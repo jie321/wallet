@@ -41,6 +41,7 @@ export default {
   share_img:require('../img/share_img.png'),
   share_pyq:require('../img/share_pyq.png'),
   share_i:require('../img/share_i.png'),
+  share_Size:require('../img/share_Size.png'),
   point_empty:require('../img/point_empty.png'),
   point_full:require('../img/point_full.png'),
   al:require('../img/al.png'),

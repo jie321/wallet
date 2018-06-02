@@ -66,17 +66,29 @@ class Home extends React.Component {
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
           if (data.code == '0') {
             if (data.data == "") {
-              this.setState({ balance: '0.0000 EOS' })
+              this.setState({
+                balance: '0.0000 EOS',
+                account: this.props.defaultWallet.name
+              })
             } else {
-              this.setState({ balance: data.data })
+              account: this.props.defaultWallet.name,
+                this.setState({ balance: data.data })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
           }
         }
       })
+    } else {
+      this.setState({ balance: '0.0000 EOS', account: 'xxxx' })
+      // this.props.defaultWallet.name = 'xxxx';
+      //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+      //   this.createWallet();
+      //   EasyDialog.dismis()
+      // }, () => { EasyDialog.dismis() });
     }
   }
+
 
   onRequestClose() {
     this.setState({
