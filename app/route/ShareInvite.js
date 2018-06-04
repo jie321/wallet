@@ -100,40 +100,32 @@ class ShareInvite extends React.Component {
       <View style={styles.container}>
         <ScrollView>
           <View style={styles.container}>
-            <ImageBackground style={{ width: '100%', height: 260, justifyContent: "center" }} source={UImage.shareBg} resizeMode="cover">
-              <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
-                <Image style={{ width: maxWidth / 2 - 30, height: (maxWidth / 2 - 30) * 0.45 }} source={UImage.inb} />
-                <Image style={{ width: maxWidth / 2 - 30, height: (maxWidth / 2 - 30) * 0.45, marginLeft: 20 }} source={UImage.link} />
+            <ImageBackground style={{ width: '100%', justifyContent: "center" }} source={UImage.shareBg} resizeMode="cover">             
+              <View  style={{width: '100%', flexDirection: "row", padding: 30,}}>
+                <View style={{ justifyContent: 'center', alignItems: 'center',}}>
+                  <Image style={{ justifyContent: 'center', width:60, height:60, }} source={UImage.logo} />
+                  <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>EosToken</Text>                 
+                </View>
+                <View style={{flex: 1,}}/>
+                <View style={{ justifyContent: 'center', alignItems: 'center',}}>
+                  <View style={{padding:5,backgroundColor:'#fff'}}>
+                    <QRCode size={90} value={this.props.inviteInfo.inviteUrl + "#" + this.props.inviteInfo.code} />
+                  </View>  
+                  <Text style={{ fontSize: 16, color: '#fff', marginTop: 15, textAlign: 'center' }}>扫码下载APP</Text>
+                </View>
               </View>
-              <Text style={{ color: '#fff', width: "100%", textAlign: 'center', fontSize: 18 }}>领投机构：硬币资本，连接资本</Text>
-
-              <View style={{ flexDirection: "row", width: '100%', justifyContent: 'center' }}>
-                <Image style={{ justifyContent: 'center' }} source={UImage.logo} />
+              <View style={{justifyContent: 'center', alignItems: 'center',width: '100%', height: 20,}}>
+                     <Image source={UImage.share_Size} style={{width: maxWidth - 100, height: (maxWidth/2 - 100) * 0.45}} />  
               </View>
-              <Text style={{ color: '#fff', width: "100%", textAlign: 'center', fontSize: 18, marginBottom: 60 }}>EosToken</Text>
-              {/* <View style={{ padding: 20 }}>
-                <Text style={{ color: '#8999b9', fontSize: 15, marginTop: 20 }}>规则说明：</Text> */}
-              {/* <Text style={{color:'#8999b9',fontSize:15,marginTop:5}}>1.新用户通过邀请链接（或邀请码）注册即获得{(parseFloat(this.props.inviteInfo.regReward)+parseFloat(this.props.inviteInfo.l1Reward))}EOS</Text> */}
-              {/* <Text style={{ color: '#8999b9', fontSize: 15, marginTop: 5 }}>1.新用户通过邀请链接（或邀请码）注册即获得{(parseFloat(this.props.inviteInfo.regReward) + parseFloat(this.props.inviteInfo.l1Reward))}积分</Text> */}
-              {/* <Text style={{color:'#8999b9',fontSize:15,marginTop:2}}>2.每邀请一个好友注册将增加{this.props.inviteInfo.l1Reward}EOS，好友邀请人数也将做为二级奖励，每一个二级好友可获得{this.props.inviteInfo.l2Reward}EOS</Text> */}
-              {/* <Text style={{ color: '#8999b9', fontSize: 15, marginTop: 2 }}>2.每邀请一个好友注册将增加{this.props.inviteInfo.l1Reward}积分，好友邀请人数也将做为二级奖励，每一个二级好友可获得{this.props.inviteInfo.l2Reward}积分</Text>
-                <Text style={{ color: '#8999b9', fontSize: 15, marginTop: 2 }}>3.获得EosToken积分享有更多权益还有机会兑换EOS；</Text>
-              </View> */}
-            </ImageBackground>
-            <View>
-              <Text style={{ marginTop: 15, marginLeft: 65 }}>专注于柚子生态</Text>
-              <Text style={{ marginTop: 2, marginLeft: 50 }}>随时随地把握精准行情</Text>
-              <View style={{ marginTop: 30, marginLeft: 60, marginBottom: 50, width: 120 }}>
-                <QRCode size={120} value={this.props.inviteInfo.inviteUrl + "#" + this.props.inviteInfo.code} />
-                <Text style={{ fontSize: 16, color: '#000', marginTop: 15, textAlign: 'center' }}>扫码注册</Text>
+              <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30,}}>
+                 <Image source={UImage.phone} style={{justifyContent: 'center', width:maxWidth/1.5, height:maxHeight/2,}} />
               </View>
-              {/* <Text style={{ color: '#000', fontSize: 15, marginTop: 20, marginLeft: 20 }}>一级邀请人数：{this.props.inviteInfo.inviteL1Count} 人</Text> */}
-              {/* <Text style={{ color: '#000', fontSize: 15, marginTop: 7, marginLeft: 20 }}>二级邀请人数：{this.props.inviteInfo.inviteL2Count} 人</Text> */}
-              {/* <Text style={{color:'#000',fontSize:15,marginTop:7,marginLeft:20}}>当前获得奖励：{this.props.inviteInfo.reward} EOS</Text> */}
-              {/* <Text style={{ color: '#000', fontSize: 15, marginTop: 7, marginLeft: 20 }}>当前获得奖励：{this.props.inviteInfo.reward} 积分</Text> */}
-              {/* <Text style={{ color: '#000', fontSize: 15, marginTop: 7, marginLeft: 20, marginBottom: 10 }}>非链接注册邀请码：{this.props.inviteInfo.code}</Text> */}
-            </View>
-            <Image source={UImage.phone} style={{ width: 103, height: 274, position: 'absolute', top: 290, left: maxWidth - 120, zIndex: 999 }} />
+              <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 20, }}>
+                <Image style={{ width: maxWidth / 2.5 - 30, height: (maxWidth / 2.5 - 30) * 0.45 }} source={UImage.inb} />
+                <Image style={{ width: maxWidth / 2.5 - 30, height: (maxWidth / 2.5 - 30) * 0.45, marginLeft: 20 }} source={UImage.link} />
+              </View>
+              <Text style={{ height:30, color: '#000', width: "100%", textAlign: 'center', fontSize: 14, }}>领投机构：硬币资本，连接资本</Text>
+            </ImageBackground>       
           </View>
         </ScrollView>
         <Button onPress={() => { this.copy() }}>
