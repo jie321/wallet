@@ -392,7 +392,7 @@ class Route extends React.Component {
           .then((isInstalled) => {
             th.setState({ showShare: false });
             if (isInstalled) {
-              WeChat.shareToSession({ type: 'imageFile', description: uri, imageUrl: uri })
+              WeChat.shareToSession({ type: 'imageFile', imageUrl: uri })
                 .catch((error) => {
                   ToastShort(error.message);
                 });
@@ -407,7 +407,7 @@ class Route extends React.Component {
           .then((isInstalled) => {
             th.setState({ showShare: false });
             if (isInstalled) {
-              WeChat.shareToTimeline({ type: 'imageFile', description: uri, imageUrl: uri })
+              WeChat.shareToTimeline({ type: 'imageFile', imageUrl: uri })
                 .catch((error) => {
                   ToastShort(error.message);
                 });
