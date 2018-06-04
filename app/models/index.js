@@ -7,6 +7,7 @@ import CoinLine from './CoinLine'
 import Login from './Login'
 import Common from './Common'
 import Invite from './Invite'
+import vote from './vote'
 const models = [
     Banner,
     NewsType,
@@ -16,6 +17,7 @@ const models = [
     CoinLine,
     Login,
     Common,
-    Invite
+    Invite,
+    vote
 ]
 export default models;

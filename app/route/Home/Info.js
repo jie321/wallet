@@ -7,6 +7,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
@@ -48,6 +49,7 @@ class Info extends React.Component {
     }
 
     _rightButtonClick() {
+        AnalyticsUtil.onEvent('To_change_into');
         // EasyDialog.show("温馨提示", "转入功能正在紧急开发中，敬请期待...", "知道了", null, () => { EasyDialog.dismis() });
         this._setModalVisible();
     }
@@ -89,6 +91,7 @@ class Info extends React.Component {
         let address = this.props.defaultWallet.account;
         Clipboard.setString(address);
         EasyToast.show("复制成功");
+        this._setModalVisible();
     }
 
     render() {

@@ -8,6 +8,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import moment from 'moment';
 import UImage from '../../utils/Img';
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { kapimg } from '../../utils/Api'
@@ -88,6 +89,8 @@ class Login extends React.Component {
 
       this.loginSubmit();
 
+      AnalyticsUtil.onEvent('Sign_inok');
+
     }, () => { EasyDialog.dismis() });
   }
 
@@ -150,6 +153,7 @@ class Login extends React.Component {
         if (data.code == 0) {
           EasyToast.show("注册成功");
           this.props.navigation.goBack();
+          AnalyticsUtil.onEvent('register_ok');
         } else {
           EasyToast.show(data.msg);
         }

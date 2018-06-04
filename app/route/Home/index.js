@@ -7,6 +7,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 var Dimensions = require('Dimensions')
 var ScreenWidth = Dimensions.get('window').width;
@@ -101,6 +102,7 @@ class Home extends React.Component {
   }
 
   scan() {
+    AnalyticsUtil.onEvent('Scavenging_transfer');
     if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
       const { navigate } = this.props.navigation;
       navigate('BarCode', {});
@@ -113,6 +115,7 @@ class Home extends React.Component {
   }
 
   qr() {
+    AnalyticsUtil.onEvent('Receipt_code');
     if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
       this._setModalVisible();
     } else {

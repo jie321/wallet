@@ -39,7 +39,10 @@ import codePush from 'react-native-code-push'
 var DeviceInfo = require('react-native-device-info');
 import { connect } from 'react-redux'
 import SplashScreen from 'react-native-splash-screen'
+import Imvote from './Settings/Imvote'
 import Set from './Settings/Set'
+import Nodevoting from './Settings/Nodevoting'
+import Bvote from './Settings/Bvote'
 import Boot from './Boot'
 import moment from 'moment';
 import Button from '../components/Button'
@@ -50,6 +53,7 @@ require('moment/locale/zh-cn');
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
 
+// import Eosjs from '../components/eosjs/Eosjs'
 var WeChat = require('react-native-wechat');
 
 const TabContainer = TabNavigator(
@@ -176,8 +180,17 @@ const Nav = StackNavigator(
     Share: {
       screen: Share
     },
+    Bvote: {
+      screen: Bvote
+    },
     Set: {
       screen: Set
+    },
+    Imvote: {
+      screen: Imvote
+    },
+    Nodevoting: {
+      screen: Nodevoting
     },
     Add_assets: {
       screen: Add_assets
@@ -244,8 +257,11 @@ class Route extends React.Component {
   state = {
     news: {},
     showShare: false,
+    showVoteShare:false,
     transformY: new Animated.Value(200),
-    transformY1: new Animated.Value(-1000)
+    transformY1: new Animated.Value(-1000),
+    vtransformY: new Animated.Value(200),
+    vtransformY1: new Animated.Value(-1000)
   }
 
   constructor(props) {
@@ -325,6 +341,29 @@ class Route extends React.Component {
             }
           ),
           Animated.timing(this.state.transformY1,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+        ]).start();
+      }, 300);
+    });
+    DeviceEventEmitter.addListener('voteShare', (news) => {
+      this.setState({showVoteShare: true });
+      this.state.vtransformY = new Animated.Value(200);
+      this.state.vtransformY1 = new Animated.Value(-1000);
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(this.state.vtransformY,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+          Animated.timing(this.state.vtransformY1,
             {
               toValue: 0,
               duration: 300,
@@ -493,6 +532,84 @@ class Route extends React.Component {
         </View>
       ) : null
       }
+
+
+
+
+
+      {this.state.showVoteShare ? (
+                <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                  <Animated.View style={{
+                    height: ScreenHeight - 180, transform: [
+                      { translateX: 0 },
+                      { translateY: this.state.vtransformY1 },
+                    ]
+                  }}>
+                    <ScrollView style={{ marginTop: 50 }}>
+                      <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                        <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
+                          <View style={{ backgroundColor: "#fff", width: '100%', height: '100%' }}>
+                          
+                            <View style={{ padding: 10 }}>
+                              <Image source={UImage.Invitation_vote} resizeMode="cover" style={{ width: '100%', height:ScreenWidth-70 }} />
+                              <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center',paddingBottom:20, }}>
+                                <QRCode size={100} style={{ width: 100, }} value={'{\"contract\":\"eos\",\"toaccount\":\"' + 'this.props.defaultWallet.account' + '\",\"symbol\":\"EOS\"}'} />
+                              </View>
+
+                            </View>
+                            <View style={{ backgroundColor: '#F2F2F2', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center' }}>
+                              <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
+                                <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>E-Token</Text>
+                                <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>专注于柚子生态</Text>
+                                <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#306eb1', margin: 10 }}>更多精彩 下载APP</Text>
+                              </View>                            
+                            </View>
+                          </View>
+                        </ViewShot>
+                      </View>
+                    </ScrollView>
+                  </Animated.View>
+                  <View style={{ height: 170, marginTop: 10 }}>
+                    <Animated.View style={{
+                      height: 170, flex: 1, backgroundColor: '#e7e7e7', transform: [
+                        { translateX: 0 },
+                        { translateY: this.state.vtransformY },
+                      ]
+                    }}>
+
+                      <View style={{ height: 125 }}>
+                        <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
+                        <View style={{ flexDirection: "row" }}>
+                          <Button  style={{ width: '33%', justifyContent: 'center' }}>
+                            <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                              <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                              <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
+                            </View>
+                          </Button>
+                          <Button style={{ width: '33%', justifyContent: 'center' }}>
+                            <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                              <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                              <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
+                            </View>
+                          </Button>
+                          <Button  style={{ width: '33%' }}>
+                            <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                              <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                              <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>
+                            </View>
+                          </Button>
+                        </View>
+                      </View>
+                      <Button onPress={() => { this.setState({ showVoteShare: false }) }}>
+                        <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
+                          <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
+                        </View>
+                      </Button>
+                    </Animated.View>
+                  </View>
+                </View>
+              ) : null
+              }    
     </View>)
   }
 }
