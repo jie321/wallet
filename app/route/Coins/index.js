@@ -127,7 +127,7 @@ class Coins extends React.Component {
         enableEmptySections={true}
         refreshControl={
           <RefreshControl
-            refreshing={false}
+            refreshing={this.props.loading}
             onRefresh={() => this.onRefresh(route.key)}
             tintColor="#fff"
             colors={['#ddd',UColor.tintColor]}

@@ -13,9 +13,12 @@ export default {
     effects: {
       *list({payload},{call,put}) {
         try{
-            yield put({type:'upstatus',payload});
+            if(payload.page==1){
+                yield put({type:'upstatus',payload:{newsRefresh:true}});
+            }
+            
             const resp = yield call(Request.request,newsList+payload.type+"?page="+payload.page,'get');
-            yield put({type:'upstatus',payload:{newsRefresh:false}});
+            
             if(resp.code=='0'){
                 let dts = new Array();
                 resp.data.map((item)=>{
@@ -26,6 +29,7 @@ export default {
             }else{
                 EasyToast.show(resp.msg);
             }
+            yield put({type:'upstatus',payload:{newsRefresh:false}});
         } catch (error) {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
             EasyToast.show('网络发生错误，请重试');
