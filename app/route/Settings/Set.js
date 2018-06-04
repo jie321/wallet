@@ -7,6 +7,7 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 
@@ -25,6 +26,7 @@ class Set extends React.Component {
     if(this.props.loginUser){
       this.props.dispatch({type:'login/logout',payload:{},callback:()=>{
         this.props.navigation.goBack();
+        AnalyticsUtil.onEvent('Sign_out');
       }});
     }else{
       const { navigate } = this.props.navigation;

@@ -6,6 +6,7 @@ import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
@@ -157,6 +158,7 @@ class TurnOut extends React.Component {
                             type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
                                 EasyLoading.dismis();
                                 if (result.code == '0') {
+                                    AnalyticsUtil.onEvent('Turn_out');
                                     EasyToast.show('交易成功');
                                     DeviceEventEmitter.emit('transaction_success');
                                     this.props.navigation.goBack();

@@ -4,6 +4,7 @@ import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Ima
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import Button from  '../../components/Button'
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
 import JPush from '../../utils/JPush'
@@ -101,6 +102,7 @@ class Coins extends React.Component {
   onPress = (coins) => {
     const { navigate } = this.props.navigation;
     navigate('Coin', { coins });
+    AnalyticsUtil.onEvent('Details_money');
   };
 
   //切换tab

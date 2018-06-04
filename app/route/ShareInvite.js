@@ -5,6 +5,7 @@ import { StyleSheet, Dimensions, Modal, Animated, View, Image, ScrollView, Text,
 import SplashScreen from 'react-native-splash-screen';
 import NavigationUtil from '../utils/NavigationUtil';
 import UImage from '../utils/Img'
+import AnalyticsUtil from '../utils/AnalyticsUtil';
 import Button from '../components/Button'
 const maxHeight = Dimensions.get('window').height;
 const maxWidth = Dimensions.get('window').width;
@@ -80,6 +81,7 @@ class ShareInvite extends React.Component {
     // Clipboard.setString(msg);
     EasyDialog.show("复制成功", msg, "分享给微信好友", "取消", () => {
       //   Linking.openURL('weixin://'); }, () => { EasyDialog.dismis() }
+      AnalyticsUtil.onEvent('Invitation_registershare');
       WeChat.isWXAppInstalled()
         .then((isInstalled) => {
           EasyDialog.dismis();
@@ -104,7 +106,7 @@ class ShareInvite extends React.Component {
               <View  style={{width: '100%', flexDirection: "row", padding: 30,}}>
                 <View style={{ justifyContent: 'center', alignItems: 'center',}}>
                   <Image style={{ justifyContent: 'center', width:60, height:60, }} source={UImage.logo} />
-                  <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>EosToken</Text>                 
+                  <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>E-Token</Text>                 
                 </View>
                 <View style={{flex: 1,}}/>
                 <View style={{ justifyContent: 'center', alignItems: 'center',}}>

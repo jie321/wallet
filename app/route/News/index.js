@@ -8,6 +8,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import moment from 'moment';
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import NavigationUtil from '../../utils/NavigationUtil'
 require('moment/locale/zh-cn');
 
@@ -107,6 +108,7 @@ class News extends React.Component {
 
   //点击新闻
   onPress = (news) => {
+    AnalyticsUtil.onEvent('click_Journalism');
     let route = this.getCurrentRoute();
     if (route.type == 2) {
       this.props.dispatch({ type: 'news/openView', payload: { key: route.key, nid: news.id } });
@@ -122,15 +124,18 @@ class News extends React.Component {
 
   onDown = (news) => {
     this.props.dispatch({ type: 'news/down', payload: { news: news } });
+    AnalyticsUtil.onEvent('step_on');
   }
 
   onUp = (news) => {
     this.props.dispatch({ type: 'news/up', payload: { news: news } });
+    AnalyticsUtil.onEvent('Fabulous');
   }
 
   onShare = (news) => {
     this.props.dispatch({ type: 'news/share', payload: { news: news } });
     DeviceEventEmitter.emit('share', news);
+    AnalyticsUtil.onEvent('Forward');
   }
 
   bannerPress = (banner) => {
@@ -220,10 +225,10 @@ class News extends React.Component {
 
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
                   <Button onPress={this.onUp.bind(this, rowData)}>
-                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.up} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.up}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isUp ? UImage.up_h:UImage.up} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.up}</Text></View>
                   </Button>
                   <Button onPress={this.onDown.bind(this, rowData)}>
-                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.down} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.down}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isDown ? UImage.down_h:UImage.down} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.down}</Text></View>
                   </Button>
                   <Button onPress={this.onShare.bind(this, rowData)}>
                     <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.share} /></View>
