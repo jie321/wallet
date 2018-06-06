@@ -83,9 +83,7 @@ class Setting extends React.Component {
     }else if (key == 'set') {
       navigate('Set', {});
     } else  if (key == 'Test') {
-      JPushModule.addTags(['yug'], map => {
-
-      })
+      navigate('Community', {});
     } else if (key == 'Bvote') {
       navigate('Bvote', {data});
     } else{
