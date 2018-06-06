@@ -48,30 +48,30 @@ class ShareInvite extends React.Component {
         }
       }
     });
-    this.props.dispatch({
-      type: "invite/getBind", payload: { uid: Constants.uid }, callback: function (data) {
-        if (data.code == "0") {
-          if (data.data == "" || data.data == "null" || data.data == null) {
-            const view = <TextInput autoFocus={true} onChangeText={(code) => th.setState({ code })} returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#65CAFF', width: maxWidth - 100, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="输入邀请码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8} />
-            EasyDialog.show("未绑定，补填邀请码", view, "绑定", "取消", () => {
-              th.setState({ focus: true })
-              EasyLoading.show("绑定中");
-              th.props.dispatch({
-                type: "invite/bind", payload: { uid: Constants.uid, code: th.state.code }, callback: function (dt) {
-                  EasyLoading.dismis()
-                  if (dt.code == "0") {
-                    EasyToast.show("绑定成功");
-                    EasyDialog.dismis();
-                  } else {
-                    EasyToast.show(dt.msg);
-                  }
-                }
-              });
-            }, () => { EasyDialog.dismis() });
-          }
-        }
-      }
-    });
+    // this.props.dispatch({
+    //   type: "invite/getBind", payload: { uid: Constants.uid }, callback: function (data) {
+        // if (data.code == "0") {
+        //   if (data.data == "" || data.data == "null" || data.data == null) {
+        //     const view = <TextInput autoFocus={true} onChangeText={(code) => th.setState({ code })} returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#65CAFF', width: maxWidth - 100, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="输入邀请码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8} />
+        //     EasyDialog.show("未绑定，补填邀请码", view, "绑定", "取消", () => {
+        //       th.setState({ focus: true })
+        //       EasyLoading.show("绑定中");
+        //       th.props.dispatch({
+        //         type: "invite/bind", payload: { uid: Constants.uid, code: th.state.code }, callback: function (dt) {
+        //           EasyLoading.dismis()
+        //           if (dt.code == "0") {
+        //             EasyToast.show("绑定成功");
+        //             EasyDialog.dismis();
+        //           } else {
+        //             EasyToast.show(dt.msg);
+        //           }
+        //         }
+        //       });
+        //     }, () => { EasyDialog.dismis() });
+        //   }
+        // }
+    //   }
+    // });
   }
 
   copy = () => {
