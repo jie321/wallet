@@ -215,7 +215,7 @@ class News extends React.Component {
               {
                 route.type == 2 && <Text numberOfLines={rowData.row} style={{ fontSize: 15, color: '#8696B0', marginTop: 10,  lineHeight: 25 }}>{rowData.content}</Text>
               }
-              {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#398EDB',lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
+              {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#65caff',lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
               {
                 route.type != 2 && <Text style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }}>{rowData.content}</Text>
               }

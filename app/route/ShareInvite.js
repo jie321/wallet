@@ -99,37 +99,36 @@ class ShareInvite extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView>
-          <View style={styles.container}>
-            <ImageBackground style={{ width: '100%', justifyContent: "center" }} source={UImage.shareBg} resizeMode="cover">             
-              <View  style={{width: '100%', flexDirection: "row", padding: 30,}}>
-                <View style={{ justifyContent: 'center', alignItems: 'center',}}>
-                  <Image style={{ justifyContent: 'center', width:60, height:60, }} source={UImage.logo} />
-                  <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>E-Token</Text>                 
-                </View>
-                <View style={{flex: 1,}}/>
-                <View style={{ justifyContent: 'center', alignItems: 'center',}}>
-                  <View style={{padding:5,backgroundColor:'#fff'}}>
-                    <QRCode size={90} value={this.props.inviteInfo.inviteUrl + "#" + this.props.inviteInfo.code} />
-                  </View>  
-                  <Text style={{ fontSize: 16, color: '#fff', marginTop: 15, textAlign: 'center' }}>扫码下载APP</Text>
-                </View>
+      <View style={styles.container}>     
+        <ImageBackground style={{flex:1, justifyContent: "center" }} source={UImage.shareBg} resizeMode="cover">
+          <View style={{justifyContent: 'center', alignItems: 'center',width: '100%', height: 20,}}>
+              <Image source={UImage.share_Size} style={{width: maxWidth - 100, height: (maxWidth/2 - 100) * 0.45}} />  
+          </View> 
+          <View style={{flexDirection: "row", paddingTop: 40, paddingBottom: 40,}}>            
+            <View  style={{flex:1,flexDirection: "column",}}>
+              <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',}}>
+                <Image style={{ justifyContent: 'center', width:60, height:60, }} source={UImage.logo} />
+                <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>E-Token</Text>                 
               </View>
-              <View style={{justifyContent: 'center', alignItems: 'center',width: '100%', height: 20,}}>
-                     <Image source={UImage.share_Size} style={{width: maxWidth - 100, height: (maxWidth/2 - 100) * 0.45}} />  
+              <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',}}>
+                <View style={{padding:5,backgroundColor:'#fff'}}>
+                  <QRCode size={70} value={this.props.inviteInfo.inviteUrl + "#" + this.props.inviteInfo.code} />
+                </View>  
+                <Text style={{ fontSize: 16, color: '#65CAFF', marginTop: 15, textAlign: 'center' }}>扫码下载APP</Text>
               </View>
-              <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30,}}>
-                 <Image source={UImage.phone} style={{justifyContent: 'center', width:maxWidth/1.5, height:maxHeight/2,}} />
-              </View>
-              <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 20, }}>
-                <Image style={{ width: maxWidth / 2.5 - 30, height: (maxWidth / 2.5 - 30) * 0.45 }} source={UImage.inb} />
-                <Image style={{ width: maxWidth / 2.5 - 30, height: (maxWidth / 2.5 - 30) * 0.45, marginLeft: 20 }} source={UImage.link} />
-              </View>
-              <Text style={{ height:30, color: '#000', width: "100%", textAlign: 'center', fontSize: 14, }}>领投机构：硬币资本，连接资本</Text>
-            </ImageBackground>       
+            </View>
+            
+            <View style={{justifyContent: 'center', alignItems: 'center', paddingRight: 20,}}>
+              <Image source={UImage.phone} style={{justifyContent: 'center', width:maxWidth/1.5-30, height:maxHeight/2-40,}} />
+            </View>
           </View>
-        </ScrollView>
+          <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 20, }}>
+            <Image style={{ width: maxWidth / 2.5 - 30, height: (maxWidth / 2.5 - 30) * 0.45 }} source={UImage.inb} />
+            <Image style={{ width: maxWidth / 2.5 - 30, height: (maxWidth / 2.5 - 30) * 0.45, marginLeft: 20 }} source={UImage.link} />
+          </View>
+          <Text style={{ height:30, color: '#000', width: "100%", textAlign: 'center', fontSize: 14, }}>领投机构：硬币资本，连接资本</Text>
+        </ImageBackground>       
+                
         <Button onPress={() => { this.copy() }}>
           <View style={{ height: 50, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ fontSize: 16, color: '#fff' }}>复制专属邀请链接</Text>
