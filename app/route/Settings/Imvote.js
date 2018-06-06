@@ -20,7 +20,7 @@ class Imvote extends React.Component {
         return {    
           title: "我的投票",
           headerStyle: {
-            paddingTop:20,
+            paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: "#586888",
           },      
         };
@@ -61,7 +61,7 @@ class Imvote extends React.Component {
         return (
             <View style={styles.container}>
                  <View style={{flexDirection: 'row', backgroundColor: '#586888',}}>         
-                    <Text style={{ width:100, paddingLeft:20, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>排名/用户</Text>           
+                    <Text style={{ width:100, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>排名/用户</Text>           
                     <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>票数（EOS）</Text>           
                     <Text style={{width:60, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
                 </View>
@@ -71,21 +71,20 @@ class Imvote extends React.Component {
                 //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
                 renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
                         <View style={{flexDirection: 'row', height: 40,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                            <View style={{ width:100, justifyContent: 'center', alignItems: 'flex-start', }}>
-                                <Text style={{ paddingLeft:20, color:'#FFFFFF', fontSize:16,}} numberOfLines={1}>{rowData.owner}</Text>
+                            <View style={{ width:120, justifyContent: 'center', alignItems: 'flex-start', }}>
+                                <Text style={{ paddingLeft:5, color:'#FFFFFF', fontSize:16,}} >{rowData.owner}</Text>
                             </View>
-                            <View style={{flex:1,justifyContent: 'center', alignItems: 'flex-start', }}>
-                                <Text style={{ paddingLeft:30, color:'#FFFFFF', fontSize:16,}}>{parseInt(rowData.total_votes)}</Text>
+                            <View style={{flex:1,justifyContent: 'center', alignItems: 'flex-end', }}>
+                                <Text style={{ color:'#FFFFFF', fontSize:16,}}>{parseInt(rowData.total_votes)}</Text>
                             </View>
-                            <TouchableOpacity style={{width:60,justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
+                            <TouchableOpacity style={{width:50,justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
                                 <View style={{width: 27, height: 27, margin:5, borderColor:'#586888',borderWidth:2,}} >
                                     <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
                                 </View>  
                             </TouchableOpacity>                         
                         </View>
                     )}                   
-                /> 
-               
+                />               
                 <View style={styles.footer}>
                     <Button  style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>

@@ -9,26 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
-var collectionArray = [
-    {collectItem1: "1.fbfdgdgdfds",collectItem2: "9999999999999999"},
-    {collectItem1: "2.fbfdgdgdhkh",collectItem2: "999999999999999"},
-    {collectItem1: "3.dgdgdsfjghj",collectItem2: "88888888888888"},
-    {collectItem1: "4.dgdgdsfjghj",collectItem2: "8888888888888"},
-    {collectItem1: "5.gsdfgdfsgjg",collectItem2: "777777777777"},
-    {collectItem1: "6.gsdfgdfsgwe",collectItem2: "77777777777"},
-    {collectItem1: "7.gdfgdfgdfgq",collectItem2: "6666666666"},
-    {collectItem1: "8.gdfgdfgdfgu",collectItem2: "666666666"},
-    {collectItem1: "9.gdgfbvxcvxc",collectItem2: "55555555"},
-    // {collectItem1: "10.gdgfbvxcvx",collectItem2: "5555555"},
-    // {collectItem1: "11.sfdsfewfxc",collectItem2: "444444"},
-    // {collectItem1: "12.sfdsfewfxc",collectItem2: "44444"},
-    // {collectItem1: "13.xcvgfbsvsd",collectItem2: "3333"},
-    // {collectItem1: "14.xcvgfbsvsd",collectItem2: "333"},
-    // {collectItem1: "15.gbhxvsdvsz",collectItem2: "22"},
-    // {collectItem1: "16.gbhxvsdvse",collectItem2: "2"},
-    // {collectItem1: "17.vdfbvdvdsh",collectItem2: "1"},
-    // {collectItem1: "18.vdfbvdvdsb",collectItem2: "0"},
-];
+
 
 @connect(({vote}) => ({...vote}))
 class Nodevoting extends React.Component {
@@ -41,7 +22,7 @@ class Nodevoting extends React.Component {
         return {    
           title: "投票",
           headerStyle: {
-            paddingTop:20,
+            paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: "#586888",
           },
           headerRight: (<Button name="search" onPress={navigation.state.params.onPress}>
@@ -70,7 +51,7 @@ class Nodevoting extends React.Component {
         this.props.dispatch({ type: 'vote/list', payload: { page:1} });
     }
 
-    _rightButtonClick() {
+    _openNodeDetails() {
         this._setModalVisible();
     }
 
@@ -82,12 +63,16 @@ class Nodevoting extends React.Component {
         });
     }
 
-    deleteItem = () => { // 删除
-        this._setModalVisible();
-        let {selectMap} = this.state;
-        let valueArr = [...selectMap.values()];
-        let keyArr = [...selectMap.keys()];
-        alert("投票成功" + valueArr)
+
+    addvote = (rowData) => { // 选中用户
+        var selectArr=[];
+        const { dispatch } = this.props;
+        this.props.voteData.forEach(element => {
+            if(element.isChecked){
+                selectArr.push(element);
+            }
+        });
+        this.props.dispatch({ type: 'vote/addvote', payload: { keyArr: selectArr}});    
     };
 
 
@@ -100,7 +85,7 @@ class Nodevoting extends React.Component {
         return (
             <View style={styles.container}>
                  <View style={{flexDirection: 'row', backgroundColor: '#586888',}}>         
-                    <Text style={{ width:100, paddingLeft:20, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>排名/用户</Text>           
+                    <Text style={{ width:100,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>排名/用户</Text>           
                     <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>票数（EOS）</Text>           
                     <Text style={{width:60, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
                 </View>
@@ -109,22 +94,26 @@ class Nodevoting extends React.Component {
                 dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
                 //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
                 renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
-                        <View style={{flexDirection: 'row', height: 40,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                            <View style={{ width:100, justifyContent: 'center', alignItems: 'flex-start', }}>
-                                <Text style={{ paddingLeft:20, color:'#FFFFFF', fontSize:16,}} numberOfLines={1}>{rowData.owner}</Text>
-                            </View>
-                            <View style={{flex:1,justifyContent: 'center', alignItems: 'flex-start', }}>
-                                <Text style={{ paddingLeft:30, color:'#FFFFFF', fontSize:16,}}>{parseInt(rowData.total_votes)}</Text>
-                            </View>
-                            <TouchableOpacity style={{width:60,justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
-                                <View style={{width: 27, height: 27, margin:5, borderColor:'#586888',borderWidth:2,}} >
-                                    <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
-                                </View>  
-                            </TouchableOpacity>                         
-                        </View>
-                    )}                   
+                        <View  >
+                            <Button> 
+                                <View style={{flexDirection: 'row', height: 40,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
+                                    <View style={{ width:120, justifyContent: 'center', alignItems: 'flex-start', }}>
+                                        <Text style={{ paddingLeft:5, color:'#FFFFFF', fontSize:16,}} >{rowData.owner}</Text>
+                                    </View>
+                                    <View style={{flex:1,justifyContent: 'center', alignItems: 'flex-end', }}>
+                                        <Text style={{ color:'#FFFFFF', fontSize:16,}}>{parseInt(rowData.total_votes)}</Text>
+                                    </View>
+                                    <TouchableOpacity style={{width:60,justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
+                                        <View style={{width: 27, height: 27, margin:5, borderColor:'#586888',borderWidth:2,}} >
+                                            <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
+                                        </View>  
+                                    </TouchableOpacity>  
+                                </View> 
+                            </Button>  
+                        </View>             
+                    )}                                     
                 /> 
-               
+              
                 <View style={styles.footer}>
                     <Button  style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
@@ -132,13 +121,13 @@ class Nodevoting extends React.Component {
                             <Text style={{ marginLeft: 20, fontSize: 14, color: '#8696B0' }}>剩余可投票数</Text>
                         </View>
                     </Button>
-                    <Button onPress={this.deleteItem.bind(this)} style={{ flex: 1 }}>
+                    <Button onPress={this.addvote.bind()} style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 1, backgroundColor: UColor.mainColor, }}>
                             <Image source={UImage.vote} style={{ width: 30, height: 30 }} />
                             <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>投票</Text>
                         </View>
                     </Button>
-                </View>  
+                </View>         
             </View>
         );
     }
