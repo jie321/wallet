@@ -101,8 +101,13 @@ class Home extends React.Component {
     });
   }
 
-  onPress(action) {
-    EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+  onPress(key, data = {}) {
+    const { navigate } = this.props.navigation;
+    if (key == 'Bvote') {
+      navigate('Bvote', {data});
+    } else{
+      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
+    }
   }
 
   scan() {
@@ -226,24 +231,24 @@ class Home extends React.Component {
                         <Text style={{color: '#8696B0',fontSize: 14,}}>收币</Text>
                       </View>
                     </Button>
-                    <Button onPress={this.onPress.bind('add', this)} style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
+                    <Button onPress={this.onPress.bind(this, 'add')} style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
                         <Image source={UImage.candy} style={styles.imgBtn} />
                         <Text style={{color: '#8696B0',fontSize: 14,}}>领取糖果</Text>
                       </View>
                     </Button>
-                    <Button  onPress={this.onPress.bind('add', this)}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
-                      <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
-                        <Image source={UImage.nash} style={styles.imgBtn} />
-                        <Text style={{color: '#8696B0',fontSize: 14,}}>NASH映射</Text>
-                      </View>
-                    </Button>
-                    <Button onPress={this.onPress.bind('add', this)} style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
+                    <Button onPress={this.onPress.bind(this, 'Bvote')} style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
                         <Image source={UImage.vote_node} style={styles.imgBtn} />
                         <Text style={{color: '#8696B0',fontSize: 14,}}>节点投票</Text>
                       </View>                      
                     </Button>
+                    {/* <Button  onPress={this.onPress.bind('add', this)}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
+                      <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
+                        <Image source={UImage.nash} style={styles.imgBtn} />
+                        <Text style={{color: '#8696B0',fontSize: 14,}}>NASH映射</Text>
+                      </View>
+                    </Button> */}
                   </View>
               </ImageBackground>
               <View style={{height: 75, backgroundColor: UColor.mainColor, flexDirection: "row",justifyContent: "space-between",borderBottomColor: '#65CAFF', borderBottomWidth: 2,}}>
@@ -251,7 +256,7 @@ class Home extends React.Component {
                     <Text style={{ marginLeft: 10, fontSize: 16, color: UColor.fontColor }}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产（￥）</Text>
                     <View style={{flexDirection: "row",alignItems: 'center', justifyContent: "center", }}>
                       <Text style={{ marginLeft: 10, fontSize: 20, color: UColor.fontColor }}>≈{this.state.balance}</Text>
-                      <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text>
+                      {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
                     </View>
                   </View>
                   <Button onPress={this.onPress.bind('add', this)} style={{ width:80, alignItems: 'center', justifyContent: "center",}}>  

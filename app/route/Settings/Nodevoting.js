@@ -52,7 +52,7 @@ class Nodevoting extends React.Component {
     }
 
     _openNodeDetails() {
-        this._setModalVisible();
+        // this._setModalVisible();
     }
 
     // 显示/隐藏 modal  
@@ -95,7 +95,7 @@ class Nodevoting extends React.Component {
                 //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
                 renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
                         <View  >
-                            <Button> 
+                            <Button onPress={this._openNodeDetails.bind(this)}> 
                                 <View style={{flexDirection: 'row', height: 40,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
                                     <View style={{ width:120, justifyContent: 'center', alignItems: 'flex-start', }}>
                                         <Text style={{ paddingLeft:5, color:'#FFFFFF', fontSize:16,}} >{rowData.owner}</Text>
