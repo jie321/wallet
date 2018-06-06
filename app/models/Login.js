@@ -128,7 +128,7 @@ export default {
         if (callback) callback({ code: 500, msg: "网络异常" });
       }
     },
-    *fetchPoint({ payload }, { call, put }) {
+    *fetchPoint({ payload, callback }, { call, put }) {
       try {
         const resp = yield call(Request.request, fetchPoint, 'post', { ...payload });
         if (resp.code == 0) {
@@ -137,9 +137,9 @@ export default {
           yield put({ type: 'updateSign', payload: { pointInfo: resp.data } });
           // yield call(store.save, 'userpoint',userpoint);
         }
-        // if (callback) callback(resp);
+        if (callback) callback(resp);
       } catch (error) {
-        // alert("error: " + error.msg);
+        // alert("error: " + JSON.stringify(error));
         if (callback) callback({ code: 500, msg: "网络异常" });
       }
     },
