@@ -38,11 +38,12 @@ class ShareInvite extends React.Component {
     var th = this;
 
     this.props.dispatch({
-      type: "invite/info", payload: { uid: Constants.uid }, callback: function (data) {
+      type: "invite/info", payload: { uid: Constants.uid }, callback: (data) =>{
         if (data.code == 403) {
           this.props.dispatch({
             type: 'login/logout', payload: {}, callback: () => {
               this.props.navigation.goBack();
+              EasyToast.show("登陆已失效, 请重新登陆!");
             }
           });
         }

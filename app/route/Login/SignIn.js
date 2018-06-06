@@ -42,19 +42,23 @@ class FetchPoint extends React.Component {
 
   componentDidMount() {
     this.props.dispatch({
-      type: "login/fetchPoint", payload: { uid: Constants.uid }, callback: function (data) {
+      type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
+        // alert("--"+ JSON.stringify(data));
         if (data.code == 403) {
           this.props.dispatch({
             type: 'login/logout', payload: {}, callback: () => {
               this.props.navigation.goBack();
+              EasyToast.show("登陆已失效, 请重新登陆!");
+              // navigate('Login', {});
             }
           });
+          
         }
       }
     });
-    const { dispatch } = this.props;
+    // const { dispatch } = this.props;
 
-    this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
+    // this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
     // dispatch({ type: 'login/fetchPoint'});
     //   DeviceEventEmitter.addListener('coinSlefChange', (tab) => {
     //     dispatch({type:'sticker/list',payload:{type:0}});
