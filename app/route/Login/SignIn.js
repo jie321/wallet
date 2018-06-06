@@ -82,7 +82,7 @@ class FetchPoint extends React.Component {
       <ScrollView keyboardShouldPersistTaps="always">
         <View>
           <View style={{ backgroundColor: '#43536D', flex: 1, flexDirection: 'column',}}>
-            <Text style={{ fontSize: 12, color: '#8696B0', marginBottom: 10, marginLeft: 5, fontSize: 14 }}> 温馨提示：连续签到将获得额外积分哦~</Text>
+            <Text style={{ fontSize: 12, color: '#8696B0', marginBottom: 10, marginLeft: 6, fontSize: 14 }}> 温馨提示：连续签到将获得额外积分哦~</Text>
             <ImageBackground style={{ justifyContent: "center", alignItems: 'center', marginLeft: ScreenWidth/7*2, marginRight: ScreenWidth/7*2, width: ScreenWidth/7*3, height: ScreenWidth/7*3, }} source={UImage.integral_bg} resizeMode="cover">
               <View style={{ flexDirection: "column", margin: 10, justifyContent: "center", alignItems: 'center', }}>
                 <Text style={{ fontSize: 14, color: '#FFFFFF', marginBottom: 10, }}>累计积分</Text>

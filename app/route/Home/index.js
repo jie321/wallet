@@ -106,7 +106,7 @@ class Home extends React.Component {
     if (key == 'Bvote') {
       navigate('Bvote', {data});
     } else{
-      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 

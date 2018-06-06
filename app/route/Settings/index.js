@@ -34,7 +34,7 @@ class Setting extends React.Component {
       { first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
       { name: "系统设置", onPress: this.goPage.bind(this, "set") },
       { name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      // { name: "节点投票", onPress: this.goPage.bind(this, "Bvote") },
+      { name: "节点投票", onPress: this.goPage.bind(this, "Bvote") },
       { name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
       // { first: true, disable: true, name: '消息推送', swt: this.state.openMsg,}
     ];

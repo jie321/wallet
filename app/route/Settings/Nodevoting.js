@@ -10,7 +10,6 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 
-
 @connect(({vote}) => ({...vote}))
 class Nodevoting extends React.Component {
 
