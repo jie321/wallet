@@ -42,6 +42,7 @@ import { connect } from 'react-redux'
 import SplashScreen from 'react-native-splash-screen'
 import Imvote from './Settings/Imvote'
 import Set from './Settings/Set'
+import Delegate from './Settings/Delegate'
 import Nodevoting from './Settings/Nodevoting'
 import Bvote from './Settings/Bvote'
 import Boot from './Boot'
@@ -189,6 +190,9 @@ const Nav = StackNavigator(
     },
     Set: {
       screen: Set
+    },
+    Delegate: {
+      screen: Delegate
     },
     Imvote: {
       screen: Imvote

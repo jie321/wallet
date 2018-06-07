@@ -15,7 +15,7 @@ import { Eos } from "react-native-eosjs";
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
-@connect(({vote, wallet}) => ({...vote, ...wallet}))
+@connect(({wallet}) => ({...wallet}))
 class Nodevoting extends React.Component {
 
   
@@ -76,17 +76,79 @@ class Nodevoting extends React.Component {
         });
     }
 
+    // 抵押
+    delegatebw = () => {
+        const view =
+        <View style={{ flexDirection: 'row' }}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                secureTextEntry={true}
+                keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
+                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+        </View>
 
-    addvote = (rowData) => { // 选中用户
-        var selectArr=[];
-        const { dispatch } = this.props;
-        this.props.voteData.forEach(element => {
-            if(element.isChecked){
-                selectArr.push(element);
+        EasyDialog.show("密码", view, "确认", "取消", () => {
+
+        if (this.state.password == "") {
+            EasyToast.show('请输入密码');
+            return;
+        }
+        EasyLoading.show();
+
+        var privateKey = this.props.defaultWallet.activePrivate;
+        try {
+            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+            if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+
+                // 抵押
+                Eos.transaction({
+                    actions:[
+                        {
+                            account: 'eosio',
+                            name: 'delegatebw',
+                            authorization: [{
+                                actor: this.props.defaultWallet.account,
+                                permission: 'active'
+                            }],
+                            data:{
+                                from: this.props.defaultWallet.account,
+                                receiver: this.props.defaultWallet.account,
+                                stake_net_quantity: "50 EOS",
+                                stake_cpu_quantity: "50 EOS",
+                                transfer: 0
+                            }
+                        }
+                    ]
+                }, plaintext_privateKey, (r) => {
+                    EasyLoading.dismis();
+                    if(r.data && r.data.transaction_id){
+                        EasyToast.show("抵押成功");
+                    }else if(r.data && JSON.parse(r.data).code != 0){
+                        var jdata = JSON.parse(r.data);
+                        var errmsg = "抵押失败: ";
+                        if(jdata.error.details[0].message){
+                            errmsg = errmsg + jdata.error.details[0].message;
+                        }
+                        alert(errmsg);
+                    }
+
+                    // alert(JSON.parse(r.data).code);
+                }); 
+            } else {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
             }
-        });
-        // this.props.dispatch({ type: 'vote/addvote', payload: { keyArr: selectArr}});    
-        // alert("this.props.defaultWallet.account: " + this.props.defaultWallet.account);
+        } catch (e) {
+            // alert("-----------密码错误");
+            EasyLoading.dismis();
+            EasyToast.show('密码错误');
+        }
+        EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() }); 
+    }
+
+    undelegatebw = () => { 
             const view =
             <View style={{ flexDirection: 'row' }}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
@@ -111,42 +173,44 @@ class Nodevoting extends React.Component {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
 
-                    //投票
+                    // 解除抵押
                     Eos.transaction({
                         actions:[
                             {
                                 account: 'eosio',
-                                name: 'voteproducer',
+                                name: 'undelegatebw',
                                 authorization: [{
                                     actor: this.props.defaultWallet.account,
                                     permission: 'active'
                                 }],
                                 data:{
-                                    voter: this.props.defaultWallet.account,
-                                    proxy: '',
-                                    producers: ["producer111j", "producer111p"]
+                                    from: this.props.defaultWallet.account,
+                                    receiver: this.props.defaultWallet.account,
+                                    unstake_net_quantity: "1000 EOS",
+                                    unstake_cpu_quantity: "1000 EOS",
                                 }
                             }
                         ]
                     }, plaintext_privateKey, (r) => {
                         EasyLoading.dismis();
-                        // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
-                            EasyToast.show("投票成功");
+                            EasyToast.show("解除抵押成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
-                            var errmsg = "投票失败: ";
+                            var errmsg = "解除抵押失败: ";
                             if(jdata.error.details[0].message){
                                 errmsg = errmsg + jdata.error.details[0].message;
                             }
                             alert(errmsg);
                         }
                     }); 
+
                 } else {
                     EasyLoading.dismis();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
+                // alert("-----------密码错误");
                 EasyLoading.dismis();
                 EasyToast.show('密码错误');
             }
@@ -162,48 +226,18 @@ class Nodevoting extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                 <View style={{flexDirection: 'row', backgroundColor: '#586888',}}>         
-                    <Text style={{ width:100,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>排名/用户</Text>           
-                    <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>票数（EOS）</Text>           
-                    <Text style={{width:60, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
-                </View>
-                <ListView style={{flex:1,}} renderRow={this.renderRow} enableEmptySections={true} 
-               
-                dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
-                //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
-                renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
-                        <View  >
-                            <Button onPress={this._openNodeDetails.bind(this)}> 
-                                <View style={{flexDirection: 'row', height: 40,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                                    <View style={{ width:120, justifyContent: 'center', alignItems: 'flex-start', }}>
-                                        <Text style={{ paddingLeft:5, color:'#FFFFFF', fontSize:16,}} >{rowData.owner}</Text>
-                                    </View>
-                                    <View style={{flex:1,justifyContent: 'center', alignItems: 'flex-end', }}>
-                                        <Text style={{ color:'#FFFFFF', fontSize:16,}}>{parseInt(rowData.total_votes)}</Text>
-                                    </View>
-                                    <TouchableOpacity style={{width:60,justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
-                                        <View style={{width: 27, height: 27, margin:5, borderColor:'#586888',borderWidth:2,}} >
-                                            <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
-                                        </View>  
-                                    </TouchableOpacity>  
-                                </View> 
-                            </Button>  
-                        </View>             
-                    )}                                     
-                /> 
-              
+            <View style={styles.container}>              
                 <View style={styles.footer}>
-                    <Button  style={{ flex: 1 }}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: '#F3F4F4' }}>123465</Text>
-                            <Text style={{ marginLeft: 20, fontSize: 14, color: '#8696B0' }}>剩余可投票数</Text>
+                    <Button  onPress={this.delegatebw.bind()} style={{ flex: 1 }}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginRight: 1, backgroundColor: UColor.mainColor, }}>
+                            <Image source={UImage.vote} style={{ width: 30, height: 30 }} />
+                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>抵押</Text>
                         </View>
                     </Button>
-                    <Button onPress={this.addvote.bind()} style={{ flex: 1 }}>
+                    <Button onPress={this.undelegatebw.bind()} style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 1, backgroundColor: UColor.mainColor, }}>
                             <Image source={UImage.vote} style={{ width: 30, height: 30 }} />
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>投票</Text>
+                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>解除抵押</Text>
                         </View>
                     </Button>
                 </View>         

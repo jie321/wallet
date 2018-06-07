@@ -46,14 +46,17 @@ class Bvote extends React.Component {
       transformY1: new Animated.Value(-1000),
       value: false,showShare:false,news:{}};
       this.config = [ 
-          {  disable: true,  avatar:UImage.eos, name: "余额", subName: "0.00EOS", },
+          // {  disable: true,  avatar:UImage.eos, name: "余额", subName: "0.00EOS", },
+          {  avatar:UImage.eos, name: "抵押", onPress: this.goPage.bind(this, "delegate") },
           {  avatar:UImage.imvote, name: "我的投票", onPress: this.goPage.bind(this, "Imvote") },
           {  avatar:UImage.Agent, name: "选择代理人", onPress: this.goPage.bind(this, "Nodevoting")},
         ];  
   }
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
-    if (key == 'Imvote') {
+    if (key == 'delegate'){
+      navigate('Delegate', {});
+    }else if (key == 'Imvote') {
       navigate('Imvote', {});
     }else if (key == 'Nodevoting') {
       navigate('Nodevoting', {data});
