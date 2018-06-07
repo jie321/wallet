@@ -111,7 +111,7 @@ class Nodevoting extends React.Component {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
 
-                    投票
+                    //投票
                     Eos.transaction({
                         actions:[
                             {
@@ -124,21 +124,29 @@ class Nodevoting extends React.Component {
                                 data:{
                                     voter: this.props.defaultWallet.account,
                                     proxy: '',
-                                    producers: selectArr //["producer111j", "producer111p"]
+                                    producers: ["producer111j", "producer111p"]
                                 }
                             }
                         ]
                     }, plaintext_privateKey, (r) => {
                         EasyLoading.dismis();
-                        // alert('asdfsadf');
-                        alert(JSON.stringify(r.data));
+                        // alert(JSON.stringify(r.data));
+                        if(r.data && r.data.transaction_id){
+                            EasyToast.show("投票成功");
+                        }else if(r.data && JSON.parse(r.data).code != 0){
+                            var jdata = JSON.parse(r.data);
+                            var errmsg = "投票失败: ";
+                            if(jdata.error.details[0].message){
+                                errmsg = errmsg + jdata.error.details[0].message;
+                            }
+                            alert(errmsg);
+                        }
                     }); 
                 } else {
                     EasyLoading.dismis();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                // alert("-----------密码错误");
                 EasyLoading.dismis();
                 EasyToast.show('密码错误');
             }
