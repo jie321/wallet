@@ -273,7 +273,7 @@ class News extends React.Component {
           lazy={true}
           navigationState={this.state}
           renderScene={this.renderScene.bind(this)}
-          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: 60, marginLeft: 20 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: 100, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
+          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth/3-50, marginLeft: 25 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: ScreenWidth/3, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
           onIndexChange={this._handleIndexChange}
           initialLayout={{ height: 0, width: Dimensions.get('window').width }}
         /> 

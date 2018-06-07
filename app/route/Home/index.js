@@ -243,6 +243,7 @@ class Home extends React.Component {
                         <Text style={{color: '#8696B0',fontSize: 14,}}>节点投票</Text>
                       </View>                      
                     </Button>
+                    
                     {/* <Button  onPress={this.onPress.bind('add', this)}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
                         <Image source={UImage.nash} style={styles.imgBtn} />

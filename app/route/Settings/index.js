@@ -34,7 +34,7 @@ class Setting extends React.Component {
       { first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
       { name: "系统设置", onPress: this.goPage.bind(this, "set") },
       { name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      { name: "节点投票", onPress: this.goPage.bind(this, "Bvote") },
+      { name: "EOS社区", onPress: this.goPage.bind(this, "Community1") },
       { name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
       // { first: true, disable: true, name: '消息推送', swt: this.state.openMsg,}
     ];
@@ -80,12 +80,10 @@ class Setting extends React.Component {
     } else if (key == 'WalletManage') {
       // EasyToast.show('测试网络暂不开放');
       navigate('WalletManage', {});
-    }else if (key == 'set') {
+    } else if (key == 'set') {
       navigate('Set', {});
-    } else  if (key == 'Test') {
+    } else if (key == 'Community') {
       navigate('Community', {});
-    } else if (key == 'Bvote') {
-      navigate('Bvote', {data});
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
