@@ -55,11 +55,7 @@ class Nodevoting extends React.Component {
         this.props.dispatch({ type: 'vote/list', payload: { page:1} });
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {
-                if (data != null && data.defaultWallet.account != null) {
-                    // this.getBalance(data);
-                } else {
-                    EasyToast.show('获取账号信息失败');
-                }
+
             }
         });
     }
@@ -78,6 +74,10 @@ class Nodevoting extends React.Component {
 
 
     addvote = (rowData) => { // 选中用户
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
         var selectArr=[];
         const { dispatch } = this.props;
         this.props.voteData.forEach(element => {
@@ -85,6 +85,7 @@ class Nodevoting extends React.Component {
                 selectArr.push(element);
             }
         });
+        
         // this.props.dispatch({ type: 'vote/addvote', payload: { keyArr: selectArr}});    
         // alert("this.props.defaultWallet.account: " + this.props.defaultWallet.account);
             const view =
