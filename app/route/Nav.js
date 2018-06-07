@@ -6,6 +6,7 @@ import UColor from '../utils/Colors'
 import UImage from '../utils/Img'
 import Home from './Home'
 import Coins from './Coins'
+import Community from './Settings/Community'
 import News from './News'
 import Settings from './Settings'
 import Splash from './Splash'
@@ -131,6 +132,9 @@ const Nav = StackNavigator(
     },
     Coin: {
       screen: Coin
+    },
+    Community: {
+      screen: Community
     },
     CreateWallet: {
       screen: CreateWallet

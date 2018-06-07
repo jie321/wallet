@@ -32,7 +32,8 @@ class FetchPoint extends React.Component {
     code: "",
     img: kapimg,
     kcode: "",
-    currentPoint: 0
+    currentPoint: 0,
+    Sign_in: '立即签到'
   }
 
   constructor(props) {
@@ -72,7 +73,7 @@ class FetchPoint extends React.Component {
         if (data.code == 0) {
           EasyToast.show("签到成功");
           this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
-          // this.props.navigation.goBack();
+          this.state.Sign_in == '已签到';
         } else {
           EasyToast.show(data.msg);
         }
@@ -86,7 +87,7 @@ class FetchPoint extends React.Component {
       <ScrollView keyboardShouldPersistTaps="always">
         <View>
           <View style={{ backgroundColor: '#43536D', flex: 1, flexDirection: 'column',}}>
-            <Text style={{ fontSize: 12, color: '#8696B0', marginBottom: 10, marginLeft: 6, fontSize: 14 }}> 温馨提示：连续签到将获得额外积分哦~</Text>
+            <Text style={{ fontSize: 12, color: '#8696B0', margin: 10, fontSize: 14 }}> 温馨提示：连续签到将获得额外积分哦~</Text>
             <ImageBackground style={{ justifyContent: "center", alignItems: 'center', marginLeft: ScreenWidth/7*2, marginRight: ScreenWidth/7*2, width: ScreenWidth/7*3, height: ScreenWidth/7*3, }} source={UImage.integral_bg} resizeMode="cover">
               <View style={{ flexDirection: "column", margin: 10, justifyContent: "center", alignItems: 'center', }}>
                 <Text style={{ fontSize: 14, color: '#FFFFFF', marginBottom: 10, }}>累计积分</Text>
@@ -117,7 +118,7 @@ class FetchPoint extends React.Component {
           </View>
           <Button onPress={() => this.signIn()}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>立即签到</Text>
+              <Text style={{ fontSize: 15, color: '#fff' }}>{this.state.Sign_in}</Text>
             </View>
           </Button>
           <Text style={{ fontSize: 14, color: '#8696B0', marginLeft: 20 }}>积分细则：</Text>

@@ -136,6 +136,7 @@ export default {
           // alert("fetchPoint: " + JSON.stringify(userpoint));
           yield put({ type: 'updateSign', payload: { pointInfo: resp.data } });
           // yield call(store.save, 'userpoint',userpoint);
+          //  alert("fetchPoint: " + JSON.stringify(payload));
         }
         if (callback) callback(resp);
       } catch (error) {
