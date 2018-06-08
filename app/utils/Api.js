@@ -1,6 +1,8 @@
 
-var rootaddr = "http://api.eostoken.im";
+// var rootaddr = "http://api.eostoken.im";
 // var rootaddr = "http://192.168.1.40:8088/api";
+// var rootaddr = "http://192.168.1.76:8088/api";
+var rootaddr = "";
 export const bannerList = rootaddr + '/news/banner';
 export const newsTypes = rootaddr + '/news/type';
 export const address = rootaddr + '/coins/address';
