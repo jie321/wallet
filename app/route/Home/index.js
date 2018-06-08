@@ -261,7 +261,7 @@ class Home extends React.Component {
                       {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
                     </View>
                   </View>
-                  <Button onPress={this.onPress.bind('add', this)} style={{ width:80, alignItems: 'center', justifyContent: "center",}}>  
+                  <Button onPress={this.onPress.bind(this, 'add')} style={{ width:80, alignItems: 'center', justifyContent: "center",}}>  
                     <View style={{flex:1,  alignItems: 'center', justifyContent: "center",}}>             
                       <Image source={UImage.add} style={styles.imgBtn} />
                       <Text style={{color:UColor.fontColor ,fontSize: 14, textAlign:'center'}}>添加资产</Text>  
