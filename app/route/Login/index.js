@@ -13,6 +13,8 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { kapimg } from '../../utils/Api'
 import { EasyDialog } from '../../components/Dialog'
+import Constants from '../../utils/Constants'
+
 var ScreenWidth = Dimensions.get('window').width;
 var tick = 60;
 
@@ -40,7 +42,7 @@ class Login extends React.Component {
       invite: "",
       loginPhone: "",
       loginPwd: "",
-      img: kapimg,
+      img: Constants.rootaddr+kapimg,
       kcode: "",
       lcode: "",
     };
@@ -75,7 +77,7 @@ class Login extends React.Component {
       EasyToast.show('请输入密码');
       return;
     }
-    let img = kapimg + this.state.loginPhone + "?v=" + Math.ceil(Math.random() * 100000);
+    let img = Constants.rootaddr+kapimg + this.state.loginPhone + "?v=" + Math.ceil(Math.random() * 100000);
 
     const view = <View style={{ flexDirection: 'row' }}><Button onPress={() => { this.refreshLcode() }}><Image onError={(e) => { this.loaderror() }} style={{ width: 100, height: 45 }} source={{ uri: img }} /></Button><TextInput autoFocus={true} onChangeText={(lcode) => this.setState({ lcode })} returnKeyType="go" selectionColor="#65CAFF" keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} /></View>
 
@@ -182,7 +184,7 @@ class Login extends React.Component {
     if (this.state.capture != "获取短信验证码") {
       return;
     }
-    let img = kapimg + this.state.phone + "?v=" + Math.ceil(Math.random() * 100000);
+    let img =Constants.rootaddr+ kapimg + this.state.phone + "?v=" + Math.ceil(Math.random() * 100000);
 
     const view = <View style={{ flexDirection: 'row' }}><Button onPress={() => { this.refresh() }}><Image onError={(e) => { this.loaderror() }} style={{ width: 100, height: 45 }} source={{ uri: img }} /></Button><TextInput autoFocus={true} onChangeText={(kcode) => this.setState({ kcode })} returnKeyType="go" selectionColor="#65CAFF" keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} /></View>
 

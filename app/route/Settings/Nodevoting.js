@@ -90,6 +90,7 @@ class Nodevoting extends React.Component {
         // alert("this.props.defaultWallet.account: " + this.props.defaultWallet.account);
             const view =
             <View style={{ flexDirection: 'row' }}>
+                <Text>请输入密码</Text>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
                     secureTextEntry={true}
                     keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
@@ -165,9 +166,9 @@ class Nodevoting extends React.Component {
         return (
             <View style={styles.container}>
                  <View style={{flexDirection: 'row', backgroundColor: '#586888',}}>         
-                    <Text style={{ width:100,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>排名/用户</Text>           
-                    <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>票数（EOS）</Text>           
-                    <Text style={{width:60, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
+                    <Text style={{ width:140,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>节点名称</Text>           
+                    <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>排名/票数</Text>           
+                    <Text style={{width:50, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
                 </View>
                 <ListView style={{flex:1,}} renderRow={this.renderRow} enableEmptySections={true} 
                
@@ -176,15 +177,20 @@ class Nodevoting extends React.Component {
                 renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
                         <View  >
                             <Button onPress={this._openNodeDetails.bind(this)}> 
-                                <View style={{flexDirection: 'row', height: 40,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                                    <View style={{ width:120, justifyContent: 'center', alignItems: 'flex-start', }}>
-                                        <Text style={{ paddingLeft:5, color:'#FFFFFF', fontSize:16,}} >{rowData.owner}</Text>
+                                <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                        <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
                                     </View>
-                                    <View style={{flex:1,justifyContent: 'center', alignItems: 'flex-end', }}>
-                                        <Text style={{ color:'#FFFFFF', fontSize:16,}}>{parseInt(rowData.total_votes)}</Text>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                        <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
+                                        <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
                                     </View>
-                                    <TouchableOpacity style={{width:60,justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
-                                        <View style={{width: 27, height: 27, margin:5, borderColor:'#586888',borderWidth:2,}} >
+                                    <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
+                                        <Text style={{ color:'#FFFFFF', fontSize:14,}}>18</Text>
+                                        <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
+                                    </View>
+                                    <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
+                                        <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
                                             <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
                                         </View>  
                                     </TouchableOpacity>  
@@ -197,8 +203,8 @@ class Nodevoting extends React.Component {
                 <View style={styles.footer}>
                     <Button  style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: '#F3F4F4' }}>123465</Text>
-                            <Text style={{ marginLeft: 20, fontSize: 14, color: '#8696B0' }}>剩余可投票数</Text>
+                            <Text style={{  fontSize: 18, color: '#F3F4F4' }}>5</Text>
+                            <Text style={{  fontSize: 14, color: '#8696B0' }}>剩余可投节点</Text>
                         </View>
                     </Button>
                     <Button onPress={this.addvote.bind()} style={{ flex: 1 }}>
@@ -221,7 +227,7 @@ const styles = StyleSheet.create({
       backgroundColor: UColor.secdColor,
     },
     footer: {
-      height: 60,
+      height: 50,
       flexDirection: 'row',
       backgroundColor: '#43536D',
     },
