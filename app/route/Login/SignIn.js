@@ -30,7 +30,7 @@ class FetchPoint extends React.Component {
     phone: "",
     password: "",
     code: "",
-    img: kapimg,
+    img: Constants.rootaddr+kapimg,
     kcode: "",
     currentPoint: 0,
     Sign_in: '立即签到'

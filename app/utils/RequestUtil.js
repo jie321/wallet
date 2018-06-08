@@ -1,5 +1,4 @@
 import Constants from '../utils/Constants'
-
 // const request = (url, method, body) => {
 //   let isOk;
 //   return new Promise((resolve, reject) => {
@@ -38,7 +37,7 @@ import Constants from '../utils/Constants'
 //   });
 // };
 
-const request = (url,method, body) => {
+const requestO = (url,method, body) => {
   let timeout=10000
   const request1 = new Promise((resolve, reject) => {
     fetch(url,{
@@ -86,6 +85,34 @@ const request = (url,method, body) => {
     });
 };
 
+const request = (url,method,body)=>{
+   return getRootaddr().then(res=>{
+      let okUrl = url
+      let rootaddr = res
+      console.info("BBBBBBBBBBBBBB", rootaddr)
+      if(okUrl.indexOf("/")==0){
+        okUrl = rootaddr+url
+      }
+      
+      return requestO(okUrl, method, body)
+   }).catch(e=>{
+    console.log(e);
+   })
+};
+
+const getRootaddr = ()=>{
+  return requestO(Constants.gateurl, 'post',{})
+    .then(res => {
+      Constants.rootaddr = res.url
+      return Constants.rootaddr;
+    })
+    .catch(e=>{
+      console.log(e);
+    })
+}
+
 export default {
-  request
+  request,
+  requestO,
+  getRootaddr
 };
