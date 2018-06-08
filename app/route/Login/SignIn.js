@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, ImageBackground } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -19,7 +19,11 @@ var tick = 60;
 class FetchPoint extends React.Component {
 
   static navigationOptions = {
-    title: '用户积分'
+    title: '用户积分',
+    headerStyle: {
+      paddingTop:Platform.OS == 'ios' ? 30 : 20,
+      backgroundColor: UColor.secdColor,
+    },
   };
 
   state = {
@@ -28,7 +32,8 @@ class FetchPoint extends React.Component {
     code: "",
     img: Constants.rootaddr+kapimg,
     kcode: "",
-    currentPoint: 0
+    currentPoint: 0,
+    Sign_in: '立即签到'
   }
 
   constructor(props) {
@@ -38,19 +43,23 @@ class FetchPoint extends React.Component {
 
   componentDidMount() {
     this.props.dispatch({
-      type: "login/fetchPoint", payload: { uid: Constants.uid }, callback: function (data) {
+      type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
+        // alert("--"+ JSON.stringify(data));
         if (data.code == 403) {
           this.props.dispatch({
             type: 'login/logout', payload: {}, callback: () => {
               this.props.navigation.goBack();
+              EasyToast.show("登陆已失效, 请重新登陆!");
+              // navigate('Login', {});
             }
           });
+          
         }
       }
     });
-    const { dispatch } = this.props;
+    // const { dispatch } = this.props;
 
-    this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
+    // this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
     // dispatch({ type: 'login/fetchPoint'});
     //   DeviceEventEmitter.addListener('coinSlefChange', (tab) => {
     //     dispatch({type:'sticker/list',payload:{type:0}});
@@ -64,7 +73,7 @@ class FetchPoint extends React.Component {
         if (data.code == 0) {
           EasyToast.show("签到成功");
           this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
-          // this.props.navigation.goBack();
+          this.state.Sign_in == '已签到';
         } else {
           EasyToast.show(data.msg);
         }
@@ -77,13 +86,15 @@ class FetchPoint extends React.Component {
     return <View style={styles.container}>
       <ScrollView keyboardShouldPersistTaps="always">
         <View>
-          <View style={{ backgroundColor: '#43536D', flex: 1, flexDirection: 'column', }}>
-            <Text style={{ fontSize: 12, color: '#8696B0', margin: 5, fontSize: 14 }}> 温馨提示：连续签到将获得额外积分哦~</Text>
-            <Image source={UImage.point_full} style={{ width: 320, height: 25, justifyContent: 'center', alignSelf: 'center' }} />
-            <View style={{ flexDirection: "row", margin: 10 }}>
-              <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 2 }}>当前累计积分:</Text>
-              <Text style={{ fontSize: 16, color: '#FFFFFF', marginLeft: 2, paddingBottom: 2 }}>{this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout}</Text>
-            </View>
+          <View style={{ backgroundColor: '#43536D', flex: 1, flexDirection: 'column',}}>
+            <Text style={{ fontSize: 12, color: '#8696B0', margin: 10, fontSize: 14 }}> 温馨提示：连续签到将获得额外积分哦~</Text>
+            <ImageBackground style={{ justifyContent: "center", alignItems: 'center', marginLeft: ScreenWidth/7*2, marginRight: ScreenWidth/7*2, width: ScreenWidth/7*3, height: ScreenWidth/7*3, }} source={UImage.integral_bg} resizeMode="cover">
+              <View style={{ flexDirection: "column", margin: 10, justifyContent: "center", alignItems: 'center', }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF', marginBottom: 10, }}>累计积分</Text>
+                <Text style={{ fontSize: 28, color: '#FFFFFF', marginLeft: 2, paddingBottom: 2 }}>{this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout}</Text>
+              </View>
+            </ImageBackground>
+            <Image source={UImage.point_full} style={{ width: 320, height: 25, justifyContent: 'center', alignSelf: 'center', marginTop: 10, }} />           
             <View style={{ flexDirection: "row", }}>
               <Text style={{ textAlign: "center", fontSize: 16, color: '#FFFFFF', alignSelf: 'center', width: '35%', fontSize: 16 }}>{this.props.pointInfo.signin}</Text>
               <Text style={{ textAlign: "center", fontSize: 16, color: '#FFFFFF', alignSelf: 'center', width: '30%', fontSize: 16 }}>{this.props.pointInfo.share}</Text>
@@ -107,7 +118,7 @@ class FetchPoint extends React.Component {
           </View>
           <Button onPress={() => this.signIn()}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>立即签到</Text>
+              <Text style={{ fontSize: 15, color: '#fff' }}>{this.state.Sign_in}</Text>
             </View>
           </Button>
           <Text style={{ fontSize: 14, color: '#8696B0', marginLeft: 20 }}>积分细则：</Text>

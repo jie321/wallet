@@ -6,6 +6,7 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
@@ -40,6 +41,7 @@ class Set extends React.Component {
   }
 
   createWallet() {
+    AnalyticsUtil.onEvent('Create_wallet');
     const { dispatch } = this.props;
     if (this.state.walletName == "") {
       EasyToast.show('请输入钱包名称');

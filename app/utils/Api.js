@@ -32,3 +32,5 @@ export const createAccount = rootaddr + '/eosrpc/createAccount';
 export const pushTransaction = rootaddr + '/eosrpc/pushTransaction';
 export const getBalance = rootaddr + '/eosrpc/getCurrencyBalance';
 export const getInfo = rootaddr + '/eosrpc/getInfo';
+
+export const Producers = rootaddr + '/eosrpc/listProducers';

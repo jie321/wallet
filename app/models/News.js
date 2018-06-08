@@ -13,9 +13,12 @@ export default {
     effects: {
       *list({payload},{call,put}) {
         try{
-            yield put({type:'upstatus',payload});
+            if(payload.page==1){
+                yield put({type:'upstatus',payload:{newsRefresh:true}});
+            }
+            
             const resp = yield call(Request.request,newsList+payload.type+"?page="+payload.page,'get');
-            yield put({type:'upstatus',payload:{newsRefresh:false}});
+            
             if(resp.code=='0'){
                 let dts = new Array();
                 resp.data.map((item)=>{
@@ -26,6 +29,7 @@ export default {
             }else{
                 EasyToast.show(resp.msg);
             }
+            yield put({type:'upstatus',payload:{newsRefresh:false}});
         } catch (error) {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
             EasyToast.show('网络发生错误，请重试');
@@ -41,6 +45,7 @@ export default {
             yield call(store.save, "news_up_"+payload.news.id,"1");
             const resp = yield call(Request.request,newsUp+payload.news.id,'get');
             if(resp.code==0){
+                payload.news.isUp=true;
                 payload.news.up=payload.news.up+1;
                 yield put({type:'updateAction',...payload});
             }else{
@@ -60,6 +65,7 @@ export default {
             yield call(store.save, "news_down_"+payload.news.id,"1");
             const resp = yield call(Request.request,newsDown+payload.news.id,'get');
             if(resp.code==0){
+                payload.news.isDown=true;
                 payload.news.down=payload.news.down+1;
                 yield put({type:'updateAction',...payload});
             }else{
@@ -139,13 +145,30 @@ export default {
             let list = newsData[n.tid];
             list.map((item, i) => {
                 if(item.id==n.id){
-                    item=n;
+                    item=n;  
+                                    
                 }
             })
             state.something = Date.parse(new Date());
             newsData[n.tid] = list;
             return {...state,newsData};
         },
+
+        // updateSelect(state, action) {
+        //     let dts = state.voteData;
+        //     let newarr = new Array();
+        //     dts.map((item)=>{
+        //         if(item==action.payload.item){
+        //             if(item.isChecked){
+        //                 item.isChecked=false;
+        //             }else{
+        //                 item.isChecked=true;
+        //             }
+        //         }
+        //         newarr.push(item);
+        //     })
+        //     return {...state,voteData:newarr}; 
+        // }
         
     }
   }

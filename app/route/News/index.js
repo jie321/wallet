@@ -8,6 +8,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import moment from 'moment';
 import UImage from '../../utils/Img'
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import NavigationUtil from '../../utils/NavigationUtil'
 require('moment/locale/zh-cn');
 
@@ -107,6 +108,7 @@ class News extends React.Component {
 
   //点击新闻
   onPress = (news) => {
+    AnalyticsUtil.onEvent('click_Journalism');
     let route = this.getCurrentRoute();
     if (route.type == 2) {
       this.props.dispatch({ type: 'news/openView', payload: { key: route.key, nid: news.id } });
@@ -122,15 +124,18 @@ class News extends React.Component {
 
   onDown = (news) => {
     this.props.dispatch({ type: 'news/down', payload: { news: news } });
+    AnalyticsUtil.onEvent('step_on');
   }
 
   onUp = (news) => {
     this.props.dispatch({ type: 'news/up', payload: { news: news } });
+    AnalyticsUtil.onEvent('Fabulous');
   }
 
   onShare = (news) => {
     this.props.dispatch({ type: 'news/share', payload: { news: news } });
     DeviceEventEmitter.emit('share', news);
+    AnalyticsUtil.onEvent('Forward');
   }
 
   bannerPress = (banner) => {
@@ -210,7 +215,7 @@ class News extends React.Component {
               {
                 route.type == 2 && <Text numberOfLines={rowData.row} style={{ fontSize: 15, color: '#8696B0', marginTop: 10,  lineHeight: 25 }}>{rowData.content}</Text>
               }
-              {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#398EDB',lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
+              {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#65caff',lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
               {
                 route.type != 2 && <Text style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }}>{rowData.content}</Text>
               }
@@ -220,10 +225,10 @@ class News extends React.Component {
 
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
                   <Button onPress={this.onUp.bind(this, rowData)}>
-                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.up} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.up}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isUp ? UImage.up_h:UImage.up} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.up}</Text></View>
                   </Button>
                   <Button onPress={this.onDown.bind(this, rowData)}>
-                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.down} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.down}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isDown ? UImage.down_h:UImage.down} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.down}</Text></View>
                   </Button>
                   <Button onPress={this.onShare.bind(this, rowData)}>
                     <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.share} /></View>
@@ -268,7 +273,7 @@ class News extends React.Component {
           lazy={true}
           navigationState={this.state}
           renderScene={this.renderScene.bind(this)}
-          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: 60, marginLeft: 20 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: 100, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
+          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth/3-50, marginLeft: 25 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: ScreenWidth/3, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
           onIndexChange={this._handleIndexChange}
           initialLayout={{ height: 0, width: Dimensions.get('window').width }}
         /> 

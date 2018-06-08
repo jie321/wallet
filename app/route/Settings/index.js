@@ -28,15 +28,14 @@ class Setting extends React.Component {
     this.state = {
       value: false,
       disabled: false,
-      changeTxt:'切换Switch',
     }
     
     this.config = [
       { first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
       { name: "系统设置", onPress: this.goPage.bind(this, "set") },
       { name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      { name: "权益股票", onPress: this.goPage.bind(this, "Test") },
-      { name: "密钥恢复", onPress: this.goPage.bind(this, "Test") },
+      { name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
+      { name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
       // { first: true, disable: true, name: '消息推送', swt: this.state.openMsg,}
     ];
 
@@ -81,12 +80,10 @@ class Setting extends React.Component {
     } else if (key == 'WalletManage') {
       // EasyToast.show('测试网络暂不开放');
       navigate('WalletManage', {});
-    }else if (key == 'set') {
+    } else if (key == 'set') {
       navigate('Set', {});
-    } else  if (key == 'Test') {
-      JPushModule.addTags(['yug'], map => {
-
-      })
+    } else if (key == 'Community') {
+      navigate('Community', {});
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -169,7 +166,7 @@ class Setting extends React.Component {
           </View>
           <View style={{ flex: 1, marginTop: 15, flexDirection: 'column' }}>
             <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center' }}>© 2018 eostoken all rights reserved </Text>
-            <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center', marginTop: 5 }}>EOS专业版钱包 V{DeviceInfo.getVersion()}(1)</Text>
+            <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center', marginTop: 5 }}>EOS专业版钱包 V{DeviceInfo.getVersion()}(2)</Text>
           </View>
         </View>
       </ScrollView>

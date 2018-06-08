@@ -8,19 +8,25 @@ export default {
     state: {
         coinList:{},
         updateTime:"",
-        coinSelf:{}
+        coinSelf:{},
+        loading:false
     },
     effects: {
       *list({payload,callback},{call,put}) {
         try{
+          
+          yield put({type:'updateLoading',payload:{loading:true}});
+          
           const resp = yield call(Request.request,sticker,'get');
           if(resp.code=='0'){
               yield put({type:'update',payload:{...payload,data:resp.data}});
           }else{
+            yield put({type:'updateLoading',payload:{loading:false}});
             EasyToast.show(resp.msg);
           }
           if (callback) callback();
         }catch(err){
+          yield put({type:'updateLoading',payload:{loading:false}});
           EasyToast.show('网络发生错误，请重试');
         }
       },
@@ -48,15 +54,20 @@ export default {
       }
     },
     reducers: {
+      
         update(state, action) {
             combine(state,action);
             state.updateTime=Date.parse(new Date());
-            return {...state};
+            return {...state,loading:false};
         },
         updateSelf(state,action){
            state.updateTime=Date.parse(new Date());
            return {...state,...action.payload};
-        }
+        },
+        updateLoading(state,action){
+          state.loading=action.payload.loading;
+          return {...state,...action.payload};
+       },
     },
     subscriptions: {
       setup({ dispatch }) {

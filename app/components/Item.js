@@ -74,7 +74,7 @@ export default class Item extends Component {
       <View style={[styles.listItem,{marginTop: first?15:0}]}>
         {icon?(<Icon name={icon} size={iconSize||20} style={{width: 22, marginRight:5, textAlign:"center"}} color={color || "#4da6f0"} />):null}
         <View style={[styles.listInfo, {borderTopWidth: !first?0.5:0}]}>
-          {avatar?(<Image source={avatar} style={{width: 25, height: 25, resizeMode: "cover", overflow:"hidden", borderRadius: 18, marginRight:10,}}/>):null}
+          {avatar?(<Image source={avatar} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden", borderRadius: 18, marginRight:10,}}/>):null}
           <View style={{flex: 1}}><Text style={{color:UColor.fontColor, fontSize:16}}>{name}</Text></View>
           <View style={styles.listInfoRight}>
             {subName?(<Text style={{color:'#8696B0', fontSize:15}}>{subName}</Text>):null}            
