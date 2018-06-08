@@ -41,7 +41,16 @@ class Imvote extends React.Component {
     }
 
     componentDidMount() {
-        this.props.dispatch({ type: 'vote/list', payload: { page:1} });
+        this.props.dispatch({
+            type: 'wallet/getDefaultWallet', callback: (data) => {
+                if(!data || !data.defaultWallet || !data.defaultWallet.account){
+                    EasyToast.show("请先创建钱包");
+                }else{
+                    this.props.dispatch({ type: 'vote/getvotinginfo', payload: { voter: data.defaultWallet.account} });
+                }
+            }
+        });
+
     }
 
     deleteItem = () => { // 删除
@@ -49,6 +58,76 @@ class Imvote extends React.Component {
         let valueArr = [...selectMap.values()];
         let keyArr = [...selectMap.keys()];
         // alert("确认撤票" + valueArr)
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
+
+        const view =
+        <View style={{ flexDirection: 'row' }}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                secureTextEntry={true}
+                keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
+                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+        </View>
+
+        EasyDialog.show("密码", view, "确认", "取消", () => {
+
+        if (this.state.password == "") {
+            EasyToast.show('请输入密码');
+            return;
+        }
+        EasyLoading.show();
+
+        var privateKey = this.props.defaultWallet.activePrivate;
+        try {
+            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+            if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                // alert("plaintext_privateKey "+plaintext_privateKey);
+
+                //投票
+                Eos.transaction({
+                    actions:[
+                        {
+                            account: 'eosio',
+                            name: 'voteproducer',
+                            authorization: [{
+                                actor: this.props.defaultWallet.account,
+                                permission: 'active'
+                            }],
+                            data:{
+                                voter: this.props.defaultWallet.account,
+                                proxy: '',
+                                producers: ["producer111j", "producer111p"]
+                            }
+                        }
+                    ]
+                }, plaintext_privateKey, (r) => {
+                    EasyLoading.dismis();
+                    // alert(JSON.stringify(r.data));
+                    if(r.data && r.data.transaction_id){
+                        EasyToast.show("撤票成功");
+                    }else if(r.data && JSON.parse(r.data).code != 0){
+                        var jdata = JSON.parse(r.data);
+                        var errmsg = "投撤票失败: ";
+                        if(jdata.error.details[0].message){
+                            errmsg = errmsg + jdata.error.details[0].message;
+                        }
+                        alert(errmsg);
+                    }
+                }); 
+            } else {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+        } catch (e) {
+            EasyLoading.dismis();
+            EasyToast.show('密码错误');
+        }
+        EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() });
     };
 
 
