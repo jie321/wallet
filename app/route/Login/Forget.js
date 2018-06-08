@@ -25,7 +25,7 @@ class Forget extends React.Component {
     phone:"",
     password:"",
     code:"",
-    capture:'获取短信验证码',
+    capture:'获取验证码',
     img:kapimg,
     kcode:"",
   }
@@ -188,7 +188,7 @@ class Forget extends React.Component {
        
         <View style={{height:0.5,backgroundColor:'#43536D'}}></View>
         <View style={{padding:20,height:80,backgroundColor:'#586888'}} >
-            <Text style={{fontSize:12,color:'#8696B0'}}> 密码</Text>
+            <Text style={{fontSize:12,color:'#8696B0'}}> 设置新密码</Text>
             <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" selectionColor="#65CAFF" style={{color:'#8696B0',fontSize:15,height:40,paddingLeft:2}} placeholderTextColor="#8696B0" placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
              onChangeText={(password) => this.setState({password})}
             />
@@ -196,7 +196,7 @@ class Forget extends React.Component {
       </View>
       <Button onPress={() => this.regSubmit()}>
         <View style={{height:45,backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',margin:20,borderRadius:5}}>
-          <Text style={{fontSize:15,color:'#fff'}}>修改密码</Text>
+          <Text style={{fontSize:15,color:'#fff'}}>提交</Text>
         </View>
       </Button>
     </View>
