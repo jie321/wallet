@@ -61,6 +61,13 @@ export default {
   xin0:require('../img/xin0.png'),
   xin1:require('../img/xin1.png'),
   vote:require('../img/vote.png'),
+  
+  votea:require('../img/votea.png'),
+  voteb:require('../img/voteb.png'),
+  votec:require('../img/votec.png'),
+  votea_bj:require('../img/votea_bj.png'),
+  voteb_bj:require('../img/voteb_bj.png'),
+  votec_bj:require('../img/votec_bj.png'),
   vote_h:require('../img/vote_h.png'),
   vote_node:require('../img/vote_node.png'),
   Tick:require('../img/Tick.png'),

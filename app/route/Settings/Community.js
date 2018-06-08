@@ -78,16 +78,16 @@ class Community extends React.Component {
             <View style={{flexDirection:'row', height: 118,}}>
               <ImageBackground style={{ justifyContent: "center", alignItems: 'flex-start', flex: 1, flexDirection:'row', marginRight: 2, paddingLeft: 5, paddingTop: 5,}} source={UImage.cmy_wx} resizeMode="stretch">                  
                 <Text style={styles.textname}>官方微信：</Text>
-                <Text onPress={this.prot.bind(this, 'wechat')} style={styles.textlink}>{this.state.wechat}</Text>           
+                <Text onLongPress={this.prot.bind(this, 'wechat')} style={styles.textlink}>{this.state.wechat}</Text>           
               </ImageBackground>
               <ImageBackground style={{ justifyContent: "center", alignItems: 'flex-start', flex: 1, flexDirection:'row', marginLeft: 2, paddingLeft: 5, paddingTop: 5,}} source={UImage.cmy_qq} resizeMode="stretch">          
                 <Text style={styles.textname}>官方QQ：</Text>
-                <Text onPress={this.prot.bind(this, 'qq')}  style={styles.textlink}>{this.state.qq}</Text>           
+                <Text onLongPress={this.prot.bind(this, 'qq')}  style={styles.textlink}>{this.state.qq}</Text>           
               </ImageBackground>        
             </View>
             <ImageBackground style={{ justifyContent: "flex-start", alignItems: 'flex-start', flexDirection:'row', width: maxWidth-10, height: 135, marginTop: 4, paddingLeft: 10, paddingTop: 10,}} source={UImage.cmy_gzh} resizeMode="stretch">              
               <Text style={styles.textname}>官方公众号：</Text>
-              <Text onPress={this.prot.bind(this, 'public')} style={styles.textlink}>{this.state.public}</Text>     
+              <Text onLongPress={this.prot.bind(this, 'public')} style={styles.textlink}>{this.state.public}</Text>     
             </ImageBackground>
             <ImageBackground style={{ justifyContent: "flex-start", alignItems: 'center',flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_wb} resizeMode="stretch">            
               <Text style={styles.textname}>官方微博：</Text>
@@ -95,7 +95,7 @@ class Community extends React.Component {
             </ImageBackground>             
             <ImageBackground style={{ justifyContent: "flex-start",  alignItems: 'center', flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_db} resizeMode="stretch">       
               <Text style={styles.textname}>EosToken电报群：</Text>
-              <Text onPress={this.prot.bind(this, 'telegraph')}  style={styles.textlink}>{this.state.telegraph}</Text>
+              <Text onLongPress={this.prot.bind(this, 'telegraph')}  style={styles.textlink}>{this.state.telegraph}</Text>
             </ImageBackground>        
           </View>   
     </View>

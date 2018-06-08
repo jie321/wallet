@@ -166,9 +166,9 @@ class Nodevoting extends React.Component {
         return (
             <View style={styles.container}>
                  <View style={{flexDirection: 'row', backgroundColor: '#586888',}}>         
-                    <Text style={{ width:100,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>节点名称</Text>           
+                    <Text style={{ width:140,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>节点名称</Text>           
                     <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>排名/票数</Text>           
-                    <Text style={{width:60, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
+                    <Text style={{width:50, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
                 </View>
                 <ListView style={{flex:1,}} renderRow={this.renderRow} enableEmptySections={true} 
                
@@ -178,7 +178,9 @@ class Nodevoting extends React.Component {
                         <View  >
                             <Button onPress={this._openNodeDetails.bind(this)}> 
                                 <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                                    <Image source={UImage.eos} style={{width: 30, height: 30, verticalAlign: 'middle',}}/>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                        <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
+                                    </View>
                                     <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                         <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
                                         <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
@@ -201,8 +203,8 @@ class Nodevoting extends React.Component {
                 <View style={styles.footer}>
                     <Button  style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: '#F3F4F4' }}>5</Text>
-                            <Text style={{ marginLeft: 20, fontSize: 14, color: '#8696B0' }}>剩余可投节点</Text>
+                            <Text style={{  fontSize: 18, color: '#F3F4F4' }}>5</Text>
+                            <Text style={{  fontSize: 14, color: '#8696B0' }}>剩余可投节点</Text>
                         </View>
                     </Button>
                     <Button onPress={this.addvote.bind()} style={{ flex: 1 }}>
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
       backgroundColor: UColor.secdColor,
     },
     footer: {
-      height: 60,
+      height: 50,
       flexDirection: 'row',
       backgroundColor: '#43536D',
     },
