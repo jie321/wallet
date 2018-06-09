@@ -186,7 +186,7 @@ class Nodevoting extends React.Component {
                                         <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
                                     </View>
                                     <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
-                                        <Text style={{ color:'#FFFFFF', fontSize:14,}}>18</Text>
+                                        <Text style={{ color:'#FFFFFF', fontSize:14,}}>{parseInt(rowID) + 1}</Text>
                                         <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
                                     </View>
                                     <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
