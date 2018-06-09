@@ -24,58 +24,21 @@ class Nodevoting extends React.Component {
         const params = navigation.state.params || {};
        
         return {    
-          title: "投票",
+          title: "投票锁仓",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: "#586888",
           },
-          headerRight: (<Button name="search" onPress={navigation.state.params.onPress}>
-            <View style={{ padding: 15 }}>
-                <Image source={UImage.Magnifier} style={{ width: 30, height: 30 }}></Image>
-            </View>
-          </Button>),            
         };
       };
 
     constructor(props) {
         super(props);
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: ds.cloneWithRows([]),
-            show: false,
-            isChecked: false,
-            isAllSelect: false,
-            isShowBottom: false,
-            selectMap: new Map(),
-            // preIndex: 0 // 声明点击上一个按钮的索引  **** 单选逻辑 ****
+            isAllSelected: true,  
+            isNotDealSelected: false,        
         };
     }
-
-    componentDidMount() {
-        this.props.dispatch({ type: 'vote/list', payload: { page:1} });
-        this.props.dispatch({
-            type: 'wallet/getDefaultWallet', callback: (data) => {
-                if (data != null && data.defaultWallet.account != null) {
-                    // this.getBalance(data);
-                } else {
-                    EasyToast.show('获取账号信息失败');
-                }
-            }
-        });
-    }
-
-    _openNodeDetails() {
-        // this._setModalVisible();
-    }
-
-    // 显示/隐藏 modal  
-    _setModalVisible() {
-        let isShow = this.state.show;
-        this.setState({
-            show: !isShow,
-        });
-    }
-
     // 抵押
     delegatebw = () => {
         const view =
@@ -219,28 +182,79 @@ class Nodevoting extends React.Component {
     };
 
 
-    selectItem = (item) => { 
-        this.props.dispatch({ type: 'vote/up', payload: { item:item} });
-    }
+ 
+
+     // 更新"全部/未处理/已处理"按钮的状态  
+     _updateBtnSelectedState(currentPressed, array) {  
+        if (currentPressed === null || currentPressed === 'undefined' || array === null || array === 'undefined') {  
+            return;  
+        }  
+  
+        let newState = {...this.state};  
+  
+        for (let type of array) {  
+            if (currentPressed == type) {  
+                newState[type] ? {} : newState[type] = !newState[type];  
+                this.setState(newState);  
+            } else {  
+                newState[type] ? newState[type] = !newState[type] : {};  
+                this.setState(newState);  
+            }  
+        }  
+    }  
+  
+    // 返回设置的button  
+    _getButton(style, selectedSate, stateType, buttonTitle) {  
+        let BTN_SELECTED_STATE_ARRAY = ['isAllSelected', 'isNotDealSelected'];  
+        return(  
+            <View style={[style, selectedSate ? {backgroundColor: '#65CAFF'} : {backgroundColor: '#586888'}]}>  
+                <Text style={[styles.tabText, selectedSate ? {color: 'white'} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+                    {buttonTitle}  
+                </Text>  
+            </View>  
+        );  
+    }  
 
 
     render() {
         return (
-            <View style={styles.container}>              
-                <View style={styles.footer}>
-                    <Button  onPress={this.delegatebw.bind()} style={{ flex: 1 }}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Image source={UImage.vote} style={{ width: 30, height: 30 }} />
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>抵押</Text>
+            <View style={styles.container}> 
+                <View style={{paddingLeft: 15, paddingRight: 15,}}>
+                    <View style={{paddingTop: 10, paddingBottom: 10,}}>
+                        <View style={styles.frame}>
+                            <Text style={styles.number}>1208</Text>
+                            <Text style={styles.state}>EOS余额</Text>
                         </View>
-                    </Button>
-                    <Button onPress={this.undelegatebw.bind()} style={{ flex: 1 }}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 1, backgroundColor: UColor.mainColor, }}>
-                            <Image source={UImage.vote} style={{ width: 30, height: 30 }} />
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>解除抵押</Text>
+                        <View style={styles.frame}>
+                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.state}>投票锁仓</Text>
                         </View>
-                    </Button>
-                </View>         
+                        <View style={styles.frame}>
+                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.state}>赎回中</Text>
+                        </View>
+                    </View> 
+                    <View style={styles.tablayout}>  
+                        {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '投票锁仓')}  
+                        {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', 'EOS赎回')}  
+                    </View>  
+                    <View style={{ paddingLeft: 20,  paddingTop: 40, paddingBottom: 60, justifyContent: 'center',}}>
+                        <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 30, }}>{this.state.isAllSelected ? '投票锁仓':'EOS赎回'}</Text>
+                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.invite} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
+                                onSubmitEditing={() => this.regSubmit()}
+                                onChangeText={(invite) => this.setState({ invite })}
+                            />
+                            <Text style={{ fontSize: 15, color: '#65CAFF', width: 50, textAlign: 'center'}}>全部</Text>
+                        </View>
+                    </View>
+                    <Text style={{fontSize: 14, color: '#8696B0', lineHeight: 25,  }}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响你的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
+                </View>
+                <Button >
+                    <View style={{ margin: 10, height: 45,  borderRadius: 6, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, color: '#fff' }}>{this.state.isAllSelected ? '确定抵押':'确认赎回'}</Text>
+                    </View>
+                </Button>       
             </View>
         );
     }
@@ -252,51 +266,51 @@ const styles = StyleSheet.create({
       flex: 1,
       flexDirection:'column',
       backgroundColor: UColor.secdColor,
+      paddingBottom: 40,
     },
-    footer: {
-      height: 60,
-      flexDirection: 'row',
-      backgroundColor: '#43536D',
+
+    frame: {
+        height:50, 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        borderBottomColor: '#586888', 
+        borderBottomWidth: 1,
     },
-    pupuo: {
-      // flex:1,  
-      backgroundColor: '#ECECF0',
+
+    number: {
+        flex: 2, 
+        fontSize: 20, 
+        color: '#FFFFFF', 
+        textAlign: 'left', 
+        paddingLeft: 8,
     },
-    // modal的样式  
-    modalStyle: {
-        // backgroundColor:'#ccc',  
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+
+    state: {
+        flex: 1, 
+        fontSize: 14, 
+        color: '#7787A3', 
+        textAlign: 'right', 
+        paddingRight: 5,
     },
-    // modal上子View的样式  
-    subView: {
-        marginLeft: 10,
-        marginRight: 10,
-        backgroundColor: '#fff',
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        borderRadius: 10,
-        borderWidth: 0.5,
-        borderColor: '#ccc',
-    },
-    // 标题  
-    titleText: {
-        marginBottom: 5,
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    // 内容  
-    contentText: {
-        flex:1,
-        paddingTop: 5,
-        fontSize: 16,
-        textAlign: 'left',    
-        lineHeight:30,
-    },
+
+    tablayout: {   
+        flexDirection: 'row',  
+    },  
+
+    buttontab: {  
+        margin: 5,
+        width: 100,
+        height: 33,
+        borderRadius: 15,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },  
+
+    tabText: {  
+       fontSize: 15,
+    },  
+
     
-    });
+});
 
 export default Nodevoting;

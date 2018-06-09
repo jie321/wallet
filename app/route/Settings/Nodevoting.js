@@ -11,7 +11,7 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
-
+const maxHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
@@ -60,7 +60,9 @@ class Nodevoting extends React.Component {
         });
     }
 
-    _openNodeDetails() {
+    _openAgentInfo() {
+        const { navigate } = this.props.navigation;
+        navigate('AgentInfo', {});
         // this._setModalVisible();
     }
 
@@ -89,15 +91,15 @@ class Nodevoting extends React.Component {
         // this.props.dispatch({ type: 'vote/addvote', payload: { keyArr: selectArr}});    
         // alert("this.props.defaultWallet.account: " + this.props.defaultWallet.account);
             const view =
-            <View style={{ flexDirection: 'row' }}>
-                <Text>请输入密码</Text>
+            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
                     secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
+                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
                     placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：为确保你的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
             </View>
     
-            EasyDialog.show("密码", view, "确认", "取消", () => {
+            EasyDialog.show("请输入密码", view, "提交", "取消", () => {
     
             if (this.state.password == "") {
                 EasyToast.show('请输入密码');
@@ -165,7 +167,7 @@ class Nodevoting extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                 <View style={{flexDirection: 'row', backgroundColor: '#586888',}}>         
+                 <View style={{flexDirection: 'row', backgroundColor: '#586888', height: 25,}}>         
                     <Text style={{ width:140,  color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>节点名称</Text>           
                     <Text style={{flex:1, color:'#FFFFFF', fontSize:16, textAlign:'center',  lineHeight:25,}}>排名/票数</Text>           
                     <Text style={{width:50, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
@@ -175,8 +177,8 @@ class Nodevoting extends React.Component {
                 dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
                 //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
                 renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
-                        <View  >
-                            <Button onPress={this._openNodeDetails.bind(this)}> 
+                        <View>
+                            <Button onPress={this._openAgentInfo.bind(this)}> 
                                 <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
                                     <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                         <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>

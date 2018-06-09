@@ -15,6 +15,7 @@ export default {
   aab1: require('../img/aab1.png'),
   aab2: require('../img/aab2.png'),
   Agent: require('../img/Agent.png'),
+  AgentInfo_bg: require('../img/AgentInfo_bg.png'),
   imvote:require('../img/imvote.png'),
   wallet: require('../img/wallet.png'),
   fav: require('../img/fav.png'),

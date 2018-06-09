@@ -45,12 +45,6 @@ class Bvote extends React.Component {
       transformY: new Animated.Value(200),
       transformY1: new Animated.Value(-1000),
       value: false,showShare:false,news:{}};
-      // this.config = [ 
-      //     // {  disable: true,  avatar:UImage.eos, name: "余额", subName: "0.00EOS", },
-      //     {  avatar:UImage.eos, name: "抵押", onPress: this.goPage.bind(this, "delegate") },
-      //     {  avatar:UImage.imvote, name: "我的投票", onPress: this.goPage.bind(this, "Imvote") },
-      //     {  avatar:UImage.Agent, name: "选择代理人", onPress: this.goPage.bind(this, "Nodevoting")},
-      //   ];  
   }
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
@@ -64,41 +58,35 @@ class Bvote extends React.Component {
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
-  _goPage() {
-    alert('1');
-  }
-
-  // _renderListItem() {
-  //   return this.config.map((item, i) => {
-  //     return (<Item key={i} {...item} />)
-  //   })
-  // }
 
     render() {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
-                <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">              
-                  <Text onPress={this.goPage.bind(this, 'delegate')} style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
-                  <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                      <Image source={UImage.votea} style={{width: 30, height: 30, margin: 10,}}/>
-                  </View>     
-                </ImageBackground>
-                <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10,}} source={UImage.voteb_bj} resizeMode="stretch">              
-                  <Text onPress={this.goPage.bind(this, 'Imvote')} style={{fontSize:16, color:'#FFFFFF'}}>你的投票信息</Text>
-                  <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                      <Image source={UImage.voteb} style={{width: 30, height: 30, margin: 10,}}/>
-                  </View>     
-                </ImageBackground>           
-                <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10, }} source={UImage.votec_bj} resizeMode="stretch">              
-                  <Text onPress={this.goPage.bind(this, 'Nodevoting')}  style={{fontSize:16, color:'#FFFFFF'}}>选择代理节点</Text>
-                  <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                      <Image source={UImage.votec} style={{width: 30, height: 30, margin: 10,}}/>
-                  </View>     
-                </ImageBackground>         
-                {/* <View>
-                   {this._renderListItem()}
-                </View>     */}
+                <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
+                  <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
+                      <Text style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
+                      <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                          <Image source={UImage.votea} style={{width: 30, height: 30, margin: 10,}}/>
+                      </View>  
+                  </ImageBackground>
+                </TouchableHighlight> 
+                <TouchableHighlight onPress={this.goPage.bind(this, 'Imvote')}>
+                  <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10,}} source={UImage.voteb_bj} resizeMode="stretch">              
+                    <Text style={{fontSize:16, color:'#FFFFFF'}}>你的投票信息</Text>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Image source={UImage.voteb} style={{width: 30, height: 30, margin: 10,}}/>
+                    </View>     
+                  </ImageBackground>     
+                </TouchableHighlight> 
+                <TouchableHighlight onPress={this.goPage.bind(this, 'Nodevoting')} >      
+                  <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10, }} source={UImage.votec_bj} resizeMode="stretch">              
+                    <Text style={{fontSize:16, color:'#FFFFFF'}}>选择代理节点</Text>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Image source={UImage.votec} style={{width: 30, height: 30, margin: 10,}}/>
+                    </View>     
+                  </ImageBackground>  
+                </TouchableHighlight>        
             </View>
         )
     }
