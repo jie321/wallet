@@ -82,12 +82,19 @@ class Nodevoting extends React.Component {
         }
         var selectArr=[];
         const { dispatch } = this.props;
+        // alert("this.props.voteData "+ JSON.stringify(this.props.voteData));
         this.props.voteData.forEach(element => {
             if(element.isChecked){
-                selectArr.push(element);
+                selectArr.push(element.owner);
             }
         });
         
+        // var producersList = "";
+        // for(count=0;count<selectArr.length;count++){
+        //     producersList += " " + selectArr[count]
+        // } 
+        // alert("producersList: " + producersList);
+
         // this.props.dispatch({ type: 'vote/addvote', payload: { keyArr: selectArr}});    
         // alert("this.props.defaultWallet.account: " + this.props.defaultWallet.account);
             const view =
@@ -128,7 +135,7 @@ class Nodevoting extends React.Component {
                                 data:{
                                     voter: this.props.defaultWallet.account,
                                     proxy: '',
-                                    producers: ["producer111j", "producer111p"]
+                                    producers: selectArr //["producer111j", "producer111p"]
                                 }
                             }
                         ]
