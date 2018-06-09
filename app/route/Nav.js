@@ -40,6 +40,7 @@ import codePush from 'react-native-code-push'
 var DeviceInfo = require('react-native-device-info');
 import { connect } from 'react-redux'
 import SplashScreen from 'react-native-splash-screen'
+import AgentInfo from './Settings/AgentInfo'
 import Imvote from './Settings/Imvote'
 import Set from './Settings/Set'
 import Delegate from './Settings/Delegate'
@@ -193,6 +194,9 @@ const Nav = StackNavigator(
     },
     Delegate: {
       screen: Delegate
+    },
+    AgentInfo: {
+      screen: AgentInfo
     },
     Imvote: {
       screen: Imvote

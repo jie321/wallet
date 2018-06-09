@@ -56,6 +56,12 @@ class Imvote extends React.Component {
         this.props.dispatch({ type: 'vote/up', payload: { item:item} });
     }
 
+    _openAgentInfo() {
+        const { navigate } = this.props.navigation;
+        navigate('AgentInfo', {});
+        // this._setModalVisible();
+    }
+
 
     render() {
         return (
@@ -70,30 +76,34 @@ class Imvote extends React.Component {
                 dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
                 //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
                 renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
-                    <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                            <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
-                        </View>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                            <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
-                            <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
-                        </View>
-                        <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
-                            <Text style={{ color:'#FFFFFF', fontSize:14,}}>18</Text>
-                            <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
-                        </View>
-                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
-                            <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
-                                <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
-                            </View>  
-                        </TouchableOpacity>  
-                    </View> 
+                    <View>
+                        <Button onPress={this._openAgentInfo.bind(this)}> 
+                            <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                    <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
+                                </View>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                    <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
+                                    <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
+                                </View>
+                                <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
+                                    <Text style={{ color:'#FFFFFF', fontSize:14,}}>18</Text>
+                                    <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
+                                </View>
+                                <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
+                                    <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
+                                        <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
+                                    </View>  
+                                </TouchableOpacity>  
+                            </View> 
+                        </Button>  
+                    </View>         
                     )}                   
                 />               
                 <View style={styles.footer}>
                     <Button  style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Text style={{ fontSize: 18, color: '#F3F4F4' }}>123465</Text>
+                            <Text style={{ fontSize: 18, color: '#F3F4F4' }}>23</Text>
                             <Text style={{ fontSize: 14, color: '#8696B0' }}>剩余可投票数</Text>
                         </View>
                     </Button>
