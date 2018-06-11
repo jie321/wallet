@@ -55,24 +55,12 @@ class Nodevoting extends React.Component {
         this.props.dispatch({ type: 'vote/list', payload: { page:1} });
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {
-
+                this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account} });
             }
         });
     }
 
-    _openAgentInfo() {
-        const { navigate } = this.props.navigation;
-        navigate('AgentInfo', {});
-        // this._setModalVisible();
-    }
-
-    // 显示/隐藏 modal  
-    _setModalVisible() {
-        let isShow = this.state.show;
-        this.setState({
-            show: !isShow,
-        });
-    }
+   
 
 
     addvote = (rowData) => { // 选中用户
@@ -106,7 +94,7 @@ class Nodevoting extends React.Component {
                 <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：为确保你的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
             </View>
     
-            EasyDialog.show("请输入密码", view, "提交", "取消", () => {
+            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
     
             if (this.state.password == "") {
                 EasyToast.show('请输入密码');
@@ -170,6 +158,19 @@ class Nodevoting extends React.Component {
         this.props.dispatch({ type: 'vote/up', payload: { item:item} });
     }
 
+    _openAgentInfo(coins) {
+        const { navigate } = this.props.navigation;
+        navigate('AgentInfo', {coins});
+        // this._setModalVisible();
+    }
+
+    // 显示/隐藏 modal  
+    _setModalVisible() {
+        let isShow = this.state.show;
+        this.setState({
+            show: !isShow,
+        });
+    }
 
     render() {
         return (
@@ -180,39 +181,40 @@ class Nodevoting extends React.Component {
                     <Text style={{width:50, color:'#FFFFFF', fontSize:16,  textAlign:'center', lineHeight:25,}}>选择</Text>          
                 </View>
                 <ListView style={{flex:1,}} renderRow={this.renderRow} enableEmptySections={true} 
-               
-                dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
-                //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
-                renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
-                        <View>
-                            <Button onPress={this._openAgentInfo.bind(this)}> 
-                                <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
-                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                        <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
-                                    </View>
-                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                        <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
-                                        <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
-                                    </View>
-                                    <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
-                                        <Text style={{ color:'#FFFFFF', fontSize:14,}}>{parseInt(rowID) + 1}</Text>
-                                        <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
-                                    </View>
-                                    <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
-                                        <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
-                                            <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
-                                        </View>  
-                                    </TouchableOpacity>  
-                                </View> 
-                            </Button>  
-                        </View>             
-                    )}                                     
-                /> 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
+                    renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
+                            <View>
+                                <Button onPress={this._openAgentInfo.bind(this,rowData)}> 
+                                    <View style={{flexDirection: 'row', height: 60,}} backgroundColor={parseInt(rowID)%2 ==0?"#43536D":" #4E5E7B"}>
+                                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                            {/* <Image source={{uri: rowData.icon}} style={{width: 30, height: 30, margin: 5,}}/> */}
+                                            <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
+                                        </View>
+                                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                            {/* <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.name}</Text>
+                                            <Text style={{ color:'#7787A3', fontSize:14,}} >{rowData.region}</Text> */}
+                                            <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
+                                            <Text style={{ color:'#7787A3', fontSize:14,}} >地区</Text>
+                                        </View>
+                                        <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
+                                            <Text style={{ color:'#FFFFFF', fontSize:14,}}>{parseInt(rowID) + 1}</Text>
+                                            <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
+                                        </View>
+                                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
+                                            <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
+                                                <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
+                                            </View>  
+                                        </TouchableOpacity>  
+                                    </View> 
+                                </Button>  
+                            </View>             
+                        )}                                   
+                    /> 
               
                 <View style={styles.footer}>
-                    <Button  style={{ flex: 1 }}>
+                    <Button style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Text style={{  fontSize: 18, color: '#F3F4F4' }}>5</Text>
+                            <Text style={{  fontSize: 18, color: '#F3F4F4' }}>{this.props.producers == null ? 30 : 30 - this.props.producers.length}</Text>
                             <Text style={{  fontSize: 14, color: '#8696B0' }}>剩余可投节点</Text>
                         </View>
                     </Button>
@@ -224,9 +226,12 @@ class Nodevoting extends React.Component {
                     </Button>
                 </View>         
             </View>
-        );
-    }
-};
+        
+            );
+        }
+    };
+    
+
 
 
 const styles = StyleSheet.create({
