@@ -34,4 +34,7 @@ export const getBalance = rootaddr + '/eosrpc/getCurrencyBalance';
 export const getInfo = rootaddr + '/eosrpc/getInfo';
 export const getAccountInfo = rootaddr + '/eosrpc/getAccountInfo';
 export const getVotingInfo = rootaddr + '/eosrpc/getVotingInfo';
+export const getUndelegatebwInfo = rootaddr + '/eosrpc/getUndelegatebwInfo';
+
 export const listProducers = rootaddr + '/eosrpc/listProducers';
+export const listAgent = rootaddr + '/eoselector/list';
