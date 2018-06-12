@@ -84,7 +84,7 @@ class Forget extends React.Component {
       EasyToast.show('请输入11位手机号');
       return;
     }
-    if(this.state.capture!="获取短信验证码"){
+    if(this.state.capture!="获取验证码"){
       return;
     }
     let img = Constants.rootaddr+kapimg+this.state.phone+"?v="+Math.ceil(Math.random()*100000);
@@ -116,7 +116,7 @@ class Forget extends React.Component {
       EasyToast.show('请输入验证码');
       return;
     }
-    if(this.state.capture!="获取短信验证码"){
+    if(this.state.capture!="获取验证码"){
       return;
     }
   
@@ -145,7 +145,7 @@ class Forget extends React.Component {
     setTimeout(function(){
       if(tick==0){
         tick=60;
-        th.setState({capture:"获取短信验证码"})
+        th.setState({capture:"获取验证码"})
       }else{
         tick--;
         th.setState({capture:tick+"s"})

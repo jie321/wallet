@@ -53,21 +53,24 @@ const requestO = (url,method, body) => {
           "deviceId":Constants.deviceId
         },
         body:JSON.stringify(body)
-    })
-    // 请求状态成功，解析请求数据
-    .then(res => {
-      if (res.status >= 200 && res.status < 300) {
-        //resolve(res);
-        resolve(res.json())
-      }
-      reject(`${res.status}`);
-    })
-    // 返回请求的数据
-    .then(responseJson=>{
-      resolve(responseJson)
-    })
-    // 返回错误
-    .catch(e => reject(e.message));
+    }).then((response) => {
+        if (response.ok) {
+          isOk = true;
+        } else {
+          isOk = false;
+        }
+        return response.json();
+      })
+      .then((responseData) => {
+        if (isOk) {
+          resolve(responseData);
+        } else {
+          reject(responseData);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 
 // 定义一个延时函数
@@ -89,7 +92,6 @@ const request = (url,method,body)=>{
    return getRootaddr().then(res=>{
       let okUrl = url
       let rootaddr = res
-      console.info("BBBBBBBBBBBBBB", rootaddr)
       if(okUrl.indexOf("/")==0){
         okUrl = rootaddr+url
       }
@@ -107,6 +109,8 @@ const getRootaddr = ()=>{
       return Constants.rootaddr;
     })
     .catch(e=>{
+      Constants.rootaddr = Constants.defaultrootaddr
+      return Constants.rootaddr;
       console.log(e);
     })
 }
