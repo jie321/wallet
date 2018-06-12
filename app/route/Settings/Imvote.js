@@ -161,10 +161,9 @@ class Imvote extends React.Component {
         this.props.dispatch({ type: 'vote/up', payload: { item:item} });
     }
 
-    _openAgentInfo() {
+    _openAgentInfo(coins) {
         const { navigate } = this.props.navigation;
-        navigate('AgentInfo', {});
-        // this._setModalVisible();
+        navigate('AgentInfo', {coins});
     }
 
 
@@ -179,20 +178,19 @@ class Imvote extends React.Component {
                 <ListView style={{flex:1,}} renderRow={this.renderRow} enableEmptySections={true} 
                
                 dataSource={this.state.dataSource.cloneWithRows(this.props.producers == null ? [] : this.props.producers)} 
-                //dataSource={this.state.dataSource.cloneWithRows(list.data == null ? [] : JSON.parse(list.data).rows)} 
-                renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
+                renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
-                        <Button onPress={this._openAgentInfo.bind(this)}> 
-                            <View style={{flexDirection: 'row', height: 60,}} backgroundColor={rowID%2 ==0?"#43536D":" #4E5E7B"}>
+                        <Button onPress={this._openAgentInfo.bind(this,rowData)}> 
+                            <View style={{flexDirection: 'row', height: 60,}} backgroundColor={(parseInt(rowID)%2 == 0) ? "#43536D" : "#4E5E7B"}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                     <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
                                 </View>
                                 <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                     <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
-                                    <Text style={{ color:'#7787A3', fontSize:14,}} >地区：新加坡</Text>
+                                    <Text style={{ color:'#7787A3', fontSize:14,}} >地区：{rowData.region}</Text>
                                 </View>
                                 <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
-                                    <Text style={{ color:'#FFFFFF', fontSize:14,}}>18</Text>
+                                    <Text style={{ color:'#FFFFFF', fontSize:14,}}>{rowData.ranking}</Text>
                                     <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
                                 </View>
                                 <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
@@ -223,22 +221,6 @@ class Imvote extends React.Component {
         );
     }
 
-     //渲染页面
-    // render() {
-    //     const v = (
-    //     <ListView
-    //         renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-    //         style={{ backgroundColor: UColor.secdColor }}
-    //         enableEmptySections={true}
-    //         onEndReachedThreshold={20}
-    //         dataSource={this.state.dataSource.cloneWithRows(this.props.voteData.rows == null ? [] : JSON.parse(this.props.voteData).rows)}
-    //         renderRow={(rowData) => (
-    //             <View>asdfasdf</View>
-    //         )}
-    //     />
-    //     );
-    //     return (v);
-    // }
 };
 
 

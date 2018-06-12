@@ -161,15 +161,6 @@ class Nodevoting extends React.Component {
     _openAgentInfo(coins) {
         const { navigate } = this.props.navigation;
         navigate('AgentInfo', {coins});
-        // this._setModalVisible();
-    }
-
-    // 显示/隐藏 modal  
-    _setModalVisible() {
-        let isShow = this.state.show;
-        this.setState({
-            show: !isShow,
-        });
     }
 
     render() {
@@ -182,23 +173,20 @@ class Nodevoting extends React.Component {
                 </View>
                 <ListView style={{flex:1,}} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.voteData == null ? [] : this.props.voteData)} 
-                    renderRow={(rowData, sectionID, rowID) => ( // cell样式                 
+                    renderRow={(rowData, sectionID, rowID) => (                  
                             <View>
                                 <Button onPress={this._openAgentInfo.bind(this,rowData)}> 
-                                    <View style={{flexDirection: 'row', height: 60,}} backgroundColor={parseInt(rowID)%2 ==0?"#43536D":" #4E5E7B"}>
+                                    <View style={{flexDirection: 'row', height: 60,}} backgroundColor={(parseInt(rowID)%2 == 0) ? "#43536D" : "#4E5E7B"}>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                            {/* <Image source={{uri: rowData.icon}} style={{width: 30, height: 30, margin: 5,}}/> */}
-                                            <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
+                                            <Image source={{uri: rowData.icon}} style={{width: 30, height: 30, margin: 10,}}/>
                                         </View>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                            {/* <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.name}</Text>
-                                            <Text style={{ color:'#7787A3', fontSize:14,}} >{rowData.region}</Text> */}
-                                            <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
-                                            <Text style={{ color:'#7787A3', fontSize:14,}} >地区</Text>
+                                            <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.name}</Text>
+                                            <Text style={{ color:'#7787A3', fontSize:14,}} >地区：{rowData.region}</Text>                                    
                                         </View>
                                         <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
-                                            <Text style={{ color:'#FFFFFF', fontSize:14,}}>{parseInt(rowID) + 1}</Text>
-                                            <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text>
+                                            <Text style={{ color:'#FFFFFF', fontSize:14,}}>{rowData.ranking}</Text>
+                                            <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text> 
                                         </View>
                                         <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
                                             <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
@@ -245,44 +233,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       backgroundColor: '#43536D',
     },
-    pupuo: {
-      // flex:1,  
-      backgroundColor: '#ECECF0',
-    },
-    // modal的样式  
-    modalStyle: {
-        // backgroundColor:'#ccc',  
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    },
-    // modal上子View的样式  
-    subView: {
-        marginLeft: 10,
-        marginRight: 10,
-        backgroundColor: '#fff',
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        borderRadius: 10,
-        borderWidth: 0.5,
-        borderColor: '#ccc',
-    },
-    // 标题  
-    titleText: {
-        marginBottom: 5,
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    // 内容  
-    contentText: {
-        flex:1,
-        paddingTop: 5,
-        fontSize: 16,
-        textAlign: 'left',    
-        lineHeight:30,
-    },
+   
     
     });
 

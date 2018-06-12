@@ -43,61 +43,54 @@ class AgentInfo extends React.Component {
  
     prot = () => {
         const { navigate } = this.props.navigation;
-        navigate('Web', { title: "注册协议", url: "https :// eoscannon.io" });
+        navigate('Web', { title: this.props.navigation.state.params.coins.name, url: this.props.navigation.state.params.coins.url });
       }
    
 
 
     render() {
+        const agent = this.props.navigation.state.params.coins;
         return (
             <View style={styles.container}> 
                 <ScrollView>
                     <View style={{paddingLeft: 5, paddingRight: 5,  paddingBottom: 10, backgroundColor: '#43536D'}}>
                         <ImageBackground style={{ justifyContent: "center", alignItems: 'center', height:118, flexDirection:'column', marginTop: 3, marginBottom: 4, }} source={UImage.AgentInfo_bg} resizeMode="stretch">                  
                             <View style={{width: 50, height: 50, backgroundColor: '#586888',justifyContent: "center", alignItems: 'center', borderRadius: 25, margin: 5,}}>
-                                <Image style={{width: 33, height: 33,}} source={UImage.AgentInfo_bg}/>
+                                <Image style={{width: 33, height: 33,}} source={{uri: agent.icon}}/>
                             </View>
-                            <Text style={{width: 117, height: 24, lineHeight: 24, backgroundColor: '#65CAFF', textAlign: 'center', color: '#FFFFFF', borderRadius: 5,  }}>EOS CANNON</Text>           
+                            <Text style={{width: 117, height: 24, lineHeight: 24, backgroundColor: '#65CAFF', textAlign: 'center', color: '#FFFFFF', borderRadius: 5,  }}>{agent.name}</Text>           
                         </ImageBackground> 
                         <View style={{padding: 5, backgroundColor: '#586888', borderRadius: 5,}}>
-                            <Image style={{width: 35, height: 26, position: 'absolute', top: 0, left: 15, zIndex: 999}} source={UImage.AgentInfo_bg}/>
+                            {/* <Image style={{width: 35, height: 26, position: 'absolute', top: 0, left: 15, zIndex: 999}} source={UImage.AgentInfo_bg}/> */}
                             <View style={{flexDirection: "row", }}>
                                 <View style={styles.frame}>
-                                    <Text style={styles.number}>中国</Text>
+                                    <Text style={styles.number}>{agent.region}</Text>
                                     <Text style={styles.state}>地区</Text>
                                 </View>
                                 <View style={styles.frame}>
-                                    <Text style={styles.number}>150.625.405</Text>
+                                    <Text style={styles.number}>{parseInt(agent.total_votes)}</Text>
                                     <Text style={styles.state}>得票总数</Text>
                                 </View>
                             </View>   
                             <View style={{flexDirection: "row", }}>
                                 <View style={styles.frame}>
-                                    <Text style={styles.number}>20</Text>
+                                    <Text style={styles.number}>{agent.ranking}</Text>
                                     <Text style={styles.state}>排名</Text>
                                 </View>
                                 <View style={styles.frame}>
-                                    <Text style={styles.number}>暂无（后选）</Text>
+                                    <Text style={styles.number}> </Text>
                                     <Text style={styles.state}>出块状态</Text>
                                 </View>
                             </View> 
                             <View style={{ height:35, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'center'}}>
                                 <Text style={{ fontSize: 12, color: '#8696B0', marginTop: 5 }}>官网：</Text>
-                                <Text onPress={() => this.prot()} style={{ fontSize: 13, color: '#65CAFF', marginTop: 5 }}>https :// eoscannon.io</Text>
+                                <Text onPress={() => this.prot()} style={{ fontSize: 13, color: '#65CAFF', marginTop: 5 }}>{agent.url}</Text>
                             </View>
                         </View>
                     </View> 
                     <View style={{flex: 1,  backgroundColor: '#FFFFFF', paddingTop: 5, paddingLeft: 35, paddingRight: 35,}}>  
                         <View style={{paddingBottom: 25,}}>
-                            <Text style={styles.text}>服务器配置</Text>
-                            <Text style={styles.text}>对于Testnet,我们使用2个EC2实例和AWSt2.xlarge（4个vCPU,16GBRAM,100GB磁盘）。对于EOS mainnet ,我们将使用2个AWSx1.32xlarge（128vCPU,2TBRAM,4TSSD）的实例，我们希望使用相同的E置作为IDC裸机的备用区。</Text>
-                        </View> 
-                        <View style={{paddingBottom: 25,}}>
-                            <Text style={styles.text}>团队介绍</Text>
-                            <Text style={styles.text}>EOS的发展将会为区块链以更好的方式改变着我们的生活，我们努力为EOS分敗式生态系统做贡献！作为一个具有很高声望的社区，我们愿恿连挎并促进海外和中国EOS社区之间的共享。此外，我们很乐3S带领大多数囯内token持有者，参与全球EOS社区的堆长。</Text>
-                        </View> 
-                        <View style={{paddingBottom: 25,}}>
-                            <Text style={styles.text}>EOSCannon将是一个可S的区块生产者，致力为社区服务。此外，我们计划成为积极的EOS生态系统贡献者和顶目孵化器，而不仅仅是一个EOS社区，我们将成为中国重要的EOS合作伙伴 数据釆源：EOS小助手小程序</Text>
+                            <Text style={styles.text}>{agent.introduce}</Text>
                         </View>
                     </View>
                 </ScrollView>        
@@ -118,6 +111,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 60,
         margin: 2, 
+        padding:5,
         flexDirection: 'column', 
         alignItems: 'center', 
         justifyContent: 'center', 
@@ -127,19 +121,13 @@ const styles = StyleSheet.create({
     },
 
     number: {
-      
         fontSize: 18, 
-        color: '#FFFFFF', 
-       
-       
+        color: '#FFFFFF',   
     },
 
-    state: {
-       
+    state: {  
         fontSize: 12, 
         color: '#8696B0', 
-       
-      
     },
 
     tablayout: {   

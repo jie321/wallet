@@ -14,10 +14,11 @@ export default {
     effects: {
      *list({payload},{call,put}) {
         try{
-            const resp = yield call(Request.request,listProducers,"get");
+            const resp = yield call(Request.requestO, "http://192.168.1.76:8088/api" + listAgent,"post");
+            //  alert('listAgent ：'+JSON.stringify(resp));
             // const resp = yield call(Request.request,listAgent,"get");
             if(resp.code=='0'){               
-                yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
+                yield put({ type: 'updateVote', payload: { voteData:resp.data } });
                 // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
             }else{
                 EasyToast.show(resp.msg);
@@ -39,7 +40,7 @@ export default {
       */
      *getaccountinfo({payload,callback},{call,put}) {
         try{
-            const resp = yield call(Request.request,getAccountInfo, 'post', payload);
+            const resp = yield call(Request.request, getAccountInfo, 'post', payload);
             // alert("getaccountinfo : " + JSON.stringify(resp));
             if(resp.code=='0'){               
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
@@ -57,7 +58,7 @@ export default {
       */
      *getundelegatebwInfo({payload,callback},{call,put}) {
         try{
-            const resp = yield call(Request.request,getUndelegatebwInfo, 'post', payload);
+            const resp = yield call(Request.request, getUndelegatebwInfo, 'post', payload);
             // alert("getundelegatebwInfo : " + JSON.stringify(resp));
             if(resp.code=='0'){               
                 // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
@@ -73,8 +74,8 @@ export default {
     },
 
     reducers : {
-        updateVote(state, action) {
-            return {...state,voteData:action.payload.voteData};      
+        updateVote(state, action) {      
+            return {...state,voteData:action.payload.voteData};  
         },
         updateSelect(state, action) {
             let dts = state.voteData;
