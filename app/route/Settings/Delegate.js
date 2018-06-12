@@ -81,10 +81,15 @@ class Nodevoting extends React.Component {
             this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
             this.getBalance();
           });
-        setInterval( ()  =>{
+          this.timer = setInterval( ()  =>{
             this.getBalance()
           },10000)
     }
+
+
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+      }
 
     getBalance() { 
         if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
@@ -347,7 +352,7 @@ class Nodevoting extends React.Component {
                     <View style={{ paddingLeft: 20, paddingRight: 20,  paddingTop: 40, paddingBottom: 60, justifyContent: 'center',}}>
                         <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 30, }}>{this.state.isAllSelected ? '投票锁仓':'EOS赎回'}</Text>
                         <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入数量" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
                                 onSubmitEditing={() => this.regSubmit()}
                                 onChangeText={(delegatebw) => this.setState({ delegatebw })}
                             />

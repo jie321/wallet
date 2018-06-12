@@ -60,9 +60,14 @@ class Home extends React.Component {
       this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
       this.getBalance();
     });
-    setInterval( ()  =>{
+    this.timer = setInterval( ()  =>{
       this.getBalance()
     },10000)
+  }
+
+
+  componentWillUnmount(){
+    this.timer && clearTimeout(this.timer);
   }
 
   getBalance() { 
@@ -104,8 +109,17 @@ class Home extends React.Component {
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
     if (key == 'Bvote') {
-      // navigate('Bvote', {data});
-      EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });  
+
+        return;
+      }
+
+      navigate('Bvote', {data, balance: this.state.balance});
+      // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -416,7 +430,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end"
   },
   top: {
-    // height: Platform.OS == 'ios' ? 65 : 50,
+    height: Platform.OS == 'ios' ? 65 : 50,
     lineHeight:50,
     textAlign: "center",
     fontSize: 18,
@@ -446,7 +460,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   topbtn: {
-   
     flexDirection: "row",
     alignItems: 'center',
     justifyContent: "space-between",
