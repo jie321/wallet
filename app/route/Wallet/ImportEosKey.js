@@ -149,7 +149,7 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请输入active私钥');
     return;
   }
-  if (this.state.password == '') {
+  if (this.state.walletpwd == '') {
     EasyToast.show('请输入密码');
     return;
   }
@@ -167,6 +167,7 @@ class ImportEosKey extends React.Component {
 createWalletByPrivateKey(owner_privateKey, active_privatekey){
   Eos.privateToPublic(active_privatekey,(r) => {
     var active_publicKey = r.data.publicKey;
+    // alert("active_publicKey "+active_publicKey);
     // Eos.privateToPublic(owner_privateKey, (r) => {
       try {
         var owner_publicKey = r.data.publicKey;
@@ -271,8 +272,8 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
                    </View> */}
                 </View>
                 <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                  value={this.state.password}
-                  onChangeText={(password) => this.setState({ password })}
+                  value={this.state.walletpwd}
+                  onChangeText={(password) => this.setState({walletpwd: password })}
                   returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16, }} placeholderTextColor="#8696B0"
                   placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
                 />
