@@ -25,6 +25,7 @@ import BackupWords from './Wallet/BackupWords'
 import BackupNote from './Wallet/BackupNote'
 import InputWords from './Wallet/InputWords'
 import ImportKey from './Wallet/ImportPrivateKey'
+import ImportEosKey from './Wallet/ImportEosKey'
 import WalletManage from './Wallet/WalletManage'
 import WalletDetail from './Wallet/WalletDetail'
 import ModifyPassword from './Wallet/ModifyPassword'
@@ -150,6 +151,9 @@ const Nav = StackNavigator(
     ImportKey: {
       screen: ImportKey
     },
+    ImportEosKey: {
+      screen: ImportEosKey
+    },
     WalletManage: {
       screen: WalletManage
     },
@@ -263,7 +267,7 @@ const Nav = StackNavigator(
 
 let routeLength = 0;
 
-@connect(({ banner, newsType, common, login }) => ({ ...banner, ...newsType, ...common, ...login }))
+@connect(({ banner, newsType, common, login, wallet }) => ({ ...banner, ...newsType, ...common, ...login,  ...wallet }))
 class Route extends React.Component {
 
   state = {
@@ -278,7 +282,6 @@ class Route extends React.Component {
 
   constructor(props) {
     super(props)
-    //test
     WeChat.registerApp('wxc5eefa670a40cc46');
   }
 
@@ -294,8 +297,12 @@ class Route extends React.Component {
   componentWillMount() {
 
   }
+ 
+  
 
   componentDidMount() {
+    //调取是否有钱包账户
+    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     //回到app触发检测更新
     AppState.addEventListener("change", (newState) => {
       newState === "active" && codePush.sync({ installMode: codePush.InstallMode.ON_NEXT_RESUME });
@@ -456,10 +463,25 @@ class Route extends React.Component {
         this.props.dispatch({ type: "login/info", payload: { uid: this.props.loginUser.uid, token: this.props.token } });
       }
     }
+    //切换到钱包判断是否创建钱包
+    if (action && action.routeName && action.routeName == "Home") {
+        if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+        EasyDialog.show("温馨提示", "系统检测到你还未创建钱包，是否创建或导入私钥", "是", "否", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });  
+        return;
+      }
+    }
     if (action && action.routeName) {
       DeviceEventEmitter.emit('changeTab', action.routeName);
     }
     routeLength = nav.routes.length;
+  }
+
+  createWallet() {
+    const { navigate } = this.props.navigation;
+    navigate('CreateWallet', {});
   }
 
   render() {
@@ -598,7 +620,7 @@ class Route extends React.Component {
                               <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
                             </View>
                           </Button>
-                          <Button style={{ width: '33%', justifyContent: 'center' }}>
+                          <Button  style={{ width: '33%', justifyContent: 'center' }}>
                             <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
                               <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
                               <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>

@@ -24,6 +24,7 @@ export default {
   shareBg:require('../img/share_bg.png'),
   qrcode:require('../img/qrcode.png'),
   phone:require('../img/phone.png'),
+  refresh:require('../img/refresh.png'),
   logo:require('../img/logo1.png'),
   signed:require('../img/signed.png'),  
   a:require('../img/a.png'),
