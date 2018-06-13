@@ -245,11 +245,11 @@ class Set extends React.Component {
             {this._renderListItem()}
           </View>
 
-          <Button onPress={() => this.backupWords()} style={{ flex: 1 }}>
+          {/* <Button onPress={() => this.backupWords()} style={{ flex: 1 }}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>
             </View>
-          </Button>
+          </Button> */}
           <Button onPress={() => this.deleteWallet()} style={{ flex: 1 }}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', marginLeft: 20, marginRight: 20, borderRadius: 5 }}>
               <Text style={{ fontSize: 15, color: '#fff' }}>删除钱包</Text>
