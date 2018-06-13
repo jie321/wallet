@@ -59,9 +59,9 @@ class WalletManage extends React.Component {
   
   importWallet() {
     // 导入钱包
-    // const { navigate } = this.props.navigation;
-    // navigate('ImportKey');
-    EasyToast.show('测试网络暂不开放');
+    const { navigate } = this.props.navigation;
+    navigate('ImportKey');
+    // EasyToast.show('测试网络暂不开放');
   }
 
   updateState(state) {

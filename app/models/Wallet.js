@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { address } from '../utils/Api';
+import { address, getAccountsByPuk } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
 import store from 'react-native-simple-store';
 import * as CryptoJS from 'crypto-js';
@@ -113,6 +113,7 @@ export default {
             }
         },
         *saveWallet({ wallet, callback }, { call, put }) {
+
             var AES = require("crypto-js/aes");
             var CryptoJS = require("crypto-js");
             var walletArr = yield call(store.get, 'walletArr');
@@ -299,7 +300,23 @@ export default {
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
-        }
+        },
+        *getAccountsByPuk({payload, callback},{call,put}) {
+            try{
+                const resp = yield call(Request.request,getAccountsByPuk,"post", payload);
+                // alert('getAccountsByPuk: '+JSON.stringify(resp));
+                if(resp.code=='0'){               
+                    // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
+                    // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
+                    // if (callback) callback(resp.data.account_names[0]);
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+                if (callback) callback(resp);
+            } catch (error) {
+                EasyToast.show('网络发生错误，请重试');
+            }
+         },
     },
     reducers: {
         update(state, action) {
