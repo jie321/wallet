@@ -16,7 +16,7 @@ var ScreenWidth = Dimensions.get('window').width;
 var tick = 60;
 
 @connect(({ login }) => ({ ...login }))
-class FetchPoint extends React.Component {
+class SignIn extends React.Component {
 
   static navigationOptions = {
     title: '用户积分',
@@ -33,7 +33,9 @@ class FetchPoint extends React.Component {
     img: Constants.rootaddr+kapimg,
     kcode: "",
     currentPoint: 0,
-    Sign_in: '立即签到'
+    Sign_in: '立即签到',
+    sign_in_bg: '#65CAFF'
+
   }
 
   constructor(props) {
@@ -42,6 +44,19 @@ class FetchPoint extends React.Component {
   }
 
   componentDidMount() {
+    this.props.dispatch({ type: 'login/signin', payload: { uid: Constants.uid }, callback: (data) => {
+      if(data.msg == "今天您已签到"){
+        this.setState({
+        Sign_in: '已签到',
+        sign_in_bg: '#586888'
+        })
+      }else{
+        this.setState({
+          Sign_in: '立即签到',
+          sign_in_bg: '#65CAFF'
+          })
+      } 
+    } });
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
         // alert("--"+ JSON.stringify(data));
@@ -52,10 +67,9 @@ class FetchPoint extends React.Component {
               EasyToast.show("登陆已失效, 请重新登陆!");
               // navigate('Login', {});
             }
-          });
-          
+          });         
         }
-      }
+      },
     });
     // const { dispatch } = this.props;
 
@@ -70,10 +84,20 @@ class FetchPoint extends React.Component {
     const { dispatch } = this.props;
     this.props.dispatch({
       type: 'login/signin', payload: { name: this.state.phone }, callback: (data) => {
+        if(data.msg == "今天您已签到"){
+          this.setState({
+          Sign_in: '已签到',
+          sign_in_bg: '#586888'
+          })
+        }else{
+          this.setState({
+            Sign_in: '立即签到',
+            sign_in_bg: '#65CAFF'
+            })
+        } 
         if (data.code == 0) {
           EasyToast.show("签到成功");
           this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
-          this.state.Sign_in == '已签到';
         } else {
           EasyToast.show(data.msg);
         }
@@ -117,7 +141,7 @@ class FetchPoint extends React.Component {
             </View>
           </View>
           <Button onPress={() => this.signIn()}>
-            <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
+            <View style={{ height: 45, justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }} backgroundColor={this.state.sign_in_bg}  >
               <Text style={{ fontSize: 15, color: '#fff' }}>{this.state.Sign_in}</Text>
             </View>
           </Button>
@@ -143,4 +167,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default FetchPoint;
+export default SignIn;

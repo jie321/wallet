@@ -37,7 +37,16 @@ class Set extends React.Component {
   }
 
   importKey() {
+     // 钱包
+     const { navigate } = this.props.navigation;
     navigate('ImportKey', {});
+  }
+  
+  importWallet() {
+    // 导入钱包
+    const { navigate } = this.props.navigation;
+    navigate('ImportEosKey');
+    // EasyToast.show('测试网络暂不开放');
   }
 
   createWallet() {
@@ -255,6 +264,9 @@ class Set extends React.Component {
           <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
             <Text style={{ fontSize: 15, color: '#fff' }}>创建钱包</Text>
           </View>
+        </Button>
+        <Button onPress={() => this.importWallet()}>     
+            <Text style={{ fontSize: 15, color: '#65CAFF', textAlign: 'center' }}>导入钱包</Text>
         </Button>
       </View>
     </View>

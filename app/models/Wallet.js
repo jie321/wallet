@@ -20,7 +20,7 @@ export default {
         *info({ payload }, { call, put }) {
             try {
                 //获取数据
-                const resp = yield call(Request.request, address, 'get');
+                const resp = yield call(Request.requestO, "http://api.eostoken.im" + address, 'get');
                 //解析数据
                 if (resp.code == "0") {
                     let i = 0;

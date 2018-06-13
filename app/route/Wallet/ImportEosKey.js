@@ -157,6 +157,10 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请输入确认密码');
     return;
   }
+  if (this.state.walletpwd != this.state.reWalletpwd) {
+    EasyToast.show('两次密码不一致');
+    return;
+  }
   if (this.state.isChecked == false) {
     EasyToast.show('请确认已阅读并同意条款');
     return;
@@ -230,7 +234,7 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
     return (
       <View style={styles.container}>
           <View style={{ backgroundColor: '#43536D',}}>
-            <View style={{ backgroundColor: '#4F617D',paddingLeft: 25, paddingRight: 25, paddingTop: 15, paddingBottom: 20, marginBottom: 5,}}>
+            <View style={{ backgroundColor: '#4F617D',paddingLeft: 25, paddingRight: 25, paddingTop: 10, paddingBottom: 15, marginBottom: 5,}}>
                 <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 25,}}>直接复制粘贴钱包私钥文件内容至输入框。或者直接输入私钥</Text>
             </View>     
             <View style={{ backgroundColor: '#586888',}}>

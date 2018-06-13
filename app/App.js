@@ -11,7 +11,7 @@ const App = () => (
  <View style={{flex:1}}>
      {/* <EosProvider server="http://192.168.1.40:8888" />
      */}
-    <EosProvider server="http://47.75.146.77:8000" />
+    <EosProvider server="http://mainnet.genereos.io:80" />
     <Loading />
     <Dialog />
     <Toast />

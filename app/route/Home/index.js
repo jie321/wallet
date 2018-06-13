@@ -45,6 +45,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.getBalance();
+
     //加载地址数据
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     Animated.timing(
