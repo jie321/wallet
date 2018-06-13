@@ -157,6 +157,10 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请输入确认密码');
     return;
   }
+  if (this.state.walletpwd.length < 8 && this.state.reWalletpwd.length < 8) {
+    EasyToast.show('密码不能少于8位');
+    return;
+  }
   if (this.state.walletpwd != this.state.reWalletpwd) {
     EasyToast.show('两次密码不一致');
     return;
