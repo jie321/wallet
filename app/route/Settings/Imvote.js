@@ -75,7 +75,7 @@ class Imvote extends React.Component {
         this.props.voteData.forEach(element => {
             if(element.isChecked){
                 // selectArr.push(element.owner);
-                selectArr.splice(selectArr.indexOf(element.owner), 1);
+                selectArr.splice(selectArr.indexOf(element.account), 1);
             }
         });
         
