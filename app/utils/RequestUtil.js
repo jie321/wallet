@@ -105,7 +105,7 @@ const request = (url,method,body)=>{
 const getRootaddr = ()=>{
   return requestO(Constants.gateurl, 'post',{})
     .then(res => {
-      Constants.rootaddr = "http://192.168.1.76:8088/api"; //res.url
+      Constants.rootaddr = res.url
       return Constants.rootaddr;
     })
     .catch(e=>{
