@@ -73,7 +73,8 @@ class Nodevoting extends React.Component {
         // alert("this.props.voteData "+ JSON.stringify(this.props.voteData));
         this.props.voteData.forEach(element => {
             if(element.isChecked){
-                selectArr.push(element.owner);
+                // alert(" --- " + JSON.stringify(element));
+                selectArr.push(element.account);
             }
         });
         
