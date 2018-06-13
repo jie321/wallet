@@ -12,7 +12,7 @@ export default {
     effects: {
         *list({ payload }, { call, put }) {
             try {
-                const resp = yield call(Request.requestO, "http://api.eostoken.im" + line + payload.coin + "?type=" + payload.type, 'get');
+                const resp = yield call(Request.request, line + payload.coin + "?type=" + payload.type, 'get');
                 if (resp.code == '0') {
                     yield put({ type: 'update', payload: { data: resp.data, ...payload } });
                 } else {
@@ -24,7 +24,7 @@ export default {
         },
         *info({ payload }, { call, put }) {
             try {
-                const resp = yield call(Request.requestO, "http://api.eostoken.im" + coinInfo + payload.id, 'get');
+                const resp = yield call(Request.request, coinInfo + payload.id, 'get');
                 if (resp.code == '0') {
                     yield put({ type: 'updateInfo', payload: { info: resp.data, ...payload } });
                 } else {

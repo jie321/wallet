@@ -14,7 +14,7 @@ export default {
     effects: {
      *list({payload},{call,put}) {
         try{
-            const resp = yield call(Request.requestO, "http://192.168.1.76:8088/api" + listAgent,"post");
+            const resp = yield call(Request.request, listAgent,"post");
             //  alert('listAgent ：'+JSON.stringify(resp));
             // const resp = yield call(Request.request,listAgent,"get");
             if(resp.code=='0'){               
