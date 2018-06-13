@@ -54,23 +54,7 @@ class ImportEosKey extends React.Component {
   componentDidMount() {
    
     const { dispatch } = this.props;
-    // InteractionManager.runAfterInteractions(() => {
-    //   dispatch({ type: 'sticker/list', payload: { type: -1 } });
-    //   this.startTick(0);
-    // });
-    var th = this;
-    // DeviceEventEmitter.addListener('changeTab', (tab) => {
-    //   if (tab == "Coins" || tab == "Coin") {
-    //     th.startTick(th.state.index);
-    //   } else {
-    //     if (timer) {
-    //       clearInterval(timer);
-    //     }
-    //   }
-    // });
-    // DeviceEventEmitter.addListener('coinSlefChange', (tab) => {
-    //   dispatch({ type: 'sticker/list', payload: { type: 0 } });
-    // });
+
     //推送初始化
     const { navigate } = this.props.navigation;
     JPush.init(navigate);
@@ -160,173 +144,105 @@ class ImportEosKey extends React.Component {
  }
 
 
-//   importByWords() {
-//     if (this.state.walletName == "") {
-//       EasyToast.show('请输入钱包名称');
-//       return;
-//     }
-//     if (this.state.walletpwd == "") {
-//       EasyToast.show('请输入钱包密码');
-//       return;
-//     }
-//     if (this.state.reWalletpwd == "") {
-//       EasyToast.show('请输入钱包确认密码');
-//       return;
-//     }
-//     if (this.state.walletpwd != this.state.reWalletpwd) {
-//       EasyToast.show('两次密码不一致');
-//       return;
-//     }
-//     if (this.state.words_owner == '') {
-//       EasyToast.show('请输入owner助记词');
-//       return;
-//     }
-//     if (this.state.words_active == '') {
-//       EasyToast.show('请输入active助记词');
-//       return;
-//     }
-//     const { navigate } = this.props.navigation;
-//     Eos.seedPrivateKey(this.state.words_owner, this.state.words_active, (result) => {
-//       if (result.isSuccess) {
-//         alert('createWallet: ' + JSON.stringify(result));
+ importPriKey() {
+  if (this.state.activePk == '') {
+    EasyToast.show('请输入active私钥');
+    return;
+  }
+  if (this.state.password == '') {
+    EasyToast.show('请输入密码');
+    return;
+  }
+  if (this.state.reWalletpwd == '') {
+    EasyToast.show('请输入确认密码');
+    return;
+  }
+  if (this.state.isChecked == false) {
+    EasyToast.show('请确认已阅读并同意条款');
+    return;
+  }
+  this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+}
 
-//         result.data.words = wordsStr_owner;
-//         result.data.words_active = wordsStr_active;
-//         result.password = this.state.walletPassword;
-//         result.name = this.state.walletName;
-//         result.account = this.state.walletName;
-
-//         this.props.dispatch({ type: 'wallet/saveWallet', wallet: result }, (r) => {
-//           if(r.isSuccess){
-//             EasyToast.show('导入成功');
-//             this.props.navigation.goBack();
-//           }else{
-//             EasyToast.show('导入失败');
-//           }
-//         });
-
-//       } else {
-//         EasyToast.show('导入失败');
-//       }
-//     });
-//     DeviceEventEmitter.emit('importWords',
-//       { name: this.state.walletName, password: this.state.walletpwd, words_owner: this.state.words_owner, words_active: this.state.active });
-//     DeviceEventEmitter.addListener('words_imported', (data) => {
-//       alert('助记词导入成功');
-//       // this.props.navigation.goBack();
-//       // const { navigate } = this.props.navigation;
-//       // navigate('BackupNote', data);
-//     });
-//   }
-
-  importByWords() {
-    if (this.state.words_active == ""){
-        EasyToast.show('请输入私钥');
-        return;
-    }  
-    if (this.state.walletName == "") {
-      EasyToast.show('请输入钱包名称');
-      return;
-    }
-    if (this.state.walletpwd == "") {
-      EasyToast.show('请输入钱包密码');
-      return;
-    }
-    if (this.state.reWalletpwd == "") {
-      EasyToast.show('请输入钱包确认密码');
-      return;
-    }
-    if (this.state.walletpwd != this.state.reWalletpwd) {
-      EasyToast.show('两次密码不一致');
-      return;
-    }
-    Eos.verifyPk(this.state.words_active, (r) => {
-              if (!r.isSuccess) {
-                EasyToast.show('Owner私钥格式不正确');
-                return;
+createWalletByPrivateKey(owner_privateKey, active_privatekey){
+  Eos.privateToPublic(active_privatekey,(r) => {
+    var active_publicKey = r.data.publicKey;
+    // Eos.privateToPublic(owner_privateKey, (r) => {
+      try {
+        var owner_publicKey = r.data.publicKey;
+        // 根据puk到eos主网上获取相关账户名称
+        this.props.dispatch({
+          type: 'wallet/getAccountsByPuk',
+          payload: {public_key: owner_publicKey}, callback: (data) => {
+            if (data.code != '0') {
+              alert('找不到' + owner_publicKey + "对应的账户名" + " "+JSON.stringify(data));
+              return;
+            }
+  
+            var result = {
+              data:{
+                ownerPublic:'',
+                activePublic:'',
+                ownerPrivate:'',
+                activePrivate:'',
+                words_active:'',
+                words:''
+              }
+            };
+            result.data.ownerPublic = owner_publicKey;
+            result.data.activePublic = active_publicKey;
+            result.data.words = '';
+            result.data.words_active = '';
+            result.data.ownerPrivate = owner_privateKey;
+            result.data.activePrivate = active_privatekey;
+            result.password = this.state.walletpwd;
+            result.name = data.data.account_names[0];
+            result.account = data.data.account_names[0];
+            // 保存钱包信息
+            this.props.dispatch({
+              type: 'wallet/saveWallet', wallet: result, callback: (data) => {
+                  
+                if (data.error != null) {
+                  EasyToast.show('导入私钥失败：' + data.error);
+                } else {
+                  EasyToast.show('导入私钥成功！');
+                  DeviceEventEmitter.emit('updateDefaultWallet');
+                  this.props.navigation.goBack();
+                  
+                }
               }
             });
-    const { dispatch } = this.props;
-        this.props.dispatch({
-            type: 'wallet/importPrivateKey',
-            payload: { ownerPk: this.state.ownerPk, activePk: this.state.activePk, password: this.state.password, walletName: this.state.walletName }, callback: (data) => {
-            if (data.isSuccess) {
-                EasyToast.show('私钥导入成功');
-            } else {
-                EasyToast.show('私钥导入失败');
-            }
-            }
+          }
         });
-  
-  }
 
+        // 
+      } catch (e) {
+        alert('privateToPublic err: ' + JSON.stringify(e));
+      }
+    // });
 
-//   importPriKey() {
-//     if (this.state.walletName == '') {
-//       EasyToast.show('请输入钱包名称');
-//       return;
-//     }
-//     if (this.state.ownerPk == '') {
-//       EasyToast.show('请输入owner私钥');
-//       return;
-//     }
-//     if (this.state.activePk == '') {
-//       EasyToast.show('请输入active私钥');
-//       return;
-//     }
-//     if (this.state.password == '') {
-//       EasyToast.show('请输入密码');
-//       return;
-//     }
-//     if (this.state.reWalletpwd == '') {
-//       EasyToast.show('请输入确认密码');
-//       return;
-//     }
+  });
+}
 
-//     Eos.verifyPk(this.state.ownerPk, (r) => {
-//       if (!r.isSuccess) {
-//         EasyToast.show('Owner私钥格式不正确');
-//         return;
-//       }
-//     });
-//     Eos.verifyPk(this.state.activePk, (r) => {
-//       if (!r.isSuccess) {
-//         EasyToast.show('active私钥格式不正确');
-//         return;
-//       }
-//     });
-
-//     const { dispatch } = this.props;
-//     this.props.dispatch({
-//       type: 'wallet/importPrivateKey',
-//       payload: { ownerPk: this.state.ownerPk, activePk: this.state.activePk, password: this.state.password, walletName: this.state.walletName }, callback: (data) => {
-//         if (data.isSuccess) {
-//           EasyToast.show('私钥导入成功');
-//         } else {
-//           EasyToast.show('私钥导入失败');
-//         }
-//       }
-//     });
-//   }
 
   render() {
     return (
       <View style={styles.container}>
           <View style={{ backgroundColor: '#43536D',}}>
-            <View style={{ backgroundColor: '#4F617D',paddingLeft: 25, paddingRight: 25, paddingTop: 20, paddingBottom: 25, marginBottom: 5,}}>
+            <View style={{ backgroundColor: '#4F617D',paddingLeft: 25, paddingRight: 25, paddingTop: 15, paddingBottom: 20, marginBottom: 5,}}>
                 <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 25,}}>直接复制粘贴钱包私钥文件内容至输入框。或者直接输入私钥</Text>
             </View>     
             <View style={{ backgroundColor: '#586888',}}>
               <View style={{paddingLeft: 14,  paddingRight: 15, height: 75, backgroundColor: '#586888', borderBottomWidth: 0.5, borderBottomColor: '#43536D',}} >
                 <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>私钥</Text>
                 <TextInput ref={(ref) => this._lphone = ref} autoFocus={false} editable={true}
-                  value={this.state.words_active}
-                  onChangeText={(words_active) => this.setState({ words_active })}
+                  value={this.state.activePk}
+                  onChangeText={(activePk) => this.setState({ activePk })}
                   returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16,  }}
                   placeholderTextColor="#8696B0" placeholder="粘贴或输入私钥" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                 />
               </View>
-              <View style={{ paddingLeft: 14,  paddingRight: 15, height: 75, backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
+              {/* <View style={{ paddingLeft: 14,  paddingRight: 15, height: 75, backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
                 <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>账号名称</Text>
                 <View style={{flexDirection: 'row',}}>
                     <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
@@ -341,26 +257,22 @@ class ImportEosKey extends React.Component {
                                   {rotateZ: this.state.rotateValue.interpolate({ inputRange: [0,1], outputRange: ['0deg', '360deg'],})},
                           ]}}>
                       </Animated.Image>
-
-
-
-                       {/* <Image source={UImage.refresh} style={{width:30,height:30}} /> */}
                     </Button>   
                 </View>
-              </View>
+              </View> */}
             
               <View style={{paddingLeft: 14,  paddingRight: 15, height: 75,  backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
                 <View style={{flexDirection: 'row',}}>
                    <Text style={{flex: 1, color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>设置密码</Text>
-                   <View style={{flexDirection: 'row',}}>
+                   {/* <View style={{flexDirection: 'row',}}>
                        <Text style={{color: '#8696B0', fontSize: 15, padding: 5,}}>弱</Text>
                        <Text style={{color: '#8696B0', fontSize: 15, padding: 5,}}>中</Text>
                        <Text style={{color: '#8696B0', fontSize: 15, padding: 5,}}>强</Text>
-                   </View>
+                   </View> */}
                 </View>
                 <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                  value={this.state.walletpwd}
-                  onChangeText={(walletpwd) => this.setState({ walletpwd })}
+                  value={this.state.password}
+                  onChangeText={(password) => this.setState({ password })}
                   returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16, }} placeholderTextColor="#8696B0"
                   placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
                 />
@@ -375,9 +287,16 @@ class ImportEosKey extends React.Component {
                 />
               </View>
             </View>
-            <Button onPress={() => this.importByWords()}>
+            <View style={{flexDirection: 'row',justifyContent: 'center', alignItems: 'center', marginTop: 20,}}>
+                <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
+                    <Image source={this.state.isChecked?UImage.aab1:UImage.aab2} style={{width:20,height:20,}}/>
+                </TouchableHighlight>
+              <Text style={styles.welcome} style={{ fontSize: 15, color: '#8696B0', marginLeft: 10 }}>我已经仔细阅读并同意</Text>
+              <Text onPress={() => this.prot(this,'clause')} style={{ fontSize: 15, color: '#65CAFF', marginLeft: 5 }}>服务及隐私条款</Text>
+            </View> 
+            <Button onPress={() => this.importPriKey()}>
               <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', marginTop: 20, marginLeft: 20, marginRight: 20, borderRadius: 5 }}>
-                <Text style={{ fontSize: 15, color: '#fff' }}>提交</Text>
+                <Text style={{ fontSize: 15, color: '#fff' }}>开始导入</Text>
               </View>
             </Button>
             <Button onPress={() => this.prot(this,'privatekey')}>
