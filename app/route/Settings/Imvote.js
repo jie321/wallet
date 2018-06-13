@@ -141,7 +141,7 @@ class Imvote extends React.Component {
                             if(jdata.error.details[0].message){
                                 errmsg = errmsg + jdata.error.details[0].message;
                             }
-                            alert(errmsg);
+                            EasyToast.show(errmsg);
                         }
                     }); 
                 } else {

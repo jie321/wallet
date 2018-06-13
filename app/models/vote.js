@@ -92,16 +92,18 @@ export default {
             })
             return {...state,voteData:newarr}; 
         },
-        updateAccountInfo(state, action) {       
+        updateAccountInfo(state, action) {    
+                // alert("updateAccountInfo : " + JSON.stringify(action.payload.producers));
             let arr = state.voteData;
             let arr1 = [];
             for(var i = 0; i < arr.length; i++){
                 for(var j = 0; j < action.payload.producers.length; j++){
-                    if(action.payload.producers[j] == (arr[i].owner)){
+                    if(action.payload.producers[j] == (arr[i].account)){
                         arr1.push(arr[i]);
                        }
                 }
             }
+            // alert("updateAccountInfo1 : " + JSON.stringify(arr1));
             return {...state, producers: arr1};      
         }, 
     }
