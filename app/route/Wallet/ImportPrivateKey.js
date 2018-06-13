@@ -201,14 +201,14 @@ class Coins extends React.Component {
   }
 
   importPriKey() {
-    if (this.state.walletName == '') {
-      EasyToast.show('请输入钱包名称');
-      return;
-    }
-    if (this.state.ownerPk == '') {
-      EasyToast.show('请输入owner私钥');
-      return;
-    }
+    // if (this.state.walletName == '') {
+    //   EasyToast.show('请输入钱包名称');
+    //   return;
+    // }
+    // if (this.state.ownerPk == '') {
+    //   EasyToast.show('请输入owner私钥');
+    //   return;
+    // }
     if (this.state.activePk == '') {
       EasyToast.show('请输入active私钥');
       return;
@@ -222,29 +222,95 @@ class Coins extends React.Component {
       return;
     }
 
-    Eos.verifyPk(this.state.ownerPk, (r) => {
-      if (!r.isSuccess) {
-        EasyToast.show('Owner私钥格式不正确');
-        return;
-      }
-    });
-    Eos.verifyPk(this.state.activePk, (r) => {
-      if (!r.isSuccess) {
-        EasyToast.show('active私钥格式不正确');
-        return;
-      }
-    });
+    // Eos.verifyPk(this.state.ownerPk, (r) => {
+    //   if (!r.isSuccess) {
+    //     EasyToast.show('Owner私钥格式不正确');
+    //     return;
+    //   }
+    // });
+    // Eos.verifyPk(this.state.activePk, (r) => {
+    //   if (!r.isSuccess) {
+    //     EasyToast.show('active私钥格式不正确');
+    //     return;
+    //   }
+    // });
 
-    const { dispatch } = this.props;
-    this.props.dispatch({
-      type: 'wallet/importPrivateKey',
-      payload: { ownerPk: this.state.ownerPk, activePk: this.state.activePk, password: this.state.password, walletName: this.state.walletName }, callback: (data) => {
-        if (data.isSuccess) {
-          EasyToast.show('私钥导入成功');
-        } else {
-          EasyToast.show('私钥导入失败');
+    // const { dispatch } = this.props;
+    // this.props.dispatch({
+    //   type: 'wallet/importPrivateKey',
+    //   payload: { ownerPk: this.state.ownerPk, activePk: this.state.activePk, password: this.state.password, walletName: this.state.walletName }, callback: (data) => {
+    //     if (data.isSuccess) {
+    //       EasyToast.show('私钥导入成功');
+    //     } else {
+    //       EasyToast.show('私钥导入失败');
+    //     }
+    //   }
+    // });
+
+    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+  }
+
+  createWalletByPrivateKey(owner_privateKey, active_privatekey){
+    Eos.privateToPublic(active_privatekey,(r) => {
+      var active_publicKey = r.data.publicKey;
+      // Eos.privateToPublic(owner_privateKey, (r) => {
+        try {
+          var owner_publicKey = r.data.publicKey;
+          // 根据puk到eos主网上获取相关账户名称
+          this.props.dispatch({
+            type: 'wallet/getAccountsByPuk',
+            payload: {public_key: owner_publicKey}, callback: (data) => {
+              if (data.code != '0') {
+                alert('找不到' + owner_publicKey + "对应的账户名" + " "+JSON.stringify(data));
+                return;
+              }
+    
+              var result = {
+                data:{
+                  ownerPublic:'',
+                  activePublic:'',
+                  ownerPrivate:'',
+                  activePrivate:'',
+                  words_active:'',
+                  words:''
+                }
+              };
+              result.data.ownerPublic = owner_publicKey;
+              result.data.activePublic = active_publicKey;
+  
+              result.data.words = '';
+              result.data.words_active = '';
+              result.data.ownerPrivate = owner_privateKey;
+              result.data.activePrivate = active_privatekey;
+              result.password = this.state.walletpwd;
+              result.name = data.data.account_names[0];
+              result.account = data.data.account_names[0];
+  
+              // alert('result-> '+JSON.stringify(result));
+  
+              // 保存钱包信息
+              this.props.dispatch({
+                type: 'wallet/saveWallet', wallet: result, callback: (data) => {
+                    
+                  if (data.error != null) {
+                    EasyToast.show('导入私钥失败：' + data.error);
+                  } else {
+                    EasyToast.show('导入私钥成功！');
+                    DeviceEventEmitter.emit('updateDefaultWallet');
+                    this.props.navigation.goBack();
+                    
+                  }
+                }
+              });
+            }
+          });
+  
+          // 
+        } catch (e) {
+          alert('privateToPublic err: ' + JSON.stringify(e));
         }
-      }
+      // });
+
     });
   }
 
