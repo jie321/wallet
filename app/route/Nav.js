@@ -467,7 +467,7 @@ class Route extends React.Component {
     if (action && action.routeName && action.routeName == "Home") {
         if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
         EasyDialog.show("温馨提示", "系统检测到你还未创建钱包，是否创建或导入私钥", "是", "否", () => {
-          this.createWallet();
+          DeviceEventEmitter.emit('createWallet', action.routeName);
           EasyDialog.dismis()
         }, () => { EasyDialog.dismis() });  
         return;
@@ -477,11 +477,6 @@ class Route extends React.Component {
       DeviceEventEmitter.emit('changeTab', action.routeName);
     }
     routeLength = nav.routes.length;
-  }
-
-  createWallet() {
-    const { navigate } = this.props.navigation;
-    navigate('CreateWallet', {});
   }
 
   render() {

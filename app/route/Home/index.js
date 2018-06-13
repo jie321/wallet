@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { DeviceEventEmitter, ListView, StyleSheet, Image, View, Text, Platform, Modal, Animated, TouchableOpacity, Easing, Clipboard, ImageBackground } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter' 
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -63,11 +64,15 @@ class Home extends React.Component {
     this.timer = setInterval( ()  =>{
       this.getBalance()
     },10000)
+    this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
+      this.createWallet();  
+    });  
   }
 
 
   componentWillUnmount(){
     this.timer && clearTimeout(this.timer);
+    this.listener.remove();  
   }
 
   getBalance() { 
@@ -172,7 +177,8 @@ class Home extends React.Component {
 
   createWallet() {
     const { navigate } = this.props.navigation;
-    navigate('CreateWallet', {});
+    // navigate('CreateWallet', {});\
+    navigate('ImportEosKey', {});
     this.setState({
       modal: false
     });
