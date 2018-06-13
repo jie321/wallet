@@ -53,8 +53,9 @@ class WalletManage extends React.Component {
 
   createWallet() {
     // 创建钱包
-    const { navigate } = this.props.navigation;
-    navigate('CreateWallet', {});
+    // const { navigate } = this.props.navigation;
+    // navigate('CreateWallet', {});
+    EasyToast.show('测试网络暂不开放');
   }
   
   importWallet() {
@@ -85,7 +86,7 @@ class WalletManage extends React.Component {
                   <View style={styles.top}>
                       <View style={{flexDirection:"row",flex:1,}}>
                           <Text style={{fontSize:14,color:'#FFFFFF',textAlign:'left',paddingLeft:10,paddingRight:10,}}>{rowData.name}</Text>
-                          <Text style={{height:18,lineHeight:18,fontSize:10,color:'#2ACFFF',textAlign:'left',borderRadius:10,borderColor:'#2ACFFF',borderWidth:1,justifyContent:'center',alignItems:'center',paddingLeft:8,paddingRight:8,}}>未备份</Text>
+                          {/* <Text style={{height:18,lineHeight:18,fontSize:10,color:'#2ACFFF',textAlign:'left',borderRadius:10,borderColor:'#2ACFFF',borderWidth:1,justifyContent:'center',alignItems:'center',paddingLeft:8,paddingRight:8,}}>未备份</Text> */}
                       </View>
                       <View style={{flexDirection:"row",flex:1, }}>               
                           <Text style={{flex:1,fontSize:14,color:'#8696B0',textAlign:'left',justifyContent:'center',alignItems:'center',paddingLeft:10,}} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
