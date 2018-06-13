@@ -186,7 +186,7 @@ class Imvote extends React.Component {
                                     <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
                                 </View>
                                 <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                    <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.owner}</Text>
+                                    <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.name}</Text>
                                     <Text style={{ color:'#7787A3', fontSize:14,}} >地区：{rowData.region}</Text>
                                 </View>
                                 <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
