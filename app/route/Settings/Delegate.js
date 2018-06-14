@@ -98,11 +98,11 @@ class Nodevoting extends React.Component {
               if (data.code == '0') {
                 if (data.data == "") {
                   this.setState({
-                    balance: '0.0000 EOS',
+                    balance: '0',
                   })
                 } else {
                   account: this.props.defaultWallet.name,
-                    this.setState({ balance: data.data })
+                  this.setState({ balance: data.data.replace(" EOS", ""), })
                 }
               } else {
                 EasyToast.show('获取余额失败：' + data.msg);
@@ -110,7 +110,7 @@ class Nodevoting extends React.Component {
             }
           })
         } else {
-          this.setState({ balance: '0.0000 EOS'})
+          this.setState({ balance: '0'})
           // this.props.defaultWallet.name = 'xxxx';
           //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           //   this.createWallet();
@@ -337,11 +337,11 @@ class Nodevoting extends React.Component {
                             <Text style={styles.state}>余额</Text>
                         </View>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>{parseFloat(this.state.delegate_cpu) + parseFloat(this.state.delegate_net)} EOS</Text>
+                            <Text style={styles.number}>{parseFloat(this.state.delegate_cpu) + parseFloat(this.state.delegate_net)}</Text>
                             <Text style={styles.state}>投票锁仓</Text>
                         </View>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>{parseFloat(this.state.undelegate_cpu) + parseFloat(this.state.undelegate_net)} EOS</Text>
+                            <Text style={styles.number}>{parseFloat(this.state.undelegate_cpu) + parseFloat(this.state.undelegate_net)}</Text>
                             <Text style={styles.state}>赎回中</Text>
                         </View>
                     </View> 
