@@ -18,12 +18,13 @@ export default {
     },
     effects: {
         *info({ payload }, { call, put }) {
+            var list = [];
+            var totalOpt;
+            var total;
             try {
                 //获取数据
                 const resp = yield call(Request.request, address, 'get');
 
-                var list = [];
-                var totalOpt;
                 //解析数据
                 if (resp.code == "0") {
                     let i = 0;
@@ -96,24 +97,24 @@ export default {
                             }
                         ]
                     }
-
+                    total = resp.data;
                 } else {
                     EasyToast.show(resp.msg);
                 }
 
-                var walletList = yield call(store.get, 'walletArr');
-                var defaultWallet = yield call(store.get, 'defaultWallet');
-                // if (walletList == null || defaultWallet == null) {
-                //     // walletList = [];
-                //     return;
-                // }
-
-                yield put({ type: 'update', payload: { list, totalOpt, total: resp.data, walletList: walletList, defaultWallet: defaultWallet } });
-                DeviceEventEmitter.emit('wallet_info');
-
             } catch (error) {
                 EasyToast.show('网络发生错误，请重试');
             }
+
+            var walletList = yield call(store.get, 'walletArr');
+            var defaultWallet = yield call(store.get, 'defaultWallet');
+            // if (walletList == null || defaultWallet == null) {
+            //     // walletList = [];
+            //     return;
+            // }
+
+            yield put({ type: 'update', payload: { list, totalOpt, total, walletList: walletList, defaultWallet: defaultWallet } });
+            DeviceEventEmitter.emit('wallet_info');
         },
         *saveWallet({ wallet, callback }, { call, put }) {
 
