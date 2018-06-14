@@ -21,10 +21,12 @@ export default {
             try {
                 //获取数据
                 const resp = yield call(Request.request, address, 'get');
+
+                var list = [];
+                var totalOpt;
                 //解析数据
                 if (resp.code == "0") {
                     let i = 0;
-                    let list = [];
                     resp.data.coins.forEach(element => {
                         var other = new Object();
                         other.name = "其他";
@@ -66,7 +68,7 @@ export default {
                         list.push(element);
                     });
 
-                    let totalOpt = {
+                    totalOpt = {
                         series: [
                             {
                                 name: '资产',
@@ -95,19 +97,20 @@ export default {
                         ]
                     }
 
-                    var walletList = yield call(store.get, 'walletArr');
-                    var defaultWallet = yield call(store.get, 'defaultWallet');
-                    if (walletList == null) {
-                        walletList = [];
-                    }
-                    if (defaultWallet == null) {
-                        defaultWallet = [];
-                    }
-                    yield put({ type: 'update', payload: { list, totalOpt, total: resp.data, walletList: walletList, defaultWallet: defaultWallet } });
-                    DeviceEventEmitter.emit('wallet_info');
                 } else {
                     EasyToast.show(resp.msg);
                 }
+
+                var walletList = yield call(store.get, 'walletArr');
+                var defaultWallet = yield call(store.get, 'defaultWallet');
+                // if (walletList == null || defaultWallet == null) {
+                //     // walletList = [];
+                //     return;
+                // }
+
+                yield put({ type: 'update', payload: { list, totalOpt, total: resp.data, walletList: walletList, defaultWallet: defaultWallet } });
+                DeviceEventEmitter.emit('wallet_info');
+
             } catch (error) {
                 EasyToast.show('网络发生错误，请重试');
             }
