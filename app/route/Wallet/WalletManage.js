@@ -40,6 +40,9 @@ class WalletManage extends React.Component {
     const { dispatch } = this.props;
     var th = this;
     this.props.dispatch({ type: 'wallet/walletList' });
+    DeviceEventEmitter.addListener('updateDefaultWallet', (tab) => {
+        this.props.dispatch({ type: 'wallet/walletList' });
+      });
     DeviceEventEmitter.addListener('delete_wallet', (tab) => {
       this.props.dispatch({ type: 'wallet/walletList' });
     });
