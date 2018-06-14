@@ -12,7 +12,7 @@ export default {
         accountInfo:[]
     },
     effects: {
-     *list({payload},{call,put}) {
+     *list({payload, callback},{call,put}) {
         try{
             const resp = yield call(Request.request, listAgent,"post");
             //  alert('listAgent ：'+JSON.stringify(resp));
@@ -20,6 +20,7 @@ export default {
             if(resp.code=='0'){               
                 yield put({ type: 'updateVote', payload: { voteData:resp.data } });
                 // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
+                if (callback) callback(resp.data);
             }else{
                 EasyToast.show(resp.msg);
             }
@@ -41,8 +42,9 @@ export default {
      *getaccountinfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getAccountInfo, 'post', payload);
-            // alert("getaccountinfo : " + JSON.stringify(resp));
-            if(resp.code=='0'){               
+            // alert("resp : " + JSON.stringify(resp));
+            if(resp.code=='0'){  
+                // alert("getaccountinfo1 : " + JSON.stringify(resp.data.voter_info));
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
             }else{
                 EasyToast.show(resp.msg);
@@ -93,7 +95,6 @@ export default {
             return {...state,voteData:newarr}; 
         },
         updateAccountInfo(state, action) {    
-                // alert("updateAccountInfo : " + JSON.stringify(action.payload.producers));
             let arr = state.voteData;
             let arr1 = [];
             for(var i = 0; i < arr.length; i++){
@@ -103,7 +104,7 @@ export default {
                        }
                 }
             }
-            // alert("updateAccountInfo1 : " + JSON.stringify(arr1));
+            // alert("producers : " + JSON.stringify(arr1));
             return {...state, producers: arr1};      
         }, 
     }

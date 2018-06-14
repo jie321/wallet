@@ -50,16 +50,22 @@ class Nodevoting extends React.Component {
             isShowBottom: false,
             selectMap: new Map(),
             // preIndex: 0 // 声明点击上一个按钮的索引  **** 单选逻辑 ****
+            arr1: 0
         };
     }
 
     componentDidMount() {
-        this.props.dispatch({ type: 'vote/list', payload: { page:1} });
+        EasyLoading.show();
         this.props.dispatch({
-            type: 'wallet/getDefaultWallet', callback: (data) => {
-                this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account} });
+            type: 'wallet/getDefaultWallet', callback: (data) => {     
+                this.props.dispatch({ type: 'vote/list', payload: { page:1}, callback: (data) => {
+                    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account}, callback: (data) => {
+                        this.setState({arr1 : this.props.producers.length});
+                    } });
+                    EasyLoading.dismis();
+                }});
             }
-        });
+        })
     }
 
    
@@ -158,8 +164,22 @@ class Nodevoting extends React.Component {
     };
 
 
-    selectItem = (item) => { 
+    selectItem = (item,section) => { 
         this.props.dispatch({ type: 'vote/up', payload: { item:item} });
+        let arr = this.props.voteData;
+       
+        var cnt = 0;
+        for(var i = 0; i < arr.length; i++){ 
+            if(arr[i].isChecked == true){
+                cnt++;              
+            }     
+        }
+
+        if(cnt == 0 && this.props.producers){
+            this.state.arr1 = this.props.producers.length;
+        }else{
+            this.state.arr1 = cnt;
+        }
     }
 
     _openAgentInfo(coins) {
@@ -184,9 +204,9 @@ class Nodevoting extends React.Component {
                                         <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                             <Image source={{uri: rowData.icon}} style={{width: 30, height: 30, margin: 10,}}/>
                                         </View>
-                                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                            <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.name}</Text>
-                                            <Text style={{ color:'#7787A3', fontSize:14,}} >地区：{rowData.region}</Text>                                    
+                                        <View style={{width: 100, justifyContent: 'center', alignItems: 'flex-start',}}>
+                                            <Text style={{ color:'#FFFFFF', fontSize:14,}} numberOfLines={1}>{rowData.name}</Text>
+                                            <Text style={{ color:'#7787A3', fontSize:14,}} numberOfLines={1}>地区：{rowData.region}</Text>                                    
                                         </View>
                                         <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
                                             <Text style={{ color:'#FFFFFF', fontSize:14,}}>{rowData.ranking}</Text>
@@ -206,7 +226,7 @@ class Nodevoting extends React.Component {
                 <View style={styles.footer}>
                     <Button style={{ flex: 1 }}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Text style={{  fontSize: 18, color: '#F3F4F4' }}>{this.props.producers == null ? 30 : 30 - this.props.producers.length}</Text>
+                            <Text style={{  fontSize: 18, color: '#F3F4F4' }}>{30 - this.state.arr1}</Text>
                             <Text style={{  fontSize: 14, color: '#8696B0' }}>剩余可投节点</Text>
                         </View>
                     </Button>

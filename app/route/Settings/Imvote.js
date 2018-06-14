@@ -47,12 +47,16 @@ class Imvote extends React.Component {
     }
 
     componentDidMount() {
+        EasyLoading.show();
         this.props.dispatch({
-            type: 'wallet/getDefaultWallet', callback: (data) => {
-                this.props.dispatch({ type: 'vote/list', payload: { page:1} });
-                this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account} });
+            type: 'wallet/getDefaultWallet', callback: (data) => {     
+                this.props.dispatch({ type: 'vote/list', payload: { page:1}, callback: (data) => {
+                    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
+                    EasyLoading.dismis();
+                }});
             }
         })
+       
     }
 
     unapprove = (rowData) => { // 选中用户
@@ -68,7 +72,7 @@ class Imvote extends React.Component {
 
         var selectArr= [];
         for(var i = 0; i < this.props.producers.length; i++){
-            selectArr.push(this.props.producers[i].owner);
+            selectArr.push(this.props.producers[i].account);
         }
         const { dispatch } = this.props;
         // alert("this.props.voteData "+ JSON.stringify(this.props.voteData));
@@ -185,9 +189,9 @@ class Imvote extends React.Component {
                                 <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                     <Image source={UImage.eos} style={{width: 30, height: 30, margin: 5,}}/>
                                 </View>
-                                <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                                    <Text style={{ color:'#FFFFFF', fontSize:14,}} >{rowData.name}</Text>
-                                    <Text style={{ color:'#7787A3', fontSize:14,}} >地区：{rowData.region}</Text>
+                                <View style={{width: 100, justifyContent: 'center', alignItems: 'flex-start',}}>
+                                    <Text style={{ color:'#FFFFFF', fontSize:14,}} numberOfLines={1}>{rowData.name}</Text>
+                                    <Text style={{ color:'#7787A3', fontSize:14,}} numberOfLines={1}>地区：{rowData.region}</Text>
                                 </View>
                                 <View style={{flex:1,justifyContent: 'center', alignItems: 'center', }}>
                                     <Text style={{ color:'#FFFFFF', fontSize:14,}}>{rowData.ranking}</Text>
