@@ -139,7 +139,11 @@ export default {
                     return;
                 }
             }
-            var salt = Math.ceil(Math.random() * 100000000000000000).toString();
+            // var salt = Math.ceil(Math.random() * 100000000000000000).toString();
+            var salt;
+            Eos.randomKey((r)=>{
+                salt = r.data.key.substr(0, 18);
+            });
 
             var _ownerPrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.ownerPrivate, wallet.password + salt);
             var _activePrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.activePrivate, wallet.password + salt);
