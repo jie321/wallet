@@ -129,7 +129,7 @@ export default {
                 return;
             }
             if (defaultWallet != null && defaultWallet.account != null) {
-                // if (callback) callback({ error: '暂时只能注册一个账号' });
+                if (callback) callback({ error: '暂时只能注册一个账号' });
                 DeviceEventEmitter.emit('wallet_10');
                 return;
             }

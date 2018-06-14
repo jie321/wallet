@@ -11,9 +11,11 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
+import AnalyticsUtil from '../../utils/AnalyticsUtil';
 const maxHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
+
 
 @connect(({vote, wallet}) => ({...vote, ...wallet}))
 class Nodevoting extends React.Component {
@@ -132,6 +134,7 @@ class Nodevoting extends React.Component {
                         EasyLoading.dismis();
                         // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
+                            AnalyticsUtil.onEvent('vote');
                             EasyToast.show("投票成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
