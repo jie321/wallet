@@ -49,8 +49,9 @@ class Nodevoting extends React.Component {
             isAllSelect: false,
             isShowBottom: false,
             selectMap: new Map(),
-            // preIndex: 0 // 声明点击上一个按钮的索引  **** 单选逻辑 ****
-            arr1: 0
+            arr1: 0,
+            producers:[],
+            isvoted: false
         };
     }
 
@@ -60,7 +61,10 @@ class Nodevoting extends React.Component {
             type: 'wallet/getDefaultWallet', callback: (data) => {     
                 this.props.dispatch({ type: 'vote/list', payload: { page:1}, callback: (data) => {
                     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account}, callback: (data) => {
-                        this.setState({arr1 : this.props.producers.length});
+                        this.setState({
+                            arr1 : this.props.producers.length,
+                            producers : this.props.producers
+                        });
                     } });
                     EasyLoading.dismis();
                 }});
@@ -76,35 +80,26 @@ class Nodevoting extends React.Component {
             EasyToast.show('请先创建钱包');
             return;
         }
-        var selectArr=[];
+        
+        var selectArr= [];
         const { dispatch } = this.props;
-        // alert("this.props.voteData "+ JSON.stringify(this.props.voteData));
         this.props.voteData.forEach(element => {
             if(element.isChecked){
-                // alert(" --- " + JSON.stringify(element));
                 selectArr.push(element.account);
             }
         });
-        
-        // var producersList = "";
-        // for(count=0;count<selectArr.length;count++){
-        //     producersList += " " + selectArr[count]
-        // } 
-        // alert("producersList: " + producersList);
 
-        // this.props.dispatch({ type: 'vote/addvote', payload: { keyArr: selectArr}});    
-        // alert("this.props.defaultWallet.account: " + this.props.defaultWallet.account);
-            const view =
-            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
-                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：为确保你的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
-            </View>
-    
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
-    
+        selectArr.sort();
+        const view =
+        <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                secureTextEntry={true}
+                keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
+                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+            <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：为确保你的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
+        </View>
+
+        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
             if (this.state.password == "") {
                 EasyToast.show('请输入密码');
                 return;
@@ -117,8 +112,6 @@ class Nodevoting extends React.Component {
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    // alert("plaintext_privateKey "+plaintext_privateKey);
-
                     //投票
                     Eos.transaction({
                         actions:[
@@ -167,14 +160,12 @@ class Nodevoting extends React.Component {
     selectItem = (item,section) => { 
         this.props.dispatch({ type: 'vote/up', payload: { item:item} });
         let arr = this.props.voteData;
-       
         var cnt = 0;
         for(var i = 0; i < arr.length; i++){ 
             if(arr[i].isChecked == true){
                 cnt++;              
             }     
         }
-
         if(cnt == 0 && this.props.producers){
             this.state.arr1 = this.props.producers.length;
         }else{
@@ -187,6 +178,19 @@ class Nodevoting extends React.Component {
         navigate('AgentInfo', {coins});
     }
 
+    isvoted(rowData){
+        if(this.props.producers == null){
+            return false;
+        }
+        for(var i = 0; i < this.props.producers.length; i++){
+            if(this.props.producers[i].account == rowData.account){
+                rowData.isChecked = true;
+                return true;
+            }
+        }
+
+        return false;
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -212,11 +216,17 @@ class Nodevoting extends React.Component {
                                             <Text style={{ color:'#FFFFFF', fontSize:14,}}>{rowData.ranking}</Text>
                                             <Text style={{ color:'#7787A3', fontSize:14,}}>{parseInt(rowData.total_votes)}</Text> 
                                         </View>
-                                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
-                                            <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
-                                                <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
-                                            </View>  
-                                        </TouchableOpacity>  
+                                        {this.isvoted(rowData) ? 
+                                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}}>
+                                            <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2, }} >
+                                                <Image source={UImage.Tick_h} style={{ width: 25, height: 25 }} />
+                                            </View>
+                                        </TouchableOpacity> :<TouchableOpacity style={{justifyContent: 'center', alignItems: 'center',}} onPress={ () => this.selectItem(rowData)}>
+                                        <View style={{width: 27, height: 27, margin: 5, borderColor:'#586888',borderWidth:2,}} >
+                                            <Image source={rowData.isChecked ? UImage.Tick:null} style={{ width: 25, height: 25 }} />
+                                        </View>  
+                                        </TouchableOpacity> 
+                                       }     
                                     </View> 
                                 </Button>  
                             </View>             
@@ -256,9 +266,7 @@ const styles = StyleSheet.create({
       height: 50,
       flexDirection: 'row',
       backgroundColor: '#43536D',
-    },
-   
-    
-    });
+    },   
+});
 
 export default Nodevoting;

@@ -73,6 +73,7 @@ export default {
   vote_h:require('../img/vote_h.png'),
   vote_node:require('../img/vote_node.png'),
   Tick:require('../img/Tick.png'),
+  Tick_h:require('../img/Tick_h.png'),
   Magnifier:require('../img/Magnifier.png'),
   nash:require('../img/nash.png'),
   Invitation_vote:require('../img/Invitation_vote.png'),
