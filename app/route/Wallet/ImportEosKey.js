@@ -7,6 +7,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
 import JPush from '../../utils/JPush'
+import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
@@ -130,9 +131,9 @@ class ImportEosKey extends React.Component {
     if (key == 'clause') {
     navigate('Web', { title: "服务及隐私条款", url: "http://static.eostoken.im/html/reg.html" });
     }else  if (key == 'Memorizingwords') {
-    navigate('Web', { title: "什么是助记词", url: "http://static.eostoken.im/html/reg.html" });
+    navigate('Web', { title: "什么是助记词", url: "http://static.eostoken.im/html/MemorizingWords.html" });
     }else  if (key == 'privatekey') {
-    navigate('Web', { title: "什么是私钥", url: "http://static.eostoken.im/html/reg.html" });
+    navigate('Web', { title: "什么是私钥", url: "http://static.eostoken.im/html/Keystore.html" });
     }
   }
 
@@ -146,7 +147,7 @@ class ImportEosKey extends React.Component {
 
  importPriKey() {
   if (this.state.activePk == '') {
-    EasyToast.show('请输入active私钥');
+    EasyToast.show('请输入私钥');
     return;
   }
   if (this.state.walletpwd == '') {
@@ -173,6 +174,7 @@ class ImportEosKey extends React.Component {
 }
 
 createWalletByPrivateKey(owner_privateKey, active_privatekey){
+  EasyLoading.show('正在请求');
   Eos.privateToPublic(active_privatekey,(r) => {
     var active_publicKey = r.data.publicKey;
     // alert("active_publicKey "+active_publicKey);
@@ -183,8 +185,9 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
         this.props.dispatch({
           type: 'wallet/getAccountsByPuk',
           payload: {public_key: owner_publicKey}, callback: (data) => {
+            EasyLoading.dismis();
             if (data.code != '0') {
-              alert('找不到' + owner_publicKey + "对应的账户名" + " "+JSON.stringify(data));
+              EasyToast.show('找不到' + owner_publicKey + "对应的账户名" + " "+JSON.stringify(data));
               return;
             }
   
@@ -226,7 +229,7 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
 
         // 
       } catch (e) {
-        alert('privateToPublic err: ' + JSON.stringify(e));
+        EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
       }
     // });
 
