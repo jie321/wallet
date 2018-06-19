@@ -54,7 +54,9 @@ class Bvote extends React.Component {
       navigate('Imvote', {});
     }else if (key == 'Nodevoting') {
       navigate('Nodevoting', {data});
-    } else {
+    } if (key == 'Resources') {
+      navigate('Resources', {data});
+    }else {
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
@@ -63,6 +65,7 @@ class Bvote extends React.Component {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
+               
                 <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
                   <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
                       <Text style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
@@ -86,7 +89,15 @@ class Bvote extends React.Component {
                         <Image source={UImage.votec} style={{width: 30, height: 30, margin: 10,}}/>
                     </View>     
                   </ImageBackground>  
-                </TouchableHighlight>        
+                </TouchableHighlight>    
+                <TouchableHighlight onPress={this.goPage.bind(this, 'Resources')} >      
+                  <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10, }} source={UImage.voted_bj} resizeMode="stretch">              
+                    <Text style={{fontSize:16, color:'#FFFFFF'}}>资源管理</Text>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Image source={UImage.voted} style={{width: 30, height: 30, margin: 10,}}/>
+                    </View>     
+                  </ImageBackground>  
+                </TouchableHighlight>      
             </View>
         )
     }
