@@ -170,7 +170,15 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请确认已阅读并同意条款');
     return;
   }
-  this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+  Eos.checkPrivateKey(this.state.activePk, (r) => {
+    if (!r.isSuccess) {
+      EasyToast.show('私钥格式不正确');
+      return;
+    }
+
+    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+  });
+
 }
 
 createWalletByPrivateKey(owner_privateKey, active_privatekey){

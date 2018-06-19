@@ -128,11 +128,11 @@ export default {
                 DeviceEventEmitter.emit('wallet_10');
                 return;
             }
-            if (defaultWallet != null && defaultWallet.account != null) {
-                if (callback) callback({ error: '暂时只能注册一个账号' });
-                DeviceEventEmitter.emit('wallet_10');
-                return;
-            }
+            // if (defaultWallet != null && defaultWallet.account != null) {
+            //     if (callback) callback({ error: '暂时只能注册一个账号' });
+            //     DeviceEventEmitter.emit('wallet_10');
+            //     return;
+            // }
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == wallet.account) {
                     if (callback) callback({ error: 'account exist' });
