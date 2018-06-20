@@ -89,10 +89,10 @@ class ShareInvite extends React.Component {
           if (isInstalled) {
             WeChat.shareToSession({ type: 'text', description: msg })
               .catch((error) => {
-                ToastShort(error.message);
+                EasyToast.show(error.message);
               });
           } else {
-            ToastShort('没有安装微信软件，请您安装微信之后再试');
+            EasyToast.show('没有安装微信软件，请您安装微信之后再试');
           }
         });
     });

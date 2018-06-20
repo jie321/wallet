@@ -10,6 +10,8 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
+import JPushModule from 'jpush-react-native';
+import JPush from '../../utils/JPush'
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -45,6 +47,16 @@ class Set extends React.Component {
       this.props.navigation.goBack();
     });
   }
+
+    //组件加载完成
+    componentDidMount() {
+   
+      // const { dispatch } = this.props;
+  
+      //推送初始化
+      const { navigate } = this.props.navigation;
+      JPush.init(navigate);
+    }
 
   _rightButtonClick() {
     //   console.log('右侧按钮点击了');  
@@ -157,6 +169,16 @@ class Set extends React.Component {
           plaintext_words = plaintext_words.substr(8, plaintext_words.length);
           const { dispatch } = this.props;
           this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
+
+          //删除tags
+          JPushModule.deleteTags([data.name],map => {
+            if (map.errorCode === 0) {
+              console.log('Delete tags succeed, tags: ' + map.tags)
+            } else {
+              console.log(map)
+              console.log('Delete tags failed, error code: ' + map.errorCode)
+            }
+          });
 
           DeviceEventEmitter.addListener('delete_wallet', (tab) => {
             this.props.navigation.goBack();
