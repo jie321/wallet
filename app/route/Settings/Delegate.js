@@ -259,8 +259,8 @@ class Nodevoting extends React.Component {
                                 data:{
                                     from: this.props.defaultWallet.account,
                                     receiver: this.props.defaultWallet.account,
-                                    unstake_net_quantity: "0.5 EOS",//this.state.net,
-                                    unstake_cpu_quantity: "0.5 EOS", //this.state.cpu,
+                                    unstake_net_quantity: this.state.net,
+                                    unstake_cpu_quantity: this.state.cpu,
                                 }
                             }
                         ]

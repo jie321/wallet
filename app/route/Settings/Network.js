@@ -39,21 +39,179 @@ class Network extends React.Component {
             isAllSelected: true,  
             isNotDealSelected: false,  
             delegatebw: "",
-            cpu: '',
-            net: '', 
-            delegate_net: "0",
-            delegate_cpu: '0',
-            undelegate_net: '0',
-            undelegate_cpu: '0',
+            undelegatebw: "",
+            receiver: "",
             balance: '0',
         };
     }
 
     componentDidMount() {
-       
+        EasyLoading.show();
+        this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
+                EasyLoading.dismis();
+                }}); 
     }
 
+    // 抵押
+    delegatebw = () => {
+        if ((this.state.delegatebw == "")) {
+            EasyToast.show('请输入抵押的EOS数量');
+            return;
+        }
 
+        // alert("this.state.invite" + this.state.invite);
+        // if(this.state.invite > this.props.navigation.state.params.balance) {
+           
+        //         EasyToast.show('输入抵押的EOS数量不能大于EOS余额');
+           
+        //     return;
+        // }
+
+
+        const view =
+        <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                secureTextEntry={true}
+                keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
+                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：抵押 {this.state.delegatebw} EOS</Text>
+        </View>
+
+        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+
+        if (this.state.password == "") {
+            EasyToast.show('请输入密码');
+            return;
+        }
+        EasyLoading.show();
+
+        var privateKey = this.props.defaultWallet.activePrivate;
+        try {
+            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+            if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+
+                // 抵押
+                Eos.transaction({
+                    actions:[
+                        {
+                            account: 'eosio',
+                            name: 'delegatebw',
+                            authorization: [{
+                                actor: this.props.defaultWallet.account,
+                                permission: 'active'
+                            }],
+                            data:{
+                                from: this.props.defaultWallet.account,
+                                receiver: this.props.defaultWallet.account,
+                                stake_net_quantity: this.state.delegatebw + " EOS",
+                                stake_cpu_quantity: "0 EOS",
+                                transfer: 0
+                            }
+                        }
+                    ]
+                }, plaintext_privateKey, (r) => {
+                    EasyLoading.dismis();
+                    if(r.data && r.data.transaction_id){
+                        EasyToast.show("抵押成功");
+                    }else if(r.data && JSON.parse(r.data).code != 0){
+                        var jdata = JSON.parse(r.data);
+                        var errmsg = "抵押失败: ";
+                        if(jdata.error.details[0].message){
+                            errmsg = errmsg + jdata.error.details[0].message;
+                        }
+                        EasyToast.show(errmsg);
+                    }
+
+                    // alert(JSON.parse(r.data).code);
+                }); 
+            } else {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+        } catch (e) {
+            EasyLoading.dismis();
+            EasyToast.show('密码错误');
+        }
+        EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() }); 
+    }
+
+    undelegatebw = () => { 
+        if ((this.state.undelegatebw == "")) {
+            EasyToast.show('请输入赎回的EOS数量');
+            return;
+        }
+
+            const view =
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                    secureTextEntry={true}
+                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1,  }}
+                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：赎回 {this.state.undelegatebw} EOS</Text>
+            </View>
+    
+            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+    
+            if (this.state.password == "") {
+                EasyToast.show('请输入密码');
+                return;
+            }
+            EasyLoading.show();
+
+            var privateKey = this.props.defaultWallet.activePrivate;
+            try {
+                var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+                var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+                if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    // alert("plaintext_privateKey "+plaintext_privateKey);
+
+                    // 解除抵押
+                    Eos.transaction({
+                        actions:[
+                            {
+                                account: 'eosio',
+                                name: 'undelegatebw',
+                                authorization: [{
+                                    actor: this.props.defaultWallet.account,
+                                    permission: 'active'
+                                }],
+                                data:{
+                                    from: this.props.defaultWallet.account,
+                                    receiver: this.props.defaultWallet.account,
+                                    unstake_net_quantity: this.state.undelegatebw + " EOS",
+                                    unstake_cpu_quantity: "0 EOS",
+                                }
+                            }
+                        ]
+                    }, plaintext_privateKey, (r) => {
+                        EasyLoading.dismis();
+                        if(r.data && r.data.transaction_id){
+                            EasyToast.show("解除抵押成功");
+                        }else if(r.data && JSON.parse(r.data).code != 0){
+                            var jdata = JSON.parse(r.data);
+                            var errmsg = "解除抵押失败: ";
+                            if(jdata.error.details[0].message){
+                                errmsg = errmsg + jdata.error.details[0].message;
+                            }
+                            alert(errmsg);
+                        }
+                    }); 
+
+                } else {
+                    EasyLoading.dismis();
+                    EasyToast.show('密码错误');
+                }
+            } catch (e) {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+            EasyDialog.dismis();
+        }, () => { EasyDialog.dismis() });
+    };
  
 
      // 更新"全部/未处理/已处理"按钮的状态  
@@ -124,10 +282,9 @@ class Network extends React.Component {
                         <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>资产抵押（EOS）</Text>
                         <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onSubmitEditing={() => this.regSubmit()}
                                 onChangeText={(delegatebw) => this.setState({ delegatebw })}
                             />
-                            <Button >
+                            <Button onPress={this.delegatebw.bind()}>
                                 <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ fontSize: 17, color: '#fff' }}>抵押</Text>
                                 </View>
@@ -137,11 +294,10 @@ class Network extends React.Component {
                     <View style={{ padding: 20,  justifyContent: 'center',}}>
                         <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>取消抵押（EOS）</Text>
                         <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onSubmitEditing={() => this.regSubmit()}
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
+                                onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
                             />
-                            <Button >
+                            <Button onPress={this.undelegatebw.bind()}>
                                 <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ fontSize: 17, color: '#fff' }}>解除</Text>
                                 </View>
