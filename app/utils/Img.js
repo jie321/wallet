@@ -25,6 +25,7 @@ export default {
   qrcode:require('../img/qrcode.png'),
   phone:require('../img/phone.png'),
   refresh:require('../img/refresh.png'),
+  resources:require('../img/resources.png'),
   resources_bj:require('../img/resources_bj.png'),
   logo:require('../img/logo1.png'),
   signed:require('../img/signed.png'),  

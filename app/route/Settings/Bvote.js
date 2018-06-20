@@ -53,9 +53,7 @@ class Bvote extends React.Component {
     }else if (key == 'Imvote') {
       navigate('Imvote', {});
     }else if (key == 'Nodevoting') {
-      navigate('Nodevoting', {data});
-    }else if (key == 'Resources') {
-      navigate('Resources', {data});
+      navigate('Nodevoting', {});
     }else {
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -65,7 +63,12 @@ class Bvote extends React.Component {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
-               
+                 <View style={styles.headoutsource}>
+                    <View style={styles.textoutsource}>
+                        <Text style={styles.textSizeone}>进度：6.1238%</Text>
+                        <Text style={styles.textSizetwo}>可投票数：0</Text>
+                    </View>                 
+                </View>
                 <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
                   <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
                       <Text style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
@@ -103,11 +106,32 @@ class Bvote extends React.Component {
     }
 }
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection:'column',
-      backgroundColor: UColor.secdColor,
-      padding:6,
-    },
+  container: {
+    flex: 1,
+    flexDirection:'column',
+    backgroundColor: UColor.secdColor,
+    padding:6,
+  },
+  headoutsource: {
+    padding: 20,
+    height: 78,
+    borderRadius: 5, 
+    backgroundColor: '#586888',
+  },
+  textoutsource: {
+    flexDirection:'row', 
+    alignItems: "center",
+    justifyContent: "center", 
+  },
+  textSizeone: {
+    fontSize: 12, 
+    color: '#FFFFFF',
+    marginRight: 10,
+  },
+  textSizetwo: {
+    marginLeft: 10,
+    fontSize: 12, 
+    color: '#FFFFFF'
+  },
 })
 export default Bvote;
