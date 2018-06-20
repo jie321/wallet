@@ -264,9 +264,9 @@ class Memory extends React.Component {
 
         return (
             <View style={styles.container}> 
-                <ScrollView >
-                  <ImageBackground  style={{ justifyContent: "center", alignItems: 'center', flexDirection:'column', height: 140, }} source={UImage.resources_bj} resizeMode="stretch">
-                    <View style={{justifyContent: "center", alignItems: 'center', flexDirection:'row', flex: 1, paddingTop: 15,}}>
+                <ScrollView keyboardShouldPersistTaps="always">
+                  <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
+                    <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
                             <Text style={styles.number}>{this.state.used}</Text>
                             <Text style={styles.state}>已使用（KB）</Text>
@@ -276,60 +276,66 @@ class Memory extends React.Component {
                             <Text style={styles.state}> 可用（KB）</Text>
                         </View>
                     </View> 
-                    <View style={{justifyContent: "center", alignItems: 'center', flexDirection:'row', paddingTop: 5,}}>
-                        <Text style={{color: '#7787A3', fontSize: 12, lineHeight: 60, }}>*内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
+                    <View style={styles.headoutsource}>
+                        <Text style={styles.headText}>*内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
                     </View> 
                   </ImageBackground>  
                     <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己购买')}  
-                        {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '购买送人')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '购买')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '赠人')}  
                     </View>  
                     {this.state.isBuyOneself ? null:
                     <View style={{ padding: 20,  justifyContent: 'center',}}>
-                        <Text style={{ fontSize: 12, color: '#FF6565', lineHeight: 35, }}>注：只限EOS账号，一旦送出可能无法收回！</Text>
-                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={12}
-                                onChangeText={(receiver) => this.setState({ receiver })}
+                        <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
+                        <View style={styles.outsource}>
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver} 
+                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                            onChangeText={(receiver) => this.setState({ receiver })}
                             />
                             <Button >
-                                <View style={{ marginLeft: 10, width: 86, height: 38, justifyContent: 'center', alignItems: 'flex-start' }}>
+                                <View style={styles.botnimg}>
                                     <Image source={UImage.al} style={{width: 26, height: 26, }} />
                                 </View>
                             </Button> 
                         </View>
                     </View>
                     }
-                    <View style={{ padding: 20,  justifyContent: 'center',}}>
-                        <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>购买内存（0.0000 EOS）</Text>
-                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
+                    <View style={styles.inptoutsource}>
+                        <Text style={styles.inptTitle}>购买内存（0.0000 EOS）</Text>
+                        <View style={styles.outsource}>
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} 
+                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                            onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
                             />
                             <Button onPress={this.buyram.bind()}>
-                                <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 17, color: '#fff' }}>购买</Text>
+                                <View style={styles.botn}>
+                                    <Text style={styles.botText}>购买</Text>
                                 </View>
                             </Button> 
                         </View>
                     </View>
-                    {this.state.isBuyForOther ? null:<View style={{ padding: 20,  justifyContent: 'center',}}>
-                        <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>出售内存（3081 Bytes）</Text>
-                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
-                                onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
+                    {this.state.isBuyForOther ? null:<View style={styles.inptoutsource}>
+                        <Text style={styles.inptTitle}>出售内存（3081 Bytes）</Text>
+                        <View style={styles.outsource}>
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} 
+                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                            onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
                             />
                             <Button onPress={this.sellram.bind()}>
-                                <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 17, color: '#fff' }}>出售</Text>
+                                <View style={styles.botn}>
+                                    <Text style={styles.botText}>出售</Text>
                                 </View>
                             </Button> 
                         </View>
                     </View>}
-                    <View style={{padding: 20,}}>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>提示</Text>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>1.购买资源内存，你将获得更多权限的使用；</Text>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>2.购买和出售资源成功，主网将收取0.5%手续费用；</Text>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>3.购买后如过多闲置可进行出售；</Text>
+                    <View style={styles.basc}>
+                        <Text style={styles.basctext}>提示</Text>
+                        <Text style={styles.basctext}>1.购买资源内存，你将获得更多权限的使用；</Text>
+                        <Text style={styles.basctext}>2.购买和出售资源成功，主网将收取0.5%手续费用；</Text>
+                        <Text style={styles.basctext}>3.购买后如过多闲置可进行出售；</Text>
                     </View>
                 </ScrollView>   
             </View>
@@ -340,55 +346,136 @@ class Memory extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      flexDirection:'column',
-      backgroundColor: UColor.secdColor,
-    },
-
-    frame: {
         flex: 1,
-        flexDirection: 'column', 
-        // alignItems: 'center', 
-        justifyContent: "center",
-    },
+        flexDirection:'column',
+        backgroundColor: UColor.secdColor,
+      },
+  
+      headbj: {
+          justifyContent: "center", 
+          alignItems: 'center',
+          flexDirection:'column', 
+          height: 140,
+      },
+  
+      frameoutsource: {
+          justifyContent: "center", 
+          alignItems: 'center', 
+          flexDirection:'row', 
+          flex: 1, 
+          paddingTop: 15,
+      },
+  
+      frame: {
+          flex: 1,
+          flexDirection: 'column', 
+          // alignItems: 'center', 
+          justifyContent: "center",
+      },
+  
+      number: {
+          flex: 2, 
+          fontSize: 24, 
+          color: '#FFFFFF', 
+          textAlign: 'center',  
+      },
+  
+      state: {
+          flex: 1, 
+          fontSize: 12, 
+          color: '#FFFFFF', 
+          textAlign: 'center',     
+      },
+      headoutsource: {
+          justifyContent: "center", 
+          alignItems: 'center', 
+          flexDirection:'row', 
+          paddingTop: 5,
+      },
+  
+      headText: {
+          color: '#7787A3', 
+          fontSize: 12, 
+          lineHeight: 60,
+      },
+  
+      tablayout: {   
+          flexDirection: 'row',  
+          borderBottomColor: '#586888',
+          borderBottomWidth: 1,
+          paddingHorizontal: 10,
+          paddingTop: 10,
+          paddingBottom: 5,
+      },  
+  
+      buttontab: {  
+          margin: 5,
+          width: 100,
+          height: 33,
+          borderRadius: 15,
+          alignItems: 'center',   
+          justifyContent: 'center', 
+      },  
+  
+      tabText: {  
+         fontSize: 15,
+      }, 
 
-    number: {
-        flex: 2, 
-        fontSize: 24, 
-        color: '#FFFFFF', 
-        textAlign: 'center',  
-    },
-
-    state: {
-        flex: 1, 
-        fontSize: 12, 
-        color: '#FFFFFF', 
-        textAlign: 'center',     
-    },
-
-    tablayout: {   
-        flexDirection: 'row',  
-        borderBottomColor: '#586888',
-        borderBottomWidth: 1,
-        paddingHorizontal: 10,
-        paddingTop: 10,
-        paddingBottom: 5,
-    },  
-
-    buttontab: {  
-        margin: 5,
-        width: 100,
-        height: 33,
-        borderRadius: 15,
-        alignItems: 'center',   
-        justifyContent: 'center', 
-    },  
-
-    tabText: {  
-       fontSize: 15,
-    },  
-
-    
+      inptoutsource: {
+          padding: 20,  
+          justifyContent: 'center',
+      },
+      outsource: {
+          flexDirection: 'row',  
+          alignItems: 'center',
+      },
+      inpt: {
+          flex: 1, 
+          color: '#8696B0', 
+          fontSize: 15, 
+          height: 40, 
+          paddingLeft: 10, 
+          backgroundColor: '#FFFFFF', 
+          borderRadius: 5,
+      },
+      inptTitlered: {
+          fontSize: 12, 
+          color: '#FF6565', 
+          lineHeight: 35,
+      },
+      inptTitle: {
+          fontSize: 14, 
+          color: '#7787A3', 
+          lineHeight: 35,
+      },
+      botnimg: {
+          marginLeft: 10, 
+          width: 86, 
+          height: 38, 
+          justifyContent: 'center', 
+          alignItems: 'flex-start'
+      },
+      botn: {
+          marginLeft: 10, 
+          width: 86, 
+          height: 38,  
+          borderRadius: 3, 
+          backgroundColor: '#65CAFF', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+      },
+      botText: {
+          fontSize: 17, 
+          color: '#fff',
+      },
+      basc: {
+          padding: 20,
+      },
+      basctext :{
+          fontSize: 12, 
+          color: '#8696B0', 
+          lineHeight: 25,
+      }
 });
 
 export default Memory;
