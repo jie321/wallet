@@ -225,9 +225,12 @@ export default {
                 if (walletArr[i].account == payload._wallet.account) {
                     walletArr[i] = payload._wallet;
                     yield call(store.save, 'walletArr', walletArr);
+                    yield call(store.save, 'defaultWallet', payload._wallet);
+                    yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload._wallet } });
                 }
             }
             DeviceEventEmitter.emit('modify_password', payload);
+            DeviceEventEmitter.emit('updateDefaultWallet', payload);
         }, *delWallet({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             var defaultWallet = yield call(store.get, 'defaultWallet');
