@@ -25,7 +25,7 @@ class Network extends React.Component {
         const params = navigation.state.params || {};
        
         return {    
-          title: "计算资源",
+          title: "网络资源",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: "#586888",
@@ -36,8 +36,8 @@ class Network extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAllSelected: true,  
-            isNotDealSelected: false,  
+            isBuyOneself: true,  
+            isBuyForOther: false,  
             delegatebw: "",
             undelegatebw: "",
             receiver: "",
@@ -235,7 +235,7 @@ class Network extends React.Component {
   
     // 返回设置的button  
     _getButton(style, selectedSate, stateType, buttonTitle) {  
-        let BTN_SELECTED_STATE_ARRAY = ['isAllSelected', 'isNotDealSelected'];  
+        let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
             <View style={[style, selectedSate ? {backgroundColor: '#65CAFF'} : {backgroundColor: '#586888'}]}>  
                 <Text style={[styles.tabText, selectedSate ? {color: 'white'} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
@@ -251,9 +251,9 @@ class Network extends React.Component {
 
         return (
             <View style={styles.container}> 
-                <ScrollView >
-                  <ImageBackground  style={{ justifyContent: "center", alignItems: 'center', flexDirection:'column', height: 140, }} source={UImage.resources_bj} resizeMode="stretch">
-                    <View style={{justifyContent: "center", alignItems: 'center', flexDirection:'row', flex: 1, paddingTop: 5,}}>
+                <ScrollView  keyboardShouldPersistTaps="always">
+                  <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
+                    <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
                             <Text style={styles.number}>0</Text>
                             <Text style={styles.state}>抵押（EOS）</Text>
@@ -263,7 +263,7 @@ class Network extends React.Component {
                             <Text style={styles.state}>赎回中（EOS）</Text>
                         </View>
                     </View> 
-                    <View style={{justifyContent: "center", alignItems: 'center', flexDirection:'row', flex: 1, paddingTop: 5,}}>
+                    <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
                             <Text style={styles.number}>0</Text>
                             <Text style={styles.state}>占用</Text>
@@ -275,40 +275,60 @@ class Network extends React.Component {
                     </View> 
                   </ImageBackground>  
                     <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '自己购买')}  
-                        {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', '购买送人')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '我的抵押')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
                     </View>  
-                    <View style={{ padding: 20,  justifyContent: 'center',}}>
-                        <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>资产抵押（EOS）</Text>
-                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                    {this.state.isBuyOneself ? null:
+                    <View style={styles.inptoutsource}>
+                        <View style={styles.outsource}>
+                            <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} 
+                                returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                                placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                onChangeText={(receiver) => this.setState({ receiver })}
+                            />
+                            <Button >
+                                <View style={styles.botnimg}>
+                                    <Image source={UImage.al} style={{width: 26, height: 26, }} />
+                                </View>
+                            </Button> 
+                        </View>
+                    </View>}  
+                    <View style={styles.inptoutsource}>
+                        <Text style={styles.inptTitle}>资产抵押（EOS）</Text>
+                        <View style={styles.outsource}>
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} 
+                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                            onChangeText={(delegatebw) => this.setState({ delegatebw })}
                             />
                             <Button onPress={this.delegatebw.bind()}>
-                                <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 17, color: '#fff' }}>抵押</Text>
+                                <View style={styles.botn}>
+                                    <Text style={styles.botText}>抵押</Text>
                                 </View>
                             </Button> 
                         </View>
                     </View>
-                    <View style={{ padding: 20,  justifyContent: 'center',}}>
-                        <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>取消抵押（EOS）</Text>
-                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
+                    {this.state.isBuyForOther ? null:
+                    <View style={styles.inptoutsource}>
+                        <Text style={styles.inptTitle}>取消抵押（EOS）</Text>
+                        <View style={styles.outsource}>
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} 
+                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                            onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
                             />
                             <Button onPress={this.undelegatebw.bind()}>
-                                <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 17, color: '#fff' }}>解除</Text>
+                                <View style={styles.botn}>
+                                    <Text style={styles.botText}>解除</Text>
                                 </View>
                             </Button> 
                         </View>
-                    </View>
-                    <View style={{padding: 20,}}>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>重要提示</Text>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>1.获取资源需要抵押EOS；</Text>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>2.抵押的EOS可以撤销抵押，并于3天后退回；</Text>
-                        <Text style={{fontSize: 12, color: '#8696B0', lineHeight: 25,  }}>3.主网投票进度未满15%时，无法撤销抵押；</Text>
+                    </View>}
+                    <View style={styles.basc}>
+                        <Text style={styles.basctext}>重要提示</Text>
+                        <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
+                        <Text style={styles.basctext}>2.抵押的EOS可以撤销抵押，并于3天后退回；</Text>
+                        <Text style={styles.basctext}>3.主网投票进度未满15%时，无法撤销抵押；</Text>
                     </View>
                 </ScrollView>   
             </View>
@@ -319,55 +339,127 @@ class Network extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      flexDirection:'column',
-      backgroundColor: UColor.secdColor,
-    },
-
-    frame: {
         flex: 1,
-        flexDirection: 'column', 
-        // alignItems: 'center', 
-        justifyContent: "center",
-    },
-
-    number: {
-        flex: 2, 
-        fontSize: 24, 
-        color: '#FFFFFF', 
-        textAlign: 'center',  
-    },
-
-    state: {
-        flex: 1, 
-        fontSize: 12, 
-        color: '#FFFFFF', 
-        textAlign: 'center',     
-    },
-
-    tablayout: {   
-        flexDirection: 'row',  
-        borderBottomColor: '#586888',
-        borderBottomWidth: 1,
-        paddingHorizontal: 10,
-        paddingTop: 10,
-        paddingBottom: 5,
-    },  
-
-    buttontab: {  
-        margin: 5,
-        width: 100,
-        height: 33,
-        borderRadius: 15,
-        alignItems: 'center',   
-        justifyContent: 'center', 
-    },  
-
-    tabText: {  
-       fontSize: 15,
-    },  
-
-    
+        flexDirection:'column',
+        backgroundColor: UColor.secdColor,
+      },
+  
+      headbj: {
+          justifyContent: "center", 
+          alignItems: 'center', 
+          flexDirection:'column',
+          height: 140,
+      },
+  
+      frameoutsource: {
+          justifyContent: "center", 
+          alignItems: 'center', 
+          flexDirection:'row', 
+          flex: 1, 
+          paddingTop: 5,
+      },
+  
+      frame: {
+          flex: 1,
+          flexDirection: 'column', 
+          // alignItems: 'center', 
+          justifyContent: "center",
+      },
+  
+      number: {
+          flex: 2, 
+          fontSize: 24, 
+          color: '#FFFFFF', 
+          textAlign: 'center',  
+      },
+  
+      state: {
+          flex: 1, 
+          fontSize: 12, 
+          color: '#FFFFFF', 
+          textAlign: 'center',     
+      },
+  
+      tablayout: {   
+          flexDirection: 'row',  
+          borderBottomColor: '#586888',
+          borderBottomWidth: 1,
+          paddingHorizontal: 10,
+          paddingTop: 10,
+          paddingBottom: 5,
+      },  
+  
+      buttontab: {  
+          margin: 5,
+          width: 100,
+          height: 33,
+          borderRadius: 15,
+          alignItems: 'center',   
+          justifyContent: 'center', 
+      },  
+  
+      tabText: {  
+         fontSize: 15,
+      },  
+  
+  
+      inptoutsource: {
+          paddingTop: 20,
+          paddingHorizontal: 20,  
+          justifyContent: 'center',
+      },
+      outsource: {
+          flexDirection: 'row',  
+          alignItems: 'center',
+      },
+      inpt: {
+          flex: 1, 
+          color: '#8696B0', 
+          fontSize: 15, 
+          height: 40, 
+          paddingLeft: 10, 
+          backgroundColor: '#FFFFFF', 
+          borderRadius: 5,
+      },
+      inptTitlered: {
+          fontSize: 12, 
+          color: '#FF6565', 
+          lineHeight: 35,
+      },
+      inptTitle: {
+          fontSize: 14, 
+          color: '#7787A3', 
+          lineHeight: 35,
+      },
+      botnimg: {
+          marginLeft: 10, 
+          width: 86, 
+          height: 38, 
+          justifyContent: 'center', 
+          alignItems: 'flex-start'
+      },
+      botn: {
+          marginLeft: 10, 
+          width: 86, 
+          height: 38,  
+          borderRadius: 3, 
+          backgroundColor: '#65CAFF', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+      },
+      botText: {
+          fontSize: 17, 
+          color: '#fff',
+      },
+      basc: {
+          padding: 20,
+      },
+      basctext :{
+          fontSize: 12, 
+          color: '#8696B0', 
+          lineHeight: 25,
+      }
+  
 });
 
 export default Network;
