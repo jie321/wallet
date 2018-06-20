@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground} from 'react-native';
+import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground,ProgressViewIOS} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -65,12 +65,19 @@ class Bvote extends React.Component {
             <View style={styles.container}>
                  <View style={styles.headoutsource}>
                     <View style={styles.textoutsource}>
-                        <Text style={styles.textSizeone}>进度：6.1238%</Text>
+                        <Text style={styles.textSizeone}>进度：24.2218%</Text>
                         <Text style={styles.textSizetwo}>可投票数：0</Text>
-                    </View>                 
+                    </View>
+                    <View>
+                      <View style={{height: 2, backgroundColor: '#43536D', position:'relative',  top: 3, }}></View> 
+                      <View style={{ flexDirection:'row', alignItems: 'center', position:'absolute', width: '100%', }}>
+                        <View style={{height: 2, width: '24.2218%', backgroundColor: '#65CAFF',}}></View>
+                        <View style={{width: 8, height: 8,  backgroundColor: '#65CAFF', borderRadius: 5,}}></View>
+                      </View>                     
+                    </View>             
                 </View>
                 <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
-                  <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
+                  <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  marginTop: 6, paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
                       <Text style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
                       <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                           <Image source={UImage.votea} style={{width: 30, height: 30, margin: 10,}}/>
@@ -92,15 +99,7 @@ class Bvote extends React.Component {
                         <Image source={UImage.votec} style={{width: 30, height: 30, margin: 10,}}/>
                     </View>     
                   </ImageBackground>  
-                </TouchableHighlight>    
-                <TouchableHighlight onPress={this.goPage.bind(this, 'Resources')} >      
-                  <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10, }} source={UImage.voted_bj} resizeMode="stretch">              
-                    <Text style={{fontSize:16, color:'#FFFFFF'}}>资源管理</Text>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                        <Image source={UImage.voted} style={{width: 30, height: 30, margin: 10,}}/>
-                    </View>     
-                  </ImageBackground>  
-                </TouchableHighlight>      
+                </TouchableHighlight>       
             </View>
         )
     }
@@ -119,6 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#586888',
   },
   textoutsource: {
+    marginBottom: 15,
     flexDirection:'row', 
     alignItems: "center",
     justifyContent: "center", 
