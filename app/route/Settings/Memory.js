@@ -42,21 +42,36 @@ class Memory extends React.Component {
             buyRamAmount: "",
             sellRamBytes: "",
             password: "",
-            cpu: '',
-            net: '', 
-            delegate_net: "0",
-            delegate_cpu: '0',
-            undelegate_net: '0',
-            undelegate_cpu: '0',
             balance: '0',
+            used: '0',
+            available: '0',
         };
     }
 
+    getAccountInfo(){
+        this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
+            // alert("----------" + JSON.stringify(data));
+            this.setState({
+                used:data.ram_usage + ' b',
+                available:data.total_resources.ram_bytes + ' b',
+            });
+        } });
+    } 
+    
     componentDidMount() {
         EasyLoading.show();
         this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
+            this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
+                // alert("----------" + JSON.stringify(data));
+                this.setState({
+                    used:(data.ram_usage / 1024).toFixed(3),
+                    available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(3),
+                });
+
                 EasyLoading.dismis();
-                }});   
+            } });
+                
+        }});   
     }
 
      // 更新"全部/未处理/已处理"按钮的状态  
@@ -150,7 +165,7 @@ class Memory extends React.Component {
                         EasyLoading.dismis();
                         // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
-                            // this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
+                            // this.getAccountInfo();
                             EasyToast.show("购买内存成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
@@ -261,12 +276,12 @@ class Memory extends React.Component {
                   <ImageBackground  style={{ justifyContent: "center", alignItems: 'center', flexDirection:'column', height: 140, }} source={UImage.resources_bj} resizeMode="stretch">
                     <View style={{justifyContent: "center", alignItems: 'center', flexDirection:'row', flex: 1, paddingTop: 15,}}>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>2.93</Text>
-                            <Text style={styles.state}>占用（KB）</Text>
+                            <Text style={styles.number}>{this.state.used}</Text>
+                            <Text style={styles.state}>已使用（KB）</Text>
                         </View>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>3.01</Text>
-                            <Text style={styles.state}> 配额（KB）</Text>
+                            <Text style={styles.number}>{this.state.available}</Text>
+                            <Text style={styles.state}> 可用（KB）</Text>
                         </View>
                     </View> 
                     <View style={{justifyContent: "center", alignItems: 'center', flexDirection:'row', paddingTop: 5,}}>

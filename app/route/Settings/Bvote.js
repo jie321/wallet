@@ -54,7 +54,7 @@ class Bvote extends React.Component {
       navigate('Imvote', {});
     }else if (key == 'Nodevoting') {
       navigate('Nodevoting', {data});
-    } if (key == 'Resources') {
+    }else if (key == 'Resources') {
       navigate('Resources', {data});
     }else {
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
