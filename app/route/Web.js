@@ -99,10 +99,10 @@ export default class Web extends Component {
               //发送朋友
               WeChat.shareToSession({ type: 'file', description: uri, imageUrl: uri })
                 .catch((error) => {
-                  ToastShort(error.message);
+                  EasyToast.show(error.message);
                 });
             } else {
-              ToastShort('没有安装微信软件，请您安装微信之后再试');
+              EasyToast.show('没有安装微信软件，请您安装微信之后再试');
             }
           });
       });
@@ -115,10 +115,10 @@ export default class Web extends Component {
               //发送朋友圈
               WeChat.shareToTimeline({ type: 'file', description: uri, imageUrl: uri })
                 .catch((error) => {
-                  ToastShort(error.message);
+                  EasyToast.show(error.message);
                 });
             } else {
-              ToastShort('没有安装微信软件，请您安装微信之后再试');
+              EasyToast.show('没有安装微信软件，请您安装微信之后再试');
             }
           });
       });
