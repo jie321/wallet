@@ -36,9 +36,12 @@ class Memory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAllSelected: true,  
-            isNotDealSelected: false,  
-            delegatebw: "",
+            isBuyOneself: true,  
+            isBuyForOther: false,  
+            receiver: "",
+            buyRamAmount: "",
+            sellRamBytes: "",
+            password: "",
             cpu: '',
             net: '', 
             delegate_net: "0",
@@ -50,11 +53,11 @@ class Memory extends React.Component {
     }
 
     componentDidMount() {
-       
+        EasyLoading.show();
+        this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
+                EasyLoading.dismis();
+                }});   
     }
-
-
- 
 
      // 更新"全部/未处理/已处理"按钮的状态  
      _updateBtnSelectedState(currentPressed, array) {  
@@ -77,7 +80,7 @@ class Memory extends React.Component {
   
     // 返回设置的button  
     _getButton(style, selectedSate, stateType, buttonTitle) {  
-        let BTN_SELECTED_STATE_ARRAY = ['isAllSelected', 'isNotDealSelected'];  
+        let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
             <View style={[style, selectedSate ? {backgroundColor: '#65CAFF'} : {backgroundColor: '#586888'}]}>  
                 <Text style={[styles.tabText, selectedSate ? {color: 'white'} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
@@ -87,6 +90,167 @@ class Memory extends React.Component {
         );  
     }  
 
+    buyram = (rowData) => { // 选中用户
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
+
+        if(this.state.buyRamAmount == ""){
+            EasyToast.show('请输入购买金额');
+            return;
+        }
+            const view =
+            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                    secureTextEntry={true}
+                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
+                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}></Text>  
+            </View>
+    
+            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+    
+            if (this.state.password == "") {
+                EasyToast.show('请输入密码');
+                return;
+            }
+            EasyLoading.show();
+
+            var privateKey = this.props.defaultWallet.activePrivate;
+            try {
+                var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+                var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+                if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    // alert("plaintext_privateKey "+plaintext_privateKey);
+
+                    if(this.state.isBuyOneself){
+                        this.state.receiver = this.props.defaultWallet.account;
+                    }
+                    // alert("isBuyOneself: " + this.state.isBuyOneself + " receiver: "+this.state.receiver+" amount: " + this.state.buyRamAmount + " account: "+this.props.defaultWallet.account);
+
+                    Eos.transaction({
+                        actions:[
+                            {
+                                account: 'eosio',
+                                name: 'buyram',
+                                authorization: [{
+                                    actor: this.props.defaultWallet.account,
+                                    permission: 'active'
+                                }],
+                                data:{
+                                    payer: this.props.defaultWallet.account,
+                                    receiver: this.state.receiver,
+                                    quant:  this.state.buyRamAmount + " EOS", //["producer111f"]
+                                }
+                            }
+                        ]
+                    }, plaintext_privateKey, (r) => {
+                        EasyLoading.dismis();
+                        // alert(JSON.stringify(r.data));
+                        if(r.data && r.data.transaction_id){
+                            // this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
+                            EasyToast.show("购买内存成功");
+                        }else if(r.data && JSON.parse(r.data).code != 0){
+                            var jdata = JSON.parse(r.data);
+                            var errmsg = "购买内存失败: ";
+                            if(jdata.error.details[0].message){
+                                errmsg = errmsg + jdata.error.details[0].message;
+                            }
+                            EasyToast.show(errmsg);
+                        }
+                    }); 
+                } else {
+                    EasyLoading.dismis();
+                    EasyToast.show('密码错误');
+                }
+            } catch (e) {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+            EasyDialog.dismis();
+        }, () => { EasyDialog.dismis() });
+    };
+
+    sellram = (rowData) => { // 选中用户
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
+
+        if(this.state.sellRamBytes == ""){
+            EasyToast.show('请输入出售内存字节数量');
+            return;
+        }
+
+            const view =
+            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                    secureTextEntry={true}
+                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
+                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}></Text>  
+            </View>
+    
+            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+    
+            if (this.state.password == "") {
+                EasyToast.show('请输入密码');
+                return;
+            }
+            EasyLoading.show();
+
+            var privateKey = this.props.defaultWallet.activePrivate;
+            try {
+                var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+                var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+                if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    // alert("plaintext_privateKey "+plaintext_privateKey);
+
+                    // alert("receiver: "+this.props.defaultWallet.account+" " + "sellBytes: " + this.state.sellRamBytes);
+                    Eos.transaction({
+                        actions:[
+                            {
+                                account: 'eosio',
+                                name: 'sellram',
+                                authorization: [{
+                                    actor: this.props.defaultWallet.account,
+                                    permission: 'active'
+                                }],
+                                data:{
+                                    account: this.props.defaultWallet.account,
+                                    bytes: this.state.sellRamBytes,
+                                }
+                            }
+                        ]
+                    }, plaintext_privateKey, (r) => {
+                        EasyLoading.dismis();
+                        // alert(JSON.stringify(r.data));
+                        if(r.data && r.data.transaction_id){
+                            // this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
+                            EasyToast.show("出售内存成功");
+                        }else if(r.data && JSON.parse(r.data).code != 0){
+                            var jdata = JSON.parse(r.data);
+                            var errmsg = "出售内存失败: ";
+                            if(jdata.error.details[0].message){
+                                errmsg = errmsg + jdata.error.details[0].message;
+                            }
+                            EasyToast.show(errmsg);
+                        }
+                    }); 
+                } else {
+                    EasyLoading.dismis();
+                    EasyToast.show('密码错误');
+                }
+            } catch (e) {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+            EasyDialog.dismis();
+        }, () => { EasyDialog.dismis() });
+    };
 
     render() {
         // balance = balance.replace("EOS", "");
@@ -110,16 +274,15 @@ class Memory extends React.Component {
                     </View> 
                   </ImageBackground>  
                     <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '自己购买')}  
-                        {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', '购买送人')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己购买')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '购买送人')}  
                     </View>  
-                    {this.state.isAllSelected ? null:
+                    {this.state.isBuyOneself ? null:
                     <View style={{ padding: 20,  justifyContent: 'center',}}>
                         <Text style={{ fontSize: 12, color: '#FF6565', lineHeight: 35, }}>注：只限EOS账号，一旦送出可能无法收回！</Text>
                         <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onSubmitEditing={() => this.regSubmit()}
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={12}
+                                onChangeText={(receiver) => this.setState({ receiver })}
                             />
                             <Button >
                                 <View style={{ marginLeft: 10, width: 86, height: 38, justifyContent: 'center', alignItems: 'flex-start' }}>
@@ -132,25 +295,23 @@ class Memory extends React.Component {
                     <View style={{ padding: 20,  justifyContent: 'center',}}>
                         <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>购买内存（0.0000 EOS）</Text>
                         <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onSubmitEditing={() => this.regSubmit()}
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
+                                onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
                             />
-                            <Button >
+                            <Button onPress={this.buyram.bind()}>
                                 <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ fontSize: 17, color: '#fff' }}>购买</Text>
                                 </View>
                             </Button> 
                         </View>
                     </View>
-                    {this.state.isNotDealSelected ? null:<View style={{ padding: 20,  justifyContent: 'center',}}>
+                    {this.state.isBuyForOther ? null:<View style={{ padding: 20,  justifyContent: 'center',}}>
                         <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 35, }}>出售内存（3081 Bytes）</Text>
                         <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onSubmitEditing={() => this.regSubmit()}
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                                onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
                             />
-                            <Button >
+                            <Button onPress={this.sellram.bind()}>
                                 <View style={{ marginLeft: 10, width: 86, height: 38,  borderRadius: 3, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ fontSize: 17, color: '#fff' }}>出售</Text>
                                 </View>
