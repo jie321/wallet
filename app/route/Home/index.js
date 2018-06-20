@@ -115,16 +115,24 @@ class Home extends React.Component {
 
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
-    if (key == 'Bvote') {
+    if (key == 'qr') {
+      AnalyticsUtil.onEvent('Receipt_code');
+      if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+        this._setModalVisible();
+      } else {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });
+      }
+    }else if (key == 'Bvote') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
         }, () => { EasyDialog.dismis() });  
-
         return;
       }
-
       navigate('Bvote', {data, balance: this.state.balance});
       // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }else if (key == 'Resources') {
@@ -145,19 +153,6 @@ class Home extends React.Component {
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
     }
-  }
-
-  qr() {
-    AnalyticsUtil.onEvent('Receipt_code');
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
-      this._setModalVisible();
-    } else {
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
-    }
-
   }
 
   _setModalVisible() {
@@ -250,7 +245,7 @@ class Home extends React.Component {
                 </View>
                 <ImageBackground style={{ justifyContent: "center" }} source={UImage.home_bg} resizeMode="cover">
                   <View style={{ height: 70, flexDirection: "row",backgroundColor:'#43536D', borderRadius: 5,  marginTop: 20,marginBottom: 20,marginRight: 10,marginLeft: 10,}}>
-                    <Button onPress={() => this.qr()} style={{flex: 1, justifyContent: "center", alignItems: 'center',padding: 5,}}>
+                    <Button onPress={this.onPress.bind(this, 'qr')} style={{flex: 1, justifyContent: "center", alignItems: 'center',padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
                         <Image source={UImage.qr} style={styles.imgBtn} />
                         <Text style={{color: '#8696B0',fontSize: 14,}}>收币</Text>
