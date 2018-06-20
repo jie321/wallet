@@ -43,10 +43,14 @@ import { connect } from 'react-redux'
 import SplashScreen from 'react-native-splash-screen'
 import AgentInfo from './Settings/AgentInfo'
 import Imvote from './Settings/Imvote'
+import Resources from './Settings/Resources'
 import Set from './Settings/Set'
 import Delegate from './Settings/Delegate'
 import Nodevoting from './Settings/Nodevoting'
 import Bvote from './Settings/Bvote'
+import Calculation from './Settings/Calculation'
+import Memory from './Settings/Memory'
+import Network from './Settings/Network'
 import Boot from './Boot'
 import moment from 'moment';
 import Button from '../components/Button'
@@ -142,6 +146,9 @@ const Nav = StackNavigator(
     CreateWallet: {
       screen: CreateWallet
     },
+    Calculation: {
+      screen: Calculation
+    },
     BackupWords: {
       screen: BackupWords
     },
@@ -172,6 +179,12 @@ const Nav = StackNavigator(
     ModifyPassword: {
       screen: ModifyPassword
     },
+    Memory: {
+      screen: Memory
+    },
+    Network: {
+      screen: Network
+    },
     BarCode: {
       screen : BarCode
     },
@@ -192,6 +205,9 @@ const Nav = StackNavigator(
     },
     Bvote: {
       screen: Bvote
+    },
+    Resources: {
+      screen: Resources
     },
     Set: {
       screen: Set
