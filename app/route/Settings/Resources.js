@@ -25,22 +25,13 @@ class Bvote extends React.Component {
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: "#586888",
-          },
-          headerRight: (<Button onPress={navigation.state.params.onPress}>
-            <Text style={{color: "#8696B0", fontSize: 18,justifyContent: 'flex-end',paddingRight:15}}>邀请投票</Text>
-          </Button>),            
+          },        
         };
       };
-
-
-  _rightTopClick = () =>{  
-    DeviceEventEmitter.emit('voteShare',""); 
-  }  
 
   // 构造函数  
   constructor(props) { 
     super(props);
-    this.props.navigation.setParams({ onPress: this._rightTopClick });
     this.state = {
       transformY: new Animated.Value(200),
       transformY1: new Animated.Value(-1000),
@@ -53,9 +44,9 @@ class Bvote extends React.Component {
     }else if (key == 'Memory') {
       navigate('Memory', {});
     }else if (key == 'Network') {
-      navigate('Network', {data});
+      navigate('Network', {});
     } if (key == 'Resources') {
-      navigate('Resources', {data});
+      navigate('Resources', {});
     }else {
       // EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -65,39 +56,45 @@ class Bvote extends React.Component {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
-                <View style={{ alignItems: 'center', flexDirection:'row', width: ScreenWidth-12, height: 80,  backgroundColor: '#586888', borderRadius: 5, }} onPress={this.goPage.bind(this, 'delegate')}>
-                  <Image source={UImage.Calculation} style={{width: 40, height: 40, marginHorizontal: 20,}} />
-                  <View  style={{flex: 1, justifyContent: "center", alignItems: 'flex-start', flexDirection:'column',}} >                               
-                      <Text style={{ fontSize:16, color:'#FFFFFF', paddingBottom: 8, }}>计算资源</Text>
+              <TouchableHighlight onPress={this.goPage.bind(this, 'Calculation')}> 
+                <View style={styles.nov} >
+                  <Image source={UImage.Calculation} style={styles.imgsize} />
+                  <View  style={styles.outsource} >                               
+                      <Text style={styles.headtextSize}>计算资源</Text>
                       <View style={{ flexDirection:'row', alignItems: "center",}}>
-                          <Text style={{fontSize: 13, color: '#8696B0'}}>可用：0</Text>
-                          <Text style={{fontSize: 13, color: '#8696B0'}}>抵押：0.0000 EOS</Text>
+                          <Text style={styles.textSizeone}>可用：0</Text>
+                          <Text style={styles.textSizetwo}>抵押：0.0000 EOS</Text>
                       </View>
                   </View>
-                  <Text onPress={this.goPage.bind(this, 'Calculation')} style={{width: 40, lineHeight: 80, color: '#ffffff', textAlign: 'center'}}>></Text>
+                  <Text style={styles.arrow}>></Text>
                 </View> 
-                <View style={{ alignItems: 'center', flexDirection:'row', width: ScreenWidth-12, height: 80,  backgroundColor: '#586888', borderRadius: 5, marginTop: 6,}} onPress={this.goPage.bind(this, 'delegate')}>
-                  <Image source={UImage.network} style={{width: 40, height: 40, marginHorizontal: 20,}} />
-                  <View  style={{flex: 1, justifyContent: "center", alignItems: 'flex-start', flexDirection:'column',}} >                               
-                      <Text style={{ fontSize:16, color:'#FFFFFF', paddingBottom: 8, }}>网络资源</Text>
+              </TouchableHighlight>  
+              <TouchableHighlight onPress={this.goPage.bind(this, 'Network')}> 
+                <View style={styles.nov} >
+                  <Image source={UImage.network} style={styles.imgsize} />
+                  <View  style={styles.outsource} >                               
+                      <Text style={styles.headtextSize}>网络资源</Text>
                       <View style={{ flexDirection:'row', alignItems: "center",}}>
-                          <Text style={{fontSize: 13, color: '#8696B0'}}>可用：0</Text>
-                          <Text style={{fontSize: 13, color: '#8696B0'}}>抵押：0.0000 EOS</Text>
+                          <Text style={styles.textSizeone}>可用：0</Text>
+                          <Text style={styles.textSizetwo}>抵押：0.0000 EOS</Text>
                       </View>
                   </View>
-                  <Text onPress={this.goPage.bind(this, 'Network')} style={{width: 40, lineHeight: 80, color: '#ffffff', textAlign: 'center'}}>></Text>
-                </View> 
-                <View style={{ alignItems: 'center', flexDirection:'row', width: ScreenWidth-12, height: 80,  backgroundColor: '#586888', borderRadius: 5, marginTop: 6, }} onPress={this.goPage.bind(this, 'delegate')}>
-                  <Image source={UImage.Memory} style={{width: 40, height: 40, marginHorizontal: 20,}} />
-                  <View  style={{flex: 1, justifyContent: "center", alignItems: 'flex-start', flexDirection:'column',}} >                               
-                      <Text style={{ fontSize:16, color:'#FFFFFF', paddingBottom: 8, }}>内存资源</Text>
-                      <View style={{ flexDirection:'row', alignItems: "center",}}>
-                          <Text style={{fontSize: 13, color: '#8696B0'}}>配额：3.01KB</Text>
-                          <Text style={{fontSize: 13, color: '#8696B0'}}>占用：2.93 KB</Text>
+                  <Text style={styles.arrow}>></Text>
+                </View>
+              </TouchableHighlight>
+              <TouchableHighlight onPress={this.goPage.bind(this, 'Memory')}> 
+                <View style={styles.nov} >
+                  <Image source={UImage.Memory} style={styles.imgsize} />
+                  <View style={styles.outsource} >                               
+                      <Text style={styles.headtextSize}>内存资源</Text>
+                      <View style={styles.textoutsource}>
+                          <Text style={styles.textSizeone}>配额：3.01KB</Text>
+                          <Text style={styles.textSizetwo}>占用：2.93 KB</Text>
                       </View>
                   </View>
-                  <Text onPress={this.goPage.bind(this, 'Memory')} style={{width: 40, lineHeight: 80, color: '#ffffff', textAlign: 'center'}}>></Text>
+                  <Text style={styles.arrow}>></Text>
                 </View> 
+              </TouchableHighlight>
             </View>
         )
     }
@@ -107,7 +104,51 @@ const styles = StyleSheet.create({
       flex: 1,
       flexDirection:'column',
       backgroundColor: UColor.secdColor,
-      padding:6,
+      paddingHorizontal:6,
     },
+    nov: {
+      alignItems: 'center', 
+      flexDirection:'row', 
+      width: ScreenWidth-12, 
+      height: 80,  
+      backgroundColor: '#586888', 
+      borderRadius: 5, 
+      marginTop: 6,
+    },
+    imgsize: {
+      width: 40, 
+      height: 40, 
+      marginHorizontal: 20,
+    },
+    outsource: {
+      flex: 1, 
+      justifyContent: "center", 
+      alignItems: 'flex-start', 
+      flexDirection:'column',
+    },
+    headtextSize: {
+      fontSize:16, 
+      color:'#FFFFFF', 
+      paddingBottom: 8,
+    },
+    textoutsource: {
+      flexDirection:'row', 
+      alignItems: "center",
+    },
+    textSizeone: {
+      fontSize: 12, 
+      color: '#8696B0'
+    },
+    textSizetwo: {
+      marginLeft: 10,
+      fontSize: 12, 
+      color: '#8696B0'
+    },
+    arrow: {
+      width: 40, 
+      lineHeight: 80, 
+      color: '#ffffff', 
+      textAlign: 'center'
+    }
 })
 export default Bvote;

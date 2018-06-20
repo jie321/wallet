@@ -127,6 +127,8 @@ class Home extends React.Component {
 
       navigate('Bvote', {data, balance: this.state.balance});
       // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    }else if (key == 'Resources') {
+      navigate('Resources', {});
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -267,12 +269,12 @@ class Home extends React.Component {
                       </View>                      
                     </Button>
                     
-                    {/* <Button  onPress={this.onPress.bind('add', this)}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
+                    <Button  onPress={this.onPress.bind(this, 'Resources')}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
-                        <Image source={UImage.nash} style={styles.imgBtn} />
-                        <Text style={{color: '#8696B0',fontSize: 14,}}>NASH映射</Text>
+                        <Image source={UImage.resources} style={styles.imgBtn} />
+                        <Text style={{color: '#8696B0',fontSize: 14,}}>资源管理</Text>
                       </View>
-                    </Button> */}
+                    </Button>
                   </View>
               </ImageBackground>
               <View style={{height: 75, backgroundColor: UColor.mainColor, flexDirection: "row",justifyContent: "space-between",borderBottomColor: '#65CAFF', borderBottomWidth: 2,}}>
@@ -311,7 +313,7 @@ class Home extends React.Component {
                     />
                     <View style={{ width: '100%', height: maxHeight / 2.5, flexDirection: "column", paddingLeft: 20, paddingTop: 15, alignItems: 'flex-start', borderTopWidth: 1, borderTopColor: '#586888', }}>
                       <Button onPress={() => this.createWallet()} style={{ height: 40, }}>
-                        <View style={{ flex: 1, flexDirection: "row", }}>
+                        <View style={{ flex: 1, flexDirection: "row",alignItems: 'center', }}>
                           <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
                           <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>创建钱包</Text>
                         </View>

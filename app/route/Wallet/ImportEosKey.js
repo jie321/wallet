@@ -48,7 +48,10 @@ class ImportEosKey extends React.Component {
         // { key: '0', title: '助记词' },
         { key: '2', title: '私钥' },
       ],
-      isChecked: this.props.isChecked || false
+      isChecked: this.props.isChecked || false,
+      weak: UColor.arrow,
+      medium: UColor.arrow,
+      strong: UColor.arrow,
     };
   }
   //组件加载完成
@@ -150,6 +153,13 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请输入私钥');
     return;
   }
+  Eos.checkPrivateKey(this.state.activePk, (r) => {
+    if (!r.isSuccess) {
+      EasyToast.show('私钥格式不正确');
+      return;
+    }
+    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+  });
   if (this.state.walletpwd == '') {
     EasyToast.show('请输入密码');
     return;
@@ -170,15 +180,6 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请确认已阅读并同意条款');
     return;
   }
-  Eos.checkPrivateKey(this.state.activePk, (r) => {
-    if (!r.isSuccess) {
-      EasyToast.show('私钥格式不正确');
-      return;
-    }
-
-    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
-  });
-
 }
 
 createWalletByPrivateKey(owner_privateKey, active_privatekey){
@@ -245,6 +246,38 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
 }
 
 
+intensity() {
+  let string = this.state.walletpwd;
+  if(string.length >=8) {
+    if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+      this.state.strong = UColor.tintColor;
+      this.state.medium = UColor.arrow;
+      this.state.weak = UColor.arrow;
+    }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
+      if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
+        this.state.strong = UColor.arrow;
+        this.state.medium = UColor.tintColor;
+        this.state.weak = UColor.arrow;
+      }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
+        this.state.strong = UColor.arrow;
+        this.state.medium = UColor.tintColor;
+        this.state.weak = UColor.arrow;
+      }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+        this.state.strong = UColor.arrow;
+        this.state.medium = UColor.tintColor;
+        this.state.weak = UColor.arrow;
+      }else{
+        this.state.strong = UColor.arrow;
+        this.state.medium = UColor.arrow;
+        this.state.weak = UColor.tintColor;
+      }
+    }else{
+      
+    }
+   }
+}
+
+
   render() {
     return (
       <View style={styles.container}>
@@ -281,20 +314,21 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
                 </View>
               </View> */}
             
-              <View style={{paddingLeft: 14,  paddingRight: 15, height: 75,  backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
+            <View style={{paddingLeft: 14,  paddingRight: 15, height: 75,  backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
                 <View style={{flexDirection: 'row',}}>
                    <Text style={{flex: 1, color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>设置密码</Text>
-                   {/* <View style={{flexDirection: 'row',}}>
-                       <Text style={{color: '#8696B0', fontSize: 15, padding: 5,}}>弱</Text>
-                       <Text style={{color: '#8696B0', fontSize: 15, padding: 5,}}>中</Text>
-                       <Text style={{color: '#8696B0', fontSize: 15, padding: 5,}}>强</Text>
-                   </View> */}
+                   <View style={{flexDirection: 'row',}}>
+                       <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
+                       <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
+                       <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
+                   </View>
                 </View>
                 <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
                   value={this.state.walletpwd}
                   onChangeText={(password) => this.setState({walletpwd: password })}
+                  onChange={this.intensity()}
                   returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16, }} placeholderTextColor="#8696B0"
-                  placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                  placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
                 />
               </View>
               <View style={{paddingLeft: 14,  paddingRight: 15, height: 75,  backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}} >
