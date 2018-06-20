@@ -46,10 +46,10 @@ export default {
             if(resp.code=='0'){  
                 // alert("getaccountinfo1 : " + JSON.stringify(resp.data.voter_info));
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
+                if (callback) callback(resp.data);
             }else{
                 EasyToast.show(resp.msg);
             }
-            if (callback) callback(resp.data);
         } catch (error) {
             EasyToast.show('网络发生错误，请重试');
         }
