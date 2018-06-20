@@ -49,11 +49,11 @@ class Memory extends React.Component {
     }
 
     getAccountInfo(){
-        this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
+        this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
             // alert("----------" + JSON.stringify(data));
             this.setState({
-                used:data.ram_usage + ' b',
-                available:data.total_resources.ram_bytes + ' b',
+                used:(data.ram_usage / 1024).toFixed(3),
+                available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(3),
             });
         } });
     } 
@@ -61,16 +61,8 @@ class Memory extends React.Component {
     componentDidMount() {
         EasyLoading.show();
         this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
-            this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
-                // alert("----------" + JSON.stringify(data));
-                this.setState({
-                    used:(data.ram_usage / 1024).toFixed(3),
-                    available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(3),
-                });
-
-                EasyLoading.dismis();
-            } });
-                
+            this.getAccountInfo();
+            EasyLoading.dismis();
         }});   
     }
 
@@ -165,7 +157,7 @@ class Memory extends React.Component {
                         EasyLoading.dismis();
                         // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
-                            // this.getAccountInfo();
+                            this.getAccountInfo();
                             EasyToast.show("购买内存成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
@@ -244,7 +236,7 @@ class Memory extends React.Component {
                         EasyLoading.dismis();
                         // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
-                            // this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
+                            this.getAccountInfo();
                             EasyToast.show("出售内存成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
