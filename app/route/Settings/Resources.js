@@ -13,6 +13,7 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import ViewShot from "react-native-view-shot";
+import { EasyLoading } from '../../components/Loading';
 
 @connect(({wallet}) => ({...wallet}))
 class Bvote extends React.Component {
@@ -35,8 +36,37 @@ class Bvote extends React.Component {
     this.state = {
       transformY: new Animated.Value(200),
       transformY1: new Animated.Value(-1000),
-      value: false,showShare:false,news:{}};
+      value: false,showShare:false,news:{},
+      cpu_staked: '0 EOS',
+      cpu_available: '0',
+      net_staked:'0 EOS',
+      net_available:'0',
+      ram_used:'0',
+      ram_available:'0',
+    };
   }
+
+  componentDidMount() {
+    EasyLoading.show();
+    this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {
+        this.getAccountInfo();
+        EasyLoading.dismis();
+    }}); 
+  }
+
+  getAccountInfo(){
+    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
+        this.setState({
+            cpu_staked:data.total_resources.cpu_weight,
+            cpu_available:(data.cpu_limit.available / 1000).toFixed(3),
+            net_staked:data.total_resources.net_weight,
+            net_available:(data.net_limit.available / 1024).toFixed(3),
+            ram_used:(data.ram_usage / 1024).toFixed(3),
+            ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(3),
+        });
+    } });
+  } 
+
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
     if (key == 'Calculation'){
@@ -62,8 +92,8 @@ class Bvote extends React.Component {
                   <View  style={styles.outsource} >                               
                       <Text style={styles.headtextSize}>计算资源</Text>
                       <View style={{ flexDirection:'row', alignItems: "center",}}>
-                          <Text style={styles.textSizeone}>可用：0</Text>
-                          <Text style={styles.textSizetwo}>抵押：0.0000 EOS</Text>
+                          <Text style={styles.textSizeone}>可用：{this.state.cpu_available} ms</Text>
+                          <Text style={styles.textSizetwo}>抵押：{this.state.cpu_staked}</Text>
                       </View>
                   </View>
                   <Text style={styles.arrow}>></Text>
@@ -75,8 +105,8 @@ class Bvote extends React.Component {
                   <View  style={styles.outsource} >                               
                       <Text style={styles.headtextSize}>网络资源</Text>
                       <View style={{ flexDirection:'row', alignItems: "center",}}>
-                          <Text style={styles.textSizeone}>可用：0</Text>
-                          <Text style={styles.textSizetwo}>抵押：0.0000 EOS</Text>
+                          <Text style={styles.textSizeone}>可用：{this.state.net_available} KB</Text>
+                          <Text style={styles.textSizetwo}>抵押：{this.state.net_staked}</Text>
                       </View>
                   </View>
                   <Text style={styles.arrow}>></Text>
@@ -88,8 +118,8 @@ class Bvote extends React.Component {
                   <View style={styles.outsource} >                               
                       <Text style={styles.headtextSize}>内存资源</Text>
                       <View style={styles.textoutsource}>
-                          <Text style={styles.textSizeone}>配额：3.01KB</Text>
-                          <Text style={styles.textSizetwo}>占用：2.93 KB</Text>
+                          <Text style={styles.textSizeone}>可用：{this.state.ram_available} KB</Text>
+                          <Text style={styles.textSizetwo}>已用：{this.state.ram_used} KB</Text>
                       </View>
                   </View>
                   <Text style={styles.arrow}>></Text>

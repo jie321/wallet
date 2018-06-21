@@ -62,8 +62,8 @@ class Calculation extends React.Component {
             this.setState({
                 staked:data.total_resources.cpu_weight.replace(" EOS", ""),
                 unstaking:data.refund_request.cpu_amount.replace(" EOS", ""),
-                used:data.cpu_limit.used,
-                available:data.cpu_limit.available,
+                used:(data.cpu_limit.used / 1000).toFixed(3),
+                available:(data.cpu_limit.available / 1000).toFixed(3),
             });
         } });
     } 
@@ -290,11 +290,11 @@ class Calculation extends React.Component {
                     <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
                             <Text style={styles.number}>{this.state.used}</Text>
-                            <Text style={styles.state}>已用(us)</Text>
+                            <Text style={styles.state}>已用(ms)</Text>
                         </View>
                         <View style={styles.frame}>
                             <Text style={styles.number}>{this.state.available}</Text>
-                            <Text style={styles.state}>可用(us)</Text>
+                            <Text style={styles.state}>可用(ms)</Text>
                         </View>
                     </View> 
                   </ImageBackground>  
