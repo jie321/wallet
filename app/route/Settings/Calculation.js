@@ -39,21 +39,181 @@ class Calculation extends React.Component {
             isBuyOneself: true,  
             isBuyForOther: false,  
             delegatebw: "",
-            cpu: '',
-            net: '', 
-            delegate_net: "0",
-            delegate_cpu: '0',
-            undelegate_net: '0',
-            undelegate_cpu: '0',
+            undelegatebw: "",
+            receiver: "",
             balance: '0',
         };
     }
 
     componentDidMount() {
-       
+        EasyLoading.show();
+        this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
+                EasyLoading.dismis();
+                }}); 
     }
 
+    // 抵押
+    delegatebw = () => {
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
 
+        if ((this.state.delegatebw == "")) {
+            EasyToast.show('请输入抵押的EOS数量');
+            return;
+        }
+
+        const view =
+        <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                secureTextEntry={true}
+                keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
+                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：抵押 {this.state.delegatebw} EOS</Text>
+        </View>
+
+        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+
+        if (this.state.password == "") {
+            EasyToast.show('请输入密码');
+            return;
+        }
+        EasyLoading.show();
+
+        var privateKey = this.props.defaultWallet.activePrivate;
+        try {
+            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+            if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+
+                if(this.state.isBuyOneself){
+                    this.state.receiver = this.props.defaultWallet.account;
+                }
+
+                // 抵押
+                Eos.transaction({
+                    actions:[
+                        {
+                            account: 'eosio',
+                            name: 'delegatebw',
+                            authorization: [{
+                                actor: this.props.defaultWallet.account,
+                                permission: 'active'
+                            }],
+                            data:{
+                                from: this.props.defaultWallet.account,
+                                receiver: this.state.receiver,
+                                stake_net_quantity: "0 EOS",
+                                stake_cpu_quantity: this.state.delegatebw + " EOS",
+                                transfer: 0
+                            }
+                        }
+                    ]
+                }, plaintext_privateKey, (r) => {
+                    EasyLoading.dismis();
+                    if(r.data && r.data.transaction_id){
+                        EasyToast.show("抵押成功");
+                    }else if(r.data && JSON.parse(r.data).code != 0){
+                        var jdata = JSON.parse(r.data);
+                        var errmsg = "抵押失败: "+ JSON.stringify(jdata);
+                        alert(errmsg);
+                        // if(jdata.error.details[0].message){
+                        //     errmsg = errmsg + jdata.error.details[0].message;
+                        // }
+                    }
+
+                    // alert(JSON.parse(r.data).code);
+                }); 
+            } else {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+        } catch (e) {
+            EasyLoading.dismis();
+            EasyToast.show('密码错误');
+        }
+        EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() }); 
+    }
+
+    undelegatebw = () => { 
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
+
+        if ((this.state.undelegatebw == "")) {
+            EasyToast.show('请输入赎回的EOS数量');
+            return;
+        }
+
+            const view =
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                    secureTextEntry={true}
+                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1,  }}
+                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：赎回 {this.state.undelegatebw} EOS</Text>
+            </View>
+    
+            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+    
+            if (this.state.password == "") {
+                EasyToast.show('请输入密码');
+                return;
+            }
+            EasyLoading.show();
+
+            var privateKey = this.props.defaultWallet.activePrivate;
+            try {
+                var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+                var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+                if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    // alert("plaintext_privateKey "+plaintext_privateKey);
+
+                    // 解除抵押
+                    Eos.transaction({
+                        actions:[
+                            {
+                                account: 'eosio',
+                                name: 'undelegatebw',
+                                authorization: [{
+                                    actor: this.props.defaultWallet.account,
+                                    permission: 'active'
+                                }],
+                                data:{
+                                    from: this.props.defaultWallet.account,
+                                    receiver: this.props.defaultWallet.account,
+                                    unstake_net_quantity: "0 EOS",
+                                    unstake_cpu_quantity: this.state.undelegatebw + " EOS",
+                                }
+                            }
+                        ]
+                    }, plaintext_privateKey, (r) => {
+                        EasyLoading.dismis();
+                        if(r.data && r.data.transaction_id){
+                            EasyToast.show("解除抵押成功");
+                        }else if(r.data && JSON.parse(r.data).code != 0){
+                            var jdata = JSON.parse(r.data);
+                            var errmsg = "解除抵押失败: "+ JSON.stringify(jdata);
+                            alert(errmsg);
+                        }
+                    }); 
+
+                } else {
+                    EasyLoading.dismis();
+                    EasyToast.show('密码错误');
+                }
+            } catch (e) {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+            EasyDialog.dismis();
+        }, () => { EasyDialog.dismis() });
+    };
  
 
      // 更新"全部/未处理/已处理"按钮的状态  
@@ -117,7 +277,7 @@ class Calculation extends React.Component {
                     </View> 
                   </ImageBackground>  
                     <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '我的抵押')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
                         {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
                     </View>  
                     {this.state.isBuyOneself ? null:
@@ -144,7 +304,7 @@ class Calculation extends React.Component {
                             placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                             onChangeText={(delegatebw) => this.setState({ delegatebw })}
                             />
-                            <Button >
+                            <Button onPress={this.delegatebw.bind()}>
                                 <View style={styles.botn}>
                                     <Text style={styles.botText}>抵押</Text>
                                 </View>
@@ -160,7 +320,7 @@ class Calculation extends React.Component {
                             placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                             onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
                             />
-                            <Button >
+                            <Button onPress={this.undelegatebw.bind()}>
                                 <View style={styles.botn}>
                                     <Text style={styles.botText}>解除</Text>
                                 </View>
