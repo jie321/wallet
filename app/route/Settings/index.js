@@ -32,13 +32,12 @@ class Setting extends React.Component {
     
     this.config = [
       { first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
-      { name: "系统设置", onPress: this.goPage.bind(this, "set") },
       { name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      { name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
       { name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
-      // { first: true, disable: true, name: '消息推送', swt: this.state.openMsg,}
+      { name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
+      { name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
+      { name: "系统设置", onPress: this.goPage.bind(this, "set") },
     ];
-
     
   }
 
@@ -84,6 +83,8 @@ class Setting extends React.Component {
       navigate('Set', {});
     } else if (key == 'Community') {
       navigate('Community', {});
+    }else if (key == 'Helpcenter') {
+      navigate('Helpcenter', {});
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -150,7 +151,7 @@ class Setting extends React.Component {
           <View>
             {this._renderListItem()}
           </View>
-          <View style={{height:60, backgroundColor: UColor.mainColor, flexDirection: "row", justifyContent: "center", alignItems: "center",}}>
+          <View style={{height:60, marginTop: 15, backgroundColor: UColor.mainColor, flexDirection: "row", justifyContent: "center", alignItems: "center",}}>
              <View style={styles.listInfo}>
                 <View style={{flex: 1}}><Text style={{color:UColor.fontColor, fontSize:16}}>消息推送</Text></View>
                 <View style={styles.listInfoRight}>

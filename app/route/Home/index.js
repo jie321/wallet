@@ -135,6 +135,8 @@ class Home extends React.Component {
       }
       navigate('Bvote', {data, balance: this.state.balance});
       // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    }else if (key == 'add') {
+      navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
     }else if (key == 'Resources') {
       navigate('Resources', {});
     } else{
