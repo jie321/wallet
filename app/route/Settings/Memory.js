@@ -58,14 +58,55 @@ class Memory extends React.Component {
         } });
     } 
     
+    getBalance() { 
+        if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+          this.props.dispatch({
+            type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
+              if (data.code == '0') {
+                if (data.data == "") {
+                  this.setState({
+                    balance: '0',
+                  })
+                } else {
+                  account: this.props.defaultWallet.name,
+                  this.setState({ balance: data.data.replace(" EOS", ""), })
+                }
+              } else {
+                EasyToast.show('获取余额失败：' + data.msg);
+              }
+            }
+          })
+        } else {
+          this.setState({ balance: '0'})
+        }
+    }
+
     componentDidMount() {
         EasyLoading.show();
         this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
             this.getAccountInfo();
             EasyLoading.dismis();
         }});   
+
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+        DeviceEventEmitter.addListener('wallet_info', (data) => {
+            this.getBalance();
+          });
+
+        DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
+            this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+            this.getBalance();
+        });
+
+        this.timer = setInterval( ()  =>{
+            this.getBalance();
+        },10000)
     }
 
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
+    
      // 更新"全部/未处理/已处理"按钮的状态  
      _updateBtnSelectedState(currentPressed, array) {  
         if (currentPressed === null || currentPressed === 'undefined' || array === null || array === 'undefined') {  
@@ -278,7 +319,7 @@ class Memory extends React.Component {
                         {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '购买')}  
                         {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '赠人')}  
                     </View>  
-                    <Text style={styles.showytext}>账户余额：2.0051 EOS</Text>
+                    <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
                     {this.state.isBuyOneself ? null:
                     <View style={styles.inptoutsource}>
                         <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
