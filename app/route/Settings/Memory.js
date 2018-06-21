@@ -28,7 +28,7 @@ class Memory extends React.Component {
           title: "内存资源",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
-            backgroundColor: "#586888",
+            backgroundColor: UColor.mainColor,
           },
         };
       };
@@ -89,8 +89,8 @@ class Memory extends React.Component {
     _getButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
-            <View style={[style, selectedSate ? {backgroundColor: '#65CAFF'} : {backgroundColor: '#586888'}]}>  
-                <Text style={[styles.tabText, selectedSate ? {color: 'white'} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <View style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
                     {buttonTitle}  
                 </Text>  
             </View>  
@@ -109,10 +109,10 @@ class Memory extends React.Component {
         }
             const view =
             <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
                     secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
-                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                    keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1, }}
+                    placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}></Text>  
             </View>
     
@@ -190,10 +190,10 @@ class Memory extends React.Component {
 
             const view =
             <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
                     secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
-                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                    keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1, }}
+                    placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}></Text>  
             </View>
     
@@ -278,12 +278,13 @@ class Memory extends React.Component {
                         {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '购买')}  
                         {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '赠人')}  
                     </View>  
+                    <Text style={styles.showytext}>账户余额：2.0051 EOS</Text>
                     {this.state.isBuyOneself ? null:
-                    <View style={{ padding: 20,  justifyContent: 'center',}}>
+                    <View style={styles.inptoutsource}>
                         <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver} 
-                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                             placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                             onChangeText={(receiver) => this.setState({ receiver })}
                             />
@@ -299,7 +300,7 @@ class Memory extends React.Component {
                         <Text style={styles.inptTitle}>购买内存（0.0000 EOS）</Text>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} 
-                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                             placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                             onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
                             />
@@ -314,7 +315,7 @@ class Memory extends React.Component {
                         <Text style={styles.inptTitle}>出售内存（3081 Bytes）</Text>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} 
-                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
                             placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
                             onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
                             />
@@ -363,21 +364,20 @@ const styles = StyleSheet.create({
       frame: {
           flex: 1,
           flexDirection: 'column', 
-          // alignItems: 'center', 
           justifyContent: "center",
       },
   
       number: {
           flex: 2, 
           fontSize: 24, 
-          color: '#FFFFFF', 
+          color: UColor.fontColor, 
           textAlign: 'center',  
       },
   
       state: {
           flex: 1, 
           fontSize: 12, 
-          color: '#FFFFFF', 
+          color: UColor.fontColor, 
           textAlign: 'center',     
       },
       headoutsource: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   
       tablayout: {   
           flexDirection: 'row',  
-          borderBottomColor: '#586888',
+          borderBottomColor: UColor.mainColor,
           borderBottomWidth: 1,
           paddingHorizontal: 10,
           paddingTop: 10,
@@ -415,8 +415,16 @@ const styles = StyleSheet.create({
          fontSize: 15,
       }, 
 
+      showytext: {
+        lineHeight: 40, 
+        paddingRight: 20, 
+        textAlign: 'right', 
+        color: UColor.showy,
+      },
+
       inptoutsource: {
-          padding: 20,  
+          paddingHorizontal: 20,
+          paddingBottom: 20,
           justifyContent: 'center',
       },
       outsource: {
@@ -425,11 +433,11 @@ const styles = StyleSheet.create({
       },
       inpt: {
           flex: 1, 
-          color: '#8696B0', 
+          color: UColor.arrow, 
           fontSize: 15, 
           height: 40, 
           paddingLeft: 10, 
-          backgroundColor: '#FFFFFF', 
+          backgroundColor: UColor.fontColor, 
           borderRadius: 5,
       },
       inptTitlered: {
@@ -454,20 +462,20 @@ const styles = StyleSheet.create({
           width: 86, 
           height: 38,  
           borderRadius: 3, 
-          backgroundColor: '#65CAFF', 
+          backgroundColor: UColor.tintColor, 
           justifyContent: 'center', 
           alignItems: 'center' 
       },
       botText: {
           fontSize: 17, 
-          color: '#fff',
+          color: UColor.fontColor,
       },
       basc: {
           padding: 20,
       },
       basctext :{
           fontSize: 12, 
-          color: '#8696B0', 
+          color: UColor.arrow, 
           lineHeight: 25,
       }
 });
