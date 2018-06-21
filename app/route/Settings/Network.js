@@ -54,19 +54,15 @@ class Network extends React.Component {
 
     // 抵押
     delegatebw = () => {
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
+
         if ((this.state.delegatebw == "")) {
             EasyToast.show('请输入抵押的EOS数量');
             return;
         }
-
-        // alert("this.state.invite" + this.state.invite);
-        // if(this.state.invite > this.props.navigation.state.params.balance) {
-           
-        //         EasyToast.show('输入抵押的EOS数量不能大于EOS余额');
-           
-        //     return;
-        // }
-
 
         const view =
         <View style={{ flexDirection: 'column', alignItems: 'center', }}>
@@ -92,6 +88,10 @@ class Network extends React.Component {
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
 
+                if(this.state.isBuyOneself){
+                    this.state.receiver = this.props.defaultWallet.account;
+                }
+
                 // 抵押
                 Eos.transaction({
                     actions:[
@@ -104,7 +104,7 @@ class Network extends React.Component {
                             }],
                             data:{
                                 from: this.props.defaultWallet.account,
-                                receiver: this.props.defaultWallet.account,
+                                receiver: this.state.receiver,
                                 stake_net_quantity: this.state.delegatebw + " EOS",
                                 stake_cpu_quantity: "0 EOS",
                                 transfer: 0
@@ -117,11 +117,11 @@ class Network extends React.Component {
                         EasyToast.show("抵押成功");
                     }else if(r.data && JSON.parse(r.data).code != 0){
                         var jdata = JSON.parse(r.data);
-                        var errmsg = "抵押失败: ";
-                        if(jdata.error.details[0].message){
-                            errmsg = errmsg + jdata.error.details[0].message;
-                        }
-                        EasyToast.show(errmsg);
+                        var errmsg = "抵押失败: "+ JSON.stringify(jdata);
+                        alert(errmsg);
+                        // if(jdata.error.details[0].message){
+                        //     errmsg = errmsg + jdata.error.details[0].message;
+                        // }
                     }
 
                     // alert(JSON.parse(r.data).code);
@@ -139,6 +139,11 @@ class Network extends React.Component {
     }
 
     undelegatebw = () => { 
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
+            return;
+        }
+        
         if ((this.state.undelegatebw == "")) {
             EasyToast.show('请输入赎回的EOS数量');
             return;
@@ -193,10 +198,7 @@ class Network extends React.Component {
                             EasyToast.show("解除抵押成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
-                            var errmsg = "解除抵押失败: ";
-                            if(jdata.error.details[0].message){
-                                errmsg = errmsg + jdata.error.details[0].message;
-                            }
+                            var errmsg = "解除抵押失败: "+ JSON.stringify(jdata);
                             alert(errmsg);
                         }
                     }); 
@@ -275,7 +277,7 @@ class Network extends React.Component {
                     </View> 
                   </ImageBackground>  
                     <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '我的抵押')}  
+                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
                         {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
                     </View>  
                     {this.state.isBuyOneself ? null:
