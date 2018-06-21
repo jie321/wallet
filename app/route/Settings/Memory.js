@@ -161,11 +161,8 @@ class Memory extends React.Component {
                             EasyToast.show("购买内存成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
-                            var errmsg = "购买内存失败: ";
-                            if(jdata.error.details[0].message){
-                                errmsg = errmsg + jdata.error.details[0].message;
-                            }
-                            EasyToast.show(errmsg);
+                            var errmsg = "购买内存失败: "+ JSON.stringify(jdata);
+                            alert(errmsg);
                         }
                     }); 
                 } else {
@@ -240,11 +237,8 @@ class Memory extends React.Component {
                             EasyToast.show("出售内存成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
-                            var errmsg = "出售内存失败: ";
-                            if(jdata.error.details[0].message){
-                                errmsg = errmsg + jdata.error.details[0].message;
-                            }
-                            EasyToast.show(errmsg);
+                            var errmsg = "出售内存失败: "+ JSON.stringify(jdata);
+                            alert(errmsg);
                         }
                     }); 
                 } else {
