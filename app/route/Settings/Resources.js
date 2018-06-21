@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
@@ -25,7 +26,7 @@ class Bvote extends React.Component {
           title: "资源管理",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
-            backgroundColor: "#586888",
+            backgroundColor: UColor.mainColor,
           },        
         };
       };
@@ -75,10 +76,10 @@ class Bvote extends React.Component {
       navigate('Memory', {});
     }else if (key == 'Network') {
       navigate('Network', {});
-    } if (key == 'Resources') {
+    }else if (key == 'Resources') {
       navigate('Resources', {});
     }else {
-      // EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
@@ -96,7 +97,7 @@ class Bvote extends React.Component {
                           <Text style={styles.textSizetwo}>抵押：{this.state.cpu_staked}</Text>
                       </View>
                   </View>
-                  <Text style={styles.arrow}>></Text>
+                  <Ionicons style={styles.arrow} name="ios-arrow-forward-outline" size={16} color={UColor.fontColor} />
                 </View> 
               </TouchableHighlight>  
               <TouchableHighlight onPress={this.goPage.bind(this, 'Network')}> 
@@ -109,7 +110,7 @@ class Bvote extends React.Component {
                           <Text style={styles.textSizetwo}>抵押：{this.state.net_staked}</Text>
                       </View>
                   </View>
-                  <Text style={styles.arrow}>></Text>
+                  <Ionicons style={styles.arrow} name="ios-arrow-forward-outline" size={16} color={UColor.fontColor} />
                 </View>
               </TouchableHighlight>
               <TouchableHighlight onPress={this.goPage.bind(this, 'Memory')}> 
@@ -122,7 +123,7 @@ class Bvote extends React.Component {
                           <Text style={styles.textSizetwo}>已用：{this.state.ram_used} KB</Text>
                       </View>
                   </View>
-                  <Text style={styles.arrow}>></Text>
+                  <Ionicons style={styles.arrow} name="ios-arrow-forward-outline" size={16} color={UColor.fontColor} />
                 </View> 
               </TouchableHighlight>
             </View>
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
       flexDirection:'row', 
       width: ScreenWidth-12, 
       height: 80,  
-      backgroundColor: '#586888', 
+      backgroundColor:  UColor.mainColor, 
       borderRadius: 5, 
       marginTop: 6,
     },
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     },
     headtextSize: {
       fontSize:16, 
-      color:'#FFFFFF', 
+      color: UColor.fontColor,  
       paddingBottom: 8,
     },
     textoutsource: {
@@ -167,17 +168,17 @@ const styles = StyleSheet.create({
     },
     textSizeone: {
       fontSize: 12, 
-      color: '#8696B0'
+      color: UColor.arrow,
     },
     textSizetwo: {
       marginLeft: 10,
       fontSize: 12, 
-      color: '#8696B0'
+      color: UColor.arrow,
     },
     arrow: {
       width: 40, 
       lineHeight: 80, 
-      color: '#ffffff', 
+      color: UColor.fontColor, 
       textAlign: 'center'
     }
 })
