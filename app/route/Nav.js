@@ -14,6 +14,8 @@ import Web from '../route/Web'
 import Coin from './Coins/Detail'
 import Login from './Login'
 import Forget from './Login/Forget'
+import Helpcenter from './Login/Helpcenter'
+import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Info from './Home/Info'
@@ -199,6 +201,12 @@ const Nav = StackNavigator(
     },
     Forget: {
       screen: Forget
+    },
+    Helpcenter: {
+      screen: Helpcenter
+    },
+    ProblemFeedback: {
+      screen: ProblemFeedback
     },
     Share: {
       screen: Share
