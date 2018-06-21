@@ -28,7 +28,7 @@ class Calculation extends React.Component {
           title: "计算资源",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
-            backgroundColor: "#586888",
+            backgroundColor: UColor.mainColor,
           },
         };
       };
@@ -82,10 +82,10 @@ class Calculation extends React.Component {
 
         const view =
         <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
                 secureTextEntry={true}
-                keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
-                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16,  backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1, }}
+                placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：抵押 {this.state.delegatebw} EOS</Text>
         </View>
 
@@ -168,10 +168,10 @@ class Calculation extends React.Component {
 
             const view =
             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
                     secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1,  }}
-                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+                    keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1,  }}
+                    placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：赎回 {this.state.undelegatebw} EOS</Text>
             </View>
     
@@ -261,8 +261,8 @@ class Calculation extends React.Component {
     _getButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
-            <View style={[style, selectedSate ? {backgroundColor: '#65CAFF'} : {backgroundColor: '#586888'}]}>  
-                <Text style={[styles.tabText, selectedSate ? {color: 'white'} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <View style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
                     {buttonTitle}  
                 </Text>  
             </View>  
@@ -302,11 +302,12 @@ class Calculation extends React.Component {
                         {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
                         {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
                     </View>  
+                    <Text style={styles.showytext}>账户余额：2.0051 EOS</Text>
                     {this.state.isBuyOneself ? null:
                     <View style={styles.inptoutsource}>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} 
-                                returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                                returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
                                 placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                                 onSubmitEditing={() => this.regSubmit()} 
                                 onChangeText={(receiver) => this.setState({ receiver })}
@@ -322,7 +323,7 @@ class Calculation extends React.Component {
                         <Text style={styles.inptTitle}>资产抵押（EOS）</Text>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} 
-                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                             placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                             onChangeText={(delegatebw) => this.setState({ delegatebw })}
                             />
@@ -337,7 +338,7 @@ class Calculation extends React.Component {
                         <Text style={styles.inptTitle}>取消抵押（EOS）</Text>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} 
-                            returnKeyType="go" selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#8696B0" 
+                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
                             placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                             onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
                             />
@@ -385,27 +386,26 @@ const styles = StyleSheet.create({
     frame: {
         flex: 1,
         flexDirection: 'column', 
-        // alignItems: 'center', 
         justifyContent: "center",
     },
 
     number: {
         flex: 2, 
         fontSize: 24, 
-        color: '#FFFFFF', 
+        color: UColor.fontColor,
         textAlign: 'center',  
     },
 
     state: {
         flex: 1, 
         fontSize: 12, 
-        color: '#FFFFFF', 
+        color: UColor.fontColor, 
         textAlign: 'center',     
     },
 
     tablayout: {   
         flexDirection: 'row',  
-        borderBottomColor: '#586888',
+        borderBottomColor: UColor.mainColor,
         borderBottomWidth: 1,
         paddingHorizontal: 10,
         paddingTop: 10,
@@ -424,8 +424,13 @@ const styles = StyleSheet.create({
     tabText: {  
        fontSize: 15,
     },  
-
-
+    
+    showytext: {
+        lineHeight: 40, 
+        paddingRight: 20, 
+        textAlign: 'right', 
+        color: UColor.showy,
+      },
 
     inptoutsource: {
         paddingTop: 20,
@@ -438,11 +443,11 @@ const styles = StyleSheet.create({
     },
     inpt: {
         flex: 1, 
-        color: '#8696B0', 
+        color: UColor.arrow, 
         fontSize: 15, 
         height: 40, 
         paddingLeft: 10, 
-        backgroundColor: '#FFFFFF', 
+        backgroundColor: UColor.fontColor,
         borderRadius: 5,
     },
     inptTitlered: {
@@ -467,20 +472,20 @@ const styles = StyleSheet.create({
         width: 86, 
         height: 38,  
         borderRadius: 3, 
-        backgroundColor: '#65CAFF', 
+        backgroundColor: UColor.tintColor,
         justifyContent: 'center', 
         alignItems: 'center' 
     },
     botText: {
         fontSize: 17, 
-        color: '#fff',
+        color: UColor.fontColor,
     },
     basc: {
         padding: 20,
     },
     basctext :{
         fontSize: 12, 
-        color: '#8696B0', 
+        color: UColor.arrow,  
         lineHeight: 25,
     }
 
