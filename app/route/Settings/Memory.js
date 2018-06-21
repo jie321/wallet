@@ -263,11 +263,11 @@ class Memory extends React.Component {
                     <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
                             <Text style={styles.number}>{this.state.used}</Text>
-                            <Text style={styles.state}>已使用（KB）</Text>
+                            <Text style={styles.state}>已用(KB)</Text>
                         </View>
                         <View style={styles.frame}>
                             <Text style={styles.number}>{this.state.available}</Text>
-                            <Text style={styles.state}> 可用（KB）</Text>
+                            <Text style={styles.state}>可用(KB)</Text>
                         </View>
                     </View> 
                     <View style={styles.headoutsource}>
