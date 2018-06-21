@@ -4,5 +4,6 @@ export default {
   secdColor: '#43536D',
   tintColor: '#65CAFF',
   fontColor: '#ffffff',
-  arrow:'#8696B0',
+  arrow: '#8696B0',
+  showy: '#ff6565',
 };

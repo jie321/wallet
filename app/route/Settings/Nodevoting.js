@@ -137,11 +137,8 @@ class Nodevoting extends React.Component {
                             EasyToast.show("投票成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
-                            var errmsg = "投票失败: ";
-                            if(jdata.error.details[0].message){
-                                errmsg = errmsg + jdata.error.details[0].message;
-                            }
-                            EasyToast.show(errmsg);
+                            var errmsg = "投票失败: "+ JSON.stringify(jdata);
+                            alert(errmsg);
                         }
                     }); 
                 } else {

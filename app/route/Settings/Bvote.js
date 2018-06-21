@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground} from 'react-native';
+import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground,ProgressViewIOS} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -53,8 +53,8 @@ class Bvote extends React.Component {
     }else if (key == 'Imvote') {
       navigate('Imvote', {});
     }else if (key == 'Nodevoting') {
-      navigate('Nodevoting', {data});
-    } else {
+      navigate('Nodevoting', {});
+    }else {
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
@@ -63,8 +63,21 @@ class Bvote extends React.Component {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
+                 <View style={styles.headoutsource}>
+                    <View style={styles.textoutsource}>
+                        <Text style={styles.textSizeone}>进度：24.2218%</Text>
+                        <Text style={styles.textSizetwo}>可投票数：0</Text>
+                    </View>
+                    <View>
+                      <View style={{height: 2, backgroundColor: '#43536D', position:'relative',  top: 3, }}></View> 
+                      <View style={{ flexDirection:'row', alignItems: 'center', position:'absolute', width: '100%', }}>
+                        <View style={{height: 2, width: '24.2218%', backgroundColor: '#65CAFF',}}></View>
+                        <View style={{width: 8, height: 8,  backgroundColor: '#65CAFF', borderRadius: 5,}}></View>
+                      </View>                     
+                    </View>             
+                </View>
                 <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
-                  <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
+                  <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  marginTop: 6, paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
                       <Text style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
                       <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                           <Image source={UImage.votea} style={{width: 30, height: 30, margin: 10,}}/>
@@ -86,17 +99,39 @@ class Bvote extends React.Component {
                         <Image source={UImage.votec} style={{width: 30, height: 30, margin: 10,}}/>
                     </View>     
                   </ImageBackground>  
-                </TouchableHighlight>        
+                </TouchableHighlight>       
             </View>
         )
     }
 }
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection:'column',
-      backgroundColor: UColor.secdColor,
-      padding:6,
-    },
+  container: {
+    flex: 1,
+    flexDirection:'column',
+    backgroundColor: UColor.secdColor,
+    padding:6,
+  },
+  headoutsource: {
+    padding: 20,
+    height: 78,
+    borderRadius: 5, 
+    backgroundColor: '#586888',
+  },
+  textoutsource: {
+    marginBottom: 15,
+    flexDirection:'row', 
+    alignItems: "center",
+    justifyContent: "center", 
+  },
+  textSizeone: {
+    fontSize: 12, 
+    color: '#FFFFFF',
+    marginRight: 10,
+  },
+  textSizetwo: {
+    marginLeft: 10,
+    fontSize: 12, 
+    color: '#FFFFFF'
+  },
 })
 export default Bvote;

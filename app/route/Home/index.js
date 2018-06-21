@@ -115,18 +115,30 @@ class Home extends React.Component {
 
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
-    if (key == 'Bvote') {
+    if (key == 'qr') {
+      AnalyticsUtil.onEvent('Receipt_code');
+      if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+        this._setModalVisible();
+      } else {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });
+      }
+    }else if (key == 'Bvote') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
         }, () => { EasyDialog.dismis() });  
-
         return;
       }
-
       navigate('Bvote', {data, balance: this.state.balance});
       // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    }else if (key == 'add') {
+      navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
+    }else if (key == 'Resources') {
+      navigate('Resources', {});
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -143,19 +155,6 @@ class Home extends React.Component {
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
     }
-  }
-
-  qr() {
-    AnalyticsUtil.onEvent('Receipt_code');
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
-      this._setModalVisible();
-    } else {
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
-    }
-
   }
 
   _setModalVisible() {
@@ -248,7 +247,7 @@ class Home extends React.Component {
                 </View>
                 <ImageBackground style={{ justifyContent: "center" }} source={UImage.home_bg} resizeMode="cover">
                   <View style={{ height: 70, flexDirection: "row",backgroundColor:'#43536D', borderRadius: 5,  marginTop: 20,marginBottom: 20,marginRight: 10,marginLeft: 10,}}>
-                    <Button onPress={() => this.qr()} style={{flex: 1, justifyContent: "center", alignItems: 'center',padding: 5,}}>
+                    <Button onPress={this.onPress.bind(this, 'qr')} style={{flex: 1, justifyContent: "center", alignItems: 'center',padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
                         <Image source={UImage.qr} style={styles.imgBtn} />
                         <Text style={{color: '#8696B0',fontSize: 14,}}>收币</Text>
@@ -267,19 +266,19 @@ class Home extends React.Component {
                       </View>                      
                     </Button>
                     
-                    {/* <Button  onPress={this.onPress.bind('add', this)}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
+                    <Button  onPress={this.onPress.bind(this, 'Resources')}  style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
-                        <Image source={UImage.nash} style={styles.imgBtn} />
-                        <Text style={{color: '#8696B0',fontSize: 14,}}>NASH映射</Text>
+                        <Image source={UImage.resources} style={styles.imgBtn} />
+                        <Text style={{color: '#8696B0',fontSize: 14,}}>资源管理</Text>
                       </View>
-                    </Button> */}
+                    </Button>
                   </View>
               </ImageBackground>
               <View style={{height: 75, backgroundColor: UColor.mainColor, flexDirection: "row",justifyContent: "space-between",borderBottomColor: '#65CAFF', borderBottomWidth: 2,}}>
                   <View style={{flex: 1, flexDirection: "column", alignItems: 'flex-start', justifyContent: "center",}}>
-                    <Text style={{ marginLeft: 10, fontSize: 16, color: UColor.fontColor }}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产（￥）</Text>
+                    <Text style={{ marginLeft: 10, fontSize: 16, color: UColor.fontColor }}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产（EOS）</Text>
                     <View style={{flexDirection: "row",alignItems: 'center', justifyContent: "center", }}>
-                      <Text style={{ marginLeft: 10, fontSize: 20, color: UColor.fontColor }}>≈{this.state.balance}</Text>
+                      <Text style={{ marginLeft: 10, fontSize: 20, color: UColor.fontColor }}>={this.state.balance}</Text>
                       {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
                     </View>
                   </View>
@@ -311,7 +310,7 @@ class Home extends React.Component {
                     />
                     <View style={{ width: '100%', height: maxHeight / 2.5, flexDirection: "column", paddingLeft: 20, paddingTop: 15, alignItems: 'flex-start', borderTopWidth: 1, borderTopColor: '#586888', }}>
                       <Button onPress={() => this.createWallet()} style={{ height: 40, }}>
-                        <View style={{ flex: 1, flexDirection: "row", }}>
+                        <View style={{ flex: 1, flexDirection: "row",alignItems: 'center', }}>
                           <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
                           <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>创建钱包</Text>
                         </View>
@@ -391,7 +390,7 @@ class Home extends React.Component {
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: 'center', }}>
                       <View>
                         <Text style={{ fontSize: 18, color: UColor.fontColor, textAlign: 'right' }}>{this.state.balance}</Text>
-                        <Text style={{ fontSize: 12, color: "#8696B0", textAlign: 'right', marginTop: 3 }}>≈（￥）{rowData.value} </Text>
+                        <Text style={{ fontSize: 12, color: "#8696B0", textAlign: 'right', marginTop: 3 }}>≈（￥）{(this.state.balance*rowData.value).toFixed(2)} </Text>
                       </View>
                       {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
                         <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />

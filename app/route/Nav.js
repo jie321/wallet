@@ -14,6 +14,8 @@ import Web from '../route/Web'
 import Coin from './Coins/Detail'
 import Login from './Login'
 import Forget from './Login/Forget'
+import Helpcenter from './Login/Helpcenter'
+import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Info from './Home/Info'
@@ -43,10 +45,14 @@ import { connect } from 'react-redux'
 import SplashScreen from 'react-native-splash-screen'
 import AgentInfo from './Settings/AgentInfo'
 import Imvote from './Settings/Imvote'
+import Resources from './Settings/Resources'
 import Set from './Settings/Set'
 import Delegate from './Settings/Delegate'
 import Nodevoting from './Settings/Nodevoting'
 import Bvote from './Settings/Bvote'
+import Calculation from './Settings/Calculation'
+import Memory from './Settings/Memory'
+import Network from './Settings/Network'
 import Boot from './Boot'
 import moment from 'moment';
 import Button from '../components/Button'
@@ -142,6 +148,9 @@ const Nav = StackNavigator(
     CreateWallet: {
       screen: CreateWallet
     },
+    Calculation: {
+      screen: Calculation
+    },
     BackupWords: {
       screen: BackupWords
     },
@@ -172,6 +181,12 @@ const Nav = StackNavigator(
     ModifyPassword: {
       screen: ModifyPassword
     },
+    Memory: {
+      screen: Memory
+    },
+    Network: {
+      screen: Network
+    },
     BarCode: {
       screen : BarCode
     },
@@ -187,11 +202,20 @@ const Nav = StackNavigator(
     Forget: {
       screen: Forget
     },
+    Helpcenter: {
+      screen: Helpcenter
+    },
+    ProblemFeedback: {
+      screen: ProblemFeedback
+    },
     Share: {
       screen: Share
     },
     Bvote: {
       screen: Bvote
+    },
+    Resources: {
+      screen: Resources
     },
     Set: {
       screen: Set
@@ -413,10 +437,10 @@ class Route extends React.Component {
             if (isInstalled) {
               WeChat.shareToSession({ type: 'imageFile', imageUrl: uri })
                 .catch((error) => {
-                  ToastShort(error.message);
+                  EasyToast.show(error.message);
                 });
             } else {
-              ToastShort('没有安装微信软件，请您安装微信之后再试');
+              EasyToast.show('没有安装微信软件，请您安装微信之后再试');
             }
           });
       });
@@ -428,10 +452,10 @@ class Route extends React.Component {
             if (isInstalled) {
               WeChat.shareToTimeline({ type: 'imageFile', imageUrl: uri })
                 .catch((error) => {
-                  ToastShort(error.message);
+                  EasyToast.show(error.message);
                 });
             } else {
-              ToastShort('没有安装微信软件，请您安装微信之后再试');
+              EasyToast.show('没有安装微信软件，请您安装微信之后再试');
             }
           });
       });
@@ -612,19 +636,19 @@ class Route extends React.Component {
                       <View style={{ height: 125 }}>
                         <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
                         <View style={{ flexDirection: "row" }}>
-                          <Button  style={{ width: '33%', justifyContent: 'center' }}>
+                          <Button style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(1) }}>
                             <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
                               <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
                               <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
                             </View>
                           </Button>
-                          <Button  style={{ width: '33%', justifyContent: 'center' }}>
+                          <Button  style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(2) }}>
                             <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
                               <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
                               <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
                             </View>
                           </Button>
-                          <Button  style={{ width: '33%' }}>
+                          <Button  style={{ width: '33%' }} onPress={() => { this.shareAction(3) }}>
                             <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
                               <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
                               <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>

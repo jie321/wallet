@@ -100,7 +100,7 @@ class Info extends React.Component {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={{ fontSize: 20, color: '#fff' }}>{this.state.balance}</Text>
-                    <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text>
+                    <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {(this.state.balance*c.value).toFixed(2)} ￥</Text>
                 </View>
                 <View style={styles.tab1}>
                     <Text style={{ fontSize: 14, color: '#8696B0', margin: 5 }}>最近交易记录</Text>

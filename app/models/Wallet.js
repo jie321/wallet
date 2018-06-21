@@ -128,11 +128,11 @@ export default {
                 DeviceEventEmitter.emit('wallet_10');
                 return;
             }
-            if (defaultWallet != null && defaultWallet.account != null) {
-                if (callback) callback({ error: '暂时只能注册一个账号' });
-                DeviceEventEmitter.emit('wallet_10');
-                return;
-            }
+            // if (defaultWallet != null && defaultWallet.account != null) {
+            //     if (callback) callback({ error: '暂时只能注册一个账号' });
+            //     DeviceEventEmitter.emit('wallet_10');
+            //     return;
+            // }
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == wallet.account) {
                     if (callback) callback({ error: 'account exist' });
@@ -225,9 +225,12 @@ export default {
                 if (walletArr[i].account == payload._wallet.account) {
                     walletArr[i] = payload._wallet;
                     yield call(store.save, 'walletArr', walletArr);
+                    yield call(store.save, 'defaultWallet', payload._wallet);
+                    yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload._wallet } });
                 }
             }
             DeviceEventEmitter.emit('modify_password', payload);
+            DeviceEventEmitter.emit('updateDefaultWallet', payload);
         }, *delWallet({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             var defaultWallet = yield call(store.get, 'defaultWallet');
