@@ -135,7 +135,7 @@ class Home extends React.Component {
       }
       navigate('Bvote', {data, balance: this.state.balance});
       // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
-    }else if (key == 'add') {
+    }else if (key == 'sweet') {
       navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
     }else if (key == 'Resources') {
       navigate('Resources', {});
@@ -253,7 +253,7 @@ class Home extends React.Component {
                         <Text style={{color: '#8696B0',fontSize: 14,}}>收币</Text>
                       </View>
                     </Button>
-                    <Button onPress={this.onPress.bind(this, 'add')} style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
+                    <Button onPress={this.onPress.bind(this, 'sweet')} style={{flex: 1, justifyContent: "center", alignItems: 'center', padding: 5,}}>
                       <View style={{flex:1, alignItems: 'center', justifyContent: "center",}}>
                         <Image source={UImage.candy} style={styles.imgBtn} />
                         <Text style={{color: '#8696B0',fontSize: 14,}}>领取糖果</Text>
