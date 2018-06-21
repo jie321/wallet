@@ -5,7 +5,7 @@ import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Item from '../../components/Item'
-import Icon from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
@@ -20,7 +20,7 @@ class WalletManage extends React.Component {
   static navigationOptions = {
     headerTitle:'钱包管理',
     headerStyle:{
-              backgroundColor:"#586888",
+              backgroundColor:UColor.mainColor,
               paddingTop:20,
           },  
   };
@@ -81,19 +81,19 @@ class WalletManage extends React.Component {
           renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
           style={{ backgroundColor: UColor.secdColor }}
           enableEmptySections={true}
-          refreshControl={<RefreshControl refreshing={false} tintColor="#fff" colors={['#ddd', UColor.tintColor]} progressBackgroundColor="#ffffff" />}
+          refreshControl={<RefreshControl refreshing={false} tintColor={UColor.fontColor} colors={['#ddd', UColor.tintColor]} progressBackgroundColor={UColor.fontColor} />}
           dataSource={this.state.dataSource.cloneWithRows(this.props.coinList == null ? [] : this.props.coinList)}
           renderRow={(rowData, sectionID, rowID) => (
             <Button onPress={this.onPress.bind(this, rowData, sectionID, rowID)}>
               <View style={styles.row} >  
                   <View style={styles.top}>
                       <View style={{flexDirection:"row",flex:1,}}>
-                          <Text style={{fontSize:14,color:'#FFFFFF',textAlign:'left',paddingLeft:10,paddingRight:10,}}>{rowData.name}</Text>
+                          <Text style={{fontSize:14,color:UColor.fontColor,textAlign:'left',paddingLeft:10,paddingRight:10,}}>{rowData.name}</Text>
                           {/* <Text style={{height:18,lineHeight:18,fontSize:10,color:'#2ACFFF',textAlign:'left',borderRadius:10,borderColor:'#2ACFFF',borderWidth:1,justifyContent:'center',alignItems:'center',paddingLeft:8,paddingRight:8,}}>未备份</Text> */}
                       </View>
                       <View style={{flexDirection:"row",flex:1, }}>               
-                          <Text style={{flex:1,fontSize:14,color:'#8696B0',textAlign:'left',justifyContent:'center',alignItems:'center',paddingLeft:10,}} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
-                          <Text style={{flex:1,fontSize:14,color:"#8696B0",textAlign:'right',justifyContent:'center',alignItems:'center',}}>＞</Text>     
+                          <Text style={{flex:1,fontSize:14,color:UColor.arrow,textAlign:'left',justifyContent:'center',alignItems:'center',paddingLeft:10,}} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+                          <Ionicons style={{flex:1,color:UColor.fontColor,textAlign:'right',justifyContent:'center',alignItems:'center',}} name="ios-arrow-forward-outline" size={20} />     
                       </View>
                   </View>                       
                   <View style={{flex:1,alignItems:'flex-end',justifyContent:'center',}}>
@@ -109,15 +109,15 @@ class WalletManage extends React.Component {
       </View> 
       <View style={styles.footer}>
           <Button  onPress={() => this.createWallet()} style={{flex:1}}>
-              <View  style={{flex:1, alignItems: 'center', justifyContent: 'center', flexDirection:'row',marginRight:1,backgroundColor:UColor.mainColor,}}>
-                  <Image source={UImage.xin1} style={{width:30,height:30}} />
-                  <Text style={{marginLeft:20,fontSize:18,color:UColor.fontColor}}>创建钱包</Text>
+              <View  style={styles.footoutsource}>
+                  <Image source={UImage.xin1} style={styles.footimg}/>
+                  <Text style={styles.footText}>创建钱包</Text>
               </View>
           </Button>
           <Button  onPress={this.importWallet.bind(this)} style={{flex:1}}>
-              <View style={{flex:1, alignItems: 'center', justifyContent: 'center', flexDirection:'row',marginLeft:1,backgroundColor:UColor.mainColor,}}>
-                  <Image source={UImage.xin0} style={{width:30,height:30}} />
-                  <Text style={{marginLeft:20,fontSize:18,color:UColor.fontColor}}>导入钱包</Text>
+              <View style={styles.footoutsource}>
+                  <Image source={UImage.xin0} style={styles.footimg}/>
+                  <Text style={styles.footText}>导入钱包</Text>
               </View>
           </Button>
       </View> 
@@ -152,83 +152,28 @@ footer:{
     height:60,    
     flexDirection:'row',  
     position:'absolute',
-    backgroundColor:'#43536D',
+    backgroundColor:UColor.secdColor,
     bottom: 0,
     left: 0,
     right: 0,
 },
-
-pupuo:{  
-    backgroundColor: '#ECECF0',  
-},  
-// modal的样式  
-modalStyle: {  
-    alignItems: 'center',  
-    justifyContent:'center',  
-    flex:1,  
-},  
-// modal上子View的样式  
-subView:{  
-    marginLeft:10,  
-    marginRight:10,  
-    backgroundColor:'#fff',  
-    alignSelf: 'stretch',  
-    justifyContent:'center',  
-    borderRadius: 10,  
-    borderWidth: 0.5,  
-    borderColor:'#ccc',  
+footoutsource:{
+    flex:1, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    flexDirection:'row',
+    marginRight:1,
+    backgroundColor:UColor.mainColor,
 },
-closeText:{
+footimg: {
     width:30,
     height:30,
-    marginBottom:0,
-    color:'#CBCBCB',
-    fontSize:28,
-},  
-// 标题  
-titleText:{ 
-    color:'#000000',  
-    marginBottom:5,  
-    fontSize:18,  
-    fontWeight:'bold',  
-    textAlign:'center',  
 },
-//警告提示  
-noticeText:{
-    color:'#F45353',
-    fontSize: 14,
-    marginLeft:15,
-    marginRight:15, 
-    textAlign:'left',  
+footText:{
+    marginLeft:20,
+    fontSize:18,
+    color:UColor.fontColor
 },
-// 内容  
-contentText:{  
-    margin: 20,
-    alignItems: 'center', 
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection:"row",   
-},  
-textContent:{
-    color:'#999999',
-    fontSize: 14, 
-    textAlign:'left',
-    lineHeight:25,
-},
-// 按钮  
-buttonView:{  
-    margin:10 ,
-    height: 46, 
-    borderRadius: 6,  
-    backgroundColor: '#65CAFF', 
-    justifyContent: 'center', 
-    alignItems: 'center'  
-},  
-buttonText:{
-    fontSize: 16, 
-    color: '#fff'
-},
-
 });
 
 export default WalletManage;
