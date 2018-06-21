@@ -333,7 +333,6 @@ class Calculation extends React.Component {
                             </Button> 
                         </View>
                     </View>
-                    {this.state.isBuyForOther ? null:
                     <View style={styles.inptoutsource}>
                         <Text style={styles.inptTitle}>取消抵押（EOS）</Text>
                         <View style={styles.outsource}>
@@ -348,7 +347,7 @@ class Calculation extends React.Component {
                                 </View>
                             </Button> 
                         </View>
-                    </View>}
+                    </View>
                     <View style={styles.basc}>
                         <Text style={styles.basctext}>重要提示</Text>
                         <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
