@@ -274,9 +274,9 @@ class Home extends React.Component {
               </ImageBackground>
               <View style={{height: 75, backgroundColor: UColor.mainColor, flexDirection: "row",justifyContent: "space-between",borderBottomColor: '#65CAFF', borderBottomWidth: 2,}}>
                   <View style={{flex: 1, flexDirection: "column", alignItems: 'flex-start', justifyContent: "center",}}>
-                    <Text style={{ marginLeft: 10, fontSize: 16, color: UColor.fontColor }}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产（￥）</Text>
+                    <Text style={{ marginLeft: 10, fontSize: 16, color: UColor.fontColor }}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产（EOS）</Text>
                     <View style={{flexDirection: "row",alignItems: 'center', justifyContent: "center", }}>
-                      <Text style={{ marginLeft: 10, fontSize: 20, color: UColor.fontColor }}>≈{this.state.balance}</Text>
+                      <Text style={{ marginLeft: 10, fontSize: 20, color: UColor.fontColor }}>={this.state.balance}</Text>
                       {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
                     </View>
                   </View>
@@ -388,7 +388,7 @@ class Home extends React.Component {
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: 'center', }}>
                       <View>
                         <Text style={{ fontSize: 18, color: UColor.fontColor, textAlign: 'right' }}>{this.state.balance}</Text>
-                        <Text style={{ fontSize: 12, color: "#8696B0", textAlign: 'right', marginTop: 3 }}>≈（￥）{rowData.value} </Text>
+                        <Text style={{ fontSize: 12, color: "#8696B0", textAlign: 'right', marginTop: 3 }}>≈（￥）{(this.state.balance*rowData.value).toFixed(2)} </Text>
                       </View>
                       {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
                         <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />
