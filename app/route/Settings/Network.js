@@ -42,14 +42,30 @@ class Network extends React.Component {
             undelegatebw: "",
             receiver: "",
             balance: '0',
+            staked: '0', // 已抵押的，包括自己抵押和别人为自己抵押的
+            unstaking: '0', // 赎回中的
+            used: '0', // 已使用的
+            available: '0', // 可用的
         };
     }
 
     componentDidMount() {
         EasyLoading.show();
         this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
-                EasyLoading.dismis();
-                }}); 
+            this.getAccountInfo();
+            EasyLoading.dismis();
+            }}); 
+    }
+
+    getAccountInfo(){
+        this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
+            this.setState({
+                staked:data.total_resources.net_weight.replace(" EOS", ""),
+                unstaking:data.refund_request.net_amount.replace(" EOS", ""),
+                used:(data.net_limit.used / 1024).toFixed(3),
+                available:(data.net_limit.available / 1024).toFixed(3),
+            });
+        } });
     }
 
     // 抵押
@@ -114,6 +130,7 @@ class Network extends React.Component {
                 }, plaintext_privateKey, (r) => {
                     EasyLoading.dismis();
                     if(r.data && r.data.transaction_id){
+                        this.getAccountInfo();
                         EasyToast.show("抵押成功");
                     }else if(r.data && JSON.parse(r.data).code != 0){
                         var jdata = JSON.parse(r.data);
@@ -174,6 +191,10 @@ class Network extends React.Component {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
 
+                    if(this.state.isBuyOneself){
+                        this.state.receiver = this.props.defaultWallet.account;
+                    }
+
                     // 解除抵押
                     Eos.transaction({
                         actions:[
@@ -186,7 +207,7 @@ class Network extends React.Component {
                                 }],
                                 data:{
                                     from: this.props.defaultWallet.account,
-                                    receiver: this.props.defaultWallet.account,
+                                    receiver: this.state.receiver,
                                     unstake_net_quantity: this.state.undelegatebw + " EOS",
                                     unstake_cpu_quantity: "0 EOS",
                                 }
@@ -195,6 +216,7 @@ class Network extends React.Component {
                     }, plaintext_privateKey, (r) => {
                         EasyLoading.dismis();
                         if(r.data && r.data.transaction_id){
+                            this.getAccountInfo();
                             EasyToast.show("解除抵押成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
@@ -257,22 +279,22 @@ class Network extends React.Component {
                   <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
                     <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>0</Text>
-                            <Text style={styles.state}>抵押（EOS）</Text>
+                            <Text style={styles.number}>{this.state.staked}</Text>
+                            <Text style={styles.state}>抵押(EOS)</Text>
                         </View>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>0</Text>
-                            <Text style={styles.state}>赎回中（EOS）</Text>
+                            <Text style={styles.number}>{this.state.unstaking}</Text>
+                            <Text style={styles.state}>赎回中(EOS)</Text>
                         </View>
                     </View> 
                     <View style={styles.frameoutsource}>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>0</Text>
-                            <Text style={styles.state}>占用</Text>
+                            <Text style={styles.number}>{this.state.used}</Text>
+                            <Text style={styles.state}>已用(KB)</Text>
                         </View>
                         <View style={styles.frame}>
-                            <Text style={styles.number}>0</Text>
-                            <Text style={styles.state}>可用</Text>
+                            <Text style={styles.number}>{this.state.available}</Text>
+                            <Text style={styles.state}>可用(KB)</Text>
                         </View>
                     </View> 
                   </ImageBackground>  
