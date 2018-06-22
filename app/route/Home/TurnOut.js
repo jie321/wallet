@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { NativeModules, StatusBar, BackHandler, DeviceEventEmitter, InteractionManager, Clipboard, ListView, StyleSheet, Image, ScrollView, View, RefreshControl, Text, TextInput, Platform, Dimensions, Modal, TouchableHighlight, } from 'react-native';
+import { NativeModules, StatusBar, BackHandler, DeviceEventEmitter, InteractionManager, Clipboard, ListView, StyleSheet, Image, ScrollView, View, RefreshControl, Text, TextInput, Platform, Dimensions, Modal, TouchableHighlight,TouchableOpacity } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -15,7 +15,7 @@ import { Eos } from "react-native-eosjs";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
 class TurnOut extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -24,8 +24,8 @@ class TurnOut extends React.Component {
             // headerTitle: '转出' + params.coins.name,
             headerTitle: '转出EOS',
             headerStyle: {
-                backgroundColor: "#586888",
-                paddingTop: 20,
+                paddingTop:Platform.OS == 'ios' ? 30 : 20,
+                backgroundColor: UColor.mainColor,
             },
         };
     };
@@ -131,14 +131,12 @@ class TurnOut extends React.Component {
         this._setModalVisible();
 
         const view =
-            <View style={{ flexDirection: 'row' }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
-                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+            <View style={styles.passoutsource}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
+                    placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             </View>
-
-        EasyDialog.show("密码", view, "确认", "取消", () => {
+            EasyDialog.show("密码", view, "确认", "取消", () => {
 
             if (this.state.password == "") {
                 EasyToast.show('请输入密码');
@@ -201,84 +199,107 @@ class TurnOut extends React.Component {
         this._lpass.blur();
     }
     scan() {
-          const { navigate } = this.props.navigation;
-          navigate('BarCode', {isTurnOut:true});
-      }
+        const { navigate } = this.props.navigation;
+        navigate('BarCode', {isTurnOut:true});
+    }
+
+    dismissKeyboardClick() {
+        dismissKeyboard();
+    }
 
     render() {
         const c = this.props.navigation.state.params.coins;
         return (
-            <View style={styles.container}>
+        <View style={styles.container}>
+            <ScrollView  keyboardShouldPersistTaps="always">
+              <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 20, color: '#fff' }}>{this.state.balance}</Text>
+                    <Text style={styles.headertext}>{this.state.balance}</Text>
                     {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
                 </View>
 
-                <View style={styles.tab2}>
-                    <View style={{ backgroundColor: '#43536D', flexDirection: 'column', padding: 20, flex: 1, }}>
-                        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#586888', marginBottom: 10, paddingLeft: 10, }}>
-                            <View style={{ height: 40, flex: 1, justifyContent: 'center',flexDirection: "row", }} >
-                                <TextInput value={this.state.toAccount}
-                                    ref={(ref) => this._raccount = ref}
-                                    onChangeText={(toAccount) => this.setState({ toAccount })}
-                                    returnKeyType="next" selectionColor="#65CAFF" style={{ flex:1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }}
-                                    placeholderTextColor="#8696B0" placeholder="收款人账号" underlineColorAndroid="transparent" />
-                               <View style={{ width:30, flexDirection: "row", alignSelf: 'center', justifyContent: "flex-end", marginRight: 10 }}>
+                <View style={styles.taboutsource}>
+                    <View style={styles.outsource}>
+                        <View style={styles.inptoutsource}>
+                            <View style={styles.accountoue} >
+                                <TextInput ref={(ref) => this._raccount = ref}  value={this.state.toAccount} returnKeyType="next"   
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}      
+                                    placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  
+                                    onChangeText={(toAccount) => this.setState({ toAccount })} 
+                                />
+                               <View style={styles.scanning}>
                                     <Button onPress={() => this.scan()}>                                  
-                                        <Image source={UImage.scan} style={{width:30,height:30,justifyContent: 'center', alignItems: 'center'}} />                                 
+                                        <Image source={UImage.scan} style={styles.scanningimg} />                                 
                                     </Button>
                                 </View>
                             </View>
                         </View>
-                        <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-                        <View style={{ paddingLeft: 10, height: 40, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: '#586888', justifyContent: 'center', }} >
-                            <TextInput value={this.state.amount}
-                                ref={(ref) => this._ramount = ref}
+                        <View style={styles.separate}></View>
+                        <View style={styles.textinptoue} >
+                            <TextInput  ref={(ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
+                                selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
+                                placeholder="转账金额"  underlineColorAndroid="transparent"   keyboardType="numeric"
                                 onChangeText={(amount) => this.setState({ amount: this.chkPrice(amount) })}
-                                returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="转账金额" underlineColorAndroid="transparent" keyboardType="numeric" />
+                                />
                         </View>
-                        <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-
-                        <View style={{ paddingLeft: 10, height: 40, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: '#586888', justifyContent: 'center', }} >
-                            <TextInput value={this.state.note}
+                        <View style={styles.separate}></View>
+                        <View style={styles.textinptoue} >
+                            <TextInput  ref={(ref) => this._rnote = ref}  value={this.state.note} returnKeyType="next"
+                                selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
+                                placeholder="备注" underlineColorAndroid="transparent" keyboardType="default" maxLength={20} 
                                 onChangeText={(note) => this.setState({ note })}
-                                ref={(ref) => this._rnote = ref}
-                                returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2, }} placeholderTextColor="#8696B0" placeholder="备注" underlineColorAndroid="transparent" maxLength={20} />
+                                />
                         </View>
-                        <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-                        <Button onPress={this._rightButtonClick.bind(this)} style={{ height: 85, marginTop: 60, }}>
-                            <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-                                <Text style={{ fontSize: 15, color: '#fff' }}>下一步</Text>
+                        <View style={styles.separate}></View>
+                        <Button onPress={this._rightButtonClick.bind(this)} style={styles.btnnextstep}>
+                            <View style={styles.nextstep}>
+                                <Text style={styles.nextsteptext}>下一步</Text>
                             </View>
                         </Button>
                     </View>
                 </View>
-
+              </TouchableOpacity>
+            </ScrollView>
                 <View style={styles.pupuo}>
                     <Modal animationType='none' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
                         <View style={styles.modalStyle}>
                             <View style={styles.subView} >
                                 <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                                    <Text style={{ width: 30, height: 30, marginBottom: 0, color: '#CBCBCB', fontSize: 28, }}>×</Text>
+                                    <Text style={styles.buttontext}>×</Text>
                                 </Button>
                                 {/* <Text style={styles.titleText}>转出 {c.name}</Text> */}
                                 <Text style={styles.contentText}>标签名称：{this.state.note}</Text>
                                 <Text style={styles.contentText}>转出地址：{this.state.toAccount}</Text>
                                 <Text style={styles.contentText}> 数量：{this.state.amount}</Text>
                                 <Button onPress={() => { this.inputPwd() }}>
-                                    <View style={{ margin: 10, height: 40, borderRadius: 6, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: 16, color: '#fff' }}>确认转出</Text>
+                                    <View style={styles.btnoutsource}>
+                                        <Text style={styles.btntext}>确认转出</Text>
                                     </View>
                                 </Button>
                             </View>
                         </View>
                     </Modal>
                 </View>
-            </View>
+        </View>
         )
     }
 }
 const styles = StyleSheet.create({
+    passoutsource: {
+        flexDirection: 'column', 
+        alignItems: 'center'
+    },
+    inptpass: {
+        color: UColor.tintColor,
+        height: 45,
+        width: 160,
+        paddingBottom: 5,
+        fontSize: 16,
+        backgroundColor: UColor.fontColor,
+        borderBottomColor: UColor.mainColor,
+        borderBottomWidth: 1,
+    },
+
     container: {
         flex: 1,
         flexDirection: 'column',
@@ -291,7 +312,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         margin: 5,
         borderRadius: 5,
-        backgroundColor: '#586888',
+        backgroundColor: UColor.mainColor,
+    },
+    headertext: {
+        fontSize: 20,
+        color: UColor.fontColor
     },
     row: {
         height: 90,
@@ -311,11 +336,13 @@ const styles = StyleSheet.create({
         height: 50,
         flexDirection: 'row',
         position: 'absolute',
-        backgroundColor: '#43536D',
+        backgroundColor: UColor.secdColor,
         bottom: 0,
         left: 0,
         right: 0,
     },
+
+
 
     pupuo: {
         backgroundColor: '#ECECF0',
@@ -331,12 +358,22 @@ const styles = StyleSheet.create({
     subView: {
         marginLeft: 10,
         marginRight: 10,
-        backgroundColor: '#fff',
+        backgroundColor: UColor.fontColor,
         alignSelf: 'stretch',
         justifyContent: 'center',
         borderRadius: 10,
         borderWidth: 0.5,
         borderColor: '#ccc',
+    },
+    buttonView: {
+        alignItems: 'flex-end',
+    },
+    buttontext: {
+        width: 30,
+        height: 30,
+        color: '#CBCBCB',
+        marginBottom: 0,
+        fontSize: 28,
     },
     // 标题  
     titleText: {
@@ -355,15 +392,99 @@ const styles = StyleSheet.create({
 
     },
     // 按钮  
-    buttonView: {
-        alignItems: 'flex-end',
+    btnoutsource: {
+        margin: 10,
+        height: 40,
+        borderRadius: 6,
+        backgroundColor: UColor.tintColor,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    tab1: {
-        flex: 1,
+    btntext: {
+        fontSize: 16,
+        color: UColor.fontColor
     },
-    tab2: {
+
+   
+    taboutsource: {
         flex: 1,
         flexDirection: 'column',
+    },
+    outsource: {
+        backgroundColor: UColor.secdColor,
+        flexDirection: 'column',
+        padding: 20,
+        flex: 1,
+    },
+    inptoutsource: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: UColor.mainColor,
+        marginBottom: 10,
+        paddingLeft: 10,
+    },
+    accountoue: {
+        height: 40,
+        flex: 1,
+        justifyContent: 'center',
+        flexDirection: "row",
+    },
+
+    inpt: {
+        flex: 1,
+        color: UColor.arrow,
+        fontSize: 15,
+        height: 40,
+        paddingLeft: 2
+    },
+    scanning: {
+        width: 30,
+        flexDirection: "row",
+        alignSelf: 'center',
+        justifyContent: "flex-end",
+        marginRight: 10
+    },
+    scanningimg: {
+        width:30,
+        height:30,
+        justifyContent: 'center', 
+        alignItems: 'center'
+    },
+    textinptoue: {
+        paddingLeft: 10,
+        height: 40,
+        marginBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: UColor.mainColor,
+        justifyContent: 'center',
+    },
+
+    separate: {
+        height: 0.5,
+        backgroundColor: UColor.secdColor
+    },
+
+    textinpt: {
+        color: UColor.arrow,
+        fontSize: 15,
+        height: 40,
+        paddingLeft: 2
+    },
+    btnnextstep: {
+        height: 85,
+        marginTop: 60,
+    },
+    nextstep: {
+        height: 45,
+        backgroundColor: UColor.tintColor,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 20,
+        borderRadius: 5
+    },
+    nextsteptext: {
+        fontSize: 15,
+        color: UColor.fontColor
     }
 
 

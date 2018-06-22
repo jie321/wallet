@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,TextInput} from 'react-native';
+import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,TextInput,TouchableOpacity} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
@@ -15,7 +15,7 @@ import Constants from '../../utils/Constants'
 
 var ScreenWidth = Dimensions.get('window').width;
 var tick=60;
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({login}) => ({...login}))
 class Forget extends React.Component {
 
@@ -89,9 +89,18 @@ class Forget extends React.Component {
     }
     let img = Constants.rootaddr+kapimg+this.state.phone+"?v="+Math.ceil(Math.random()*100000);
 
-    const view = <View style={{flexDirection:'row'}}><Button onPress={()=>{this.refresh()}}><Image onError={(e)=>{this.loaderror()}} style={{width:100,height:45}} source={{uri:img}} /></Button><TextInput autoFocus={true} onChangeText={(kcode) => this.setState({kcode})} returnKeyType="go" selectionColor="#65CAFF" keyboardType="ascii-capable" style={{color:'#65CAFF',marginLeft:10,width:120,height:45,fontSize:15,backgroundColor:'#EFEFEF'}} placeholderTextColor="#8696B0" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8}/></View>
-    
-    EasyDialog.show("计算结果",view,"获取","取消",()=>{
+    const view = 
+      <View style={styles.countout}>
+          <Button onPress={()=>{this.refresh()}}>
+             <Image onError={(e)=>{this.loaderror()}} style={styles.countimg} source={{uri:img}} />
+          </Button>
+          <TextInput autoFocus={true} onChangeText={(kcode) => this.setState({kcode})} returnKeyType="go" 
+              selectionColor={UColor.tintColor} keyboardType="ascii-capable"  style={styles.countinpt} 
+              placeholderTextColor={UColor.arrow} placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8}
+          />
+      </View>
+  
+      EasyDialog.show("计算结果",view,"获取","取消",()=>{
       
       if(this.state.kcode==""){
         EasyToast.show('请输入计算结果');
@@ -160,59 +169,153 @@ class Forget extends React.Component {
     this._rcode.blur();
   }
 
+  dismissKeyboardClick() {
+    dismissKeyboard();
+  }
+
   render() {
     return <View style={styles.container}>
-     <ScrollView keyboardShouldPersistTaps="always">
-      <View>
-      <View style={{backgroundColor:'#43536D',flex: 1,flexDirection: 'column',}}>
-        <View style={{padding:20,height:80,backgroundColor:'#586888'}} >
-            <Text style={{fontSize:12,color:'#8696B0'}}> 手机号</Text>
-            <TextInput ref={(ref) => this._rphone = ref}  value={this.state.phone} returnKeyType="next" selectionColor="#65CAFF" style={{color:'#8696B0',fontSize:15,height:40,paddingLeft:2}} placeholderTextColor="#8696B0" placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
-            onChangeText={(phone) => this.setState({phone})}
-            />
-        </View>
-        <View style={{height:0.5,backgroundColor:'#43536D'}}></View>
-        <View style={{flexDirection:'row',backgroundColor:'#586888'}}>
-            <View style={{padding:20,height:80,width:200}} >
-                <Text style={{fontSize:12,color:'#8696B0'}}> 验证码</Text>
-                <TextInput  value={this.state.code} ref={(ref) => this._rcode = ref}  returnKeyType="next" selectionColor="#65CAFF" style={{color:'#8696B0',fontSize:15,height:40,paddingLeft:2}} placeholderTextColor="#8696B0" placeholder="输入验证码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={6}
-                 onChangeText={(code) => this.setState({code})}
-                />
-            </View>
-            <View style={{flex:1,flexDirection:"row",alignSelf:'center',justifyContent:"flex-end",marginRight:10}}>
-              <Button onPress={() => this.kcaptrue()}>
-                <View style={{backgroundColor:'#65CAFF',borderRadius:5,width:100,height:30,justifyContent:'center',alignItems:'center'}}>
-                  <Text style={{fontSize:12,color:'#fff'}}>{this.state.capture}</Text>
+        <ScrollView keyboardShouldPersistTaps="always">
+            <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+              <View style={styles.outsource}>
+                <View style={styles.phoneoue} >
+                    <Text style={styles.texttitle}> 手机号</Text>
+                    <TextInput ref={(ref) => this._rphone = ref}  value={this.state.phone}  returnKeyType="next" 
+                      selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
+                      placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
+                      onChangeText={(phone) => this.setState({phone})}
+                    />
+                </View>
+                <View style={styles.separate}></View>
+                <View style={styles.codeoutsource}>
+                    <View style={styles.codeout} >
+                        <Text style={styles.texttitle}> 验证码</Text>
+                        <TextInput  value={this.state.code} ref={(ref) => this._rcode = ref}  returnKeyType="next" 
+                          selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
+                          placeholder="输入验证码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={6}
+                          onChangeText={(code) => this.setState({code})}
+                        />
+                    </View>
+                    <View style={styles.btnoutsource}>
+                      <Button onPress={() => this.kcaptrue()}>
+                        <View style={styles.btnout}>
+                          <Text style={styles.btntext}>{this.state.capture}</Text>
+                        </View>
+                      </Button>
+                    </View>
+                </View>
+                <View style={styles.separate}></View>
+                <View style={styles.phoneoue} >
+                    <Text style={styles.texttitle}> 设置新密码</Text>
+                    <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" 
+                      selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
+                      placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                      onChangeText={(password) => this.setState({password})}
+                    />
+                </View>
+              </View>
+              <Button onPress={() => this.regSubmit()}>
+                <View style={styles.referbtn}>
+                  <Text style={styles.refertext}>提交</Text>
                 </View>
               </Button>
-            </View>
-        </View>
-       
-        <View style={{height:0.5,backgroundColor:'#43536D'}}></View>
-        <View style={{padding:20,height:80,backgroundColor:'#586888'}} >
-            <Text style={{fontSize:12,color:'#8696B0'}}> 设置新密码</Text>
-            <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" selectionColor="#65CAFF" style={{color:'#8696B0',fontSize:15,height:40,paddingLeft:2}} placeholderTextColor="#8696B0" placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-             onChangeText={(password) => this.setState({password})}
-            />
-        </View>
-      </View>
-      <Button onPress={() => this.regSubmit()}>
-        <View style={{height:45,backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',margin:20,borderRadius:5}}>
-          <Text style={{fontSize:15,color:'#fff'}}>提交</Text>
-        </View>
-      </Button>
-    </View>
-  </ScrollView>
+          </TouchableOpacity>
+      </ScrollView>
   </View>
   }
 }
 
 const styles = StyleSheet.create({
+  countout: {
+    flexDirection:'row'
+  },
+  countimg: {
+    width:100,
+    height:45
+  },   
+  countinpt: {
+    color: UColor.tintColor,
+    marginLeft: 10,
+    width: 120,
+    height: 45,
+    fontSize: 15,
+    backgroundColor: '#EFEFEF'
+  },
+
+
   container: {
     flex: 1,
     flexDirection:'column',
     backgroundColor: UColor.secdColor,
-  }
+  },
+  
+  outsource: {
+    backgroundColor: '#43536D',
+    flex: 1,
+    flexDirection: 'column',
+  },
+  phoneoue: {
+    padding:20,
+    height:80,
+    backgroundColor:'#586888'
+  },
+  codeoutsource: {
+    flexDirection:'row',
+    backgroundColor:'#586888'
+  },
+  codeout: {
+    padding: 20,
+    height: 80,
+    width: 200
+  },
+  phonetitle: {
+    fontSize:12,
+    color:'#8696B0'
+  },
+  textinpt: {
+    color: '#8696B0',
+    fontSize: 15,
+    height: 40,
+    paddingLeft: 2
+  },
+  btnoutsource: {
+    flex: 1,
+    flexDirection: "row",
+    alignSelf: 'center',
+    justifyContent: "flex-end",
+    marginRight: 10
+  },
+  btnout: {
+    backgroundColor: UColor.tintColor,
+    borderRadius: 5,
+    width: 100,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  btntext: {
+    fontSize:12,
+    color:'#fff'
+  },
+  separate: {
+    height: 0.5,
+    backgroundColor: '#43536D'
+  },
+
+  referbtn: {
+    height: 45,
+    backgroundColor: UColor.tintColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    borderRadius: 5
+  },
+  refertext: {
+    fontSize:15,
+    color:'#fff'
+  },
+
+
 });
 
 export default Forget;

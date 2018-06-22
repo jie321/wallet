@@ -15,7 +15,7 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({wallet, vote}) => ({...wallet, ...vote}))
 class Network extends React.Component {
 
@@ -122,12 +122,11 @@ class Network extends React.Component {
         }
 
         const view =
-        <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
-                secureTextEntry={true}
-                keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16,  backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1, }}
+        <View style={styles.passoutsource}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+               selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：抵押 {this.state.delegatebw} EOS</Text>
+                <Text style={styles.inptpasstext}>提示：抵押 {this.state.delegatebw} EOS</Text>
         </View>
 
         EasyDialog.show("请输入密码", view, "确认", "取消", () => {
@@ -208,12 +207,11 @@ class Network extends React.Component {
         }
 
             const view =
-            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1,  }}
+            <View style={styles.passoutsource}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                   selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：赎回 {this.state.undelegatebw} EOS</Text>
+                <Text style={styles.inptpasstext}>提示：赎回 {this.state.undelegatebw} EOS</Text>
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
@@ -310,6 +308,10 @@ class Network extends React.Component {
         );  
     }  
 
+    dismissKeyboardClick() {
+        dismissKeyboard();
+    }
+
 
     render() {
         // balance = balance.replace("EOS", "");
@@ -317,84 +319,86 @@ class Network extends React.Component {
         return (
             <View style={styles.container}> 
                 <ScrollView  keyboardShouldPersistTaps="always">
-                  <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
-                    <View style={styles.frameoutsource}>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.staked}</Text>
-                            <Text style={styles.state}>抵押(EOS)</Text>
-                        </View>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.unstaking}</Text>
-                            <Text style={styles.state}>赎回中(EOS)</Text>
-                        </View>
-                    </View> 
-                    <View style={styles.frameoutsource}>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.used}</Text>
-                            <Text style={styles.state}>已用(KB)</Text>
-                        </View>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.available}</Text>
-                            <Text style={styles.state}>可用(KB)</Text>
-                        </View>
-                    </View> 
-                  </ImageBackground>  
-                    <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
-                        {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
-                    </View>  
-                    <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
-                    {this.state.isBuyOneself ? null:
-                    <View style={styles.inptoutsource}>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} 
-                                returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                                onChangeText={(receiver) => this.setState({ receiver })}
-                            />
-                            <Button >
-                                <View style={styles.botnimg}>
-                                    <Image source={UImage.al} style={{width: 26, height: 26, }} />
+                    <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                        <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
+                            <View style={styles.frameoutsource}>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.staked}</Text>
+                                    <Text style={styles.state}>抵押(EOS)</Text>
                                 </View>
-                            </Button> 
-                        </View>
-                    </View>}  
-                    <View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>资产抵押（EOS）</Text>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} 
-                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                            placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                            onChangeText={(delegatebw) => this.setState({ delegatebw })}
-                            />
-                            <Button onPress={this.delegatebw.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText}>抵押</Text>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.unstaking}</Text>
+                                    <Text style={styles.state}>赎回中(EOS)</Text>
                                 </View>
-                            </Button> 
-                        </View>
-                    </View>
-                    <View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>取消抵押（EOS）</Text>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} 
-                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                            placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad"
-                            onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
-                            />
-                            <Button onPress={this.undelegatebw.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText}>解除</Text>
+                            </View> 
+                            <View style={styles.frameoutsource}>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.used}</Text>
+                                    <Text style={styles.state}>已用(KB)</Text>
                                 </View>
-                            </Button> 
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.available}</Text>
+                                    <Text style={styles.state}>可用(KB)</Text>
+                                </View>
+                            </View> 
+                        </ImageBackground>  
+                        <View style={styles.tablayout}>  
+                            {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
+                            {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
+                        </View>  
+                        <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
+                        {this.state.isBuyOneself ? null:
+                        <View style={styles.inptoutsource}>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} returnKeyType="go"
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                    placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="default" 
+                                    onChangeText={(receiver) => this.setState({ receiver })}
+                                />
+                                <Button >
+                                    <View style={styles.botnimg}>
+                                        <Image source={UImage.al} style={{width: 26, height: 26, }} />
+                                    </View>
+                                </Button> 
+                            </View>
+                        </View>}  
+                        <View style={styles.inptoutsource}>
+                            <Text style={styles.inptTitle}>资产抵押（EOS）</Text>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go"
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                                />
+                                <Button onPress={this.delegatebw.bind()}>
+                                    <View style={styles.botn}>
+                                        <Text style={styles.botText}>抵押</Text>
+                                    </View>
+                                </Button> 
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.basc}>
-                        <Text style={styles.basctext}>重要提示</Text>
-                        <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
-                        <Text style={styles.basctext}>2.抵押的EOS可以撤销抵押，并于3天后退回；</Text>
-                        <Text style={styles.basctext}>3.主网投票进度未满15%时，无法撤销抵押；</Text>
-                    </View>
+                        <View style={styles.inptoutsource}>
+                            <Text style={styles.inptTitle}>取消抵押（EOS）</Text>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                                onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
+                                />
+                                <Button onPress={this.undelegatebw.bind()}>
+                                    <View style={styles.botn}>
+                                        <Text style={styles.botText}>解除</Text>
+                                    </View>
+                                </Button> 
+                            </View>
+                        </View>
+                        <View style={styles.basc}>
+                            <Text style={styles.basctext}>重要提示</Text>
+                            <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
+                            <Text style={styles.basctext}>2.抵押的EOS可以撤销抵押，并于3天后退回；</Text>
+                            <Text style={styles.basctext}>3.主网投票进度未满15%时，无法撤销抵押；</Text>
+                        </View>
+                    </TouchableOpacity>
                 </ScrollView>   
             </View>
         );
@@ -403,6 +407,27 @@ class Network extends React.Component {
 
 
 const styles = StyleSheet.create({
+    passoutsource: {
+        flexDirection: 'column', 
+        alignItems: 'center'
+    },
+    inptpass: {
+        color: UColor.tintColor,
+        height: 45,
+        width: 160,
+        paddingBottom: 5,
+        fontSize: 16,
+        backgroundColor: UColor.fontColor,
+        borderBottomColor: UColor.mainColor,
+        borderBottomWidth: 1,
+    },
+    inptpasstext: {
+        fontSize: 14,
+        color: '#808080',
+        lineHeight: 25,
+        marginTop: 5,
+    },
+
     container: {
         flex: 1,
         flexDirection:'column',

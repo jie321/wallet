@@ -15,7 +15,7 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({wallet, vote}) => ({...wallet, ...vote}))
 class Memory extends React.Component {
 
@@ -149,12 +149,11 @@ class Memory extends React.Component {
             return;
         }
             const view =
-            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1, }}
+            <View style={styles.passoutsource}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}></Text>  
+                <Text style={styles.inptpasstext}></Text>  
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
@@ -230,12 +229,11 @@ class Memory extends React.Component {
         }
 
             const view =
-            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor={UColor.tintColor}
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: UColor.tintColor, height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: UColor.fontColor, borderBottomColor: UColor.mainColor, borderBottomWidth: 1, }}
+            <View style={styles.passoutsource}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                    selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable" style={styles.inptpass}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}></Text>  
+                <Text style={styles.inptpasstext}></Text>  
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
@@ -294,85 +292,91 @@ class Memory extends React.Component {
         }, () => { EasyDialog.dismis() });
     };
 
+    dismissKeyboardClick() {
+        dismissKeyboard();
+    }
+
     render() {
         // balance = balance.replace("EOS", "");
 
         return (
             <View style={styles.container}> 
                 <ScrollView keyboardShouldPersistTaps="always">
-                  <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
-                    <View style={styles.frameoutsource}>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.used}</Text>
-                            <Text style={styles.state}>已用(KB)</Text>
-                        </View>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.available}</Text>
-                            <Text style={styles.state}>可用(KB)</Text>
-                        </View>
-                    </View> 
-                    <View style={styles.headoutsource}>
-                        <Text style={styles.headText}>*内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
-                    </View> 
-                  </ImageBackground>  
-                    <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '购买')}  
-                        {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '赠人')}  
-                    </View>  
-                    <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
-                    {this.state.isBuyOneself ? null:
-                    <View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver} 
-                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                            placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                            onChangeText={(receiver) => this.setState({ receiver })}
-                            />
-                            <Button >
-                                <View style={styles.botnimg}>
-                                    <Image source={UImage.al} style={{width: 26, height: 26, }} />
+                    <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                        <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
+                            <View style={styles.frameoutsource}>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.used}</Text>
+                                    <Text style={styles.state}>已用(KB)</Text>
                                 </View>
-                            </Button> 
-                        </View>
-                    </View>
-                    }
-                    <View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>购买内存（0.0000 EOS）</Text>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} 
-                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                            placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                            onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
-                            />
-                            <Button onPress={this.buyram.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText}>购买</Text>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.available}</Text>
+                                    <Text style={styles.state}>可用(KB)</Text>
                                 </View>
-                            </Button> 
+                            </View> 
+                            <View style={styles.headoutsource}>
+                                <Text style={styles.headText}>*内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
+                            </View> 
+                        </ImageBackground>  
+                        <View style={styles.tablayout}>  
+                            {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '购买')}  
+                            {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '赠人')}  
+                        </View>  
+                        <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
+                        {this.state.isBuyOneself ? null:
+                        <View style={styles.inptoutsource}>
+                            <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver}  returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
+                                placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="default" 
+                                onChangeText={(receiver) => this.setState({ receiver })}
+                                />
+                                <Button >
+                                    <View style={styles.botnimg}>
+                                        <Image source={UImage.al} style={{width: 26, height: 26, }} />
+                                    </View>
+                                </Button> 
+                            </View>
                         </View>
-                    </View>
-                    {this.state.isBuyForOther ? null:<View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>出售内存（3081 Bytes）</Text>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} 
-                            returnKeyType="go" selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
-                            placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
-                            onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
-                            />
-                            <Button onPress={this.sellram.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText}>出售</Text>
-                                </View>
-                            </Button> 
+                        }
+                        <View style={styles.inptoutsource}>
+                            <Text style={styles.inptTitle}>购买内存（0.0000 EOS）</Text>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
+                                placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
+                                />
+                                <Button onPress={this.buyram.bind()}>
+                                    <View style={styles.botn}>
+                                        <Text style={styles.botText}>购买</Text>
+                                    </View>
+                                </Button> 
+                            </View>
                         </View>
-                    </View>}
-                    <View style={styles.basc}>
-                        <Text style={styles.basctext}>提示</Text>
-                        <Text style={styles.basctext}>1.购买资源内存，你将获得更多权限的使用；</Text>
-                        <Text style={styles.basctext}>2.购买和出售资源成功，主网将收取0.5%手续费用；</Text>
-                        <Text style={styles.basctext}>3.购买后如过多闲置可进行出售；</Text>
-                    </View>
+                        {this.state.isBuyForOther ? null:<View style={styles.inptoutsource}>
+                            <Text style={styles.inptTitle}>出售内存（3081 Bytes）</Text>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
+                                placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                                onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
+                                />
+                                <Button onPress={this.sellram.bind()}>
+                                    <View style={styles.botn}>
+                                        <Text style={styles.botText}>出售</Text>
+                                    </View>
+                                </Button> 
+                            </View>
+                        </View>}
+                        <View style={styles.basc}>
+                            <Text style={styles.basctext}>提示</Text>
+                            <Text style={styles.basctext}>1.购买资源内存，你将获得更多权限的使用；</Text>
+                            <Text style={styles.basctext}>2.购买和出售资源成功，主网将收取0.5%手续费用；</Text>
+                            <Text style={styles.basctext}>3.购买后如过多闲置可进行出售；</Text>
+                        </View>
+                    </TouchableOpacity>
                 </ScrollView>   
             </View>
         );
@@ -381,6 +385,27 @@ class Memory extends React.Component {
 
 
 const styles = StyleSheet.create({
+    passoutsource: {
+        flexDirection: 'column', 
+        alignItems: 'center'
+    },
+    inptpass: {
+        color: UColor.tintColor,
+        height: 45,
+        width: 160,
+        paddingBottom: 5,
+        fontSize: 16,
+        backgroundColor: UColor.fontColor,
+        borderBottomColor: UColor.mainColor,
+        borderBottomWidth: 1,
+    },
+    inptpasstext: {
+        fontSize: 14,
+        color: '#808080',
+        lineHeight: 25,
+        marginTop: 5,
+    },
+
     container: {
         flex: 1,
         flexDirection:'column',
