@@ -2,6 +2,8 @@ package com.eostoken;
 
 import android.app.Application;
 
+import com.eagle.pay66.Pay66;
+import com.eostoken.communication.CommPackage;
 import com.facebook.react.ReactApplication;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.horcrux.svg.SvgPackage;
@@ -38,6 +40,8 @@ import com.reactnativecomponent.barcode.RCTCapturePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
+    private static final CommPackage mCommPackage = new CommPackage();
+
     private ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
 
         @Override
@@ -54,6 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+                    mCommPackage,
                     new RCTCapturePackage(),
                     new RNViewShotPackage(),
                     new SvgPackage(),
@@ -85,5 +90,14 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         RNUMConfigure.init(this, "5abddfbab27b0a2e67000060", "Umeng", UMConfigure.DEVICE_TYPE_PHONE,"");
+        Pay66.init("9132de465d4e4060ba310f24276a2069", getApplicationContext());
+    }
+
+    /**
+     * 获取 reactPackage
+     * @return
+     */
+    public static CommPackage getReactPackage() {
+        return mCommPackage;
     }
 }
