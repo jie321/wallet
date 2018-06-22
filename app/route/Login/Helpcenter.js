@@ -27,7 +27,7 @@ class Helpcenter extends React.Component {
     title: '帮助中心',
     headerStyle: {
       paddingTop:Platform.OS == 'ios' ? 30 : 20,
-      backgroundColor: "#586888",
+      backgroundColor: UColor.mainColor,
     },
   };
   

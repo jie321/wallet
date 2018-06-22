@@ -250,30 +250,36 @@ const styles = StyleSheet.create({
   },
   
   outsource: {
-    backgroundColor: '#43536D',
+    backgroundColor: UColor.secdColor,
     flex: 1,
     flexDirection: 'column',
   },
   phoneoue: {
     padding:20,
     height:80,
-    backgroundColor:'#586888'
+    backgroundColor: UColor.mainColor
+  },
+
+  texttitle:{
+    fontSize:12,
+    color: UColor.arrow
   },
   codeoutsource: {
     flexDirection:'row',
-    backgroundColor:'#586888'
+    backgroundColor: UColor.mainColor
   },
   codeout: {
     padding: 20,
     height: 80,
     width: 200
   },
+
   phonetitle: {
     fontSize:12,
-    color:'#8696B0'
+    color: UColor.arrow
   },
   textinpt: {
-    color: '#8696B0',
+    color: UColor.arrow,
     fontSize: 15,
     height: 40,
     paddingLeft: 2
@@ -295,11 +301,11 @@ const styles = StyleSheet.create({
   },
   btntext: {
     fontSize:12,
-    color:'#fff'
+    color: UColor.fontColor
   },
   separate: {
     height: 0.5,
-    backgroundColor: '#43536D'
+    backgroundColor: UColor.secdColor
   },
 
   referbtn: {
@@ -312,8 +318,8 @@ const styles = StyleSheet.create({
   },
   refertext: {
     fontSize:15,
-    color:'#fff'
-  },
+    color: UColor.fontColor
+  }
 
 
 });

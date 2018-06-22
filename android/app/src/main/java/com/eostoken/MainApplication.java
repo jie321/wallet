@@ -90,7 +90,7 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         RNUMConfigure.init(this, "5abddfbab27b0a2e67000060", "Umeng", UMConfigure.DEVICE_TYPE_PHONE,"");
-        Pay66.init("9132de465d4e4060ba310f24276a2069", getApplicationContext());
+        // Pay66.init("9132de465d4e4060ba310f24276a2069", getApplicationContext());
     }
 
     /**

@@ -20,9 +20,9 @@ class WalletManage extends React.Component {
   static navigationOptions = {
     headerTitle:'钱包管理',
     headerStyle:{
-              backgroundColor:UColor.mainColor,
-              paddingTop:20,
-          },  
+            paddingTop:Platform.OS == 'ios' ? 30 : 20,
+            backgroundColor: UColor.mainColor,
+    },  
   };
 
   constructor(props) {

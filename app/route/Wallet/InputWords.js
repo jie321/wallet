@@ -16,9 +16,8 @@ class InputWords extends React.Component {
   static navigationOptions = {
     title: '助记词确认',
     headerStyle:{
-      backgroundColor:"#586888",
-      paddingTop:20,
-      // alignSelf:'center'
+        paddingTop:Platform.OS == 'ios' ? 30 : 20,
+        backgroundColor: UColor.mainColor,
     }    
   };
 
