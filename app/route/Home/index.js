@@ -25,8 +25,8 @@ class Home extends React.Component {
     title: '钱包',
     header: null,
     headerStyle: {
-      paddingTop:20,
-      backgroundColor: "#586888",
+      paddingTop:Platform.OS == 'ios' ? 30 : 20,
+      backgroundColor: UColor.mainColor,
     },
   };
 
@@ -40,6 +40,7 @@ class Home extends React.Component {
       balance: 0,
       account: 'xxxx',
       show: false,
+      init: true,
     };
   }
 
@@ -79,6 +80,11 @@ class Home extends React.Component {
 
   getBalance() { 
     if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+      if(this.state.init){
+        this.setState({init: false});
+        EasyLoading.show();
+      }
+
       this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
           if (data.code == '0') {
@@ -94,6 +100,7 @@ class Home extends React.Component {
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
           }
+          EasyLoading.dismis();
         }
       })
     } else {
@@ -138,9 +145,16 @@ class Home extends React.Component {
     }else if (key == 'sweet') {
       navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
     }else if (key == 'Resources') {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });  
+        return;
+      }
       navigate('Resources', {});
     } else{
-      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 

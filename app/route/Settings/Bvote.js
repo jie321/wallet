@@ -24,10 +24,10 @@ class Bvote extends React.Component {
           title: "节点投票",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
-            backgroundColor: "#586888",
+            backgroundColor: UColor.mainColor,
           },
           headerRight: (<Button onPress={navigation.state.params.onPress}>
-            <Text style={{color: "#8696B0", fontSize: 18,justifyContent: 'flex-end',paddingRight:15}}>邀请投票</Text>
+            <Text style={{color: UColor.arrow, fontSize: 18,justifyContent: 'flex-end',paddingRight:15}}>邀请投票</Text>
           </Button>),            
         };
       };
@@ -63,40 +63,40 @@ class Bvote extends React.Component {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
-                 <View style={styles.headoutsource}>
-                    <View style={styles.textoutsource}>
-                        <Text style={styles.textSizeone}>进度：24.2218%</Text>
-                        <Text style={styles.textSizetwo}>可投票数：0</Text>
+                 <View style={styles.outsource}>
+                    <View style={styles.headoutsource}>
+                        <Text style={styles.headSizeone}>进度：24.2218%</Text>
+                        <Text style={styles.headSizetwo}>可投票数：0</Text>
                     </View>
                     <View>
-                      <View style={{height: 2, backgroundColor: '#43536D', position:'relative',  top: 3, }}></View> 
-                      <View style={{ flexDirection:'row', alignItems: 'center', position:'absolute', width: '100%', }}>
-                        <View style={{height: 2, width: '24.2218%', backgroundColor: '#65CAFF',}}></View>
-                        <View style={{width: 8, height: 8,  backgroundColor: '#65CAFF', borderRadius: 5,}}></View>
+                      <View style={styles.Underschedule}></View> 
+                      <View style={styles.Aboveschedule}>
+                        <View style={styles.Abovestrip}></View>
+                        <View style={styles.Abovecircular}></View>
                       </View>                     
                     </View>             
                 </View>
-                <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
-                  <ImageBackground  style={{justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115,  marginTop: 6, paddingRight: 10,}} source={UImage.votea_bj} resizeMode="stretch">                               
-                      <Text style={{fontSize:16, color:'#FFFFFF'}}>投票前划分锁仓</Text>
-                      <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                          <Image source={UImage.votea} style={{width: 30, height: 30, margin: 10,}}/>
+                {/* <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
+                  <ImageBackground  style={styles.lockoutsource} source={UImage.votea_bj} resizeMode="stretch">                               
+                      <Text style={styles.locktitle}>投票前划分锁仓</Text>
+                      <View style={styles.locktext}>
+                          <Image source={UImage.votea} style={styles.lockimg}/>
                       </View>  
                   </ImageBackground>
-                </TouchableHighlight> 
+                </TouchableHighlight>  */}
                 <TouchableHighlight onPress={this.goPage.bind(this, 'Imvote')}>
-                  <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10,}} source={UImage.voteb_bj} resizeMode="stretch">              
-                    <Text style={{fontSize:16, color:'#FFFFFF'}}>你的投票信息</Text>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                        <Image source={UImage.voteb} style={{width: 30, height: 30, margin: 10,}}/>
+                  <ImageBackground  style={styles.lockoutsource} source={UImage.votea_bj} resizeMode="stretch">              
+                    <Text style={styles.locktitle}>你的投票信息</Text>
+                    <View style={styles.locktext}>
+                        <Image source={UImage.voteb} style={styles.lockimg}/>
                     </View>     
                   </ImageBackground>     
                 </TouchableHighlight> 
                 <TouchableHighlight onPress={this.goPage.bind(this, 'Nodevoting')} >      
-                  <ImageBackground  style={{ justifyContent: "flex-end", alignItems: 'center', flexDirection:'row', width: ScreenWidth-10, height: 115, marginTop: 6, paddingRight: 10, }} source={UImage.votec_bj} resizeMode="stretch">              
-                    <Text style={{fontSize:16, color:'#FFFFFF'}}>选择代理节点</Text>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                        <Image source={UImage.votec} style={{width: 30, height: 30, margin: 10,}}/>
+                  <ImageBackground  style={styles.lockoutsource} source={UImage.votec_bj} resizeMode="stretch">              
+                    <Text style={styles.locktitle}>选择代理节点</Text>
+                    <View style={styles.locktext}>
+                        <Image source={UImage.votec} style={styles.lockimg}/>
                     </View>     
                   </ImageBackground>  
                 </TouchableHighlight>       
@@ -111,27 +111,85 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.secdColor,
     padding:6,
   },
-  headoutsource: {
+
+  outsource: {
     padding: 20,
     height: 78,
     borderRadius: 5, 
-    backgroundColor: '#586888',
+    backgroundColor: UColor.mainColor,
   },
-  textoutsource: {
+
+  headoutsource: {
     marginBottom: 15,
     flexDirection:'row', 
     alignItems: "center",
     justifyContent: "center", 
   },
-  textSizeone: {
+
+  headSizeone: {
     fontSize: 12, 
-    color: '#FFFFFF',
+    color: UColor.fontColor,
     marginRight: 10,
   },
-  textSizetwo: {
+
+  headSizetwo: {
     marginLeft: 10,
     fontSize: 12, 
-    color: '#FFFFFF'
+    color: UColor.fontColor
   },
+
+  Underschedule: {
+    height: 2, 
+    backgroundColor: UColor.secdColor, 
+    position:'relative', 
+    top: 3,
+  },
+
+  Aboveschedule: {
+    flexDirection:'row', 
+    alignItems: 'center', 
+    position:'absolute', 
+    width: '100%',
+  },
+  Abovestrip: {
+    width: '24.2218%',
+    height: 2,
+    backgroundColor: UColor.tintColor,
+  },
+
+  Abovecircular: {
+    width: 8, 
+    height: 8,  
+    backgroundColor: UColor.tintColor, 
+    borderRadius: 5,
+  },
+
+  lockoutsource: {
+    justifyContent: "flex-end", 
+    alignItems: 'center', 
+    flexDirection:'row', 
+    width: ScreenWidth-10, 
+    height: 115, 
+    marginTop: 6, 
+    paddingRight: 10,
+  },
+
+  locktitle: {
+    fontSize:16, 
+    color: UColor.fontColor
+  },
+
+  locktext: {
+    justifyContent: 'center', 
+    alignItems: 'center',
+  },
+
+  lockimg: {
+    width: 30, 
+    height: 30, 
+    margin: 10,
+  },
+
+
 })
 export default Bvote;

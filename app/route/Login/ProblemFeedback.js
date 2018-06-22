@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,TextInput} from 'react-native';
+import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,TextInput,TouchableOpacity} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
@@ -12,6 +12,7 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 let {width, height} = Dimensions.get('window');
 
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({login}) => ({...login}))
 class ProblemFeedback extends React.Component {
 
@@ -19,7 +20,7 @@ class ProblemFeedback extends React.Component {
     title: '问题反馈',
     headerStyle: {
         paddingTop:Platform.OS == 'ios' ? 30 : 20,
-        backgroundColor: "#586888",
+        backgroundColor: UColor.mainColor,
       },
   };
 
@@ -95,27 +96,33 @@ class ProblemFeedback extends React.Component {
       this.setState({selection: event.nativeEvent.selection})
   }
 
+  dismissKeyboardClick() {
+    dismissKeyboard();
+  }
+
   render() {
     let {feedBackText, selection} = this.state;
     return <View style={styles.container}>
      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="always">
-        <View style={{paddingHorizontal: 10, paddingTop: 20,}}>
-            <View style={{padding: 20,}}>
-               <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} 
-               selectionColor="#65CAFF" style={styles.inpt} placeholderTextColor="#B3B3B3" 
-               placeholder="请详细描述你的问题......" underlineColorAndroid="transparent" 
-               selection={selection} onSelectionChange={this._onSelectionChange}
-               onChangeText={this.onChange} value={feedBackText} {...this.props}
-               multiline={true} onSubmitEditing={this._fixedOnSubmitEditing}
-               blurOnSubmit={false} maxLength={500}/>
-            </View>
-            <Text style={{fontSize: 14, color: '#8696B0', lineHeight: 25, paddingHorizontal: 5,}}>说明：如果你提交的问题或建议被官方采纳，我们将进行电话回访和颁发一定的奖励作为鼓励。</Text>
-            <Button onPress={() => this.logout()}>
-                <View style={{height:47, marginTop: 30, backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',borderRadius:5}}>
-                   <Text style={{fontSize:15,color:'#fff'}}>提交</Text>
+        <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+            <View style={{paddingHorizontal: 10, paddingTop: 20,}}>
+                <View style={{padding: 20,}}>
+                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} 
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#B3B3B3" 
+                placeholder="请详细描述你的问题......" underlineColorAndroid="transparent" 
+                selection={selection} onSelectionChange={this._onSelectionChange}
+                onChangeText={this.onChange} value={feedBackText} {...this.props}
+                multiline={true} onSubmitEditing={this._fixedOnSubmitEditing}
+                blurOnSubmit={false} maxLength={500}/>
                 </View>
-            </Button>
-        </View>
+                <Text style={{fontSize: 14, color: '#8696B0', lineHeight: 25, paddingHorizontal: 5,}}>说明：如果你提交的问题或建议被官方采纳，我们将进行电话回访和颁发一定的奖励作为鼓励。</Text>
+                <Button onPress={() => this.logout()}>
+                    <View style={{height:47, marginTop: 30, backgroundColor:  UColor.tintColor,justifyContent:'center',alignItems:'center',borderRadius:5}}>
+                    <Text style={{fontSize:15,color:'#fff'}}>提交</Text>
+                    </View>
+                </Button>
+            </View>
+        </TouchableOpacity>
     </ScrollView>
   </View>
   }

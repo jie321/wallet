@@ -14,7 +14,7 @@ import { Eos } from "react-native-eosjs";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({wallet, vote}) => ({...wallet, ...vote}))
 class Nodevoting extends React.Component {
 
@@ -27,7 +27,7 @@ class Nodevoting extends React.Component {
           title: "投票锁仓",
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
-            backgroundColor: "#586888",
+            backgroundColor: UColor.mainColor,
           },
         };
       };
@@ -49,6 +49,7 @@ class Nodevoting extends React.Component {
     }
 
     componentDidMount() {
+        EasyLoading.show();
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {
                 this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
@@ -67,7 +68,7 @@ class Nodevoting extends React.Component {
                             undelegate_cpu:data.rows[0].cpu_amount.replace(" EOS", ""),
                         });
                     }
-
+                    EasyLoading.dismis();
                 } });
 
             }
@@ -141,12 +142,11 @@ class Nodevoting extends React.Component {
 
 
         const view =
-        <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-                secureTextEntry={true}
-                keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1, }}
-                placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：抵押 {this.state.delegatebw} EOS</Text>
+        <View style={styles.passoutsource}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+               selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
+                placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={styles.inptpasstext}>提示：抵押 {this.state.delegatebw} EOS</Text>
         </View>
 
         EasyDialog.show("请输入密码", view, "确认", "取消", () => {
@@ -219,12 +219,11 @@ class Nodevoting extends React.Component {
         this.state.net += " EOS";
 
             const view =
-            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable" style={{ color: '#65CAFF', height: 45, width: 160, paddingBottom: 5, fontSize: 16, backgroundColor: '#FFF', borderBottomColor: '#586888', borderBottomWidth: 1,  }}
-                    placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
-                <Text style={{ fontSize: 14, color: '#808080', lineHeight: 25, marginTop: 5,}}>提示：赎回 {this.state.delegatebw} EOS</Text>
+            <View style={styles.passoutsource}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
+                placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={styles.inptpasstext}>提示：赎回 {this.state.delegatebw} EOS</Text>
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
@@ -310,56 +309,64 @@ class Nodevoting extends React.Component {
     _getButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isAllSelected', 'isNotDealSelected'];  
         return(  
-            <View style={[style, selectedSate ? {backgroundColor: '#65CAFF'} : {backgroundColor: '#586888'}]}>  
-                <Text style={[styles.tabText, selectedSate ? {color: 'white'} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <View style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
                     {buttonTitle}  
                 </Text>  
             </View>  
         );  
     }  
 
+    dismissKeyboardClick() {
+        dismissKeyboard();
+    }
 
     render() {
         // balance = balance.replace("EOS", "");
 
         return (
             <View style={styles.container}> 
-                <View style={{paddingLeft: 15, paddingRight: 15,}}>
-                    <View style={{paddingTop: 10, paddingBottom: 10,}}>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{this.state.balance}</Text>
-                            <Text style={styles.state}>余额</Text>
+                <ScrollView keyboardShouldPersistTaps="always">
+                    <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                        <View style={styles.outsource}>
+                            <View style={{}}>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{this.state.balance}</Text>
+                                    <Text style={styles.state}>余额</Text>
+                                </View>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{parseFloat(this.state.delegate_cpu) + parseFloat(this.state.delegate_net)}</Text>
+                                    <Text style={styles.state}>投票锁仓</Text>
+                                </View>
+                                <View style={styles.frame}>
+                                    <Text style={styles.number}>{parseFloat(this.state.undelegate_cpu) + parseFloat(this.state.undelegate_net)}</Text>
+                                    <Text style={styles.state}>赎回中</Text>
+                                </View>
+                            </View> 
+                            <View style={styles.tablayout}>  
+                                {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '投票锁仓')}  
+                                {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', 'EOS赎回')}  
+                            </View>  
+                            <View style={styles.inpoutsource}>
+                                <Text style={styles.inptext}>{this.state.isAllSelected ? '投票锁仓':'EOS赎回'}</Text>
+                                <View style={styles.inptoutsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                    placeholder="输入数量" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                    onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                                    />
+                                    {/* <Text style={{ fontSize: 15, color: UColor.tintColor, width: 50, textAlign: 'center'}}>全部</Text> */}
+                                </View>
+                            </View>
+                            <Text style={styles.prompttext}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响你的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
                         </View>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{parseFloat(this.state.delegate_cpu) + parseFloat(this.state.delegate_net)}</Text>
-                            <Text style={styles.state}>投票锁仓</Text>
-                        </View>
-                        <View style={styles.frame}>
-                            <Text style={styles.number}>{parseFloat(this.state.undelegate_cpu) + parseFloat(this.state.undelegate_net)}</Text>
-                            <Text style={styles.state}>赎回中</Text>
-                        </View>
-                    </View> 
-                    <View style={styles.tablayout}>  
-                        {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '投票锁仓')}  
-                        {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', 'EOS赎回')}  
-                    </View>  
-                    <View style={{ paddingLeft: 20, paddingRight: 20,  paddingTop: 40, paddingBottom: 60, justifyContent: 'center',}}>
-                        <Text style={{ fontSize: 14, color: '#7787A3', lineHeight: 30, }}>{this.state.isAllSelected ? '投票锁仓':'EOS赎回'}</Text>
-                        <View style={{flexDirection: 'row',  alignItems: 'center',  }}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10, backgroundColor: '#FFFFFF', borderRadius: 5, }} placeholderTextColor="#8696B0" placeholder="输入数量" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                                onSubmitEditing={() => this.regSubmit()}
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
-                            />
-                            {/* <Text style={{ fontSize: 15, color: '#65CAFF', width: 50, textAlign: 'center'}}>全部</Text> */}
-                        </View>
-                    </View>
-                    <Text style={{fontSize: 14, color: '#8696B0', lineHeight: 25,  }}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响你的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
-                </View>
-                <Button onPress={this.state.isAllSelected ? this.delegatebw.bind(): this.undelegatebw.bind()}>
-                    <View style={{ margin: 10, height: 45,  borderRadius: 6, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 16, color: '#fff' }}>{this.state.isAllSelected ? '确定抵押':'确认赎回'}</Text>
-                    </View>
-                </Button>       
+                        <Button onPress={this.state.isAllSelected ? this.delegatebw.bind(): this.undelegatebw.bind()}>
+                            <View style={styles.btnoutsource}>
+                                <Text style={styles.btntext}>{this.state.isAllSelected ? '确定抵押':'确认赎回'}</Text>
+                            </View>
+                        </Button>   
+                    </TouchableOpacity>
+                </ScrollView>     
             </View>
         );
     }
@@ -367,6 +374,27 @@ class Nodevoting extends React.Component {
 
 
 const styles = StyleSheet.create({
+    passoutsource: {
+        flexDirection: 'column', 
+        alignItems: 'center'
+    },
+    inptpass: {
+        color: UColor.tintColor,
+        height: 45,
+        width: 160,
+        paddingBottom: 5,
+        fontSize: 16,
+        backgroundColor: UColor.fontColor,
+        borderBottomColor: UColor.mainColor,
+        borderBottomWidth: 1,
+    },
+    inptpasstext: {
+        fontSize: 14,
+        color: '#808080',
+        lineHeight: 25,
+        marginTop: 5,
+    },
+
     container: {
       flex: 1,
       flexDirection:'column',
@@ -378,14 +406,14 @@ const styles = StyleSheet.create({
         height:50, 
         flexDirection: 'row', 
         alignItems: 'center', 
-        borderBottomColor: '#586888', 
+        borderBottomColor: UColor.mainColor, 
         borderBottomWidth: 1,
     },
 
     number: {
         flex: 2, 
         fontSize: 20, 
-        color: '#FFFFFF', 
+        color: UColor.fontColor, 
         textAlign: 'left', 
         paddingLeft: 8,
     },
@@ -415,6 +443,60 @@ const styles = StyleSheet.create({
        fontSize: 15,
     },  
 
+    outsource: {
+        paddingHorizontal: 15,
+    },
+
+    showoutsource: {
+        paddingVertical: 10,
+    },
+
+    inpoutsource: {
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 40,
+        paddingBottom: 60,
+        justifyContent: 'center',
+    },
+    inptext: {
+        fontSize: 14,
+        color: '#7787A3',
+        lineHeight: 30,
+    },
+
+    inptoutsource: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    inpt: {
+        flex: 1,
+        color: UColor.arrow,
+        fontSize: 15,
+        height: 40,
+        paddingLeft: 10,
+        backgroundColor: UColor.fontColor,
+        borderRadius: 5,
+    },
+
+    prompttext: {
+        fontSize: 14,
+        color: '#8696B0',
+        lineHeight: 25,
+    },
+
+    btnoutsource: {
+        margin: 10, 
+        height: 45,  
+        borderRadius: 6, 
+        backgroundColor: UColor.tintColor, 
+        justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+    btntext: {
+        fontSize: 16,
+        color: UColor.fontColor
+    }
     
 });
 

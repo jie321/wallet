@@ -20,8 +20,8 @@ class AddressQr extends React.Component {
         return {
             headerTitle:'收款账号',
             headerStyle: {
-                backgroundColor: "#586888",
-                paddingTop: 20,
+                paddingTop:Platform.OS == 'ios' ? 30 : 20,
+                backgroundColor: UColor.mainColor,
             },
 
         };

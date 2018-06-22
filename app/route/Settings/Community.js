@@ -22,8 +22,8 @@ class Community extends React.Component {
   static navigationOptions = {
     title: 'EOS社区',
     headerStyle: {
-        paddingTop:Platform.OS == 'ios' ? 30 : 20,
-        backgroundColor: "#586888",
+      paddingTop:Platform.OS == 'ios' ? 30 : 20,
+      backgroundColor: UColor.mainColor,
       },
   };
 

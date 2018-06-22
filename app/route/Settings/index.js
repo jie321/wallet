@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, Switch } from 'react-native';
+import { Dimensions, DeviceEventEmitter,NativeModules, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, Switch } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -88,6 +88,31 @@ class Setting extends React.Component {
     } else{
       EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
     }
+  }
+
+  skipNativeCall() {  
+    let phone = '123123123';
+    NativeModules.commModule.rnCallNative(phone);  
+ }  
+
+  /** 
+ * Callback 通信方式 
+ */
+  callbackComm(msg) {
+    NativeModules.commModule.rnCallNativeFromCallback(msg, (result) => {
+      alert("CallBack收到消息:" + result);
+    })
+  }
+
+    /** 
+   * 接收原生调用 
+   */
+  componentDidMount() {
+    DeviceEventEmitter.addListener('nativeCallRn', (msg) => {
+      title = "React Native界面,收到数据：" + msg;
+      // ToastAndroid.show("发送成功", ToastAndroid.SHORT);
+      alert(title);
+    })
   }
 
   _renderListItem() {
