@@ -59,6 +59,7 @@ import Button from '../components/Button'
 import ViewShot from "react-native-view-shot";
 import QRCode from 'react-native-qrcode-svg';
 import Constants from '../utils/Constants'
+import { EasyLoading } from '../components/Loading';
 require('moment/locale/zh-cn');
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
@@ -490,7 +491,9 @@ class Route extends React.Component {
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
         if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+        EasyLoading.show();
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+          EasyLoading.dismis();
           if (this.props.defaultWallet == null || this.props.defaultWallet.account == null){
             EasyDialog.show("温馨提示", "系统检测到你还未创建钱包，是否创建或导入私钥", "是", "否", () => {
               this.createWallet();
