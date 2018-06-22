@@ -138,9 +138,16 @@ class Home extends React.Component {
     }else if (key == 'sweet') {
       navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
     }else if (key == 'Resources') {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });  
+        return;
+      }
       navigate('Resources', {});
     } else{
-      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
