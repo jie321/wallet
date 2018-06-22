@@ -40,6 +40,7 @@ class Home extends React.Component {
       balance: 0,
       account: 'xxxx',
       show: false,
+      init: true,
     };
   }
 
@@ -79,6 +80,11 @@ class Home extends React.Component {
 
   getBalance() { 
     if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+      if(this.state.init){
+        this.setState({init: false});
+        EasyLoading.show();
+      }
+
       this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
           if (data.code == '0') {
@@ -94,6 +100,7 @@ class Home extends React.Component {
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
           }
+          EasyLoading.dismis();
         }
       })
     } else {
