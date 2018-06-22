@@ -49,6 +49,7 @@ class Nodevoting extends React.Component {
     }
 
     componentDidMount() {
+        EasyLoading.show();
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {
                 this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
@@ -67,7 +68,7 @@ class Nodevoting extends React.Component {
                             undelegate_cpu:data.rows[0].cpu_amount.replace(" EOS", ""),
                         });
                     }
-
+                    EasyLoading.dismis();
                 } });
 
             }

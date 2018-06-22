@@ -76,16 +76,16 @@ class Bvote extends React.Component {
                       </View>                     
                     </View>             
                 </View>
-                <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
+                {/* <TouchableHighlight  onPress={this.goPage.bind(this, 'delegate')}>
                   <ImageBackground  style={styles.lockoutsource} source={UImage.votea_bj} resizeMode="stretch">                               
                       <Text style={styles.locktitle}>投票前划分锁仓</Text>
                       <View style={styles.locktext}>
                           <Image source={UImage.votea} style={styles.lockimg}/>
                       </View>  
                   </ImageBackground>
-                </TouchableHighlight> 
+                </TouchableHighlight>  */}
                 <TouchableHighlight onPress={this.goPage.bind(this, 'Imvote')}>
-                  <ImageBackground  style={styles.lockoutsource} source={UImage.voteb_bj} resizeMode="stretch">              
+                  <ImageBackground  style={styles.lockoutsource} source={UImage.votea_bj} resizeMode="stretch">              
                     <Text style={styles.locktitle}>你的投票信息</Text>
                     <View style={styles.locktext}>
                         <Image source={UImage.voteb} style={styles.lockimg}/>
