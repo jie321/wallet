@@ -20,7 +20,7 @@ class ProblemFeedback extends React.Component {
     title: '问题反馈',
     headerStyle: {
         paddingTop:Platform.OS == 'ios' ? 30 : 20,
-        backgroundColor: "#586888",
+        backgroundColor: UColor.mainColor,
       },
   };
 

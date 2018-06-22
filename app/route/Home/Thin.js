@@ -20,8 +20,8 @@ class Thin extends React.Component {
     static navigationOptions = {
         title: 'EOS地址薄',  
         headerStyle:{
-            backgroundColor:"#586888",
-            paddingTop:20,
+            paddingTop:Platform.OS == 'ios' ? 30 : 20,
+            backgroundColor: UColor.mainColor,
         }    
       };
  // 构造函数  

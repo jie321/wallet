@@ -21,8 +21,8 @@ class Info extends React.Component {
         return {
             headerTitle: params.coinType.name,
             headerStyle: {
-                backgroundColor: "#586888",
-                paddingTop: 20,
+                paddingTop:Platform.OS == 'ios' ? 30 : 20,
+                backgroundColor: UColor.mainColor,
             },
         };
     };
