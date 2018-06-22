@@ -192,7 +192,7 @@ class Setting extends React.Component {
           </View>
           <View style={{ flex: 1, marginTop: 15, flexDirection: 'column' }}>
             <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center' }}>© 2018 eostoken all rights reserved </Text>
-            <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center', marginTop: 5 }}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text>
+            <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center', marginTop: 5 }}>EOS专业版钱包 V{DeviceInfo.getVersion()}.1</Text>
           </View>
         </View>
       </ScrollView>
