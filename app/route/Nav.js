@@ -490,11 +490,16 @@ class Route extends React.Component {
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
         if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
-        EasyDialog.show("温馨提示", "系统检测到你还未创建钱包，是否创建或导入私钥", "是", "否", () => {
-          this.createWallet();
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });  
-        return;
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+          if (this.props.defaultWallet == null || this.props.defaultWallet.account == null){
+            EasyDialog.show("温馨提示", "系统检测到你还未创建钱包，是否创建或导入私钥", "是", "否", () => {
+              this.createWallet();
+              EasyDialog.dismis()
+            }, () => { EasyDialog.dismis() });  
+            return;
+          }
+          }
+        });
       }
     }
     if (action && action.routeName) {

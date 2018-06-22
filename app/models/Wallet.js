@@ -17,7 +17,7 @@ export default {
         totalOpt: {}
     },
     effects: {
-        *info({ payload }, { call, put }) {
+        *info({ payload, callback }, { call, put }) {
             var list = [];
             var totalOpt;
             var total;
@@ -115,6 +115,7 @@ export default {
 
             yield put({ type: 'update', payload: { list, totalOpt, total, walletList: walletList, defaultWallet: defaultWallet } });
             DeviceEventEmitter.emit('wallet_info');
+            if (callback) callback();
         },
         *saveWallet({ wallet, callback }, { call, put }) {
 
