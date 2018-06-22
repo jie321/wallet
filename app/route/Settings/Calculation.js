@@ -256,10 +256,10 @@ class Calculation extends React.Component {
                         EasyLoading.dismis();
                         if(r.data && r.data.transaction_id){
                             this.getAccountInfo();
-                            EasyToast.show("解除抵押成功");
+                            EasyToast.show("赎回成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
                             var jdata = JSON.parse(r.data);
-                            var errmsg = "解除抵押失败: "+ JSON.stringify(jdata);
+                            var errmsg = "赎回失败: "+ JSON.stringify(jdata);
                             alert(errmsg);
                         }
                     }); 
@@ -363,11 +363,11 @@ class Calculation extends React.Component {
                             </View>
                         </View>}  
                         <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>资产抵押（EOS）</Text>
+                            <Text style={styles.inptTitle}>抵押（EOS）</Text>
                             <View style={styles.outsource}>
                                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                placeholder="输入抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                                 onChangeText={(delegatebw) => this.setState({ delegatebw })}
                                 />
                                 <Button onPress={this.delegatebw.bind()}>
@@ -378,16 +378,16 @@ class Calculation extends React.Component {
                             </View>
                         </View>
                         <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>取消抵押（EOS）</Text>
+                            <Text style={styles.inptTitle}>赎回（EOS）</Text>
                             <View style={styles.outsource}>
                                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" 
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="输入取消抵押金额" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="phone-pad" 
                                 onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
                                 />
                                 <Button onPress={this.undelegatebw.bind()}>
                                     <View style={styles.botn}>
-                                        <Text style={styles.botText}>解除</Text>
+                                        <Text style={styles.botText}>赎回</Text>
                                     </View>
                                 </Button> 
                             </View>
@@ -395,8 +395,8 @@ class Calculation extends React.Component {
                         <View style={styles.basc}>
                             <Text style={styles.basctext}>重要提示</Text>
                             <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
-                            <Text style={styles.basctext}>2.抵押的EOS可以撤销抵押，并于3天后退回；</Text>
-                            <Text style={styles.basctext}>3.主网投票进度未满15%时，无法撤销抵押；</Text>
+                            <Text style={styles.basctext}>2.抵押的EOS可以赎回，并于3天后到账；</Text>
+                            <Text style={styles.basctext}>3.主网投票进度未满15%时，无法赎回；</Text>
                         </View>
                     </TouchableOpacity>
                 </ScrollView>   
