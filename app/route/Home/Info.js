@@ -27,6 +27,19 @@ class Info extends React.Component {
         };
     };
 
+     // 构造函数  
+     constructor(props) {
+        super(props);
+        this.state = {
+            show: false,
+            balance: this.props.navigation.state.params.balance,
+        };
+        DeviceEventEmitter.addListener('transaction_success', () => {
+            this.getBalance();
+            DeviceEventEmitter.emit('wallet_info');
+        });
+    }
+
     componentDidMount() {
         // EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
         //加载地址数据
@@ -44,13 +57,8 @@ class Info extends React.Component {
         });
     }
 
-    onPress(action) {
-        EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
-    }
-
     _rightButtonClick() {
         AnalyticsUtil.onEvent('To_change_into');
-        // EasyDialog.show("温馨提示", "转入功能正在紧急开发中，敬请期待...", "知道了", null, () => { EasyDialog.dismis() });
         this._setModalVisible();
     }
 
@@ -61,22 +69,10 @@ class Info extends React.Component {
             show: !isShow,
         });
     }
+
     turnOut(coins) {
         const { navigate } = this.props.navigation;
         navigate('TurnOut', { coins, balance: this.state.balance });
-    }
-
-    // 构造函数  
-    constructor(props) {
-        super(props);
-        this.state = {
-            show: false,
-            balance: this.props.navigation.state.params.balance,
-        };
-        DeviceEventEmitter.addListener('transaction_success', () => {
-            this.getBalance();
-            DeviceEventEmitter.emit('wallet_info');
-        });
     }
 
     getBalance() {
@@ -99,12 +95,12 @@ class Info extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 20, color: '#fff' }}>{this.state.balance}</Text>
-                    <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {(this.state.balance*c.value).toFixed(2)} ￥</Text>
+                    <Text style={styles.headbalance}>{this.state.balance}</Text>
+                    <Text style={styles.headmarket}>≈ {(this.state.balance.replace(" EOS", "")*c.value).toFixed(2)} ￥</Text>
                 </View>
-                <View style={styles.tab1}>
-                    <Text style={{ fontSize: 14, color: '#8696B0', margin: 5 }}>最近交易记录</Text>
-                    <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 50, textAlign: "center", }}>交易记录功能正在紧急开发中，敬请期待...</Text>
+                <View style={styles.tab}>
+                    <Text style={styles.latelytext}>最近交易记录</Text>
+                    <Text style={styles.tabtext}>交易记录功能正在紧急开发中，敬请期待...</Text>
                     {/* <ScrollView style={{ marginBottom: 45, }}>
                         <View style={styles.row}>
                             <View style={styles.top}>
@@ -126,15 +122,15 @@ class Info extends React.Component {
 
                 <View style={styles.footer}>
                     <Button onPress={this._rightButtonClick.bind(this)} style={{ flex: 1 }}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginRight: 1, backgroundColor: UColor.mainColor, }}>
-                            <Image source={UImage.shift_to} style={{ width: 30, height: 30 }} />
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>转入</Text>
+                        <View style={styles.shiftshiftturnout}>
+                            <Image source={UImage.shift_to} style={styles.shiftturn} />
+                            <Text style={styles.shifttoturnout}>转入</Text>
                         </View>
                     </Button>
                     <Button onPress={this.turnOut.bind(this, c)} style={{ flex: 1 }}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 1, backgroundColor: UColor.mainColor, }}>
-                            <Image source={UImage.turn_out} style={{ width: 30, height: 30 }} />
-                            <Text style={{ marginLeft: 20, fontSize: 18, color: UColor.fontColor }}>转出</Text>
+                        <View style={styles.shiftshiftturnout}>
+                            <Image source={UImage.turn_out} style={styles.shiftturn} />
+                            <Text style={styles.shifttoturnout}>转出</Text>
                         </View>
                     </Button>
                 </View>
@@ -143,20 +139,19 @@ class Info extends React.Component {
                         <View style={styles.modalStyle}>
                             <View style={styles.subView} >
                                 <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                                    <Text style={{ width: 30, height: 30, marginBottom: 0, color: '#CBCBCB', fontSize: 28, }}>×</Text>
+                                    <Text style={styles.buttoncols}>×</Text>
                                 </Button>
                                 <Text style={styles.titleText}>你的{c.name}地址</Text>
                                 <Text style={styles.contentText}>{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
-                                <Text style={{ color: '#F45353', fontSize: 12, marginLeft: 15, textAlign: 'center', }}>提示：扫码同样可获取地址</Text>
-                                <View style={{ margin: 10, alignItems: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: "row", }}>
-                                    <View style={{ flex: 1, }} />
-                                    {/* <QRCode size={170} style={{ width: 170, }} value={{'contract':'eos','toaccount':this.props.defaultWallet.account,'symbol':'EOS'}} /> */}
-                                    <QRCode size={170} style={{ width: 170, }} value={'{\"contract\":\"eos\",\"toaccount\":\"' + this.props.defaultWallet.account + '\",\"symbol\":\"EOS\"}'} />
-                                    <View style={{ flex: 1, }} />
+                                <Text style={styles.prompttext}>提示：扫码同样可获取地址</Text>
+                                <View style={styles.codeout}>
+                                    <View style={styles.tab} />
+                                    <QRCode size={170}  value={'{\"contract\":\"eos\",\"toaccount\":\"' + this.props.defaultWallet.account + '\",\"symbol\":\"EOS\"}'} />
+                                    <View style={styles.tab} />
                                 </View>
                                 <Button onPress={() => { this.copy() }}>
-                                    <View style={{ margin: 10, height: 40, borderRadius: 6, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: 16, color: '#fff' }}>复制地址</Text>
+                                    <View style={styles.copyout}>
+                                        <Text style={styles.copytext}>复制地址</Text>
                                     </View>
                                 </Button>
                             </View>
@@ -180,7 +175,31 @@ const styles = StyleSheet.create({
         alignItems: "center",
         margin: 5,
         borderRadius: 5,
-        backgroundColor: '#586888',
+        backgroundColor: UColor.mainColor,
+    },
+    headbalance: {
+        fontSize: 20, 
+        color: UColor.fontColor
+    },
+    headmarket: {
+        fontSize: 14,
+        color: UColor.arrow,
+        marginTop: 5
+    },
+
+    tab: {
+        flex: 1,
+    },
+    latelytext: {
+        fontSize: 14,
+        color: UColor.arrow,
+        margin: 5
+    },
+    tabtext: {
+        fontSize: 14,
+        color: UColor.arrow,
+        marginTop: 50,
+        textAlign: "center",
     },
     row: {
         height: 90,
@@ -196,15 +215,34 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: 'center',
     },
+
+
     footer: {
         paddingTop: 10,
         height: 60,
         flexDirection: 'row',
         position: 'absolute',
-        backgroundColor: '#43536D',
+        backgroundColor: UColor.secdColor,
         bottom: 0,
         left: 0,
         right: 0,
+    },
+    shiftshiftturnout: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        marginRight: 1,
+        backgroundColor: UColor.mainColor,
+    },
+    shiftturn: {
+        width: 30, 
+        height: 30
+    },
+    shifttoturnout: {
+        marginLeft: 20,
+        fontSize: 18,
+        color: UColor.fontColor
     },
 
     pupuo: {
@@ -223,12 +261,23 @@ const styles = StyleSheet.create({
     subView: {
         marginLeft: 10,
         marginRight: 10,
-        backgroundColor: '#fff',
+        backgroundColor: UColor.fontColor,
         alignSelf: 'stretch',
         justifyContent: 'center',
         borderRadius: 10,
         borderWidth: 0.5,
         borderColor: '#ccc',
+    },
+     // 关闭按钮  
+    buttonView: {
+        alignItems: 'flex-end',
+    },
+    buttoncols: {
+        width: 30,
+        height: 30,
+        marginBottom: 0,
+        color: '#CBCBCB',
+        fontSize: 28,
     },
     // 标题  
     titleText: {
@@ -243,18 +292,31 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: 'center',
     },
-    // 按钮  
-    buttonView: {
-        alignItems: 'flex-end',
+    prompttext: {
+        color: '#F45353',
+        fontSize: 12,
+        marginLeft: 15,
+        textAlign: 'center',
     },
-    tab1: {
-        flex: 1,
+    codeout: {
+        margin: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: "row",
     },
-    tab2: {
-        flex: 1,
-        flexDirection: 'column',
-    }
-
+    copyout: {
+        margin: 10,
+        height: 40,
+        borderRadius: 6,
+        backgroundColor: UColor.tintColor,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    copytext: {
+        fontSize: 16, 
+        color: UColor.fontColor
+    },
 
 })
 export default Info;
