@@ -82,7 +82,7 @@ class Imvote extends React.Component {
                 selectArr.splice(selectArr.indexOf(element.account), 1);
             }
         });
-        
+        selectArr.sort();
         // var producersList = "";
         // for(count=0;count<selectArr.length;count++){
         //     producersList += " " + selectArr[count]
