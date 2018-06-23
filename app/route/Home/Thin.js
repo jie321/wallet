@@ -92,15 +92,15 @@ class Thin extends React.Component {
         // let isChecked = parseInt(rowID) == this.state.preIndex ?  map.has(parseInt(rowID)) : false; // 将rowID转成Int,然后将Int类型的ID当做Key传给Map
 
         return (
-            <View style={{width: width, height: 60, backgroundColor:UColor.secdColor,  marginTop:5,marginBottom: 5, alignItems:"center", justifyContent:'center', paddingLeft: this.state.isEdit ? 54 : 0}}>
-               { this.state.isEdit ?
-                       <TouchableOpacity style={{position:'absolute', left:3,}} onPress={() => this.selectItem(parseInt(rowID), rowData.labelname, isChecked)}>
-                           <Image source={isChecked ? UImage.aab1:UImage.aab2} style={{width:30,height:30,}}/>
-                       </TouchableOpacity> : null
-               }
-               <View style={{width: width-20, height: 84, backgroundColor:"#586888",  marginBottom: 10, paddingLeft:10, alignItems:"flex-start", justifyContent:'center',}}>
-                    <Text style={{color:'#EFEFEF',fontSize:15,}}>{rowData.labelname}</Text>
-                    <Text style={{color:'#8696B0',fontSize:15,}}>{rowData.address}</Text>
+            <View style={styles.selectout}>
+               {this.state.isEdit ? 
+               <TouchableOpacity style={{ width: width, height: 60, backgroundColor: UColor.secdColor, marginTop: 5, marginBottom: 5, alignItems: "center", justifyContent: 'center', paddingLeft: this.state.isEdit ? 54 : 0}} onPress={() => this.selectItem(parseInt(rowID), rowData.labelname, isChecked)}>
+                    <Image source={isChecked ? UImage.aab1:UImage.aab2} style={styles.selectoutimg}/>
+                </TouchableOpacity> : null
+                }
+               <View style={styles.selout}>
+                    <Text style={styles.outlabelname}>{rowData.labelname}</Text>
+                    <Text style={styles.outaddress}>{rowData.address}</Text>
                </View>
            </View>
         )
@@ -112,26 +112,25 @@ class Thin extends React.Component {
 
         console.log(temp, '......')
         return (
-            <View style={{flex:1, backgroundColor: UColor.secdColor,paddingTop:5,}}>
-            {/* enableEmptySections = {true} */}
+            <View style={styles.container}>
                 <ListView renderRow={this.renderRow}  enableEmptySections = {true}  dataSource={this.state.dataSource.cloneWithRows((this.props.contracts == null ? [] : this.props.contracts))}></ListView> 
                 { this.state.isShowBottom == false ? 
-                <View style={{width: width, backgroundColor: UColor.secdColor, justifyContent:"space-between", flexDirection:'column', alignItems:"center"}}>
-                    <TouchableOpacity onPress={this.newlyAddedClick.bind(this)} style={{width: width-20,height:45,backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',margin:10,borderRadius:5}}>
-                        <Text style={{fontSize:17,color:'#fff'}}>新增地址</Text>
+                <View style={styles.replace}>
+                    <TouchableOpacity onPress={this.newlyAddedClick.bind(this)} style={styles.added}>
+                        <Text style={styles.address}>新增地址</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.editClick()} style={{width: width-20,height:45,backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',margin:10,borderRadius:5}}>
-                        <Text style={{fontSize:17,color:'#fff'}}>管理地址</Text>
+                    <TouchableOpacity onPress={() => this.editClick()} style={styles.editClickout}>
+                        <Text style={styles.address}>管理地址</Text>
                     </TouchableOpacity>                 
                 </View> : null
                 }             
                 { this.state.isShowBottom == true ? 
-                <View style={{width: width,  backgroundColor: UColor.secdColor, justifyContent:"space-between", flexDirection:'column', alignItems:"center"}}>                         
-                    <TouchableOpacity onPress={() => this.deleteItem()} style={{width: width-20,height:45,backgroundColor:'#EF4F4F',justifyContent:'center',alignItems:'center',margin:10,borderRadius:5}}>
-                        <Text style={{fontSize:17,color:'#fff'}}>删除地址</Text>
+                <View style={styles.alternate}>                         
+                    <TouchableOpacity onPress={() => this.deleteItem()} style={styles.deleteItemout}>
+                        <Text style={styles.address}>删除地址</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{flexDirection:'row'}} onPress={() => this.editClick()} style={{width: width-20,height:45,backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',margin:10,borderRadius:5}}>                              
-                        <Text style={{fontSize:17,color:'#fff'}}>完成</Text>
+                    <TouchableOpacity onPress={() => this.editClick()} style={styles.completeout}>                              
+                        <Text style={styles.address}>完成</Text>
                     </TouchableOpacity>
                 </View> : null
                 }
@@ -140,21 +139,23 @@ class Thin extends React.Component {
                         <View style={styles.modalStyle}>                           
                             <View style={styles.subView} >  
                                 <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>  
-                                    <Text style={{width:30,height:30,marginBottom:0,color:'#CBCBCB',fontSize:28,}}>×</Text>                                          
+                                    <Text style={styles.buttoncols}>×</Text>                                          
                                 </Button>  
                                 <Text style={styles.titleText}>添加地址</Text> 
-                                <View style={{ paddingLeft:20, height: 40,  marginBottom: 10,  justifyContent:'center', }} >
-                                    <TextInput  value={this.state.labelname} 
-                                      onChangeText={(labelname) => this.setState({ labelname })} returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#999999', fontSize: 14, height: 50, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="输入标签名称" underlineColorAndroid="transparent" />
+                                <View style={styles.inptout} >
+                                    <TextInput onChangeText={(labelname) => this.setState({ labelname })} returnKeyType="next"
+                                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}  
+                                      placeholder="输入标签名称" underlineColorAndroid="transparent" value={this.state.labelname} />
                                 </View>    
-                                <View style={{ paddingLeft:20, height: 40,  marginBottom: 10,  justifyContent:'center', }} >
-                                    <TextInput value={this.state.address}
-                                     onChangeText={(address) => this.setState({ address })} returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#999999', fontSize: 14, height: 50, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="粘贴收款人地址" underlineColorAndroid="transparent" />
+                                <View style={styles.inptout} >
+                                    <TextInput onChangeText={(address) => this.setState({ address })} returnKeyType="next"
+                                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                      placeholder="粘贴收款人地址" underlineColorAndroid="transparent"  value={this.state.address} />
                                 </View>                               
                                                                                                         
                                 <Button onPress={() => this.confirm() }>
-                                    <View style={{ margin:10 ,height: 40, borderRadius: 6,  backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: 16, color: '#fff' }}>确认</Text>
+                                    <View style={styles.conout}>
+                                        <Text style={styles.context}>确认</Text>
                                     </View>
                                 </Button>
                             </View>  
@@ -225,26 +226,131 @@ class Thin extends React.Component {
 };
 
 const styles = StyleSheet.create({
+    selectout: {
+       
+    },
+    selectouttou: {
+        position:'absolute',
+        left:3,
+    },
+    selectoutimg: {
+        width:30,
+        height:30,
+    },
+    selout: {
+        width: width - 20,
+        height: 84,
+        backgroundColor: UColor.mainColor,
+        marginBottom: 10,
+        paddingLeft: 10,
+        alignItems: "flex-start",
+        justifyContent: 'center',
+    },
+    outlabelname:{
+        color:'#EFEFEF',
+        fontSize:15,
+    },
+    outaddress: {
+        color: UColor.arrow,
+        fontSize:15,
+    },
+
+
+    container: {
+        flex: 1,
+        backgroundColor: UColor.secdColor,
+        paddingTop: 5,
+    },
+    replace: {
+        width: width,
+        backgroundColor: UColor.secdColor,
+        justifyContent: "space-between",
+        flexDirection: 'column',
+        alignItems: "center"
+    },
+    alternate: {
+        width: width,
+        backgroundColor: UColor.secdColor,
+        justifyContent: "space-between",
+        flexDirection: 'column',
+        alignItems: "center"
+    },
+    added: {
+        width: width - 20,
+        height: 45,
+        backgroundColor: UColor.tintColor,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
+        borderRadius: 5
+    },
+    address: {
+        fontSize:17,
+        color:UColor.fontColor
+    },
+    editClickout: {
+        width: width - 20,
+        height: 45,
+        backgroundColor: UColor.tintColor,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
+        borderRadius: 5
+    },
+
+    deleteItemout: {
+        width: width - 20,
+        height: 45,
+        backgroundColor: '#EF4F4F',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
+        borderRadius: 5
+    },
+    completeout: {
+        flexDirection:'row',
+        width: width - 20,
+        height: 45,
+        backgroundColor: UColor.tintColor,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
+        borderRadius: 5
+    },
+   
+
     pupuo:{  
         backgroundColor: '#ECECF0',  
       },  
       // modal的样式  
       modalStyle: {  
-        // backgroundColor:'#ccc',  
+        backgroundColor: UColor.mask,  
         alignItems: 'center',  
         justifyContent:'center',  
         flex:1,  
+      }, 
+       // 按钮  
+       buttonView:{  
+        alignItems: 'flex-end', 
       },  
+      buttoncols: {
+        width: 30,
+        height: 30,
+        marginBottom: 0,
+        color: '#CBCBCB',
+        fontSize: 28,
+      },
+      
       // modal上子View的样式  
       subView:{  
         marginLeft:10,  
         marginRight:10, 
-        backgroundColor:'#fff',  
+        backgroundColor: UColor.fontColor,  
         alignSelf: 'stretch',  
         justifyContent:'center',  
         borderRadius: 10,  
         borderWidth: 0.5,  
-        borderColor:'#ccc',  
+        borderColor: UColor.baseline,  
       },  
       // 标题  
       titleText:{   
@@ -252,20 +358,33 @@ const styles = StyleSheet.create({
         fontSize:18,  
         fontWeight:'bold',  
         textAlign:'center',  
-      },  
-      // 内容  
-      contentText:{ 
-        marginLeft:15,
-        marginRight:15, 
-        lineHeight:30, 
-        fontSize:14,  
-        textAlign:'left', 
-      
-      },  
-      // 按钮  
-      buttonView:{  
-        alignItems: 'flex-end', 
-      },  
+      }, 
+      inptout: {
+          paddingLeft: 20,
+          height: 40,
+          marginBottom: 10,
+          justifyContent: 'center',
+      },
+      inpt: {
+          color: '#999999',
+          fontSize: 14,
+          height: 50,
+          paddingLeft: 2
+      },
+      conout: {
+          margin: 10,
+          height: 40,
+          borderRadius: 6,
+          backgroundColor: UColor.tintColor,
+          justifyContent: 'center',
+          alignItems: 'center'
+      },
+      context: {
+        fontSize: 16, 
+        color: UColor.fontColor
+      },
+    
+     
   
 })
 

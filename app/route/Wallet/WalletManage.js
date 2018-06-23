@@ -75,32 +75,27 @@ class WalletManage extends React.Component {
   render() {
     const v = (
     <View style={styles.container}>  
-      <View style={styles.tab1}>
-        <ListView
-          initialListSize={10}
+      <View>
+        <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor }} enableEmptySections={true}
           renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-          style={{ backgroundColor: UColor.secdColor }}
-          enableEmptySections={true}
           refreshControl={<RefreshControl refreshing={false} tintColor={UColor.fontColor} colors={['#ddd', UColor.tintColor]} progressBackgroundColor={UColor.fontColor} />}
           dataSource={this.state.dataSource.cloneWithRows(this.props.coinList == null ? [] : this.props.coinList)}
           renderRow={(rowData, sectionID, rowID) => (
             <Button onPress={this.onPress.bind(this, rowData, sectionID, rowID)}>
               <View style={styles.row} >  
                   <View style={styles.top}>
-                      <View style={{flexDirection:"row",flex:1,}}>
-                          <Text style={{fontSize:14,color:UColor.fontColor,textAlign:'left',paddingLeft:10,paddingRight:10,}}>{rowData.name}</Text>
-                          {/* <Text style={{height:18,lineHeight:18,fontSize:10,color:'#2ACFFF',textAlign:'left',borderRadius:10,borderColor:'#2ACFFF',borderWidth:1,justifyContent:'center',alignItems:'center',paddingLeft:8,paddingRight:8,}}>未备份</Text> */}
+                      <View style={styles.topout}>
+                          <Text style={styles.outname}>{rowData.name}</Text>
+                          {rowData.isBackups ? <Text style={styles.stopoutBackups}>已备份</Text> : <Text style={styles.notoutBackups}>未备份</Text> }   
                       </View>
-                      <View style={{flexDirection:"row",flex:1, }}>               
-                          <Text style={{flex:1,fontSize:14,color:UColor.arrow,textAlign:'left',justifyContent:'center',alignItems:'center',paddingLeft:10,}} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
-                          <Ionicons style={{flex:1,color:UColor.fontColor,textAlign:'right',justifyContent:'center',alignItems:'center',}} name="ios-arrow-forward-outline" size={20} />     
+                      <View style={styles.topout}>               
+                          <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+                          <Ionicons style={styles.outIon} name="ios-arrow-forward-outline" size={20} />     
                       </View>
                   </View>                       
-                  <View style={{flex:1,alignItems:'flex-end',justifyContent:'center',}}>
-                      <Text style={{fontSize:14,color:"#EFEFEF",textAlign:'right',alignItems:'flex-end',}}>
-                      <Text style={{color:"#EFEFEF",}}></Text>
-                      <Text style={{color:"#8696B0",}}></Text>
-                      </Text>                               
+                  <View style={styles.balanceout}>
+                      <Text style={styles.balance}></Text>
+                      <Text style={styles.balancetext}></Text>                           
                   </View>
               </View>
             </Button>          
@@ -138,42 +133,114 @@ const styles = StyleSheet.create({
     height:110,
     backgroundColor:UColor.mainColor,
     flexDirection:"column",
-    padding:10,
+    paddingTop:10,
+    paddingHorizontal: 20,
     justifyContent:"space-between",
     borderRadius:5,
-    margin:5,
+    margin:10,
   },
-top:{
-    flex:2,
-    flexDirection:"column",
+  top:{
+      flex:2,
+      flexDirection:"column",
   },
-footer:{
-    paddingTop:5,
-    height:60,    
-    flexDirection:'row',  
-    position:'absolute',
-    backgroundColor:UColor.secdColor,
-    bottom: 0,
-    left: 0,
-    right: 0,
-},
-footoutsource:{
-    flex:1, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    flexDirection:'row',
-    marginRight:1,
-    backgroundColor:UColor.mainColor,
-},
-footimg: {
-    width:30,
-    height:30,
-},
-footText:{
-    marginLeft:20,
-    fontSize:18,
-    color:UColor.fontColor
-},
+  topout: {
+      flexDirection: "row",
+      flex: 1,
+  },
+  outname: {
+    fontSize: 14,
+    color: UColor.fontColor,
+    textAlign: 'left',
+    marginRight: 10,
+  },
+  stopoutBackups: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: '#2ACFFF',
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#2ACFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  notoutBackups: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: UColor.arrow,
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: UColor.arrow,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  outaccount: {
+    flex: 1,
+    fontSize: 14,
+    color: UColor.arrow,
+    textAlign: 'left',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  outIon: {
+    flex: 1,
+    color: UColor.fontColor,
+    textAlign: 'right',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+
+
+  balanceout: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  balance: {
+    fontSize:20, 
+    color:"#EFEFEF",
+  },
+  balancetext: {
+    fontSize:16, 
+    color: UColor.arrow,
+  },
+
+  footer:{
+      paddingTop:5,
+      height:60,    
+      flexDirection:'row',  
+      position:'absolute',
+      backgroundColor:UColor.secdColor,
+      bottom: 0,
+      left: 0,
+      right: 0,
+  },
+  footoutsource:{
+      flex:1, 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      flexDirection:'row',
+      marginRight:1,
+      backgroundColor:UColor.mainColor,
+  },
+  footimg: {
+      width:30,
+      height:30,
+  },
+  footText:{
+      marginLeft:20,
+      fontSize:18,
+      color:UColor.fontColor
+  },
 });
 
 export default WalletManage;

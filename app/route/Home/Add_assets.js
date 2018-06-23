@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
       height:60,    
       flexDirection:'row',  
       position:'absolute',
-      backgroundColor:'#43536D',
+      backgroundColor: UColor.secdColor,
       bottom: 0,
       left: 0,
       right: 0,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     },  
     // modal的样式  
     modalStyle: {  
-      // backgroundColor:'#ccc',  
+      backgroundColor: UColor.mask,  
       alignItems: 'center',  
       justifyContent:'center',  
       flex:1,  
@@ -137,12 +137,12 @@ const styles = StyleSheet.create({
     subView:{  
       marginLeft:10,  
       marginRight:10,  
-      backgroundColor:'#fff',  
+      backgroundColor:  UColor.fontColor,  
       alignSelf: 'stretch',  
       justifyContent:'center',  
       borderRadius: 10,  
       borderWidth: 0.5,  
-      borderColor:'#ccc',  
+      borderColor: UColor.mask,  
     },  
     // 标题  
     titleText:{   

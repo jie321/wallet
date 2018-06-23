@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     },
     // modal的样式  
     modalStyle: {
-        // backgroundColor:'#ccc',  
+        backgroundColor: UColor.mask,  
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,

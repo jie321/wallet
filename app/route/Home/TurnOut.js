@@ -292,11 +292,11 @@ const styles = StyleSheet.create({
     inptpass: {
         color: UColor.tintColor,
         height: 45,
-        width: 160,
+        width: '100%',
         paddingBottom: 5,
         fontSize: 16,
         backgroundColor: UColor.fontColor,
-        borderBottomColor: UColor.mainColor,
+        borderBottomColor: UColor.baseline,
         borderBottomWidth: 1,
     },
 
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     },
     // modal的样式  
     modalStyle: {
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',  
+        backgroundColor: UColor.mask,  
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 10,
         borderWidth: 0.5,
-        borderColor: '#ccc',
+        borderColor: UColor.baseline,
     },
     buttonView: {
         alignItems: 'flex-end',

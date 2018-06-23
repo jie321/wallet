@@ -392,11 +392,11 @@ const styles = StyleSheet.create({
     inptpass: {
         color: UColor.tintColor,
         height: 45,
-        width: 160,
+        width: '100%',
         paddingBottom: 5,
         fontSize: 16,
         backgroundColor: UColor.fontColor,
-        borderBottomColor: UColor.mainColor,
+        borderBottomColor: UColor.baseline,
         borderBottomWidth: 1,
     },
     inptpasstext: {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Image, View, RefreshControl, Text, Platform, TextInput, ScrollView, TouchableHighlight, Animated,  Easing,  } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Image, View, RefreshControl, Text, Platform, TextInput, ScrollView, TouchableHighlight, Animated,  Easing, TouchableOpacity  } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -12,16 +12,12 @@ import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
 
+var dismissKeyboard = require('dismissKeyboard');
 const pages = [];
-
 let loadMoreTime = 0;
-
 let currentLoadMoreTypeId;
-
 let timer;
-
 let currentTab = 0;
-
 const _index = 0;
 
 @connect(({ wallet }) => ({ ...wallet }))
@@ -277,94 +273,95 @@ intensity() {
    }
 }
 
+dismissKeyboardClick() {
+  dismissKeyboard();
+}
+
 
   render() {
     return (
       <View style={styles.container}>
-          <View style={{ backgroundColor: '#43536D',}}>
-            <View style={{ backgroundColor: '#4F617D',paddingLeft: 25, paddingRight: 25, paddingTop: 10, paddingBottom: 15, marginBottom: 5,}}>
-                <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 25,}}>直接复制粘贴钱包私钥文件内容至输入框。或者直接输入私钥</Text>
-            </View>     
-            <View style={{ backgroundColor: '#586888',}}>
-              <View style={{paddingLeft: 14,  paddingRight: 15, height: 75, backgroundColor: '#586888', borderBottomWidth: 0.5, borderBottomColor: '#43536D',}} >
-                <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>私钥</Text>
-                <TextInput ref={(ref) => this._lphone = ref} autoFocus={false} editable={true}
-                  value={this.state.activePk}
-                  onChangeText={(activePk) => this.setState({ activePk })}
-                  returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16,  }}
-                  placeholderTextColor="#8696B0" placeholder="粘贴或输入私钥" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                />
-              </View>
-              {/* <View style={{ paddingLeft: 14,  paddingRight: 15, height: 75, backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
-                <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>账号名称</Text>
-                <View style={{flexDirection: 'row',}}>
-                    <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                    onChangeText={(walletName) => this.setState({ walletName })}
-                    returnKeyType="go" selectionColor="#65CAFF" style={{flex: 1, color: '#8696B0', fontSize: 16, }} placeholderTextColor="#8696B0"
-                    value={this.state.walletName}
-                    placeholder="输入账号或者点击刷新按钮" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                    />
-                    <Button onPress={() => this.refresh()}>
-                      <Animated.Image source={UImage.refresh} style={{width:30,height: 30, 
-                                  transform: [{scale: this.state.bounceValue},
-                                  {rotateZ: this.state.rotateValue.interpolate({ inputRange: [0,1], outputRange: ['0deg', '360deg'],})},
-                          ]}}>
-                      </Animated.Image>
-                    </Button>   
+       <ScrollView keyboardShouldPersistTaps="always">
+            <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+            <View style={styles.header}>
+              <View style={styles.headout}>
+                  <Text style={styles.headtitle}>直接复制粘贴钱包私钥文件内容至输入框。或者直接输入私钥</Text>
+              </View>     
+              <View style={styles.inptoutbg}>
+                <View style={styles.inptout} >
+                  <Text style={styles.inptitle}>私钥</Text>
+                  <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next"
+                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                     onChangeText={(activePk) => this.setState({ activePk })}  autoFocus={false} editable={true}
+                     placeholder="粘贴或输入私钥" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                  />
                 </View>
-              </View> */}
-            
-            <View style={{paddingLeft: 14,  paddingRight: 15, height: 75,  backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}}>
-                <View style={{flexDirection: 'row',}}>
-                   <Text style={{flex: 1, color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>设置密码</Text>
-                   <View style={{flexDirection: 'row',}}>
-                       <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
-                       <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
-                       <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
-                   </View>
+                {/* <View style={styles.inptout}>
+                  <Text style={styles.inptitle}>账号名称</Text>
+                  <View style={{flexDirection: 'row',}}>
+                      <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletName}  returnKeyType="go"
+                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                      onChangeText={(walletName) => this.setState({ walletName })} autoFocus={false} editable={true}
+                      placeholder="输入账号或者点击刷新按钮" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                      />
+                      <Button onPress={() => this.refresh()}>
+                        <Animated.Image source={UImage.refresh} style={{width:30,height: 30, 
+                                    transform: [{scale: this.state.bounceValue},
+                                    {rotateZ: this.state.rotateValue.interpolate({ inputRange: [0,1], outputRange: ['0deg', '360deg'],})},
+                            ]}}>
+                        </Animated.Image>
+                      </Button>   
+                  </View>
+                </View> */}
+              
+              <View style={styles.inptout}>
+                  <View style={{flexDirection: 'row',}}>
+                    <Text style={styles.inptitle}>设置密码</Text>
+                    <View style={{flexDirection: 'row',}}>
+                        <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
+                        <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
+                        <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
+                    </View>
+                  </View>
+                  <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletpwd}  returnKeyType="go" editable={true}
+                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false}
+                    onChangeText={(password) => this.setState({walletpwd: password })} onChange={this.intensity()} 
+                    placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
+                  />
                 </View>
-                <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                  value={this.state.walletpwd}
-                  onChangeText={(password) => this.setState({walletpwd: password })}
-                  onChange={this.intensity()}
-                  returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16, }} placeholderTextColor="#8696B0"
-                  placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
-                />
+                <View style={styles.inptout} >
+                  <Text style={styles.inptitle}>确认密码</Text>
+                  <TextInput ref={(ref) => this._lpass = ref}  value={this.state.reWalletpwd}  returnKeyType="go"
+                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                      placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} editable={true} 
+                      autoFocus={false}  onChangeText={(reWalletpwd) => this.setState({ reWalletpwd })}
+                  />
+                </View>
               </View>
-              <View style={{paddingLeft: 14,  paddingRight: 15, height: 75,  backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}} >
-                <Text style={{ color: '#8696B0', fontSize: 15, lineHeight: 30, paddingLeft: 5, }}>确认密码</Text>
-                <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                  value={this.state.reWalletpwd}
-                  onChangeText={(reWalletpwd) => this.setState({ reWalletpwd })}
-                  returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 16, }} placeholderTextColor="#8696B0"
-                  placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                />
-              </View>
+              <View style={styles.readout}>
+                  <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
+                      <Image source={this.state.isChecked?UImage.aab1:UImage.aab2} style={styles.readoutimg}/>
+                  </TouchableHighlight>
+                <Text style={styles.readtext} >我已经仔细阅读并同意</Text>
+                <Text onPress={() => this.prot(this,'clause')} style={styles.servicetext}>服务及隐私条款</Text>
+              </View> 
+              <Button onPress={() => this.importPriKey()}>
+                <View style={styles.importPriout}>
+                  <Text style={styles.importPritext}>开始导入</Text>
+                </View>
+              </Button>
+              <Button onPress={() => this.prot(this,'privatekey')}>
+                <View style={styles.privatekeyout}>
+                  <Text style={styles.privatekeytext}>什么是 私钥 ？</Text>
+                </View>
+              </Button>
             </View>
-            <View style={{flexDirection: 'row',justifyContent: 'center', alignItems: 'center', marginTop: 20,}}>
-                <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
-                    <Image source={this.state.isChecked?UImage.aab1:UImage.aab2} style={{width:20,height:20,}}/>
-                </TouchableHighlight>
-              <Text style={styles.welcome} style={{ fontSize: 15, color: '#8696B0', marginLeft: 10 }}>我已经仔细阅读并同意</Text>
-              <Text onPress={() => this.prot(this,'clause')} style={{ fontSize: 15, color: '#65CAFF', marginLeft: 5 }}>服务及隐私条款</Text>
-            </View> 
-            <Button onPress={() => this.importPriKey()}>
-              <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', marginTop: 20, marginLeft: 20, marginRight: 20, borderRadius: 5 }}>
-                <Text style={{ fontSize: 15, color: '#fff' }}>开始导入</Text>
-              </View>
-            </Button>
-            <Button onPress={() => this.prot(this,'privatekey')}>
-              <View style={{ height: 45, backgroundColor: '#43536D', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-                <Text style={{ fontSize: 15, color: '#65CAFF' }}>什么是 私钥 ？</Text>
-              </View>
-            </Button>
-          </View>
+          </TouchableOpacity>
+        </ScrollView>   
       </View>
     );
   }
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -372,6 +369,26 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: UColor.secdColor
   },
+  header: { 
+    backgroundColor: UColor.secdColor,
+  },
+  headout: {
+    backgroundColor: '#4F617D',
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingTop: 10,
+    paddingBottom: 15,
+    marginBottom: 5,
+  },
+  headtitle: {
+    color: UColor.arrow,
+    fontSize: 15,
+    lineHeight: 25,
+  },
+  inptoutbg: { 
+    backgroundColor: UColor.mainColor,
+  },
+
   row: {
     flex: 1,
     backgroundColor: UColor.mainColor,
@@ -411,7 +428,77 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     minWidth: 60,
     maxHeight: 25
-  }
+  },
+
+
+  inptout: {
+    paddingLeft: 14,
+    paddingRight: 15,
+    height: 75,
+    backgroundColor: UColor.mainColor,
+    borderBottomWidth: 0.5,
+    borderBottomColor: UColor.secdColor,
+  },
+  inptitle: {
+    color: UColor.arrow,
+    fontSize: 15,
+    lineHeight: 30,
+    paddingLeft: 5,
+  },
+  inpt: {
+    color: UColor.arrow, 
+    fontSize: 16,
+  },
+
+  readout: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  readoutimg: {
+    width: 20,
+    height: 20,
+  },
+  readtext: {
+    fontSize: 15,
+    color: UColor.arrow,
+    marginLeft: 10
+  },
+  servicetext: {
+    fontSize: 15,
+    color: UColor.tintColor,
+    marginLeft: 5
+  },
+
+  importPriout: { 
+    height: 45, 
+    backgroundColor: UColor.tintColor, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginTop: 20, 
+    marginLeft: 20, 
+    marginRight: 20, 
+    borderRadius: 5, 
+  },
+  importPritext: {
+    fontSize: 15,
+    color: UColor.fontColor,
+  },
+
+
+  privatekeyout: { 
+    height: 45, 
+    backgroundColor: UColor.secdColor, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    margin: 20, 
+    borderRadius: 5,
+  },
+  privatekeytext: { 
+    fontSize: 15, 
+    color: UColor.tintColor,
+  },
 });
 
 export default ImportEosKey;

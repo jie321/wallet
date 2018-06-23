@@ -250,12 +250,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#ECECF0',
     },
     // modal的样式  
-    modalStyle: {
-        // backgroundColor:'#ccc',  
+    modalStyle: { 
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor:  UColor.mask,
     },
     // modal上子View的样式  
     subView: {
@@ -266,7 +265,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 10,
         borderWidth: 0.5,
-        borderColor: '#ccc',
+        borderColor: UColor.baseline,
     },
      // 关闭按钮  
     buttonView: {
