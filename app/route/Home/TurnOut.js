@@ -97,7 +97,7 @@ class TurnOut extends React.Component {
             show: false,
             toAccount: '',
             amount: '',
-            note: '',
+            memo: '',
             defaultWallet: null,
             balance: 0,
             name: '',
@@ -150,7 +150,7 @@ class TurnOut extends React.Component {
 
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    Eos.transfer(this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", "", plaintext_privateKey, false, (r) => {
+                    Eos.transfer(this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
                             type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
@@ -244,10 +244,10 @@ class TurnOut extends React.Component {
                         </View>
                         <View style={styles.separate}></View>
                         <View style={styles.textinptoue} >
-                            <TextInput  ref={(ref) => this._rnote = ref}  value={this.state.note} returnKeyType="next"
+                            <TextInput  ref={(ref) => this._rnote = ref}  value={this.state.memo} returnKeyType="next"
                                 selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
-                                placeholder="备注" underlineColorAndroid="transparent" keyboardType="default" maxLength={20} 
-                                onChangeText={(note) => this.setState({ note })}
+                                placeholder="账户唯一的备注 (MEMO) 信息，选填" underlineColorAndroid="transparent" keyboardType="default" maxLength={20} 
+                                onChangeText={(memo) => this.setState({ memo })}
                                 />
                         </View>
                         <View style={styles.separate}></View>
@@ -268,7 +268,7 @@ class TurnOut extends React.Component {
                                     <Text style={styles.buttontext}>×</Text>
                                 </Button>
                                 {/* <Text style={styles.titleText}>转出 {c.name}</Text> */}
-                                <Text style={styles.contentText}>标签名称：{this.state.note}</Text>
+                                <Text style={styles.contentText}>MEMO信息：{this.state.memo}</Text>
                                 <Text style={styles.contentText}>转出地址：{this.state.toAccount}</Text>
                                 <Text style={styles.contentText}> 数量：{this.state.amount}</Text>
                                 <Button onPress={() => { this.inputPwd() }}>
