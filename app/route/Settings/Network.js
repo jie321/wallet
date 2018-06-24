@@ -149,40 +149,16 @@ class Network extends React.Component {
                 }
 
                 // 抵押
-                Eos.transaction({
-                    actions:[
-                        {
-                            account: 'eosio',
-                            name: 'delegatebw',
-                            authorization: [{
-                                actor: this.props.defaultWallet.account,
-                                permission: 'active'
-                            }],
-                            data:{
-                                from: this.props.defaultWallet.account,
-                                receiver: this.state.receiver,
-                                stake_net_quantity: this.state.delegatebw + " EOS",
-                                stake_cpu_quantity: "0 EOS",
-                                transfer: 0
-                            }
-                        }
-                    ]
-                }, plaintext_privateKey, (r) => {
+                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegatebw + " EOS", (r) =>{
                     EasyLoading.dismis();
-                    if(r.data && r.data.transaction_id){
+                    if(r.isSuccess){
                         this.getAccountInfo();
                         EasyToast.show("抵押成功");
-                    }else if(r.data && JSON.parse(r.data).code != 0){
-                        var jdata = JSON.parse(r.data);
-                        var errmsg = "抵押失败: "+ JSON.stringify(jdata);
+                    }else{
+                        var errmsg = "抵押失败: "+ JSON.stringify(r);
                         alert(errmsg);
-                        // if(jdata.error.details[0].message){
-                        //     errmsg = errmsg + jdata.error.details[0].message;
-                        // }
                     }
-
-                    // alert(JSON.parse(r.data).code);
-                }); 
+                });
             } else {
                 EasyLoading.dismis();
                 EasyToast.show('密码错误');
@@ -235,34 +211,16 @@ class Network extends React.Component {
                     }
 
                     // 解除抵押
-                    Eos.transaction({
-                        actions:[
-                            {
-                                account: 'eosio',
-                                name: 'undelegatebw',
-                                authorization: [{
-                                    actor: this.props.defaultWallet.account,
-                                    permission: 'active'
-                                }],
-                                data:{
-                                    from: this.props.defaultWallet.account,
-                                    receiver: this.state.receiver,
-                                    unstake_net_quantity: this.state.undelegatebw + " EOS",
-                                    unstake_cpu_quantity: "0 EOS",
-                                }
-                            }
-                        ]
-                    }, plaintext_privateKey, (r) => {
+                    Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegatebw + " EOS", (r) => {
                         EasyLoading.dismis();
-                        if(r.data && r.data.transaction_id){
+                        if(r.isSuccess){
                             this.getAccountInfo();
                             EasyToast.show("赎回成功");
-                        }else if(r.data && JSON.parse(r.data).code != 0){
-                            var jdata = JSON.parse(r.data);
-                            var errmsg = "赎回失败: "+ JSON.stringify(jdata);
+                        }else{
+                            var errmsg = "赎回失败: "+ JSON.stringify(r);
                             alert(errmsg);
                         }
-                    }); 
+                    })
 
                 } else {
                     EasyLoading.dismis();

@@ -177,34 +177,17 @@ class Memory extends React.Component {
                     }
                     // alert("isBuyOneself: " + this.state.isBuyOneself + " receiver: "+this.state.receiver+" amount: " + this.state.buyRamAmount + " account: "+this.props.defaultWallet.account);
 
-                    Eos.transaction({
-                        actions:[
-                            {
-                                account: 'eosio',
-                                name: 'buyram',
-                                authorization: [{
-                                    actor: this.props.defaultWallet.account,
-                                    permission: 'active'
-                                }],
-                                data:{
-                                    payer: this.props.defaultWallet.account,
-                                    receiver: this.state.receiver,
-                                    quant:  this.state.buyRamAmount + " EOS", //["producer111f"]
-                                }
-                            }
-                        ]
-                    }, plaintext_privateKey, (r) => {
+                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.buyRamAmount + " EOS", (r) => {
                         EasyLoading.dismis();
-                        // alert(JSON.stringify(r.data));
-                        if(r.data && r.data.transaction_id){
+                        if(r.isSuccess){
                             this.getAccountInfo();
-                            EasyToast.show("购买内存成功");
-                        }else if(r.data && JSON.parse(r.data).code != 0){
-                            var jdata = JSON.parse(r.data);
-                            var errmsg = "购买内存失败: "+ JSON.stringify(jdata);
+                            EasyToast.show("购买成功");
+                        }else{
+                            var errmsg = "购买失败: "+ JSON.stringify(r);
                             alert(errmsg);
                         }
-                    }); 
+                    });
+
                 } else {
                     EasyLoading.dismis();
                     EasyToast.show('密码错误');
@@ -253,33 +236,17 @@ class Memory extends React.Component {
                     // alert("plaintext_privateKey "+plaintext_privateKey);
 
                     // alert("receiver: "+this.props.defaultWallet.account+" " + "sellBytes: " + this.state.sellRamBytes);
-                    Eos.transaction({
-                        actions:[
-                            {
-                                account: 'eosio',
-                                name: 'sellram',
-                                authorization: [{
-                                    actor: this.props.defaultWallet.account,
-                                    permission: 'active'
-                                }],
-                                data:{
-                                    account: this.props.defaultWallet.account,
-                                    bytes: this.state.sellRamBytes,
-                                }
-                            }
-                        ]
-                    }, plaintext_privateKey, (r) => {
+                    Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes, (r) => {
                         EasyLoading.dismis();
-                        // alert(JSON.stringify(r.data));
-                        if(r.data && r.data.transaction_id){
+                        if(r.isSuccess){
                             this.getAccountInfo();
-                            EasyToast.show("出售内存成功");
-                        }else if(r.data && JSON.parse(r.data).code != 0){
-                            var jdata = JSON.parse(r.data);
-                            var errmsg = "出售内存失败: "+ JSON.stringify(jdata);
+                            EasyToast.show("出售成功");
+                        }else{
+                            var errmsg = "出售失败: "+ JSON.stringify(r);
                             alert(errmsg);
                         }
-                    }); 
+                    });
+                    
                 } else {
                     EasyLoading.dismis();
                     EasyToast.show('密码错误');

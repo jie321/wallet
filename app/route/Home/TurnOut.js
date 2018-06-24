@@ -150,7 +150,7 @@ class TurnOut extends React.Component {
 
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    Eos.transfer(this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", this.state.memo, plaintext_privateKey, false, (r) => {
+                    Eos.transfer("eosio.token", this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
                             type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: JSON.stringify(r.data.transaction) }, callback: (result) => {

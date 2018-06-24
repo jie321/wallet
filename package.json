@@ -10,7 +10,7 @@
     "ios-bundle-build": "react-native bundle --platform ios --entry-file index.js --bundle-output ./build-ios/main.jsbundle --assets-dest ./build-ios --dev false",
     "android-bundle-build": "react-native bundle --platform android --entry-file index.js --bundle-output ./build-android/index.android.bundle --assets-dest ./build-android --dev false",
     "ios-push": "code-push release i_eostoken ./build-ios/ 2.0.2 --deploymentName Production  --description '' --mandatory true",
-    "android-push": "code-push release a_eostoken ./build-android/ 1.0.7 --deploymentName Production  --description '' --mandatory true",
+    "android-push": "code-push release a_eostoken ./build-android/ 2.0.2 --deploymentName Production  --description '' --mandatory true",
     "push-list": "code-push deployment ls i_eostoken"
   },
   "dependencies": {
@@ -26,7 +26,7 @@
     "react-native": "^0.54.1",
     "react-native-code-push": "^5.3.0",
     "react-native-device-info": "^0.17.4",
-    "react-native-eosjs": "0.0.3",
+    "react-native-eosjs": "0.0.6",
     "react-native-gesture-handler": "^1.0.0-alpha.40",
     "react-native-progress-bar-classic": "^1.2.1",
     "react-native-qrcode-svg": "^5.0.6",
