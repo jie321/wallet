@@ -101,31 +101,31 @@ export class Dialog extends React.Component {
                     <TouchableWithoutFeedback>
                       <View>
                         <View style={styles.titleContainer}>
-                            <Text style={[material.title,{color:'#65CAFF'}]}>{this.state.title}</Text>
+                            <Text style={[material.title,{color:'#586888'}]}>{this.state.title}</Text>
                         </View>
                         <View style={[styles.contentContainer,styles.contentContainerPadding]}>
                           {
-                            (typeof(this.state.content)=='string')?<Text>{this.state.content}</Text>:this.state.content
+                            (typeof(this.state.content)=='string')?<Text style={styles.contentext}>{this.state.content}</Text>:this.state.content
                           }
                         </View>
                         <View style={styles.actionsContainer}>
                           {this.state.disLabel?(
                             <TouchableHighlight
                               testID="dialog-cancel-button"
-                              style={styles.actionContainer}
-                              underlayColor="#F0F0F0"
+                              style={styles.disactionContainer}
+                              underlayColor="#8696B0"
                               onPress={()=>{this.setState({visible:false})}}>
-                              <Text style={[material.button, { color: '#65CAFF' }]}>{this.state.disLabel}</Text>
+                              <Text style={[material.button, { color: '#FFFFFF' }]}>{this.state.disLabel}</Text>
                             </TouchableHighlight>
                           ):null
                         }
                         {this.state.okHandler?(
                             <TouchableHighlight
                               testID="dialog-ok-button"
-                              style={styles.actionContainer}
-                              underlayColor="#F0F0F0"
+                              style={styles.okactionContainer}
+                              underlayColor="#8696B0"
                               onPress={this.state.okHandler}>
-                              <Text style={[material.button, { color: '#65CAFF' }]}>{this.state.okLable}</Text>
+                              <Text style={[material.button, { color: '#FFFFFF' }]}>{this.state.okLable}</Text>
                             </TouchableHighlight>
                           ):null
                         }
@@ -150,16 +150,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   modalContainer: {
-    marginHorizontal: 16,
+    marginHorizontal: 10,
+    padding: 10,
     marginVertical: 106,
-    minWidth: 280,
+    minWidth: 320,
     borderRadius: 2,
     elevation: 24,
     overflow: 'hidden',
-    backgroundColor:"#ffffff"
+    backgroundColor:"#ffffff",
+    borderRadius: 5,
   },
   modalContainerPadding: {
     paddingTop: 24,
@@ -168,7 +170,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 20,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   titleContainerScrolled: {
@@ -184,8 +186,12 @@ const styles = StyleSheet.create({
     flex: -1,
   },
   contentContainerPadding: {
-    paddingHorizontal: 24,
-    paddingBottom: 24,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  contentext : {
+    fontSize: 16,
+    lineHeight: 25,
   },
   contentContainerScrolled: {
     flex: -1,
@@ -193,13 +199,6 @@ const styles = StyleSheet.create({
   },
   contentContainerScrolledPadding: {
     paddingHorizontal: 24,
-  },
-  actionsContainer: {
-    height: 52,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingLeft: 8,
   },
   actionsContainerScrolled: {
     height: 52,
@@ -210,13 +209,30 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: "#DCDCDC",
   },
-  actionContainer: {
-    marginRight: 8,
+  actionsContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  disactionContainer: {
     paddingHorizontal: 8,
-    paddingVertical: 8,
-    minWidth: 64,
+    paddingVertical: 12,
+    minWidth: 140,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#ff6565',
+    borderRadius: 3,
+  },
+  okactionContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    minWidth: 140,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#65CAFF',
+    borderRadius: 3,
   },
 });
