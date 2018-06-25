@@ -1,6 +1,7 @@
 import Request from '../utils/RequestUtil';
-import { address, getAccountsByPuk } from '../utils/Api';
+import { address, getAccountsByPuk, getActions } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
+import { EasyLoading } from '../components/Loading';
 import store from 'react-native-simple-store';
 import * as CryptoJS from 'crypto-js';
 import { DeviceEventEmitter } from 'react-native';
@@ -14,7 +15,8 @@ export default {
     state: {
         list: [],
         total: {},
-        totalOpt: {}
+        totalOpt: {},
+        Details: []
     },
     effects: {
         *info({ payload, callback }, { call, put }) {
@@ -218,9 +220,11 @@ export default {
             const walletArr = yield call(store.get, 'walletArr');
             yield put({ type: 'updateAction', payload: { data: walletArr, ...payload } });
 
-        }, *getWalletDetail({ payload }, { call, put }) {
+        }, 
+        *getWalletDetail({ payload }, { call, put }) {
             const walletArr = yield call(store.get, 'walletArr');
-        }, *modifyPassword({ payload }, { call, put }) {
+        },
+        *modifyPassword({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == payload._wallet.account) {
@@ -232,7 +236,8 @@ export default {
             }
             DeviceEventEmitter.emit('modify_password', payload);
             DeviceEventEmitter.emit('updateDefaultWallet', payload);
-        }, *delWallet({ payload }, { call, put }) {
+        }, 
+        *delWallet({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             var defaultWallet = yield call(store.get, 'defaultWallet');
             if (walletArr.length == 1) {
@@ -255,14 +260,17 @@ export default {
                 }
             }
             DeviceEventEmitter.emit('updateDefaultWallet');
-        }, *getDefaultWallet({ payload, callback }, { call, put }) {
+        }, 
+        *getDefaultWallet({ payload, callback }, { call, put }) {
             var defaultWallet = yield call(store.get, 'defaultWallet');
             if (callback) callback({ defaultWallet });
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: defaultWallet } });
-        }, *changeWallet({ payload }, { call, put }) {
+        }, 
+        *changeWallet({ payload }, { call, put }) {
             yield call(store.save, 'defaultWallet', payload.data);
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
-        }, *backupWords({ payload }, { call, put }) {
+        }, 
+        *backupWords({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             for (var i = 0; i < walletArr.length; i++) {
                 // alert('backupWords: ' + walletArr[i].account + ' ' + payload.account);
@@ -274,7 +282,8 @@ export default {
                 }
             }
             // yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
-        }, *createAccount({ payload }, { call, put }) {
+        }, 
+        *createAccount({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             if (walletArr == null) {
                 walletArr = [];
@@ -284,7 +293,8 @@ export default {
             yield call(store.save, 'defaultWallet', payload);
             DeviceEventEmitter.emit('wallet_backup', payload);
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
-        }, *createAccountService({ payload, callback }, { call, put }) {
+        }, 
+        *createAccountService({ payload, callback }, { call, put }) {
             var defaultWallet = yield call(store.get, 'defaultWallet');
             if (defaultWallet != null && defaultWallet.account != null) {
                 if (callback) callback({ code: '500',data:'暂时不支持创建更多账号' });
@@ -297,14 +307,16 @@ export default {
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
-        }, *pushTransaction({ payload, callback }, { call, put }) {
+        }, 
+        *pushTransaction({ payload, callback }, { call, put }) {
             try {
                 const resp = yield call(Request.request, pushTransaction, 'post', payload);
                 if (callback) callback(resp);
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
-        }, *getBalance({ payload, callback }, { call, put }) {
+        }, 
+        *getBalance({ payload, callback }, { call, put }) {
             // alert('getBalance: '+JSON.stringify(payload));
             try {
                 const resp = yield call(Request.request, getBalance, 'post', payload);
@@ -329,6 +341,29 @@ export default {
                 EasyToast.show('网络发生错误，请重试');
             }
          },
+         *getTradeDetails({payload, callback},{call,put}) {
+            EasyLoading.show();
+            try{
+                const resp = yield call(Request.requestO,"http://192.168.1.44:8088/api" + getActions,"post", payload);
+                // alert('getTradeDetails: '+JSON.stringify(resp));
+               
+                if(resp.code=='0'){               
+                    // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
+                    yield put({ type: 'updateDetails', payload: { DetailsData:resp.data } });
+                    // if (callback) callback(resp.data.account_names[0]);
+                    // alert('updateDetails: '+JSON.stringify(resp.data));
+                    EasyLoading.dismis();
+                }else{
+                    EasyToast.show(resp.msg);
+                    EasyLoading.dismis();
+                }
+                if (callback) callback(resp);
+            } catch (error) {
+                EasyToast.show('网络发生错误，请重试');
+                EasyLoading.dismis();
+            }
+         },
+
     },
     reducers: {
         update(state, action) {
@@ -341,8 +376,13 @@ export default {
         },
         walletCreated(state, action) {
             let data = action.payload.data;
-        }, updateDefaultWallet(state, action) {
+        }, 
+        updateDefaultWallet(state, action) {
             return { ...state, ...action.payload };
+        },
+        updateDetails(state, action) {
+            //  alert('getTradeDetails: '+JSON.stringify(action.payload.DetailsData.actions));
+            return {...state,DetailsData:action.payload.DetailsData.actions};
         }
     }
 }
