@@ -20,6 +20,7 @@ import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Info from './Home/Info'
 import Thin from './Home/Thin'
+import TradeDetails from './Home/TradeDetails'
 import TurnOut from './Home/TurnOut'
 import Share from './ShareInvite'
 import CreateWallet from './Wallet/CreateWallet'
@@ -241,6 +242,9 @@ const Nav = StackNavigator(
     },
     Thin: {
       screen: Thin
+    },
+    TradeDetails: {
+      screen: TradeDetails
     },
     TurnOut: {
       screen: TurnOut

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { NativeModules, StatusBar, BackHandler, Clipboard, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Image, ScrollView, View, RefreshControl, Text, TextInput, Platform, Dimensions, Modal, TouchableHighlight, } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -12,6 +13,7 @@ import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
+import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 
 @connect(({ wallet }) => ({ ...wallet }))
@@ -33,6 +35,8 @@ class Info extends React.Component {
         this.state = {
             show: false,
             balance: this.props.navigation.state.params.balance,
+            dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            type: '',
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
             this.getBalance();
@@ -41,20 +45,18 @@ class Info extends React.Component {
     }
 
     componentDidMount() {
-        // EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
         //加载地址数据
-        const { dispatch } = this.props;
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
 
-        DeviceEventEmitter.addListener('transfer_result', (result) => {
-            // EasyToast.show('交易成功：刷新交易记录');
-            // this.props.dispatch({ type: 'wallet/walletList' });
-            // if (result.success) {
-            //     // this.props.navigation.goBack();
-            // } else {
-            //     EasyToast.show('交易失败：' + result.result);
-            // }
-        });
+        // DeviceEventEmitter.addListener('transfer_result', (result) => {
+        //     EasyToast.show('交易成功：刷新交易记录');
+        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : "marcol521313", pos :"-1",  offset :"-1"}}); 
+        //     if (result.success) {
+        //         // this.props.navigation.goBack();
+        //     } else {
+        //         EasyToast.show('交易失败：' + result.result);
+        //     }
+        // });
     }
 
     _rightButtonClick() {
@@ -89,6 +91,11 @@ class Info extends React.Component {
         EasyToast.show("复制成功");
         this._setModalVisible();
     }
+    _openDetails(trade) {  
+        const { navigate } = this.props.navigation;
+        navigate('TradeDetails', {trade});
+    }
+
 
     render() {
         const c = this.props.navigation.state.params.coinType;
@@ -100,24 +107,34 @@ class Info extends React.Component {
                 </View>
                 <View style={styles.tab}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    <Text style={styles.tabtext}>交易记录功能正在紧急开发中，敬请期待...</Text>
-                    {/* <ScrollView style={{ marginBottom: 45, }}>
-                        <View style={styles.row}>
-                            <View style={styles.top}>
-                                <View style={{ flex: 3, flexDirection: "column", justifyContent: "flex-end", }}>
-                                    <Text style={{ fontSize: 14, color: '#8696B0', textAlign: 'left' }}>时间：2018-5-01 15:32</Text>
-                                    <Text style={{ fontSize: 14, color: '#8696B0', textAlign: 'left', marginTop: 3 }}>数量：34562.12001</Text>
+                    <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
+                    renderRow={(rowData, sectionID, rowID) => (                 
+                    <View style={{ marginBottom: 45, }}>
+                        <Button onPress={this._openDetails.bind(this,rowData)}> 
+                            <View style={styles.row}>
+                                <View style={styles.top}>
+                                    <View style={styles.timequantity}>
+                                        <Text style={styles.timetext}>时间：{rowData.blockTime}</Text>
+                                        <Text style={styles.quandesc}>数量：{rowData.quantity.replace(" EOS", "")}</Text>
+                                    </View>
+                                    <View style={styles.typedescription}>
+                                       {rowData.type == '转出' ? 
+                                       <Text style={styles.typeto}>类型 ：{rowData.type}</Text>
+                                       :
+                                       <Text style={styles.typeout}>类型 ：{rowData.type}</Text>
+                                       }
+                                        <Text style={styles.quandesc}>（{rowData.description}）</Text>
+                                    </View>
                                 </View>
-                                <View style={{ flex: 2, flexDirection: "column", justifyContent: "flex-end", }}>
-                                    <Text style={{ fontSize: 14, color: '#8696B0', textAlign: 'left' }}>类型：转出</Text>
-                                    <Text style={{ fontSize: 14, color: "#8696B0", textAlign: 'left', marginTop: 3 }}>状态：完成</Text>
+                                <View style={styles.Ionicout}>
+                                    <Ionicons style={styles.Ionico} name="ios-arrow-forward-outline" size={20} /> 
                                 </View>
                             </View>
-                            <View>
-                                <Text style={{ fontSize: 14, color: "#8696B0", textAlign: 'left' }}>地址：{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
-                            </View>
-                        </View>
-                    </ScrollView> */}
+                        </Button>  
+                    </View>         
+                     )}                
+                 /> 
                 </View>
 
                 <View style={styles.footer}>
@@ -195,16 +212,10 @@ const styles = StyleSheet.create({
         color: UColor.arrow,
         margin: 5
     },
-    tabtext: {
-        fontSize: 14,
-        color: UColor.arrow,
-        marginTop: 50,
-        textAlign: "center",
-    },
     row: {
         height: 90,
         backgroundColor: UColor.mainColor,
-        flexDirection: "column",
+        flexDirection: "row",
         padding: 10,
         justifyContent: "space-between",
         borderRadius: 5,
@@ -214,6 +225,46 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         alignItems: 'center',
+        justifyContent: "center",
+    },
+    timequantity: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "flex-end",
+    },
+    timetext: {
+        fontSize: 14,
+        color: UColor.arrow,
+        textAlign: 'left'
+    },
+    quandesc: {
+        fontSize: 14,
+        color: UColor.arrow,
+        textAlign: 'left',
+        marginTop: 3
+    },
+    typedescription: {
+        flexDirection: "column",
+        justifyContent: "flex-end",
+    },
+    typeto: {
+        fontSize: 14,
+        color: UColor.tintColor,
+        textAlign: 'center'
+    },
+    typeout: {
+        fontSize: 14,
+        color: "#4ed694",
+        textAlign: 'center'
+    },
+
+    Ionicout: {
+        width: 30,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    Ionico: {
+        color: UColor.arrow,   
     },
 
 

@@ -141,7 +141,6 @@ class Home extends React.Component {
         return;
       }
       navigate('Bvote', {data, balance: this.state.balance});
-      // EasyDialog.show("温馨提示", "即将开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }else if (key == 'sweet') {
       navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
     }else if (key == 'Resources') {
@@ -153,6 +152,8 @@ class Home extends React.Component {
         return;
       }
       navigate('Resources', {});
+    }else if(key == 'add'){
+      navigate('Add_assets', {});
     } else{
       EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -307,7 +308,7 @@ class Home extends React.Component {
               <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
                 <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
                   <View style={styles.touchableout}>
-                    <ListView initialListSize={5} style={styles.touchableoutlist}
+                    <ListView initialListSize={5} style={styles.touchablelist}
                       renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
                       enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
                       renderRow={(rowData) => (
@@ -322,7 +323,7 @@ class Home extends React.Component {
                     <View style={styles.ebhbtnout}>
                       <Button onPress={() => this.createWallet()} style={{height: 40,}}>
                         <View style={styles.establishout}>
-                          <Image source={UImage.wallet_1} style={{}} />
+                          <Image source={UImage.wallet_1} style={styles.establishimg} />
                           <Text style={styles.establishtext}>创建钱包</Text>
                         </View>
                       </Button>
@@ -537,8 +538,6 @@ const styles = StyleSheet.create({
   },
 
 
-
-
   totalbg: {
     flex: 1,
     justifyContent: "center",
@@ -719,12 +718,6 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
   },
-  tab2: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-
-
 
   left: {
     flex: 1,

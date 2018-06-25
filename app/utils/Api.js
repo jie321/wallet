@@ -40,3 +40,5 @@ export const listProducers = rootaddr + '/eosrpc/listProducers';
 export const listAgent = rootaddr + '/eoselector/list';
 
 export const getAccountsByPuk = rootaddr + '/eosrpc/getKeyAccounts';
+
+export const getActions = rootaddr + '/eosrpc/getActions';
