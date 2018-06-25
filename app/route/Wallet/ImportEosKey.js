@@ -444,6 +444,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 30,
     paddingLeft: 5,
+    flex: 1
   },
   inpt: {
     color: UColor.arrow, 
