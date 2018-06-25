@@ -50,7 +50,7 @@ class Info extends React.Component {
 
         // DeviceEventEmitter.addListener('transfer_result', (result) => {
         //     EasyToast.show('交易成功：刷新交易记录');
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : "marcol521313", pos :"-1",  offset :"-1"}}); 
+        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : "marcol521313", pos :"1",  offset :"99999"}}); 
         //     if (result.success) {
         //         // this.props.navigation.goBack();
         //     } else {
@@ -110,7 +110,7 @@ class Info extends React.Component {
                     <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
-                    <View style={{ marginBottom: 45, }}>
+                    <View>
                         <Button onPress={this._openDetails.bind(this,rowData)}> 
                             <View style={styles.row}>
                                 <View style={styles.top}>

@@ -37,7 +37,7 @@ class TradeDetails extends React.Component {
   }
 
   componentDidMount() {
-        alert('trade: '+JSON.stringify(this.props.navigation.state.params.trade));
+        // alert('trade: '+JSON.stringify(this.props.navigation.state.params.trade));
   }
   
   
@@ -46,23 +46,23 @@ class TradeDetails extends React.Component {
     return <View style={styles.container}>
         <View style={{height: 100, alignItems: 'center', justifyContent: 'center',  borderBottomColor: UColor.mainColor, borderBottomWidth: 0.5, }}>
             <View style={{flex: 1, flexDirection:'row', alignItems: 'center', justifyContent: 'center',}}>
-                <Text style={{ fontSize: 32, color: '#FFFFFF'}}>{c.quantity.replace(" EOS", "")}</Text>
-                <Text style={{ fontSize: 16, color: '#FFFFFF'}}>bytes</Text>
+                <Text style={{ fontSize: 30, color: '#FFFFFF'}}>{c.quantity.replace(" EOS", " ")}</Text>
+                <Text style={{ fontSize: 15, color: '#FFFFFF',paddingTop: 10,}}> bytes</Text>
             </View>
-            <Text style={{height: 35,fontSize: 16, color:UColor.tintColor,}}>（{c.description}）</Text>
+            <Text style={{height: 35,fontSize: 14, color:UColor.tintColor,}}>（{c.description}）</Text>
         </View>
         <View style={{paddingHorizontal:20, paddingVertical: 5, borderBottomColor: UColor.mainColor, borderBottomWidth: 0.5,}}>
-            <Text style={{fontSize: 16, color: '#8696B0', paddingTop: 10,}}>发送方：{c.to}}</Text>
-            <Text style={{fontSize: 16, color: '#8696B0', paddingTop: 10,}}>接受方：{c.from}</Text>
-            <Text style={{fontSize: 16, color: '#8696B0', paddingTop: 10,}}>高度：654152</Text>
-            <Text style={{fontSize: 16, color: '#8696B0', paddingTop: 10,}}>备注：002153</Text>
+            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>发送方：{c.from}</Text>
+            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>接受方：{c.to}</Text>
+            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>区块高度：{c.blockNum}</Text>
+            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>备注：{c.memo}</Text>
         </View>
-        <Text style={{fontSize: 16, color: '#FFFFFF', textAlign: 'right', lineHeight: 30, marginRight: 10,}}>{c.blockTime}</Text>
+        <Text style={{fontSize: 14, color: '#FFFFFF', textAlign: 'right', lineHeight: 30, marginRight: 10,}}>{c.blockTime}</Text>
         <View style={styles.codeout}>
-            <QRCode size={140} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
+            <QRCode size={140} style={{padding:3}} value={'https://eosmonitor.io/txn/' + c.transactionId } />
         </View>
-        <Text style={{fontSize: 16, color: '#8696B0', paddingTop: 10, }}>交易号：{c.transactionld}</Text>
-        <Text style={{fontSize: 16, color: '#8696B0', paddingTop: 10,}}>提示：扫码可获取区块交易状态</Text>
+        <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10, paddingHorizontal: 25, }} >交易号：{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text>
+        <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10, paddingHorizontal: 25, }}>提示：扫码可获取区块交易状态</Text>
     </View>
   }
 }
