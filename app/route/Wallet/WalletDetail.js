@@ -135,7 +135,7 @@ class Set extends React.Component {
     this.setState({
       show: !isShow,
     });
-    Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + 'ActivePrivateKey: ' + this.state.txt_active);
+    Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + "\n" + 'ActivePrivateKey: ' + this.state.txt_active);
     EasyToast.show("复制成功")
   }
 
