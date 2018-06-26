@@ -344,7 +344,7 @@ export default {
          *getTradeDetails({payload, callback},{call,put}) {
             EasyLoading.show();
             try{
-                const resp = yield call(Request.requestO,"http://192.168.1.44:8088/api" + getActions,"post", payload);
+                const resp = yield call(Request.request,getActions,"post", payload);
                 // alert('getTradeDetails: '+JSON.stringify(resp));
                
                 if(resp.code=='0'){               

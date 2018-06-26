@@ -30,9 +30,7 @@ class TradeDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        delegatebw: "",
-        feedBackText: "",
-        selection: {start: 0, end: 0},
+      
     };
   }
 
@@ -44,25 +42,27 @@ class TradeDetails extends React.Component {
   render() {
     const c = this.props.navigation.state.params.trade;
     return <View style={styles.container}>
-        <View style={{height: 100, alignItems: 'center', justifyContent: 'center',  borderBottomColor: UColor.mainColor, borderBottomWidth: 0.5, }}>
-            <View style={{flex: 1, flexDirection:'row', alignItems: 'center', justifyContent: 'center',}}>
-                <Text style={{ fontSize: 30, color: '#FFFFFF'}}>{c.quantity.replace(" EOS", " ")}</Text>
-                <Text style={{ fontSize: 15, color: '#FFFFFF',paddingTop: 10,}}> bytes</Text>
+        <View style={styles.header}>
+            <View style={styles.headout}>
+                <Text style={styles.quantitytext}>{c.quantity}</Text>
+                {/* <Text style={styles.headtext}> bytes</Text> */}
             </View>
-            <Text style={{height: 35,fontSize: 14, color:UColor.tintColor,}}>（{c.description}）</Text>
+            <Text style={styles.description}>（{c.description} {c.bytes? c.bytes + " bytes":""}）</Text>
         </View>
-        <View style={{paddingHorizontal:20, paddingVertical: 5, borderBottomColor: UColor.mainColor, borderBottomWidth: 0.5,}}>
-            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>发送方：{c.from}</Text>
-            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>接受方：{c.to}</Text>
-            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>区块高度：{c.blockNum}</Text>
-            <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10,}}>备注：{c.memo}</Text>
+        <View style={styles.conout}>
+            <Text style={styles.context}>发送方：{c.from}</Text>
+            <Text style={styles.context}>接受方：{c.to}</Text>
+            <Text style={styles.context}>区块高度：{c.blockNum}</Text>
+            <Text style={styles.context}>备注：{c.memo}</Text>
         </View>
-        <Text style={{fontSize: 14, color: '#FFFFFF', textAlign: 'right', lineHeight: 30, marginRight: 10,}}>{c.blockTime}</Text>
+        <Text style={styles.blocktime}>{c.blockTime}</Text>
         <View style={styles.codeout}>
-            <QRCode size={140} style={{padding:3}} value={'https://eosmonitor.io/txn/' + c.transactionId } />
+            <View style={styles.qrcode}>
+               <QRCode size={105} value={'https://eosmonitor.io/txn/' + c.transactionId } />
+            </View>
         </View>
-        <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10, paddingHorizontal: 25, }} >交易号：{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text>
-        <Text style={{fontSize: 14, color: '#8696B0', paddingTop: 10, paddingHorizontal: 25, }}>提示：扫码可获取区块交易状态</Text>
+        <Text style={styles.tradehint}>交易号：{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text>
+        <Text style={styles.tradehint}>提示：扫码可获取区块交易状态</Text>
     </View>
   }
 }
@@ -73,20 +73,53 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     backgroundColor: UColor.secdColor,
   },
-  scrollView: {
-
+ 
+  header: {
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomColor: UColor.mainColor,
+    borderBottomWidth: 0.5,
   },
-  inpt: {
-    flex: 1, 
-    color: '#8696B0', 
+  headout: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quantitytext: {
+    fontSize: 30,
+    color: UColor.fontColor
+  },
+  headtext: {
+    fontSize: 15,
+    color: UColor.fontColor,
+    paddingTop: 10,
+  },
+  description: {
+    height: 35,
     fontSize: 14,
-    textAlignVertical: 'top', 
-    height: 266, 
-    lineHeight: 25,
-    paddingLeft: 10, 
-    backgroundColor: '#FFFFFF', 
+    color: UColor.tintColor,
+  },
+  conout: {
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    borderBottomColor: UColor.mainColor,
+    borderBottomWidth: 0.5,
+  },
+  context: {
+    fontSize: 14,
+    color: UColor.arrow,
+    paddingTop: 10,
   },
 
+  blocktime: {
+    fontSize: 14,
+    color: UColor.fontColor,
+    textAlign: 'right',
+    lineHeight: 30,
+    marginRight: 10,
+  },
   codeout: {
     margin: 20,
     alignItems: 'center',
@@ -94,21 +127,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: "row",
   },
-  copyout: {
-    margin: 10, 
-    height: 40, 
-    borderRadius: 6, 
-    backgroundColor: UColor.tintColor, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  qrcode: {
+    backgroundColor: UColor.fontColor,
+    padding: 5,
   },
-  copyrtext: {
-    fontSize: 16, 
-    color: UColor.fontColor,
-  },
-
-  tab: {
-    flex: 1,
+ 
+  tradehint: {
+    fontSize: 14,
+    color: UColor.arrow,
+    paddingTop: 10,
+    paddingHorizontal: 25,
   },
 });
 

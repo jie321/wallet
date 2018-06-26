@@ -50,13 +50,14 @@ class Info extends React.Component {
 
         // DeviceEventEmitter.addListener('transfer_result', (result) => {
         //     EasyToast.show('交易成功：刷新交易记录');
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : "marcol521313", pos :"1",  offset :"99999"}}); 
+        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
         //     if (result.success) {
         //         // this.props.navigation.goBack();
         //     } else {
         //         EasyToast.show('交易失败：' + result.result);
         //     }
         // });
+        // alert('updateDefaultWallet: '+(this.props.defaultWallet.name));
     }
 
     _rightButtonClick() {
@@ -105,9 +106,10 @@ class Info extends React.Component {
                     <Text style={styles.headbalance}>{this.state.balance}</Text>
                     <Text style={styles.headmarket}>≈ {(this.state.balance.replace(" EOS", "")*c.value).toFixed(2)} ￥</Text>
                 </View>
-                <View style={styles.tab}>
+                <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
+                    {this.props.DetailsData == null && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>}
+                    <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
@@ -116,7 +118,7 @@ class Info extends React.Component {
                                 <View style={styles.top}>
                                     <View style={styles.timequantity}>
                                         <Text style={styles.timetext}>时间：{rowData.blockTime}</Text>
-                                        <Text style={styles.quandesc}>数量：{rowData.quantity.replace(" EOS", "")}</Text>
+                                        <Text style={styles.quantity}>数量：{rowData.quantity.replace(" EOS", "")}</Text>
                                     </View>
                                     <View style={styles.typedescription}>
                                        {rowData.type == '转出' ? 
@@ -124,7 +126,7 @@ class Info extends React.Component {
                                        :
                                        <Text style={styles.typeout}>类型 ：{rowData.type}</Text>
                                        }
-                                        <Text style={styles.quandesc}>（{rowData.description}）</Text>
+                                        <Text style={styles.description}>（{rowData.description}）</Text>
                                     </View>
                                 </View>
                                 <View style={styles.Ionicout}>
@@ -207,10 +209,25 @@ const styles = StyleSheet.create({
     tab: {
         flex: 1,
     },
+    btn: {
+        flex: 1,
+        paddingBottom: 60,
+    },
+
     latelytext: {
         fontSize: 14,
         color: UColor.arrow,
         margin: 5
+    },
+    nothave: {
+        height: 90,
+        backgroundColor: UColor.mainColor,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: "center",
+        padding: 10,
+        borderRadius: 5,
+        margin: 5,
     },
     row: {
         height: 90,
@@ -237,10 +254,16 @@ const styles = StyleSheet.create({
         color: UColor.arrow,
         textAlign: 'left'
     },
-    quandesc: {
+    quantity: {
         fontSize: 14,
         color: UColor.arrow,
         textAlign: 'left',
+        marginTop: 3
+    },
+    description: {
+        fontSize: 14,
+        color: UColor.arrow,
+        textAlign: 'center',
         marginTop: 3
     },
     typedescription: {
@@ -269,7 +292,7 @@ const styles = StyleSheet.create({
 
 
     footer: {
-        paddingTop: 10,
+        paddingTop: 5,
         height: 60,
         flexDirection: 'row',
         position: 'absolute',
