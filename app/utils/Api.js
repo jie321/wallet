@@ -42,3 +42,4 @@ export const listAgent = rootaddr + '/eoselector/list';
 export const getAccountsByPuk = rootaddr + '/eosrpc/getKeyAccounts';
 
 export const getActions = rootaddr + '/eosrpc/getActions';
+export const pocketAsset = rootaddr + '/pocketAsset/list';
