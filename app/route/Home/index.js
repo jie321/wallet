@@ -710,7 +710,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center' 
   },
-  copyrtext: {
+  copytext: {
     fontSize: 16, 
     color: UColor.fontColor,
   },

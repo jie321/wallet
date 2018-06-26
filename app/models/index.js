@@ -1,3 +1,4 @@
+import Assets from './Assets'
 import Banner from './Banner'
 import NewsType from './NewsType'
 import Wallet from './Wallet'
@@ -9,6 +10,7 @@ import Common from './Common'
 import Invite from './Invite'
 import vote from './vote'
 const models = [
+    Assets,
     Banner,
     NewsType,
     Wallet,
