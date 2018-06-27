@@ -149,13 +149,6 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请输入私钥');
     return;
   }
-  Eos.checkPrivateKey(this.state.activePk, (r) => {
-    if (!r.isSuccess) {
-      EasyToast.show('私钥格式不正确');
-      return;
-    }
-    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
-  });
   if (this.state.walletpwd == '') {
     EasyToast.show('请输入密码');
     return;
@@ -176,6 +169,13 @@ class ImportEosKey extends React.Component {
     EasyToast.show('请确认已阅读并同意条款');
     return;
   }
+  Eos.checkPrivateKey(this.state.activePk, (r) => {
+    if (!r.isSuccess) {
+      EasyToast.show('私钥格式不正确');
+      return;
+    }
+    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+  });
 }
 
 createWalletByPrivateKey(owner_privateKey, active_privatekey){
@@ -215,6 +215,7 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
             result.password = this.state.walletpwd;
             result.name = data.data.account_names[0];
             result.account = data.data.account_names[0];
+            result.isactived = true;
             // 保存钱包信息
             this.props.dispatch({
               type: 'wallet/saveWallet', wallet: result, callback: (data) => {
@@ -277,24 +278,24 @@ dismissKeyboardClick() {
   dismissKeyboard();
 }
 
-
   render() {
+    let {feedBackText, selection} = this.state;
     return (
       <View style={styles.container}>
        <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
             <View style={styles.header}>
-              <View style={styles.headout}>
+              {/* <View style={styles.headout}>
                   <Text style={styles.headtitle}>直接复制粘贴钱包私钥文件内容至输入框。或者直接输入私钥</Text>
-              </View>     
+              </View>      */}
               <View style={styles.inptoutbg}>
-                <View style={styles.inptout} >
-                  <Text style={styles.inptitle}>私钥</Text>
-                  <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next"
-                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                     onChangeText={(activePk) => this.setState({ activePk })}  autoFocus={false} editable={true}
-                     placeholder="粘贴或输入私钥" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                  />
+                <View style={styles.inptoutgo} >
+                  {/* <Text style={styles.inptitle}>私钥</Text> */}
+                  <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next" 
+                    selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} 
+                    onChangeText={(activePk) => this.setState({ activePk })}  autoFocus={false} editable={true}
+                    placeholder="粘贴或输入私钥" underlineColorAndroid="transparent" keyboardType="default" 
+                    multiline={true}  />
                 </View>
                 {/* <View style={styles.inptout}>
                   <Text style={styles.inptitle}>账号名称</Text>
@@ -430,25 +431,42 @@ const styles = StyleSheet.create({
     maxHeight: 25
   },
 
-
   inptout: {
-    paddingLeft: 14,
-    paddingRight: 15,
-    height: 75,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
     backgroundColor: UColor.mainColor,
-    borderBottomWidth: 0.5,
     borderBottomColor: UColor.secdColor,
   },
   inptitle: {
-    color: UColor.arrow,
+    flex: 1,
     fontSize: 15,
     lineHeight: 30,
     paddingLeft: 5,
-    flex: 1
+    color: UColor.arrow,
   },
   inpt: {
-    color: UColor.arrow, 
     fontSize: 16,
+    color: UColor.arrow, 
+  },
+  inptoutgo: {
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderBottomWidth: 10,
+    backgroundColor: UColor.mainColor,
+    borderBottomColor: UColor.secdColor,
+  },
+  inptgo: {
+    flex: 1, 
+    height: 90, 
+    fontSize: 16,
+    lineHeight: 25,
+    borderRadius: 5,
+    color: UColor.arrow, 
+    paddingHorizontal: 10,
+    textAlignVertical: 'top', 
+    borderWidth: 1,
+    borderColor: UColor.arrow,
+    backgroundColor: UColor.secdColor,
   },
 
   readout: {

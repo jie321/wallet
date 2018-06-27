@@ -56,9 +56,10 @@ class WalletManage extends React.Component {
 
   createWallet() {
     // 创建钱包
-    // const { navigate } = this.props.navigation;
-    // navigate('CreateWallet', {});
-    EasyToast.show('该功能正在紧急开发中，敬请期待');
+    const { navigate } = this.props.navigation;
+    navigate('CreateWallet', {});
+    // EasyToast.show('该功能正在紧急开发中，敬请期待');
+
   }
   
   importWallet() {
@@ -86,7 +87,7 @@ class WalletManage extends React.Component {
                   <View style={styles.top}>
                       <View style={styles.topout}>
                           <Text style={styles.outname}>{rowData.name}</Text>
-                          {rowData.isBackups ? <Text style={styles.stopoutBackups}>已备份</Text> : <Text style={styles.notoutBackups}>未备份</Text> }   
+                          {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(rowData.isBackups ? <Text style={styles.stopoutBackups}>已备份</Text> : <Text style={styles.notoutBackups}>未备份</Text>) }   
                       </View>
                       <View style={styles.topout}>               
                           <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
@@ -172,6 +173,20 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontSize: 10,
     color: UColor.arrow,
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: UColor.arrow,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  notactived: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: UColor.showy,
     textAlign: 'left',
     borderRadius: 10,
     borderWidth: 1,

@@ -117,14 +117,14 @@ class Info extends React.Component {
                             <View style={styles.row}>
                                 <View style={styles.top}>
                                     <View style={styles.timequantity}>
-                                        <Text style={styles.timetext}>时间：{rowData.blockTime}</Text>
-                                        <Text style={styles.quantity}>数量：{rowData.quantity.replace(" EOS", "")}</Text>
+                                        <Text style={styles.timetext}>时间 : {rowData.blockTime}</Text>
+                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace(" EOS", "")}</Text>
                                     </View>
                                     <View style={styles.typedescription}>
                                        {rowData.type == '转出' ? 
-                                       <Text style={styles.typeto}>类型 ：{rowData.type}</Text>
+                                       <Text style={styles.typeto}>类型 : {rowData.type}</Text>
                                        :
-                                       <Text style={styles.typeout}>类型 ：{rowData.type}</Text>
+                                       <Text style={styles.typeout}>类型 : {rowData.type}</Text>
                                        }
                                         <Text style={styles.description}>（{rowData.description}）</Text>
                                     </View>
@@ -220,20 +220,20 @@ const styles = StyleSheet.create({
         margin: 5
     },
     nothave: {
-        height: 90,
+        height: Platform.OS == 'ios' ? 84.5 : 65,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: "center",
-        padding: 10,
+        paddingHorizontal: 20,
         borderRadius: 5,
         margin: 5,
     },
     row: {
-        height: 90,
+        height: Platform.OS == 'ios' ? 84.5 : 65,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
-        padding: 10,
+        paddingHorizontal: 20,
         justifyContent: "space-between",
         borderRadius: 5,
         margin: 5,
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     Ionicout: {
         width: 30,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-end'
     },
     Ionico: {
         color: UColor.arrow,   
