@@ -58,7 +58,7 @@ class WalletManage extends React.Component {
     // 创建钱包
     // const { navigate } = this.props.navigation;
     // navigate('CreateWallet', {});
-    EasyToast.show('敬请期待');
+    EasyToast.show('该功能正在紧急开发中，敬请期待');
   }
   
   importWallet() {

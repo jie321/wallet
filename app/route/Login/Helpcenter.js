@@ -100,7 +100,7 @@ class Helpcenter extends React.Component {
     }else if (key == 'pf'){
       navigate('ProblemFeedback', {});
     }else{
-      EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
   _renderListItem() {

@@ -28,7 +28,7 @@ class AddressQr extends React.Component {
     };
 
     componentDidMount() {
-        // EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
         //加载地址数据
         const { dispatch } = this.props;
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
@@ -45,11 +45,11 @@ class AddressQr extends React.Component {
     }
 
     onPress(action) {
-        EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
 
     _rightButtonClick() {
-        // EasyDialog.show("温馨提示", "转入功能正在紧急开发中，敬请期待...", "知道了", null, () => { EasyDialog.dismis() });
+        // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待", "知道了", null, () => { EasyDialog.dismis() });
         this._setModalVisible();
     }
 
