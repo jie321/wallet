@@ -2,6 +2,7 @@ import Request from '../utils/RequestUtil';
 import {pocketAsset, getBalance} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
+import { DeviceEventEmitter } from 'react-native';
 
 export default {
     namespace: 'assets',
@@ -77,6 +78,7 @@ export default {
                     myAssets.splice(i, 1);
                     yield call(store.save, 'myAssets', myAssets);
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+                    DeviceEventEmitter.emit('updateMyAssets', myAssets);
                     return;
                 }
             }
@@ -97,6 +99,7 @@ export default {
         // alert("777777777 " + JSON.stringify(payload.asset));
         yield call(store.save, 'myAssets', myAssets);
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        DeviceEventEmitter.emit('updateMyAssets', myAssets);
      },
      *myAssetInfo({payload, callback},{call,put}){
         const myAssets = yield call(store.get, 'myAssets');

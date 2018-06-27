@@ -74,6 +74,9 @@ class Home extends React.Component {
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
+    DeviceEventEmitter.addListener('updateMyAssets', (assets) => {
+      this.setState({myAssets: assets});
+    });
   }
 
 
