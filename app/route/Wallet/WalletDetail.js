@@ -121,7 +121,7 @@ class Set extends React.Component {
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
     } else {
-      // EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
+      // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
@@ -135,7 +135,7 @@ class Set extends React.Component {
     this.setState({
       show: !isShow,
     });
-    Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + 'ActivePrivateKey: ' + this.state.txt_active);
+    Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + "\n" + 'ActivePrivateKey: ' + this.state.txt_active);
     EasyToast.show("复制成功")
   }
 

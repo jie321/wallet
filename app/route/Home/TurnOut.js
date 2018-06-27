@@ -74,7 +74,7 @@ class TurnOut extends React.Component {
     }
 
     onPress(action) {
-        EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
 
     _rightButtonClick() {

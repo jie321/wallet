@@ -134,9 +134,8 @@ class Nodevoting extends React.Component {
                         if(r.data && r.data.transaction_id){
                             AnalyticsUtil.onEvent('vote');
                             EasyToast.show("投票成功");
-                        }else if(r.data && JSON.parse(r.data).code != 0){
-                            var jdata = JSON.parse(r.data);
-                            var errmsg = "投票失败: "+ JSON.stringify(jdata);
+                        }else{
+                            var errmsg = "投票失败: "+ JSON.stringify(r);
                             alert(errmsg);
                         }
                     }); 

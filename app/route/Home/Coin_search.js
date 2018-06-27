@@ -20,7 +20,6 @@ import JPushModule from 'jpush-react-native';
 class Coin_search extends React.Component {
 
   static navigationOptions = {
-    tabBarVisible: false, // 隐藏底部导航栏
     header:null,  //隐藏顶部导航栏
   };
 
@@ -104,7 +103,7 @@ class Coin_search extends React.Component {
     
 
   onPress(action){
-    EasyDialog.show("温馨提示","部分功能将于6月份EOS上线主网后开通，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});
+    EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});
   }
   logout() {
     this._setModalVisible();  
@@ -153,7 +152,7 @@ class Coin_search extends React.Component {
                     </TouchableOpacity>  
                 </View> 
 
-                <Text style={styles.prompttext}>提示：如果你没有搜索到你要找的Token，可以 使用手动添加。</Text>
+                <Text style={styles.prompttext}>提示：如果你没有搜索到你要找的Token，可以使用手动添加。</Text>
                 <View style={styles.btnout}>
                     <Button onPress={() => this.logout()}>
                         <View style={styles.btnloginUser}>

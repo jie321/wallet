@@ -15,7 +15,7 @@ import JPush from 'jpush-react-native';
 export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
 
-@connect(({assets}) => ({...assets}))
+@connect(({wallet, assets}) => ({...wallet, ...assets}))
 class Add_assets extends React.Component {
     static navigationOptions = ({ navigation }) => {
     
@@ -48,6 +48,7 @@ class Add_assets extends React.Component {
 
   componentDidMount() {
     this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
+    this.props.dispatch({ type: 'assets/myAssetInfo'});
   }
 
   _rightTopClick = () =>{
@@ -119,22 +120,37 @@ class Add_assets extends React.Component {
     });  
   }  
 
+  addAsset(asset, value) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+      //todo 创建钱包引导
+      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        // EasyToast.show('创建钱包');
+        this.createWallet();
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+      return;
+    }
+    this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value} });
+  }
 
+  isMyAsset(rowData){
+    if(this.props.myAssets == null){
+        return false;
+    }
+    for(var i = 0; i < this.props.myAssets.length; i++){
+        if(this.props.myAssets[i].asset.name == rowData.name){
+            // rowData.isChecked = true;
+            return true;
+        }
+    }
 
-    render() {
+    return false;
+ }
+  
+ render() {
         return (
             <View style={styles.container}>
                 <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
-                  // onEndReached={() => this.onEndReached(route.key)}
-                  // refreshControl={
-                  //   <RefreshControl
-                  //     refreshing={this.props.newsRefresh}
-                  //     onRefresh={() => this.onRefresh(route.key, true)}
-                  //     tintColor="#fff"
-                  //     colors={['#ddd', UColor.tintColor]}
-                  //     progressBackgroundColor="#ffffff"
-                  //   />
-                  // }
                   dataSource={this.state.dataSource.cloneWithRows(this.props.assetsData == null ? [] : this.props.assetsData)} 
                   renderRow={(rowData, sectionID, rowID) => (      
                   <View style={styles.listItem}>
@@ -145,11 +161,8 @@ class Add_assets extends React.Component {
                         </View>
                         <View style={styles.listInfoRight}>
                           <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
-                              value={this.state.value} onValueChange={(value)=>{
-                              this.setState({
-                                  value:value,
-                              });
-                              // this.changeJpush(value);
+                              value={this.isMyAsset(rowData)} onValueChange={(value)=>{
+                              this.addAsset(rowData, value);
                           }}/>
                         </View>
                       </View>
