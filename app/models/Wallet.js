@@ -363,7 +363,6 @@ export default {
                 EasyLoading.dismis();
             }
          },
-
     },
     reducers: {
         update(state, action) {
@@ -383,6 +382,6 @@ export default {
         updateDetails(state, action) {
             //  alert('getTradeDetails: '+JSON.stringify(action.payload.DetailsData.actions));
             return {...state,DetailsData:action.payload.DetailsData.actions};
-        }
+        },
     }
 }

@@ -63,6 +63,45 @@ export default {
       *openView({payload},{call,put}) {
         yield put({type:'open',...payload});
       },
+      *addMyAsset({payload, callback},{call,put}){
+        var myAssets = yield call(store.get, 'myAssets');
+        // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));
+        if (myAssets == null) {
+            var  myAssets = [];
+        }
+        for (var i = 0; i < myAssets.length; i++) {
+            if (myAssets[i].asset.name == payload.asset.name) {
+                if(payload.value){ // 添加资产,  但资产已存在
+                    return;
+                }else{ // 删除资产
+                    myAssets.splice(i, 1);
+                    yield call(store.save, 'myAssets', myAssets);
+                    yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+                    return;
+                }
+            }
+        }
+
+        // 如果目前我的资产没有传入的资产
+        if(!payload.value){ // 删除资产直接退出
+            return;
+        }
+
+        // 添加资产
+        var _asset = {
+            asset: payload.asset,
+            value: payload.value,
+            balance: '0',
+        }
+        myAssets[myAssets.length] = _asset;
+        // alert("777777777 " + JSON.stringify(payload.asset));
+        yield call(store.save, 'myAssets', myAssets);
+        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+     },
+     *myAssetInfo({payload},{call,put}){
+        const myAssets = yield call(store.get, 'myAssets');
+        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+    }
     },
    
     reducers: {
@@ -113,9 +152,9 @@ export default {
             assetsData[n.tid] = list;
             return {...state,assetsData};
         },
-
-     
-        
+        updateMyAssets(state, action) {
+            return { ...state, ...action.payload };
+        },
     }
   }
   

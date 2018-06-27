@@ -18,7 +18,7 @@ import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 
-@connect(({ wallet }) => ({ ...wallet }))
+@connect(({ wallet, assets }) => ({ ...wallet, ...assets }))
 class Home extends React.Component {
 
   static navigationOptions = {
@@ -49,6 +49,7 @@ class Home extends React.Component {
 
     //加载地址数据
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1} });
     Animated.timing(
       this.state.fadeAnim,  //初始值
       {
@@ -232,30 +233,12 @@ class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <ListView
-          initialListSize={1}
-          renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-          onScroll={(event) => {
-            if (event.nativeEvent.contentOffset.y > 280) {
-              this.setState({
-                status: 'rgba(0, 0, 0,0.3)'
-              });
-            } else {
-              this.setState({
-                status: 'rgba(255, 255, 255,0)'
-              });
-            }
-          }
-          }
-          enableEmptySections={true}
-          dataSource={this.state.dataSource.cloneWithRows((this.props.list == null ? [] : this.props.list))}
-          renderHeader={() => (
-            <View>
+             <View>
                 <View style={styles.topbtn}>
                   <Button onPress={() => this.scan()}>
                     <Image source={UImage.scan} style={styles.imgBtn} />
                   </Button>
-                  <Text style={styles.top}>EOS资产</Text>
+                  <Text style={styles.toptext}>EOS资产</Text>
                   <Button onPress={() => this.setState({ modal: !this.state.modal })}>
                     <Image source={UImage.wallet} style={styles.imgBtn} />
                   </Button>
@@ -304,116 +287,120 @@ class Home extends React.Component {
                     </View>               
                   </Button>
               </View>
-             
-              <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
-                <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
-                  <View style={styles.touchableout}>
-                    <ListView initialListSize={5} style={styles.touchablelist}
-                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-                      enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
-                      renderRow={(rowData) => (
-                        <Button onPress={this.changeWallet.bind(this, rowData)}>
-                          <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
-                            <Text style={styles.walletname}>{rowData.name}</Text>
-                            <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
-                          </View>
-                        </Button>
-                      )}
-                    />
-                    <View style={styles.ebhbtnout}>
-                      <Button onPress={() => this.createWallet()} style={{height: 40,}}>
-                        <View style={styles.establishout}>
-                          <Image source={UImage.wallet_1} style={styles.establishimg} />
-                          <Text style={styles.establishtext}>创建钱包</Text>
-                        </View>
-                      </Button>
-                      {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
-                        <View style={{ flex: 1, flexDirection: "row", }}>
-                          <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
-                          <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
-                        </View>
-                      </Button> */}
+          </View>   
+        <View style={{height: 75}}>
+          <ListView  initialListSize={1} enableEmptySections={true}
+            // renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
+            // onScroll={(event) => { 
+            //   if (event.nativeEvent.contentOffset.y > 280) { this.setState({ status: 'rgba(0, 0, 0,0.3)'});} 
+            //   else { this.setState({ status: 'rgba(255, 255, 255,0)' });}}}
+            dataSource={this.state.dataSource.cloneWithRows((this.props.list == null ? [] : this.props.list))}
+            renderRow={(rowData, sectionID, rowID ) => (
+              <View style={{height: 90,}}>
+                <Button onPress={this.coinInfo.bind(this, rowData)}>
+                  <View style={styles.row}>
+                    <View style={styles.left}>
+                      <Image source={{ uri: rowData.img }} style={styles.leftimg} />
+                      <Text style={styles.lefttext}>{rowData.name}</Text>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </Modal>
-
-              <View style={styles.pupuo}>
-                <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                  <View style={styles.modalStyle}>
-                    <View style={styles.subView} >
-                      <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                        <Text style={styles.butclose}>×</Text>
-                      </Button>
-                      <Text style={styles.titleText}>收款码</Text>
-                      <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name)}</Text>
-                      <Text style={styles.prompt}>提示：扫码同样可获取地址</Text>
-                      <View style={styles.codeout}>
-                        <View style={styles.tab} />
-                        <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
-                        <View style={styles.tab} />
+                    <View style={styles.right}>
+                      <View style={styles.rightout}>
+                        <View>
+                          <Text style={styles.rightbalance}>{this.state.balance}</Text>
+                          <Text style={styles.rightmarket}>≈（￥）{(this.state.balance*rowData.value).toFixed(2)} </Text>
+                        </View>
+                        {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
+                          <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />
+                        </View> */}
                       </View>
-                      <Button onPress={() => { this.copy() }}>
-                        <View style={styles.copyout}>
-                          <Text style={styles.copytext}>复制地址</Text>
-                        </View>
-                      </Button>
                     </View>
                   </View>
-                </Modal>
+                </Button>
               </View>
-                {/* <View>
-                  {
-                    this.props.totalOpt != undefined && <Echarts ba option={this.props.totalOpt} height={Platform.OS == 'ios' ? 200 : 215} width={ScreenWidth} />
-                  }
-                  {
-                    this.props.total != undefined && (<View style={styles.totalbg}>
-                      <Button>
-                        <View style={{ width: 200, height: 200, justifyContent: "center", alignItems: "center" }}>
-                          <Text style={{ fontSize: 14, color: '#fff' }}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name}</Text>
-                          <Text style={{ fontSize: 21, color: '#fff', marginTop: 15, marginBottom: 15 }}>{this.state.balance}</Text>
-                        </View>
-                      </Button>
-                    </View>)
-                  }
-                </View> */}
-
-                {/* <View style={styles.botbtn}>
-                  <Button onPress={() => this.qr()}>
-                    <Image source={UImage.qr} style={styles.imgBtn} />
-                  </Button>
-                  <Button onPress={this.onPress.bind('add', this)}>
-                    <Image source={UImage.add} style={styles.imgBtn} />
-                  </Button>
-                </View> */}
-              {/* </View> */}
-            </View>
-          )}
-
-          renderRow={(rowData) => (
-            <View>
+            )}
+          />   
+        </View>
+        <ListView initialListSize={1} enableEmptySections={true} 
+          dataSource={this.state.dataSource.cloneWithRows(this.props.myAssets == null ? [] : this.props.myAssets)} 
+          renderRow={(rowData, sectionID, rowID) => (      
+            <View style={styles.listItem}>
               <Button onPress={this.coinInfo.bind(this, rowData)}>
                 <View style={styles.row}>
                   <View style={styles.left}>
-                    <Image source={{ uri: rowData.img }} style={styles.leftimg} />
-                    <Text style={styles.lefttext}>{rowData.name}</Text>
+                    <Image source={{ uri: rowData.asset.icon }} style={styles.leftimg} />
+                    <Text style={styles.lefttext}>{rowData.asset.name}</Text>
                   </View>
                   <View style={styles.right}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{this.state.balance}</Text>
-                        <Text style={styles.rightmarket}>≈（￥）{(this.state.balance*rowData.value).toFixed(2)} </Text>
+                        <Text style={styles.rightbalance}>{rowData.asset.balance}</Text>
+                        <Text style={styles.rightmarket}>≈（￥）0 </Text>
                       </View>
-                      {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
-                        <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />
-                      </View> */}
                     </View>
                   </View>
                 </View>
               </Button>
             </View>
-          )}
-        />        
+          )}                
+         />  
+
+
+        <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
+          <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
+            <View style={styles.touchableout}>
+              <ListView initialListSize={5} style={styles.touchablelist}
+                renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
+                enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
+                renderRow={(rowData) => (
+                  <Button onPress={this.changeWallet.bind(this, rowData)}>
+                    <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
+                      <Text style={styles.walletname}>{rowData.name}</Text>
+                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+                    </View>
+                  </Button>
+                )}
+              />
+              <View style={styles.ebhbtnout}>
+                <Button onPress={() => this.createWallet()} style={{height: 40,}}>
+                  <View style={styles.establishout}>
+                    <Image source={UImage.wallet_1} style={styles.establishimg} />
+                    <Text style={styles.establishtext}>创建钱包</Text>
+                  </View>
+                </Button>
+                {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
+                  <View style={{ flex: 1, flexDirection: "row", }}>
+                    <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
+                    <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
+                  </View>
+                </Button> */}
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+        <View style={styles.pupuo}>
+          <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+            <View style={styles.modalStyle}>
+              <View style={styles.subView} >
+                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
+                  <Text style={styles.butclose}>×</Text>
+                </Button>
+                <Text style={styles.titleText}>收款码</Text>
+                <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name)}</Text>
+                <Text style={styles.prompt}>提示：扫码同样可获取地址</Text>
+                <View style={styles.codeout}>
+                  <View style={styles.tab} />
+                  <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
+                  <View style={styles.tab} />
+                </View>
+                <Button onPress={() => { this.copy() }}>
+                  <View style={styles.copyout}>
+                    <Text style={styles.copytext}>复制地址</Text>
+                  </View>
+                </Button>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </View>
     );
   }
@@ -424,23 +411,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: UColor.secdColor,
   },
+
   row: {
-    flex: 1,
     backgroundColor: UColor.mainColor,
     flexDirection: "row",
     padding: 15,
     justifyContent: "space-between",
-    borderTopColor: '#2D354F', 
-    borderTopWidth: 1,
+    // borderTopColor: '#2D354F', 
+    // borderTopWidth: 1,
   },
-  
-  top: {
+
+  topbtn: {
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: "space-between",
+    width: Dimensions.get('window').width,
+    paddingTop:Platform.OS == 'ios' ? 30 : 20,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: UColor.mainColor, 
+  },
+  toptext: {
     height: Platform.OS == 'ios' ? 65 : 50,
-    lineHeight:50,
+    lineHeight: Platform.OS == 'ios' ? 65 : 50,
     textAlign: "center",
     fontSize: 18,
     color: UColor.fontColor,
-    // paddingTop: Platform.OS == 'ios' ? 24 : 16
   },
 
   bgout: {
@@ -560,17 +556,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
-  topbtn: {
-    flexDirection: "row",
-    alignItems: 'center',
-    justifyContent: "space-between",
-    width: Dimensions.get('window').width,
-    height: 65,
-    paddingTop:Platform.OS == 'ios' ? 30 : 20,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: UColor.mainColor, 
-  },
+ 
   botbtn: {
     width: Dimensions.get('window').width,
     height: 50,
@@ -710,7 +696,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center' 
   },
-  copytext: {
+  copyrtext: {
     fontSize: 16, 
     color: UColor.fontColor,
   },
