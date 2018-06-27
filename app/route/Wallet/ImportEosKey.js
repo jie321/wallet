@@ -215,6 +215,7 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
             result.password = this.state.walletpwd;
             result.name = data.data.account_names[0];
             result.account = data.data.account_names[0];
+            result.isactived = true;
             // 保存钱包信息
             this.props.dispatch({
               type: 'wallet/saveWallet', wallet: result, callback: (data) => {

@@ -138,8 +138,20 @@ export default {
             // }
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == wallet.account) {
-                    if (callback) callback({ error: 'account exist' });
-                    return;
+                    if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
+                        if (callback) callback({}, error);
+                        return;
+                    }else if(wallet.isactived){
+                        //激活账号，修改激活状态
+                        walletArr[i].isactived = true;
+                        yield call(store.save, 'walletArr', walletArr);
+                        yield call(store.save, 'defaultWallet', walletArr[i]);
+                        yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: defaultWallet} });
+                        DeviceEventEmitter.emit('updateDefaultWallet', {});
+                        if (callback) callback(_wallet,null);
+                        return;
+                    }
+                   
                 }
             }
             // var salt = Math.ceil(Math.random() * 100000000000000000).toString();
@@ -163,6 +175,7 @@ export default {
                 words: _words.toString(),
                 words_active: _words_active.toString(),
                 salt: salt,
+                isactived: wallet.isactived,
                 isBackups: false
             }
 
@@ -175,6 +188,8 @@ export default {
             // // Eos.createAccount("eosio", wallet.ownerPrivate, wallet.name, wallet.ownerPublic, wallet.activePublic, (r) => {
 
             walletArr[walletArr.length] = _wallet;
+
+
             yield call(store.save, 'walletArr', walletArr);
             DeviceEventEmitter.emit('key_created');
             yield call(store.save, 'defaultWallet', _wallet);
@@ -183,7 +198,8 @@ export default {
             JPushModule.addTags([_wallet.name], map => {
 
             })
-            if (callback) callback(_wallet);
+            DeviceEventEmitter.emit('updateDefaultWallet', {});
+            if (callback) callback(_wallet,null);
         },
         *importPrivateKey({ payload, callback }, { call, put }) {
             var AES = require("crypto-js/aes");
@@ -295,18 +311,19 @@ export default {
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
         }, 
         *createAccountService({ payload, callback }, { call, put }) {
-            var defaultWallet = yield call(store.get, 'defaultWallet');
-            if (defaultWallet != null && defaultWallet.account != null) {
-                if (callback) callback({ code: '500',data:'暂时不支持创建更多账号' });
-                // DeviceEventEmitter.emit('wallet_10');
-                return;
-            }
+            // var defaultWallet = yield call(store.get, 'defaultWallet');
+            // if (defaultWallet != null && defaultWallet.account != null) {
+            //     if (callback) callback({ code: '500',data:'暂时不支持创建更多账号' });
+            //     // DeviceEventEmitter.emit('wallet_10');
+            //     return;
+            // }
             try {
                 const resp = yield call(Request.request, createAccount, 'post', payload);
                 if (callback) callback(resp);
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
+            
         }, 
         *pushTransaction({ payload, callback }, { call, put }) {
             try {
