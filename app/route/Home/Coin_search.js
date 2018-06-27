@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch} from 'react-native';
+import {NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,TouchableOpacity  } from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -11,45 +11,18 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
+import { EasyToast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
 export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
 
 @connect(({assets}) => ({...assets}))
 class Coin_search extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-    
-        const params = navigation.state.params || {};
-       
-        return {   
-            headerLeft: (<Button name="search" onPress={navigation.state.params.search}>
-            <View style={{paddingLeft:15}} >
-                <Image source={UImage.Magnifier} style={{ width: 30, height: 30 }}></Image>
-            </View>
-            </Button>),           
-            headerTitle: (
-                <View style={styles.inptout} >
-                    <TextInput ref={(ref) => this._raccount = ref}  returnKeyType="go"
-                        selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#b3b3b3" 
-                        placeholder="输入标签名称" underlineColorAndroid="transparent" keyboardType="default"
-                        // value={this.state.labelname} onChangeText={(labelname) => this.setState({ labelname })}
-                        />
-                       
-                       
-                               
-                </View>   
-            ),
-            headerStyle:{
-                    paddingTop:Platform.OS == 'ios' ? 30 : 20,
-                    backgroundColor: UColor.mainColor,
-                    },
-            headerRight: (<Button name="search" onPress={navigation.state.params.cancel}>
-                <View >
-                    <Text style={{ color: UColor.arrow, fontSize: 18,justifyContent: 'flex-end',paddingRight:15}}>取消</Text>
-                </View>
-            </Button>),                  
-        };
-      };
+
+  static navigationOptions = {
+    tabBarVisible: false, // 隐藏底部导航栏
+    header:null,  //隐藏顶部导航栏
+  };
 
   // 构造函数  
   constructor(props) { 
@@ -70,12 +43,16 @@ class Coin_search extends React.Component {
     this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
   }
 
-  _rightTopClick() {
-    alert(1);
+  _rightTopClick = () => {
+    const {goBack} = this.props.navigation;
+    goBack();
   }
 
-  _leftTopClick() {
-    alert(12);
+  _leftTopClick =() => {
+    if (this.state.labelname == "") {
+      EasyToast.show('请输入标签名称');
+      return;
+    }
   }
 
   onBackAndroid = () => {
@@ -143,8 +120,12 @@ class Coin_search extends React.Component {
   }  
 
   copy() {
-    if ((this.state.tokenname == "")) {
+    if (this.state.tokenname == "") {
       EasyToast.show('请输入token名称');
+      return;
+    }
+    if (this.state.address == "") {
+      EasyToast.show('请输入合约地址');
       return;
     }
   }
@@ -154,7 +135,25 @@ class Coin_search extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontSize: 15, color: UColor.arrow, lineHeight: 30, padding:30,}}>提示：如果你没有搜索到你要找的Token，可以 使用手动添加。</Text>
+                  <View style={styles.header}>  
+                    <TouchableOpacity onPress={this._leftTopClick.bind()}>  
+                        <View style={styles.leftout} >
+                            <Image source={UImage.Magnifier} style={styles.headleftimg}></Image>
+                        </View>
+                    </TouchableOpacity>  
+                    <View style={styles.inptout} >
+                        <TextInput ref={(ref) => this._raccount = ref} value={this.state.labelname} returnKeyType="go"
+                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#b3b3b3" 
+                            placeholder="输入标签名称" underlineColorAndroid="transparent" keyboardType="default"
+                            onChangeText={(labelname) => this.setState({ labelname })}
+                            />      
+                    </View>     
+                    <TouchableOpacity   onPress={this._rightTopClick.bind()}>  
+                        <Text style={styles.canceltext}>取消</Text>
+                    </TouchableOpacity>  
+                </View> 
+
+                <Text style={styles.prompttext}>提示：如果你没有搜索到你要找的Token，可以 使用手动添加。</Text>
                 <View style={styles.btnout}>
                     <Button onPress={() => this.logout()}>
                         <View style={styles.btnloginUser}>
@@ -182,7 +181,6 @@ class Coin_search extends React.Component {
                                 placeholder="输入合约地址" underlineColorAndroid="transparent"  keyboardType="default"  
                                 onChangeText={(address) => this.setState({ address })}/>
                         </View>
-                     
                         <Button onPress={() => { this.copy() }}>
                           <View style={styles.copyout}>
                             <Text style={styles.copytext}>提交</Text>
@@ -203,84 +201,37 @@ const styles = StyleSheet.create({
       backgroundColor: UColor.secdColor,
       paddingTop:5,
     },
-
-    listItem: {
-      backgroundColor: UColor.mainColor,
+    header: {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-    },
-   
-    listInfo: {
-      height: 65,
-      flex: 1,
-      paddingLeft: 16,
-      paddingRight: 16,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      borderTopWidth:1,
-      borderTopColor: UColor.secdColor
-    },
-    scrollView: {
-      flex: 1,
-    },
-    listInfoTitle: {
-      color:UColor.fontColor, 
-      fontSize:16
-    },
-    listInfoRight: {
-      flexDirection: "row",
-      alignItems: "center"
-    },
-
-
-
-
-
-
-
-
-
-
-
-
-
-    row: {
-      height:80,
+      paddingTop:Platform.OS == 'ios' ? 30 : 20,
+      paddingBottom: 5,
       backgroundColor: UColor.mainColor,
-      flexDirection: "row",
-      padding: 15,
-      justifyContent: "space-between",
     },
-    left: {
+    leftout: {
+      paddingLeft: 15
+    },
+    headleftimg: {
+      width: 30,
+      height: 30
+    },
+    inptout: {
       flex: 1,
-      flexDirection: "row",
-      alignItems: 'center',
+      paddingHorizontal: 20,
+      justifyContent: 'center', 
     },
-    right: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: 'center',
-      justifyContent: "flex-end"
-    },
-    top:{
-      flex:2,
-      flexDirection:"column",
-    },
-    footer:{
-      paddingTop:5,
-      height:60,    
-      flexDirection:'row',  
-      position:'absolute',
-      backgroundColor: UColor.secdColor,
-      bottom: 0,
-      left: 0,
-      right: 0,
+    inpt: {
+        color: '#999999',
+        fontSize: 14,
+        height: 30,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        backgroundColor: UColor.fontColor,
+        paddingVertical: 0,
     },
 
     pupuo: {
-      // flex:1,  
       backgroundColor: '#ECECF0',
     },
     // modal的样式  
@@ -301,6 +252,17 @@ const styles = StyleSheet.create({
       borderWidth: 0.5,
       borderColor: UColor.mask,
     },
+     // 关闭按钮  
+     buttonView: {
+      alignItems: 'flex-end',
+    },
+    butclose: {
+      width: 30,
+      height: 30,
+      marginBottom: 0,
+      color: '#CBCBCB',
+      fontSize: 28,
+    },
     // 标题  
     titleText: {
       marginBottom: 5,
@@ -313,51 +275,15 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       padding: 10,
       
-  },
-  inptpass: {
-      color: UColor.tintColor,
-      height: 45,
-      width: '100%',
-      paddingHorizontal: 15,
-      marginVertical: 10,
-      fontSize: 16,
-      backgroundColor: '#f3f3f3',
-      // borderBottomColor: UColor.baseline,
-      // borderBottomWidth: 1,
-  },
-  inptpasstext: {
-      fontSize: 14,
-      color: '#808080',
-      lineHeight: 25,
-      marginTop: 5,
-  },
-    // 内容  
-    contentText: {
-      fontSize: 15,
-      textAlign: 'center',
     },
-    // 按钮  
-    buttonView: {
-      alignItems: 'flex-end',
-    },
-    butclose: {
-      width: 30,
-      height: 30,
-      marginBottom: 0,
-      color: '#CBCBCB',
-      fontSize: 28,
-    },
-    prompt: {
-      color: '#F45353',
-      fontSize: 12,
-      textAlign: 'center',
-    },
-    codeout: {
-      margin: 10,
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: "row",
+    inptpass: {
+        color: UColor.tintColor,
+        height: 45,
+        width: '100%',
+        paddingHorizontal: 15,
+        marginVertical: 10,
+        fontSize: 16,
+        backgroundColor: '#f3f3f3',
     },
     copyout: {
       margin: 10, 
@@ -379,52 +305,34 @@ const styles = StyleSheet.create({
       flex:1,
       flexDirection: 'column',
     }, 
-
-
-    inptout: {
-        flex: 1,
-        paddingHorizontal: 20,
-        justifyContent: 'center', 
+    
+    canceltext: {
+      color: UColor.arrow,
+      fontSize: 18,
+      justifyContent: 'flex-end',
+      paddingRight: 15
     },
-    inpt: {
-        // flex: 1,
-        color: '#999999',
-        fontSize: 14,
-        height: 30,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        backgroundColor: UColor.fontColor,
-        paddingVertical: 0,
+    prompttext: {
+      fontSize: 15,
+      color: UColor.arrow,
+      lineHeight: 30,
+      padding: 30,
     },
-    // conout: {
-    //     margin: 10,
-    //     height: 40,
-    //     borderRadius: 6,
-    //     backgroundColor: UColor.tintColor,
-    //     justifyContent: 'center',
-    //     alignItems: 'center'
-    // },
-    // context: {
-    //   fontSize: 16, 
-    //   color: UColor.fontColor
-    // },
-
-
     btnout: {
         justifyContent: 'center',
         alignItems: 'center',
-      },
-      btnloginUser: {
-        width: 150,
-        height: 45,
-        backgroundColor: UColor.tintColor,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5
-      },
-      btntext: {
-        fontSize:17,
-        color: UColor.fontColor,
-      },
+    },
+    btnloginUser: {
+      width: 150,
+      height: 45,
+      backgroundColor: UColor.tintColor,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 5
+    },
+    btntext: {
+      fontSize:17,
+      color: UColor.fontColor,
+    },
 })
 export default Coin_search;
