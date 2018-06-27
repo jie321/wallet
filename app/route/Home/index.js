@@ -76,6 +76,7 @@ class Home extends React.Component {
     });  
     DeviceEventEmitter.addListener('updateMyAssets', (assets) => {
       this.setState({myAssets: assets});
+      this.getBalance();
     });
   }
 

@@ -119,8 +119,8 @@ class AssetInfo extends React.Component {
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    {this.props.DetailsData == null && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>}
-                    <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
+                    {<View style={styles.nothave}><Text style={styles.copytext}>抱歉，正在开发中...</Text></View>}
+                    {/* <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
@@ -147,7 +147,7 @@ class AssetInfo extends React.Component {
                         </Button>  
                     </View>         
                      )}                
-                 /> 
+                  />  */}
                 </View>
 
                 <View style={styles.footer}>
