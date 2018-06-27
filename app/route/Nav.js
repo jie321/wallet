@@ -20,9 +20,11 @@ import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Coin_search from './Home/Coin_search'
 import Info from './Home/Info'
+import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
 import TradeDetails from './Home/TradeDetails'
 import TurnOut from './Home/TurnOut'
+import TurnOutAsset from './Home/TurnOutAsset'
 import Share from './ShareInvite'
 import CreateWallet from './Wallet/CreateWallet'
 import BackupWords from './Wallet/BackupWords'
@@ -244,6 +246,9 @@ const Nav = StackNavigator(
     Info: {
       screen: Info
     },
+    AssetInfo: {
+      screen: AssetInfo
+    },
     Thin: {
       screen: Thin
     },
@@ -252,6 +257,9 @@ const Nav = StackNavigator(
     },
     TurnOut: {
       screen: TurnOut
+    },
+    TurnOutAsset: {
+      screen: TurnOutAsset
     },
     Boot: {
       screen: Boot

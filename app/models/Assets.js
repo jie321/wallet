@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {pocketAsset,} from '../utils/Api';
+import {pocketAsset, getBalance} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 
@@ -98,12 +98,57 @@ export default {
         yield call(store.save, 'myAssets', myAssets);
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
      },
-     *myAssetInfo({payload},{call,put}){
+     *myAssetInfo({payload, callback},{call,put}){
         const myAssets = yield call(store.get, 'myAssets');
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
-    }
+        if(callback){
+            callback(myAssets);
+        }
     },
-   
+    *updateMyAsset({payload},{call,put}){
+        var myAssets = yield call(store.get, 'myAssets');
+        alert(JSON.stringify(payload) + "   " +JSON.stringify(myAssets));
+        if (myAssets == null) {
+            myAssets = [];
+        }
+        for (var i = 0; i < myAssets.length; i++) {
+            if (myAssets[i].asset.name == payload.asset.name) {
+                // 删除资产
+                myAssets.splice(i, 1);
+            }
+        }
+
+        // 添加资产
+        var _asset = {
+            asset: payload.asset,
+            value: true,
+            balance: payload.balance,
+        }
+        myAssets[myAssets.length] = _asset;
+        yield call(store.save, 'myAssets', myAssets);
+        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+     },
+     *getBalance({payload, callback}, {call, put}){
+        try{
+            // alert("------ " + JSON.stringify(payload));
+            for(let i in payload.assets){
+                let item = payload.assets[i];
+                const resp = yield call(Request.request, getBalance, 'post', {contract: item.asset.contractAccount, account: payload.accountName, symbol: item.asset.name});
+                // alert("------ " + JSON.stringify(resp));
+                if(resp && resp.code=='0'){
+                    item.balance = resp.data;
+                }
+            }
+            if(callback){
+                callback(payload.assets);
+            }
+        }catch(e){
+            EasyToast.show('网络发生错误，请重试');
+        }
+    }
+
+    },
+
     reducers: {
         update(state, action) {
             // alert('update: '+JSON.stringify(action));

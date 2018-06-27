@@ -17,12 +17,12 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
-class TurnOut extends React.Component {
+class TurnOutAsset extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            // headerTitle: '转出' + params.coins.name,
-            headerTitle: '转出EOS',
+            headerTitle: '转出' + params.coins.asset.name,
+            // headerTitle: '转出EOS',
             headerStyle: {
                 paddingTop:Platform.OS == 'ios' ? 30 : 20,
                 backgroundColor: UColor.mainColor,
@@ -59,7 +59,7 @@ class TurnOut extends React.Component {
 
     getBalance(data) {
         this.props.dispatch({
-            type: 'wallet/getBalance', payload: { contract: "eosio.token", account: data.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
+            type: 'wallet/getBalance', payload: { contract: this.props.navigation.state.params.coins.asset.contractAccount, account: data.defaultWallet.account, symbol: this.props.navigation.state.params.coins.asset.name }, callback: (data) => {
                 if (data.code == '0') {
                     if (data.data == "") {
                         this.setState({ balance: '0.0000' })
@@ -74,7 +74,7 @@ class TurnOut extends React.Component {
     }
 
     onPress(action) {
-        EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        EasyDialog.show("温馨提示", "开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
 
     _rightButtonClick() {
@@ -150,7 +150,7 @@ class TurnOut extends React.Component {
 
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    Eos.transfer("eosio.token", this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", this.state.memo, plaintext_privateKey, false, (r) => {
+                    Eos.transfer(this.props.navigation.state.params.coins.asset.contractAccount, this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " " + this.props.navigation.state.params.coins.asset.name, this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
                             type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
@@ -489,4 +489,4 @@ const styles = StyleSheet.create({
 
 
 })
-export default TurnOut;
+export default TurnOutAsset;

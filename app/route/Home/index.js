@@ -41,6 +41,7 @@ class Home extends React.Component {
       account: 'xxxx',
       show: false,
       init: true,
+      myAssets: []
     };
   }
 
@@ -49,7 +50,9 @@ class Home extends React.Component {
 
     //加载地址数据
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1} });
+    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (data) => { 
+      this.setState({myAssets: data});
+    } });
     Animated.timing(
       this.state.fadeAnim,  //初始值
       {
@@ -112,6 +115,17 @@ class Home extends React.Component {
       //   EasyDialog.dismis()
       // }, () => { EasyDialog.dismis() });
     }
+
+    // 其他资产
+    if(this.props.defaultWallet == null && this.props.defaultWallet.name == null || this.props.myAssets == null){
+      return;
+    }
+
+    this.props.dispatch({
+      type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
+        this.setState({myAssets: data});
+      }
+    });
   }
 
 
@@ -230,6 +244,21 @@ class Home extends React.Component {
     navigate('Info', { coinType, balance: this.state.balance, account: this.props.defaultWallet.name });
   }
 
+  assetInfo(asset) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+      //todo 创建钱包引导
+      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        // EasyToast.show('创建钱包');
+        this.createWallet();
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+      return;
+    }
+
+    const { navigate } = this.props.navigation;
+    navigate('AssetInfo', { asset, account: this.props.defaultWallet.name });
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -321,10 +350,10 @@ class Home extends React.Component {
           />   
         </View>
         <ListView initialListSize={1} enableEmptySections={true} 
-          dataSource={this.state.dataSource.cloneWithRows(this.props.myAssets == null ? [] : this.props.myAssets)} 
+          dataSource={this.state.dataSource.cloneWithRows(this.state.myAssets == null ? [] : this.state.myAssets)} 
           renderRow={(rowData, sectionID, rowID) => (      
             <View style={styles.listItem}>
-              <Button onPress={this.coinInfo.bind(this, rowData)}>
+              <Button onPress={this.assetInfo.bind(this, rowData)}>
                 <View style={styles.row}>
                   <View style={styles.left}>
                     <Image source={{ uri: rowData.asset.icon }} style={styles.leftimg} />
@@ -333,7 +362,7 @@ class Home extends React.Component {
                   <View style={styles.right}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{rowData.asset.balance}</Text>
+                        <Text style={styles.rightbalance}>{rowData.balance}</Text>
                         <Text style={styles.rightmarket}>≈（￥）0 </Text>
                       </View>
                     </View>
