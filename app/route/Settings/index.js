@@ -84,7 +84,7 @@ class Setting extends React.Component {
     }else if (key == 'Helpcenter') {
       navigate('Helpcenter', {});
     } else{
-      EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
@@ -164,7 +164,7 @@ class Setting extends React.Component {
               </View>
               <View style={styles.Withdrawout}>
                 {
-                  this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "6月份EOS主网上线后将逐步解冻…", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
+                  this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
                     <Text style={styles.Withdrawtext}>提币</Text>
                   </Button>
                 }

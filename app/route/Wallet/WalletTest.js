@@ -69,7 +69,7 @@ class Setting extends React.Component {
     }else if(key=='BackupNote'){
       navigate('BackupNote', {});
     }else{
-      EasyDialog.show("温馨提示","该功能将于EOS主网上线后开通。","知道了",null,()=>{EasyDialog.dismis()});
+      EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});
     }
   }
 
@@ -112,7 +112,7 @@ class Setting extends React.Component {
               </View>
               <View style={{flex:1,flexDirection:"row",alignSelf:'center',justifyContent:"flex-end"}}>
                 {
-                  this.props.loginUser && <Button onPress={()=>{EasyDialog.show("温馨提示","6月份EOS主网上线后将逐步解冻…","知道了",null,()=>{EasyDialog.dismis()});}} style={{backgroundColor:'#65CAFF',borderRadius:5,paddingVertical: 5,paddingHorizontal:15}}>
+                  this.props.loginUser && <Button onPress={()=>{EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});}} style={{backgroundColor:'#65CAFF',borderRadius:5,paddingVertical: 5,paddingHorizontal:15}}>
                   <Text style={{fontSize:15,color:'#fff'}}>提币</Text>
                 </Button>
                 }
