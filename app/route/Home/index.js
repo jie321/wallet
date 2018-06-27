@@ -70,7 +70,7 @@ class Home extends React.Component {
     });
     this.timer = setInterval( ()  =>{
       this.getBalance()
-    },10000)
+    },30000)
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
@@ -172,6 +172,13 @@ class Home extends React.Component {
       }
       navigate('Resources', {});
     }else if(key == 'add'){
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });  
+        return;
+      }
       navigate('Add_assets', {});
     } else{
       EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
