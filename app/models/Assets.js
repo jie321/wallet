@@ -35,35 +35,6 @@ export default {
         }
       },
     
-      *view({payload},{call,put}) {
-        try{
-            const resp = yield call(Request.request,newsView+payload.news.id,'get');
-            if(resp.code==0){
-                payload.news.view=payload.news.view+1;
-                yield put({type:'updateAction',...payload});
-            }else{
-                EasyToast.show(resp.msg);
-            }
-        } catch (error) {
-            EasyToast.show('网络发生错误，请重试');
-        }
-      },
-      *share({payload},{call,put}) {
-        try{
-            const resp = yield call(Request.request,newsShare+payload.news.id,'get');
-            if(resp.code==0){
-                payload.news.share=payload.news.share+1;
-                yield put({type:'updateAction',...payload});
-            }else{
-                EasyToast.show(resp.msg);
-            }
-        } catch (error) {
-            EasyToast.show('网络发生错误，请重试');
-        }
-      },
-      *openView({payload},{call,put}) {
-        yield put({type:'open',...payload});
-      },
       *addMyAsset({payload, callback},{call,put}){
         var myAssets = yield call(store.get, 'myAssets');
         // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));

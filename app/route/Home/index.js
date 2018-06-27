@@ -98,12 +98,12 @@ class Home extends React.Component {
           if (data.code == '0') {
             if (data.data == "") {
               this.setState({
-                balance: '0.0000 EOS',
+                balance: '0.0000 ',
                 account: this.props.defaultWallet.name
               })
             } else {
               account: this.props.defaultWallet.name,
-                this.setState({ balance: data.data })
+                this.setState({ balance: data.data.replace(" EOS", "") })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
@@ -112,7 +112,7 @@ class Home extends React.Component {
         }
       })
     } else {
-      this.setState({ balance: '0.0000 EOS', account: 'xxxx' })
+      this.setState({ balance: '0.0000 ', account: 'xxxx' })
       // this.props.defaultWallet.name = 'xxxx';
       //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
       //   this.createWallet();
@@ -182,7 +182,7 @@ class Home extends React.Component {
       }
       navigate('Add_assets', {});
     } else{
-      EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
@@ -229,7 +229,7 @@ class Home extends React.Component {
   }
 
   walletDetail() {
-    // EasyDialog.show("温馨提示", "部分功能将于6月份EOS上线主网后开通，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     const { navigate } = this.props.navigation;
     navigate('WalletManage', {});
   }
@@ -375,7 +375,7 @@ class Home extends React.Component {
                   <View style={styles.right}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{rowData.balance}</Text>
+                        <Text style={styles.rightbalance}>{rowData.balance==""? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
                         <Text style={styles.rightmarket}>≈（￥）0 </Text>
                       </View>
                     </View>

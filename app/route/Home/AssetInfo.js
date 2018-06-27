@@ -114,12 +114,12 @@ class AssetInfo extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headbalance}>{c.balance}</Text>
+                    <Text style={styles.headbalance}>{c.balance==""? "0.0000" :c.balance.replace(c.asset.name, "")}</Text>
                     <Text style={styles.headmarket}>≈ 0.00 ￥</Text>
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    {<View style={styles.nothave}><Text style={styles.copytext}>抱歉，正在开发中...</Text></View>}
+                    {<View style={styles.nothave}><Text style={styles.copytext}>该功能正在紧急开发中，敬请期待</Text></View>}
                     {/* <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
