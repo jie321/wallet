@@ -189,6 +189,69 @@ class Set extends React.Component {
     }, () => { EasyDialog.dismis() });
   }
 
+  activeWallet() {
+    const view =
+      <View style={styles.passoutsource}>
+        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+          selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass}
+          placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
+      </View>
+
+    EasyDialog.show("密码", view, "确定", "取消", () => {
+
+      if (this.state.password == "") {
+        EasyToast.show('请输入密码');
+        return;
+      }
+
+      try {
+
+        var data = this.props.navigation.state.params.data;
+        var ownerPrivateKey = this.props.navigation.state.params.data.ownerPrivate;
+        var bytes_words = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.state.password + this.props.navigation.state.params.data.salt);
+        var plaintext_words = bytes_words.toString(CryptoJS.enc.Utf8);
+
+        if (plaintext_words.indexOf('eostoken') != - 1) {
+          plaintext_words = plaintext_words.substr(8, plaintext_words.length);
+          const { dispatch } = this.props;
+          // this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
+
+        let _wallet = this.props.navigation.state.params.data
+          EasyLoading.show('正在请求');
+          this.props.dispatch({
+            type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
+              EasyLoading.dismis();
+              if (data.code == '0') {
+                _wallet.isactived = true
+                this.props.dispatch({
+                  type: 'wallet/saveWallet', wallet: _wallet, callback: (data, error) => {
+                    DeviceEventEmitter.emit('updateDefaultWallet');
+                    if (error != null) {
+                      EasyToast.show('激活账号失败：' + error);
+                      this.props.navigation.goBack();
+                    } else {
+                      EasyToast.show('激活账号成功');
+                      this.props.navigation.goBack();
+                    }
+                  }
+                });
+              }else{
+                EasyToast.show('激活账号失败：' + data.msg);
+                this.props.navigation.goBack();
+              }
+              
+            }
+          })
+        } else {
+          EasyToast.show('您输入的密码不正确');
+        }
+      } catch (error) {
+        EasyToast.show('您输入的密码不正确');
+      }
+      EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() });
+  }
+
   backupWords() {
     const view =
       <View style={styles.passoutsource}>
@@ -267,11 +330,20 @@ class Set extends React.Component {
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>
             </View>
           </Button> */}
+          {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
+          <Button onPress={() => this.activeWallet()} style={{ flex: 1 }}>
+            <View style={styles.acttiveout}>
+              <Text style={styles.delete}>激活钱包</Text>
+            </View>
+          </Button>
+          :null
+          }
           <Button onPress={() => this.deleteWallet()} style={{ flex: 1 }}>
             <View style={styles.deleteout}>
               <Text style={styles.delete}>删除钱包</Text>
             </View>
           </Button>
+
         </View>
       </ScrollView>
       <View style={styles.pupuo}>
@@ -343,15 +415,25 @@ const styles = StyleSheet.create({
     fontSize: 15, 
     color:  UColor.arrow, 
   },
-
-  deleteout: {
+  acttiveout: {
     height: 45, 
     backgroundColor:  UColor.tintColor, 
     justifyContent: 'center', 
     alignItems: 'center', 
     marginLeft: 20, 
     marginRight: 20, 
-    borderRadius: 5
+    borderRadius: 5,
+    marginBottom: 30,
+  },
+  deleteout: {
+    height: 45, 
+    backgroundColor: UColor.showy, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginLeft: 20, 
+    marginRight: 20, 
+    borderRadius: 5,
+    marginBottom: 30,
   },
   delete: { 
     fontSize: 15, 

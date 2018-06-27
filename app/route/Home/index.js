@@ -80,7 +80,7 @@ class Home extends React.Component {
   }
 
   getBalance() { 
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
       if(this.state.init){
         this.setState({init: false});
         EasyLoading.show();
@@ -125,7 +125,8 @@ class Home extends React.Component {
     const { navigate } = this.props.navigation;
     if (key == 'qr') {
       AnalyticsUtil.onEvent('Receipt_code');
-      if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+
+      if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         this._setModalVisible();
       } else {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
@@ -134,7 +135,7 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });
       }
     }else if (key == 'Bvote') {
-      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
@@ -145,7 +146,7 @@ class Home extends React.Component {
     }else if (key == 'sweet') {
       navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
     }else if (key == 'Resources') {
-      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
@@ -162,7 +163,7 @@ class Home extends React.Component {
 
   scan() {
     AnalyticsUtil.onEvent('Scavenging_transfer');
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
       const { navigate } = this.props.navigation;
       navigate('BarCode', {});
     } else {
@@ -182,7 +183,7 @@ class Home extends React.Component {
 
   copy = () => {
     let address;
-    if (this.props.defaultWallet != null && this.props.defaultWallet.account != null) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.account != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
       address = this.props.defaultWallet.account;
     } else {
       address = this.state.account;
@@ -194,8 +195,9 @@ class Home extends React.Component {
 
   createWallet() {
     const { navigate } = this.props.navigation;
-    // navigate('CreateWallet', {});\
-    navigate('ImportEosKey', {});
+    // navigate('CreateWallet', {});
+    navigate('WalletManage', {});
+    // navigate('ImportEosKey', {});
     this.setState({
       modal: false
     });
@@ -217,7 +219,7 @@ class Home extends React.Component {
   }
 
   coinInfo(coinType) {
-    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
         // EasyToast.show('创建钱包');
@@ -274,7 +276,7 @@ class Home extends React.Component {
               </ImageBackground>
               <View style={styles.addto}>
                   <View style={styles.addout}>
-                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产（EOS）</Text>
+                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name} 总资产（EOS）</Text>
                     <View style={styles.addtoout}>
                       <Text style={styles.addtoouttext}>={this.state.balance}</Text>
                       {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
@@ -345,56 +347,61 @@ class Home extends React.Component {
          />  
 
 
-        <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
-          <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
-            <View style={styles.touchableout}>
-              <ListView initialListSize={5} style={styles.touchablelist}
-                renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-                enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
-                renderRow={(rowData) => (
-                  <Button onPress={this.changeWallet.bind(this, rowData)}>
-                    <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
-                      <Text style={styles.walletname}>{rowData.name}</Text>
-                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+       <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
+                <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
+                  <View style={styles.touchableout}>
+                    <ListView initialListSize={5} style={styles.touchablelist}
+                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
+                      enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
+                      renderRow={(rowData) => (
+                        (rowData.isactived || !rowData.hasOwnProperty('isactived')) ?
+                        <Button onPress={this.changeWallet.bind(this, rowData)}>
+                          <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
+                            <Text style={styles.walletname}>{rowData.name}</Text>
+                            <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+                          </View>
+                        </Button>
+                        :
+                        null
+                      
+                      )}
+                    />
+                    <View style={styles.ebhbtnout}>
+                      <Button onPress={() => this.createWallet()} style={{height: 40,}}>
+                        <View style={styles.establishout}>
+                          <Image source={UImage.wallet_1} style={styles.establishimg} />
+                          <Text style={styles.establishtext}>创建钱包</Text>
+                        </View>
+                      </Button>
+                      {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
+                        <View style={{ flex: 1, flexDirection: "row", }}>
+                          <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
+                          <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
+                        </View>
+                      </Button> */}
                     </View>
-                  </Button>
-                )}
-              />
-              <View style={styles.ebhbtnout}>
-                <Button onPress={() => this.createWallet()} style={{height: 40,}}>
-                  <View style={styles.establishout}>
-                    <Image source={UImage.wallet_1} style={styles.establishimg} />
-                    <Text style={styles.establishtext}>创建钱包</Text>
                   </View>
-                </Button>
-                {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
-                  <View style={{ flex: 1, flexDirection: "row", }}>
-                    <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
-                    <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
-                  </View>
-                </Button> */}
-              </View>
-            </View>
-          </TouchableOpacity>
-        </Modal>
-        <View style={styles.pupuo}>
-          <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-            <View style={styles.modalStyle}>
-              <View style={styles.subView} >
-                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                  <Text style={styles.butclose}>×</Text>
-                </Button>
-                <Text style={styles.titleText}>收款码</Text>
-                <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name)}</Text>
-                <Text style={styles.prompt}>提示：扫码同样可获取地址</Text>
-                <View style={styles.codeout}>
-                  <View style={styles.tab} />
-                  <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
-                  <View style={styles.tab} />
-                </View>
-                <Button onPress={() => { this.copy() }}>
-                  <View style={styles.copyout}>
-                    <Text style={styles.copytext}>复制地址</Text>
+                </TouchableOpacity>
+              </Modal>
+
+              <View style={styles.pupuo}>
+                <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+                  <View style={styles.modalStyle}>
+                    <View style={styles.subView} >
+                      <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
+                        <Text style={styles.butclose}>×</Text>
+                      </Button>
+                      <Text style={styles.titleText}>收款码</Text>
+                      <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name)}</Text>
+                      <Text style={styles.prompt}>提示：扫码同样可获取地址</Text>
+                      <View style={styles.codeout}>
+                        <View style={styles.tab} />
+                        <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
+                        <View style={styles.tab} />
+                      </View>
+                      <Button onPress={() => { this.copy() }}>
+                        <View style={styles.copyout}>
+                          <Text style={styles.copytext}>复制地址</Text>
                   </View>
                 </Button>
               </View>
@@ -696,7 +703,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center' 
   },
-  copyrtext: {
+  copytext: {
     fontSize: 16, 
     color: UColor.fontColor,
   },
