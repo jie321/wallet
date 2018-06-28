@@ -100,46 +100,52 @@ class Set extends React.Component {
     EasyLoading.show('正在请求');
     Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
       if (result.isSuccess) {
-        result.data.words = wordsStr_owner;
-        result.data.words_active = wordsStr_active;
-        result.password = this.state.walletPassword;
-        result.name = this.state.walletName;
-        result.account = this.state.walletName;
-        this.props.dispatch({
-          type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
-            EasyLoading.dismis();
-            if (data.code == '0') {
-              result.isactived = true
-              this.props.dispatch({
-                type: 'wallet/saveWallet', wallet: result, callback: (data,error) => {
-                  DeviceEventEmitter.emit('updateDefaultWallet');
-                  if (error != null) {
-                    EasyToast.show('生成账号失败：' + error);
-                  } else {
-                    EasyToast.show('生成账号成功：');
-                    DeviceEventEmitter.emit('updateDefaultWallet');
-                    this.props.navigation.goBack();
-                    // const { navigate } = this.props.navigation;
-                    // navigate('BackupNote', data);
-                    
-                  }
+        var salt;
+        Eos.randomPrivateKey((r)=>{
+            salt = r.data.ownerPrivate.substr(0, 18);
+            result.data.words = wordsStr_owner;
+            result.data.words_active = wordsStr_active;
+            result.password = this.state.walletPassword;
+            result.name = this.state.walletName;
+            result.account = this.state.walletName;
+            result.salt = salt;
+            this.props.dispatch({
+              type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
+                EasyLoading.dismis();
+                if (data.code == '0') {
+                  result.isactived = true
+                  this.props.dispatch({
+                    type: 'wallet/saveWallet', wallet: result, callback: (data,error) => {
+                      DeviceEventEmitter.emit('updateDefaultWallet');
+                      if (error != null) {
+                        EasyToast.show('生成账号失败：' + error);
+                      } else {
+                        EasyToast.show('生成账号成功：');
+                        DeviceEventEmitter.emit('updateDefaultWallet');
+                        this.props.navigation.goBack();
+                        // const { navigate } = this.props.navigation;
+                        // navigate('BackupNote', data);
+                        
+                      }
+                    }
+                  });
+                }else if(data.code != '515') {
+                  result.isactived = false
+                  this.props.dispatch({
+                    type: 'wallet/saveWallet', wallet: result, callback: (data) => {
+                      DeviceEventEmitter.emit('updateDefaultWallet');
+                      this.props.navigation.goBack();
+                      // const { navigate } = this.props.navigation;
+                    }
+                  });
+                  EasyToast.show('生成账号失败：' + data.msg);
+                }else {
+                  EasyToast.show('生成账号失败：' + data.data);
                 }
-              });
-            }else if(data.code != '515') {
-              result.isactived = false
-              this.props.dispatch({
-                type: 'wallet/saveWallet', wallet: result, callback: (data) => {
-                  DeviceEventEmitter.emit('updateDefaultWallet');
-                  this.props.navigation.goBack();
-                  // const { navigate } = this.props.navigation;
-                }
-              });
-              EasyToast.show('生成账号失败：' + data.msg);
-            }else {
-              EasyToast.show('生成账号失败：' + data.data);
-            }
-          }
-        })
+              }
+            })
+        });
+
       } else {
         EasyLoading.dismis();
       }

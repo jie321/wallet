@@ -154,16 +154,11 @@ export default {
                    
                 }
             }
-            // var salt = Math.ceil(Math.random() * 100000000000000000).toString();
-            var salt;
-            Eos.randomPrivateKey((r)=>{
-                salt = r.data.ownerPrivate.substr(0, 18);
-            });
 
-            var _ownerPrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.ownerPrivate, wallet.password + salt);
-            var _activePrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.activePrivate, wallet.password + salt);
-            var _words = CryptoJS.AES.encrypt('eostoken' + wallet.data.words, wallet.password + salt);
-            var _words_active = CryptoJS.AES.encrypt('eostoken' + wallet.data.words_active, wallet.password + salt);
+            var _ownerPrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.ownerPrivate, wallet.password + wallet.salt);
+            var _activePrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.activePrivate, wallet.password + wallet.salt);
+            var _words = CryptoJS.AES.encrypt('eostoken' + wallet.data.words, wallet.password + wallet.salt);
+            var _words_active = CryptoJS.AES.encrypt('eostoken' + wallet.data.words_active, wallet.password + wallet.salt);
 
             var _wallet = {
                 name: wallet.name,
@@ -174,7 +169,7 @@ export default {
                 activePrivate: _activePrivate.toString(),
                 words: _words.toString(),
                 words_active: _words_active.toString(),
-                salt: salt,
+                salt: wallet.salt,
                 isactived: wallet.isactived,
                 isBackups: false
             }
@@ -200,6 +195,70 @@ export default {
             })
             DeviceEventEmitter.emit('updateDefaultWallet', {});
             if (callback) callback(_wallet,null);
+        },
+        *saveWalletList({ walletList, callback }, { call, put }) {
+            // alert(" --- "+walletList);
+            if(walletList == null || walletList.length == 0){
+                return;
+            }
+
+            var AES = require("crypto-js/aes");
+            var CryptoJS = require("crypto-js");
+            var walletArr = yield call(store.get, 'walletArr');
+            var defaultWallet = yield call(store.get, 'defaultWallet');
+            if (walletArr == null) {
+                walletArr = [];
+            } else if (walletArr.length >= 10) {
+                DeviceEventEmitter.emit('wallet_10');
+                return;
+            }
+
+            for(var j = 0; j < walletList.length; j++){
+                if(walletArr.length >= 10){
+                    break;
+                }
+                var wallet = walletList[j];
+                for (var i = 0; i < walletArr.length; i++) {
+                    if (walletArr[i].account == wallet.account) {
+                        if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
+                            break;
+                        }
+                    }
+                }
+
+                var _ownerPrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.ownerPrivate, wallet.password + wallet.salt);
+                var _activePrivate = CryptoJS.AES.encrypt('eostoken' + wallet.data.activePrivate, wallet.password + wallet.salt);
+                var _words = CryptoJS.AES.encrypt('eostoken' + wallet.data.words, wallet.password + wallet.salt);
+                var _words_active = CryptoJS.AES.encrypt('eostoken' + wallet.data.words_active, wallet.password + wallet.salt);
+    
+                var _wallet = {
+                    name: wallet.name,
+                    account: wallet.name,
+                    ownerPublic: wallet.data.ownerPublic,
+                    activePublic: wallet.data.activePublic,
+                    ownerPrivate: _ownerPrivate.toString(),
+                    activePrivate: _activePrivate.toString(),
+                    words: _words.toString(),
+                    words_active: _words_active.toString(),
+                    salt: wallet.salt,
+                    isactived: wallet.isactived,
+                    isBackups: false
+                }
+    
+                walletArr[walletArr.length] = _wallet;
+
+                yield call(store.save, 'walletArr', walletArr);
+                DeviceEventEmitter.emit('key_created');
+                yield call(store.save, 'defaultWallet', _wallet);
+                yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
+                // DeviceEventEmitter.emit('wallet_backup', _wallet);
+                JPushModule.addTags([_wallet.name], map => {
+    
+                })
+                DeviceEventEmitter.emit('updateDefaultWallet', {});
+                if (callback) callback(_wallet,null);
+            }
+
         },
         *importPrivateKey({ payload, callback }, { call, put }) {
             var AES = require("crypto-js/aes");

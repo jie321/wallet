@@ -196,40 +196,51 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
               return;
             }
   
-            var result = {
-              data:{
-                ownerPublic:'',
-                activePublic:'',
-                ownerPrivate:'',
-                activePrivate:'',
-                words_active:'',
-                words:''
-              }
-            };
-            result.data.ownerPublic = owner_publicKey;
-            result.data.activePublic = active_publicKey;
-            result.data.words = '';
-            result.data.words_active = '';
-            result.data.ownerPrivate = owner_privateKey;
-            result.data.activePrivate = active_privatekey;
-            result.password = this.state.walletpwd;
-            result.name = data.data.account_names[0];
-            result.account = data.data.account_names[0];
-            result.isactived = true;
-            // 保存钱包信息
-            this.props.dispatch({
-              type: 'wallet/saveWallet', wallet: result, callback: (data) => {
-                  
-                if (data.error != null) {
-                  EasyToast.show('导入私钥失败：' + data.error);
-                } else {
-                  EasyToast.show('导入私钥成功！');
-                  DeviceEventEmitter.emit('updateDefaultWallet');
-                  this.props.navigation.goBack();
-                  
+            var walletList = [];
+            var salt;
+            Eos.randomPrivateKey((r)=>{
+                salt = r.data.ownerPrivate.substr(0, 18);
+                for(var i = 0; i < data.data.account_names.length; i++){
+                  var result = {
+                    data:{
+                      ownerPublic:'',
+                      activePublic:'',
+                      ownerPrivate:'',
+                      activePrivate:'',
+                      words_active:'',
+                      words:'',
+                    }
+                  };
+                  result.data.ownerPublic = owner_publicKey;
+                  result.data.activePublic = active_publicKey;
+                  result.data.words = '';
+                  result.data.words_active = '';
+                  result.data.ownerPrivate = owner_privateKey;
+                  result.data.activePrivate = active_privatekey;
+                  result.password = this.state.walletpwd;
+                  result.name = data.data.account_names[i];
+                  result.account = data.data.account_names[i];
+                  result.isactived = true;
+                  result.salt=salt;
+                  walletList[i] = result;
                 }
-              }
+    
+                // 保存钱包信息
+                this.props.dispatch({
+                  type: 'wallet/saveWalletList', walletList: walletList, callback: (data) => {
+                                    
+                    if (data.error != null) {
+                      EasyToast.show('导入私钥失败：' + data.error);
+                    } else {
+                      EasyToast.show('导入私钥成功！');
+                      DeviceEventEmitter.emit('updateDefaultWallet');
+                      this.props.navigation.goBack();
+                                    
+                    }
+                  }
+                });
             });
+
           }
         });
 
