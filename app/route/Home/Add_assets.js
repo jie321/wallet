@@ -42,6 +42,7 @@ class Add_assets extends React.Component {
       show:false,
       value: false,
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      selectasset: null
     };
   }
 
@@ -140,11 +141,19 @@ class Add_assets extends React.Component {
     if(this.props.myAssets == null){
         return false;
     }
+    
+    if(this.state.selectasset != null && this.state.selectasset.name == rowData.name){
+      if(this.state.value){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
     for(var i = 0; i < this.props.myAssets.length; i++){
-        if(this.props.myAssets[i].asset.name == rowData.name){
-            // rowData.isChecked = true;
+        if(this.props.myAssets[i].asset.name == rowData.name ){
             return true;
-        }
+        } 
     }
 
     return false;
@@ -165,6 +174,7 @@ class Add_assets extends React.Component {
                         <View style={styles.listInfoRight}>
                           <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
                               value={this.isMyAsset(rowData)} onValueChange={(value)=>{
+                              this.setState({selectasset: rowData, value: value});
                               this.addAsset(rowData, value);
                           }}/>
                         </View>
