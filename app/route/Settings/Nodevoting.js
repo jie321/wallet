@@ -134,9 +134,8 @@ class Nodevoting extends React.Component {
                         if(r.data && r.data.transaction_id){
                             AnalyticsUtil.onEvent('vote');
                             EasyToast.show("投票成功");
-                        }else if(r.data && JSON.parse(r.data).code != 0){
-                            var jdata = JSON.parse(r.data);
-                            var errmsg = "投票失败: "+ JSON.stringify(jdata);
+                        }else{
+                            var errmsg = "投票失败: "+ JSON.stringify(r);
                             alert(errmsg);
                         }
                     }); 
@@ -260,11 +259,11 @@ const styles = StyleSheet.create({
     inptpass: {
         color: UColor.tintColor,
         height: 45,
-        width: 160,
+        width: '100%',
         paddingBottom: 5,
         fontSize: 16,
         backgroundColor: UColor.fontColor,
-        borderBottomColor: UColor.mainColor,
+        borderBottomColor: UColor.baseline,
         borderBottomWidth: 1,
     },
     inptpasstext: {

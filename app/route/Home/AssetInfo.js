@@ -17,11 +17,11 @@ import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 
 @connect(({ wallet }) => ({ ...wallet }))
-class Info extends React.Component {
+class AssetInfo extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: params.coinType.name,
+            headerTitle: params.asset.asset.name,
             headerStyle: {
                 paddingTop:Platform.OS == 'ios' ? 30 : 20,
                 backgroundColor: UColor.mainColor,
@@ -34,7 +34,7 @@ class Info extends React.Component {
         super(props);
         this.state = {
             show: false,
-            balance: this.props.navigation.state.params.balance,
+            balance: this.props.navigation.state.params.asset.balance,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             type: '',
         };
@@ -50,7 +50,7 @@ class Info extends React.Component {
 
         // DeviceEventEmitter.addListener('transfer_result', (result) => {
         //     EasyToast.show('交易成功：刷新交易记录');
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
+        // this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
         //     if (result.success) {
         //         // this.props.navigation.goBack();
         //     } else {
@@ -75,15 +75,26 @@ class Info extends React.Component {
 
     turnOut(coins) {
         const { navigate } = this.props.navigation;
-        navigate('TurnOut', { coins, balance: this.state.balance });
+        navigate('TurnOutAsset', { coins, balance: this.state.balance });
     }
 
     getBalance() {
-        Eos.balance("eosio.token", this.props.defaultWallet.name, (r) => {
-            try {
-                this.setState({ balance: r.data[0] == null ? 0 : r.data[0] })
-            } catch (e) { }
-        });
+        this.props.dispatch({
+            type: 'wallet/getBalance', payload: { contract: this.props.navigation.state.params.asset.asset.contractAccount, account: this.props.defaultWallet.name, symbol: this.props.navigation.state.params.asset.asset.name }, callback: (data) => {
+              if (data.code == '0') {
+                if (data.data == "") {
+                  this.setState({
+                    balance: '0.0000 EOS',
+                  })
+                } else {
+                    this.setState({ balance: data.data });
+                }
+              } else {
+                EasyToast.show('获取余额失败：' + data.msg);
+              }
+              EasyLoading.dismis();
+            }
+          })
     }
 
     copy = () => {
@@ -99,17 +110,17 @@ class Info extends React.Component {
 
 
     render() {
-        const c = this.props.navigation.state.params.coinType;
+        const c = this.props.navigation.state.params.asset;
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headbalance}>{this.state.balance}</Text>
-                    <Text style={styles.headmarket}>≈ {(this.state.balance.replace(" EOS", "")*c.value).toFixed(2)} ￥</Text>
+                    <Text style={styles.headbalance}>{c.balance==""? "0.0000" :c.balance.replace(c.asset.name, "")}</Text>
+                    <Text style={styles.headmarket}>≈ 0.00 ￥</Text>
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    {this.props.DetailsData == null && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>}
-                    <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
+                    {<View style={styles.nothave}><Text style={styles.copytext}>该功能正在紧急开发中，敬请期待</Text></View>}
+                    {/* <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
@@ -117,14 +128,14 @@ class Info extends React.Component {
                             <View style={styles.row}>
                                 <View style={styles.top}>
                                     <View style={styles.timequantity}>
-                                        <Text style={styles.timetext}>时间 : {rowData.blockTime}</Text>
-                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace(" EOS", "")}</Text>
+                                        <Text style={styles.timetext}>时间：{rowData.blockTime}</Text>
+                                        <Text style={styles.quantity}>数量：{rowData.quantity.replace(" EOS", "")}</Text>
                                     </View>
                                     <View style={styles.typedescription}>
                                        {rowData.type == '转出' ? 
-                                       <Text style={styles.typeto}>类型 : {rowData.type}</Text>
+                                       <Text style={styles.typeto}>类型 ：{rowData.type}</Text>
                                        :
-                                       <Text style={styles.typeout}>类型 : {rowData.type}</Text>
+                                       <Text style={styles.typeout}>类型 ：{rowData.type}</Text>
                                        }
                                         <Text style={styles.description}>（{rowData.description}）</Text>
                                     </View>
@@ -136,7 +147,7 @@ class Info extends React.Component {
                         </Button>  
                     </View>         
                      )}                
-                 /> 
+                  />  */}
                 </View>
 
                 <View style={styles.footer}>
@@ -220,20 +231,20 @@ const styles = StyleSheet.create({
         margin: 5
     },
     nothave: {
-        height: Platform.OS == 'ios' ? 84.5 : 65,
+        height: 90,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: "center",
-        paddingHorizontal: 20,
+        padding: 10,
         borderRadius: 5,
         margin: 5,
     },
     row: {
-        height: Platform.OS == 'ios' ? 84.5 : 65,
+        height: 90,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
-        paddingHorizontal: 20,
+        padding: 10,
         justifyContent: "space-between",
         borderRadius: 5,
         margin: 5,
@@ -284,7 +295,7 @@ const styles = StyleSheet.create({
     Ionicout: {
         width: 30,
         justifyContent: 'center',
-        alignItems: 'flex-end'
+        alignItems: 'center'
     },
     Ionico: {
         color: UColor.arrow,   
@@ -392,4 +403,4 @@ const styles = StyleSheet.create({
     },
 
 })
-export default Info;
+export default AssetInfo;

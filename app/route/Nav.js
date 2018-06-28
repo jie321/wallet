@@ -18,9 +18,13 @@ import Helpcenter from './Login/Helpcenter'
 import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
+import Coin_search from './Home/Coin_search'
 import Info from './Home/Info'
+import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
+import TradeDetails from './Home/TradeDetails'
 import TurnOut from './Home/TurnOut'
+import TurnOutAsset from './Home/TurnOutAsset'
 import Share from './ShareInvite'
 import CreateWallet from './Wallet/CreateWallet'
 import BackupWords from './Wallet/BackupWords'
@@ -236,14 +240,26 @@ const Nav = StackNavigator(
     Add_assets: {
       screen: Add_assets
     },
+    Coin_search: {
+      screen: Coin_search
+    },
     Info: {
       screen: Info
+    },
+    AssetInfo: {
+      screen: AssetInfo
     },
     Thin: {
       screen: Thin
     },
+    TradeDetails: {
+      screen: TradeDetails
+    },
     TurnOut: {
       screen: TurnOut
+    },
+    TurnOutAsset: {
+      screen: TurnOutAsset
     },
     Boot: {
       screen: Boot
@@ -490,11 +506,11 @@ class Route extends React.Component {
     }
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
-        if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+        if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyLoading.show();
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
           EasyLoading.dismis();
-          if (this.props.defaultWallet == null || this.props.defaultWallet.account == null){
+          if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
             EasyDialog.show("温馨提示", "系统检测到你还未创建钱包，是否创建或导入私钥", "是", "否", () => {
               this.createWallet();
               EasyDialog.dismis()

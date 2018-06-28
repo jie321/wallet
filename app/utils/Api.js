@@ -28,7 +28,7 @@ export const newsShare = rootaddr + '/news/share/';
 export const redirect = rootaddr + '/news/redirect/';
 export const fetchPoint = rootaddr + '/user/point/fetch';
 
-export const createAccount = rootaddr + '/eosrpc/createAccount';
+export const createAccount = rootaddr + '/user/createEosAccount';
 export const pushTransaction = rootaddr + '/eosrpc/pushTransaction';
 export const getBalance = rootaddr + '/eosrpc/getCurrencyBalance';
 export const getInfo = rootaddr + '/eosrpc/getInfo';
@@ -40,3 +40,6 @@ export const listProducers = rootaddr + '/eosrpc/listProducers';
 export const listAgent = rootaddr + '/eoselector/list';
 
 export const getAccountsByPuk = rootaddr + '/eosrpc/getKeyAccounts';
+
+export const getActions = rootaddr + '/eosrpc/getActions';
+export const pocketAsset = rootaddr + '/pocketAsset/list';

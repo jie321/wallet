@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity } from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Item from '../../components/Item'
@@ -11,12 +11,16 @@ import { EasyToast } from '../../components/Toast';
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
-class Set extends React.Component {
+class ModifyPassword extends React.Component {
 
     static navigationOptions = {
-        title: '更改密码'
+        title: '更改密码',
+        headerStyle: {
+            paddingTop:Platform.OS == 'ios' ? 30 : 20,
+            backgroundColor: UColor.mainColor,
+        },
     };
 
     constructor(props) {
@@ -118,63 +122,52 @@ class Set extends React.Component {
         }
     }
 
+    dismissKeyboardClick() {
+        dismissKeyboard();
+    }
+
     render() {
         return <View style={styles.container}>
-
-            {/* <ScrollView style={styles.scrollView}> */}
-            <View>
-                <View style={{ backgroundColor: '#43536D', marginTop: 30 }}>
-                    <View style={{ padding: 20, height: 55, backgroundColor: '#586888' }} >
-                        {/* <Text style={{fontSize:12,color:'#8696B0'}}> 手机号</Text> */}
-                        <TextInput ref={(ref) => this._lphone = ref} autoFocus={false} editable={true}
-                            value={this.state.password} onChangeText={(password) => this.setState({ password })}
-                            returnKeyType="next" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} secureTextEntry={true}
-                            placeholderTextColor="#8696B0" placeholder="当前密码" underlineColorAndroid="transparent"
+          <ScrollView keyboardShouldPersistTaps="always">
+            <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                <View style={styles.outsource}>
+                    <View  style={styles.inptoutsource} >
+                        <TextInput ref={(ref) => this._lphone = ref} value={this.state.password} returnKeyType="next"
+                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                            secureTextEntry={true} placeholder="当前密码"  underlineColorAndroid="transparent" autoFocus={false}
+                            editable={true} onChangeText={(password) => this.setState({ password })}  
                         />
                     </View>
-                    <View style={{ height: 0.5, backgroundColor: '#43536D', flex: 1, flexDirection: 'column' }}></View>
-                    <View style={{ padding: 20, height: 55, backgroundColor: '#586888' }} >
-                        {/* <Text style={{fontSize:12,color:'#8696B0'}}> 密码</Text> */}
-                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                            value={this.state.newPassword} onChangeText={(newPassword) => this.setState({ newPassword })}
-                            returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0"
-                            placeholder="新密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                        // onSubmitEditing={() => this.loginKcaptrue()}
-                        // onChangeText={(loginPwd) => this.setState({loginPwd})}
+                    <View  style={styles.inptoutsource} >
+                        <TextInput ref={(ref) => this._lpass = ref} value={this.state.newPassword} returnKeyType="next"
+                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                            secureTextEntry={true}  placeholder="新密码" underlineColorAndroid="transparent"  autoFocus={false} 
+                            editable={true} onChangeText={(newPassword) => this.setState({ newPassword })} 
                         />
                     </View>
-                    <View style={{ height: 0.5, backgroundColor: '#43536D', flex: 1, flexDirection: 'column', }}></View>
-                    <View style={{ padding: 20, height: 55, backgroundColor: '#586888' }} >
-                        {/* <Text style={{fontSize:12,color:'#8696B0'}}> 密码</Text> */}
-                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
+                    <View  style={styles.inptoutsource} >
+                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next"
                             value={this.state.newRePassword} onChangeText={(newRePassword) => this.setState({ newRePassword })}
-                            returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0"
-                            placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                        // onSubmitEditing={() => this.loginKcaptrue()}
-                        // onChangeText={(loginPwd) => this.setState({loginPwd})}
+                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                            placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
                         />
                     </View>
-                    <View style={{ height: 0.5, backgroundColor: '#43536D', flex: 1, flexDirection: 'column', }}></View>
-                    <View style={{ padding: 20, height: 55, backgroundColor: '#586888' }} >
-                        {/* <Text style={{fontSize:12,color:'#8696B0'}}> 密码</Text> */}
-                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-                            // value={this.state.loginPwd} 
-                            returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0"
-                            placeholder="密码提示(可不填)" underlineColorAndroid="transparent" maxLength={20}
-                        // onSubmitEditing={() => this.loginKcaptrue()}
-                        // onChangeText={(loginPwd) => this.setState({loginPwd})}
+                    <View style={styles.inptoutsource} >
+                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" 
+                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                            placeholder="密码提示(可不填)" underlineColorAndroid="transparent" 
                         />
                     </View>
                 </View>
-                {/* <Text style={styles.welcome} style={{ color: '#8696B0', marginBottom: 10, marginLeft: 10 }}>忘记密码？导入助记词或私钥可重置密码。马上导入</Text> */}
+                {/* <Text style={styles.welcome}>忘记密码？导入助记词或私钥可重置密码。马上导入</Text> */}
                 <Button onPress={() => this.updatePassword()}>
-                    <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-                        <Text style={{ fontSize: 15, color: '#fff' }}>确认</Text>
+                    <View style={styles.btnout}>
+                        <Text style={styles.buttext}>确认</Text>
                     </View>
                 </Button>
-            </View>
-            {/* </ScrollView> */}
-        </View>
+            </TouchableOpacity>
+        </ScrollView>   
+    </View>
     }
 }
 
@@ -184,10 +177,43 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: UColor.secdColor,
     },
-    scrollView: {
 
+    outsource: {
+        backgroundColor: UColor.mainColor, 
+        marginTop: 30, 
+        paddingBottom: 5,
+    },
+    inptoutsource: {
+        paddingTop: 10, 
+        paddingHorizontal: 20, 
+        borderBottomColor: UColor.secdColor, 
+        borderBottomWidth: 1,
+    },
+    inpt: {
+        color: UColor.arrow, 
+        fontSize: 15, 
+        height: 50,
     },
 
+    welcome: {
+        color: UColor.arrow, 
+        marginBottom: 10, 
+        marginLeft: 10
+    },
+
+    btnout: {
+        height: 45, 
+        backgroundColor: UColor.tintColor, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        margin: 40, 
+        marginHorizontal:30,  
+        borderRadius: 5
+    },
+    buttext: {
+        fontSize: 15, 
+        color: UColor.fontColor
+    },
 });
 
-export default Set;
+export default ModifyPassword;

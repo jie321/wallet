@@ -43,19 +43,21 @@ class News extends React.Component {
     //切换tab完成后执行,不影响ui流畅度
     InteractionManager.runAfterInteractions(() => {
       let i = 0;
-      this.props.types.map((route) => {
-        if (i == 0) {
-          //加载新闻
-          this.props.dispatch({ type: 'news/list', payload: { type: route.key, page: 1, newsRefresh: false } });
-          pages.push(1);
-        } else {
-          pages.push(0);
-        }
-        i++;
-      });
-      this.setState({
-        routes: this.props.types
-      });
+      if (this.props.types && this.props.types.length > 0) {
+        this.props.types.map((route) => {
+          if (i == 0) {
+            //加载新闻
+            this.props.dispatch({ type: 'news/list', payload: { type: route.key, page: 1, newsRefresh: false } });
+            pages.push(1);
+          } else {
+            pages.push(0);
+          }
+          i++;
+        });
+        this.setState({
+          routes: this.props.types
+        });
+      }
     });
     BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
   }
@@ -211,11 +213,11 @@ class News extends React.Component {
         renderRow={(rowData) => (
           <Button onPress={() => { this.onPress(rowData) }}>
             <View style={styles.row}>
-              <Text  style={{ fontSize: 16, color: UColor.fontColor, marginTop: 5, }}>{rowData.title}</Text>
+              <Text style={{ fontSize: 16, color: UColor.fontColor, marginTop: 5, }}>{rowData.title}</Text>
               {
-                route.type == 2 && <Text numberOfLines={rowData.row} style={{ fontSize: 15, color: '#8696B0', marginTop: 10,  lineHeight: 25 }}>{rowData.content}</Text>
+                route.type == 2 && <Text numberOfLines={rowData.row} style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }}>{rowData.content}</Text>
               }
-              {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#65caff',lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
+              {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#65caff', lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
               {
                 route.type != 2 && <Text style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }}>{rowData.content}</Text>
               }
@@ -225,10 +227,10 @@ class News extends React.Component {
 
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
                   <Button onPress={this.onUp.bind(this, rowData)}>
-                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isUp ? UImage.up_h:UImage.up} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.up}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isUp ? UImage.up_h : UImage.up} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.up}</Text></View>
                   </Button>
                   <Button onPress={this.onDown.bind(this, rowData)}>
-                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isDown ? UImage.down_h:UImage.down} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.down}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={rowData.isDown ? UImage.down_h : UImage.down} /><Text style={{ marginLeft: 5, fontSize: 13, color: '#8696B0' }}>{rowData.down}</Text></View>
                   </Button>
                   <Button onPress={this.onShare.bind(this, rowData)}>
                     <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.share} /></View>
@@ -251,7 +253,7 @@ class News extends React.Component {
           <Image source={{ uri: item.img }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
         </Button>)
       })
-    }else{
+    } else {
       return (<View></View>)
     }
   }
@@ -269,14 +271,14 @@ class News extends React.Component {
           </Swiper>
         </View>
         {
-          this.state.routes &&   <TabViewAnimated
-          lazy={true}
-          navigationState={this.state}
-          renderScene={this.renderScene.bind(this)}
-          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth/3-50, marginLeft: 25 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: ScreenWidth/3, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
-          onIndexChange={this._handleIndexChange}
-          initialLayout={{ height: 0, width: Dimensions.get('window').width }}
-        /> 
+          this.state.routes && <TabViewAnimated
+            lazy={true}
+            navigationState={this.state}
+            renderScene={this.renderScene.bind(this)}
+            renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth / 3 - 50, marginLeft: 25 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: ScreenWidth / 3, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
+            onIndexChange={this._handleIndexChange}
+            initialLayout={{ height: 0, width: Dimensions.get('window').width }}
+          />
         }
       </View>
     );

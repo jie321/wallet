@@ -76,11 +76,10 @@ class Set extends React.Component {
 
     if (key == 'ExportPrivateKey') {
       const view =
-        <View style={{ flexDirection: 'row' }}>
-          <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-            secureTextEntry={true}
-            keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
-            placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+        <View style={styles.passoutsource}>
+          <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+            selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass}
+            placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
         </View>
 
       EasyDialog.show("密码", view, "确定", "取消", () => {
@@ -91,8 +90,6 @@ class Set extends React.Component {
         }
 
         try {
-
-
           var ownerPrivateKey = this.props.navigation.state.params.data.ownerPrivate;
           var bytes_words_owner = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.state.password + this.props.navigation.state.params.data.salt);
           var plaintext_words_owner = bytes_words_owner.toString(CryptoJS.enc.Utf8);
@@ -124,7 +121,7 @@ class Set extends React.Component {
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
     } else {
-      // EasyDialog.show("温馨提示", "该功能将于EOS主网上线后开通。", "知道了", null, () => { EasyDialog.dismis() });
+      // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
@@ -138,17 +135,16 @@ class Set extends React.Component {
     this.setState({
       show: !isShow,
     });
-    Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + 'ActivePrivateKey: ' + this.state.txt_active);
+    Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + "\n" + 'ActivePrivateKey: ' + this.state.txt_active);
     EasyToast.show("复制成功")
   }
 
   deleteWallet() {
     const view =
-      <View style={{ flexDirection: 'row' }}>
-        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-          secureTextEntry={true}
-          keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
-          placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent" />
+      <View style={styles.passoutsource}>
+        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+          selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass}
+          placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
       </View>
 
     EasyDialog.show("密码", view, "确定", "取消", () => {
@@ -193,13 +189,75 @@ class Set extends React.Component {
     }, () => { EasyDialog.dismis() });
   }
 
+  activeWallet() {
+    const view =
+      <View style={styles.passoutsource}>
+        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+          selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass}
+          placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
+      </View>
+
+    EasyDialog.show("密码", view, "确定", "取消", () => {
+
+      if (this.state.password == "") {
+        EasyToast.show('请输入密码');
+        return;
+      }
+
+      try {
+
+        var data = this.props.navigation.state.params.data;
+        var ownerPrivateKey = this.props.navigation.state.params.data.ownerPrivate;
+        var bytes_words = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.state.password + this.props.navigation.state.params.data.salt);
+        var plaintext_words = bytes_words.toString(CryptoJS.enc.Utf8);
+
+        if (plaintext_words.indexOf('eostoken') != - 1) {
+          plaintext_words = plaintext_words.substr(8, plaintext_words.length);
+          const { dispatch } = this.props;
+          // this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
+
+        let _wallet = this.props.navigation.state.params.data
+          EasyLoading.show('正在请求');
+          this.props.dispatch({
+            type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
+              EasyLoading.dismis();
+              if (data.code == '0') {
+                _wallet.isactived = true
+                this.props.dispatch({
+                  type: 'wallet/saveWallet', wallet: _wallet, callback: (data, error) => {
+                    DeviceEventEmitter.emit('updateDefaultWallet');
+                    if (error != null) {
+                      EasyToast.show('激活账号失败：' + error);
+                      this.props.navigation.goBack();
+                    } else {
+                      EasyToast.show('激活账号成功');
+                      this.props.navigation.goBack();
+                    }
+                  }
+                });
+              }else{
+                EasyToast.show('激活账号失败：' + data.msg);
+                this.props.navigation.goBack();
+              }
+              
+            }
+          })
+        } else {
+          EasyToast.show('您输入的密码不正确');
+        }
+      } catch (error) {
+        EasyToast.show('您输入的密码不正确');
+      }
+      EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() });
+  }
+
   backupWords() {
     const view =
-      <View style={{ flexDirection: 'row' }}>
-        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" selectionColor="#65CAFF"
-          secureTextEntry={true}
-          keyboardType="ascii-capable" style={{ color: '#65CAFF', marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }}
-          placeholderTextColor="#8696B0" placeholder="请输入密码" underlineColorAndroid="transparent"/>
+      <View style={styles.passoutsource}>
+        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+          selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass}
+          placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent"/>
       </View>
 
     EasyDialog.show("密码", view, "备份", "取消", () => {
@@ -255,12 +313,12 @@ class Set extends React.Component {
     return <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View>
-          <View style={{ padding: 20, height: 120, backgroundColor: '#586888', margin: 10, borderRadius: 5, }}>
-            <View style={{ justifyContent: 'center', alignItems: 'center', }} >
+          <View style={styles.walletout}>
+            <View style={styles.accountout} >
               {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
-              <Text style={{ fontSize: 17, color: '#8696B0', marginBottom: 10, }}> {this.props.navigation.state.params.data.account}</Text>
+              <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
             </View>
-            <Text style={{ fontSize: 15, color: '#8696B0' }}>钱包名称：{this.props.navigation.state.params.data.name}</Text>
+            <Text style={styles.walletname}>钱包名称：{this.props.navigation.state.params.data.name}</Text>
           </View>
 
           <View style={{ marginBottom: 50 }}>
@@ -272,11 +330,20 @@ class Set extends React.Component {
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>
             </View>
           </Button> */}
-          <Button onPress={() => this.deleteWallet()} style={{ flex: 1 }}>
-            <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', marginLeft: 20, marginRight: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>删除钱包</Text>
+          {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
+          <Button onPress={() => this.activeWallet()} style={{ flex: 1 }}>
+            <View style={styles.acttiveout}>
+              <Text style={styles.delete}>激活钱包</Text>
             </View>
           </Button>
+          :null
+          }
+          <Button onPress={() => this.deleteWallet()} style={{ flex: 1 }}>
+            <View style={styles.deleteout}>
+              <Text style={styles.delete}>删除钱包</Text>
+            </View>
+          </Button>
+
         </View>
       </ScrollView>
       <View style={styles.pupuo}>
@@ -308,10 +375,69 @@ class Set extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  passoutsource: {
+    flexDirection: 'column', 
+    alignItems: 'center'
+  },
+  inptpass: {
+      color: UColor.tintColor,
+      height: 45,
+      width: '100%',
+      paddingBottom: 5,
+      fontSize: 16,
+      backgroundColor: UColor.fontColor,
+      borderBottomColor: UColor.baseline,
+      borderBottomWidth: 1,
+  },
+
   container: {
     flex: 1,
     flexDirection: 'column',
     backgroundColor: UColor.secdColor,
+  },
+  walletout: { 
+    padding: 20, 
+    height: 120, 
+    backgroundColor:  UColor.mainColor, 
+    margin: 10, 
+    borderRadius: 5, 
+  },
+  accountout: { 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+  },
+  accounttext: { 
+    fontSize: 17, 
+    color:  UColor.arrow, 
+    marginBottom: 10, 
+  },
+  walletname: { 
+    fontSize: 15, 
+    color:  UColor.arrow, 
+  },
+  acttiveout: {
+    height: 45, 
+    backgroundColor:  UColor.tintColor, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginLeft: 20, 
+    marginRight: 20, 
+    borderRadius: 5,
+    marginBottom: 30,
+  },
+  deleteout: {
+    height: 45, 
+    backgroundColor: UColor.showy, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginLeft: 20, 
+    marginRight: 20, 
+    borderRadius: 5,
+    marginBottom: 30,
+  },
+  delete: { 
+    fontSize: 15, 
+    color:  UColor.fontColor,
   },
 
   pupuo: {
@@ -319,21 +445,21 @@ const styles = StyleSheet.create({
   },
   // modal的样式  
   modalStyle: {
+    backgroundColor: UColor.mask,
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   // modal上子View的样式  
   subView: {
     marginLeft: 10,
     marginRight: 10,
-    backgroundColor: '#fff',
+    backgroundColor:  UColor.fontColor,
     alignSelf: 'stretch',
     justifyContent: 'center',
     borderRadius: 10,
     borderWidth: 0.5,
-    borderColor: '#ccc',
+    borderColor: UColor.baseline,
   },
   closeText: {
     width: 30,
@@ -377,13 +503,13 @@ const styles = StyleSheet.create({
     margin: 10,
     height: 46,
     borderRadius: 6,
-    backgroundColor: '#65CAFF',
+    backgroundColor:  UColor.tintColor,
     justifyContent: 'center',
     alignItems: 'center'
   },
   buttonText: {
     fontSize: 16,
-    color: '#fff'
+    color:  UColor.fontColor,
   },
 
 });

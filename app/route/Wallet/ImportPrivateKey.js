@@ -285,7 +285,7 @@ class Coins extends React.Component {
               result.password = this.state.walletpwd;
               result.name = data.data.account_names[0];
               result.account = data.data.account_names[0];
-  
+              result.isactived = true;
               // alert('result-> '+JSON.stringify(result));
   
               // 保存钱包信息

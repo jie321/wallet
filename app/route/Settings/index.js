@@ -10,12 +10,12 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
-import JPush from 'jpush-react-native';
+// import JPush from 'jpush-react-native';
 var DeviceInfo = require('react-native-device-info');
-export var jpushSwitch = false;
-import JPushModule from 'jpush-react-native';
+// export var jpushSwitch = false;
+// import JPushModule from 'jpush-react-native';
 
-@connect(({ login,jPush }) => ({ ...login,...JPush }))
+@connect(({ login}) => ({ ...login}))
 class Setting extends React.Component {
 
   static navigationOptions = {
@@ -27,7 +27,6 @@ class Setting extends React.Component {
     super(props);
     this.state = {
       value: false,
-      disabled: false,
     }
     
     this.config = [
@@ -44,28 +43,28 @@ class Setting extends React.Component {
     //组件加载完成
     componentDidMount() {
       const {dispatch}=this.props;
-      dispatch({type:'login/getJpush',callback:(jpush)=>{
-        this.setState({
-          value:jpush.jpush,
-        });
-      }});
+      // dispatch({type:'login/getJpush',callback:(jpush)=>{
+      //   this.setState({
+      //     value:jpush.jpush,
+      //   });
+      // }});
     }
 
-    changeJpush(state){
-      const {dispatch}=this.props;
-      dispatch({type:'login/changeJpush',callback:(jpush)=>{
-        this.setState({
-          value:jpush,
-        });
-      }});
-      if(state){
-        JPushModule.addTags(['newsmorningbook'], map => {
-        })
-      }else{
-        JPushModule.deleteTags(['newsmorningbook'], map => {
-        });
-      }
-    }
+    // changeJpush(state){
+    //   const {dispatch}=this.props;
+    //   dispatch({type:'login/changeJpush',callback:(jpush)=>{
+    //     this.setState({
+    //       value:jpush,
+    //     });
+    //   }});
+    //   if(state){
+    //     JPushModule.addTags(['newsmorningbook'], map => {
+    //     })
+    //   }else{
+    //     JPushModule.deleteTags(['newsmorningbook'], map => {
+    //     });
+    //   }
+    // }
 
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
@@ -77,7 +76,6 @@ class Setting extends React.Component {
         EasyToast.show('请登陆');
       }
     } else if (key == 'WalletManage') {
-      // EasyToast.show('测试网络暂不开放');
       navigate('WalletManage', {});
     } else if (key == 'set') {
       navigate('Set', {});
@@ -86,7 +84,7 @@ class Setting extends React.Component {
     }else if (key == 'Helpcenter') {
       navigate('Helpcenter', {});
     } else{
-      EasyDialog.show("温馨提示", "开发中, 敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
@@ -145,29 +143,29 @@ class Setting extends React.Component {
         <View>
           <Button onPress={this.goProfile.bind(this)}>
             <View style={styles.userHead} >
-              <View style={{ flex: 1, flexDirection: "row", alignItems: "center", paddingVertical: 15 }}>
-                <Image source={UImage.logo} style={{ width: 42, height: 52 }} />
-                <Text style={{ color: UColor.fontColor, fontSize: 17, marginLeft: 15 }}>{(this.props.loginUser) ? this.props.loginUser.nickname : "登陆"}</Text>
+              <View style={styles.headout}>
+                <Image source={UImage.logo} style={styles.headimg} />
+                <Text style={styles.headtext}>{(this.props.loginUser) ? this.props.loginUser.nickname : "登陆"}</Text>
               </View>
-              <View style={{ flex: 1, flexDirection: "row", alignSelf: 'center', justifyContent: "flex-end" }}>
+              <View style={styles.signedout}>
                 {
-                  <Button onPress={this.signIn.bind(this)} style={{ borderRadius: 5, paddingVertical: 5, paddingHorizontal: 15 }}>
-                    <Image source={UImage.signed} style={{ width: 40, height: 49 }} />
+                  <Button onPress={this.signIn.bind(this)} style={styles.signedbtn}>
+                    <Image source={UImage.signed} style={styles.signedimg} />
                   </Button>
                 }
               </View>
             </View>
           </Button>
-          <Button style={{ marginTop: 15 }}>
-            <View style={{ flex: 1, flexDirection: "row", paddingHorizontal: 20, backgroundColor: UColor.mainColor, justifyContent: 'space-between' }}>
-              <View style={{ flex: 1, flexDirection: "column", paddingVertical: 12 }}>
-                <Text style={{ color: '#8696B0', fontSize: 11 }}>EOS资产</Text>
-                <Text style={{ color: UColor.fontColor, fontSize: 15, marginTop: 10 }}>{(this.props.loginUser) ? this.props.loginUser.eost : "0"} EOS</Text>
+          <Button style={styles.eosbtn}>
+            <View style={styles.eosbtnout}>
+              <View style={styles.eosout}>
+                <Text style={styles.eosbtntext}>EOS资产</Text>
+                <Text style={styles.eostext}>{(this.props.loginUser) ? this.props.loginUser.eost : "0"} EOS</Text>
               </View>
-              <View style={{ flex: 1, flexDirection: "row", alignSelf: 'center', justifyContent: "flex-end" }}>
+              <View style={styles.Withdrawout}>
                 {
-                  this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "6月份EOS主网上线后将逐步解冻…", "知道了", null, () => { EasyDialog.dismis() }); }} style={{ backgroundColor: '#65CAFF', borderRadius: 5, paddingVertical: 5, paddingHorizontal: 15 }}>
-                    <Text style={{ fontSize: 15, color: '#fff' }}>提币</Text>
+                  this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
+                    <Text style={styles.Withdrawtext}>提币</Text>
                   </Button>
                 }
               </View>
@@ -176,9 +174,9 @@ class Setting extends React.Component {
           <View>
             {this._renderListItem()}
           </View>
-          <View style={{height:60, marginTop: 15, backgroundColor: UColor.mainColor, flexDirection: "row", justifyContent: "center", alignItems: "center",}}>
+          {/* <View style={styles.listItem}>
              <View style={styles.listInfo}>
-                <View style={{flex: 1}}><Text style={{color:UColor.fontColor, fontSize:16}}>消息推送</Text></View>
+                <View style={{flex: 1}}><Text style={styles.listInfoTitle}>消息推送</Text></View>
                 <View style={styles.listInfoRight}>
                   <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
                       value={this.state.value} onValueChange={(value)=>{
@@ -189,10 +187,10 @@ class Setting extends React.Component {
                   }}/>
                 </View>
               </View>
-          </View>
-          <View style={{ flex: 1, marginTop: 15, flexDirection: 'column' }}>
-            <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center' }}>© 2018 eostoken all rights reserved </Text>
-            <Text style={{ fontSize: 10, color: '#8696B0', width: '100%', textAlign: 'center', marginTop: 5 }}>EOS专业版钱包 V{DeviceInfo.getVersion()}.1</Text>
+          </View> */}
+          <View style={styles.footer}>
+            <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
+            <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text>
           </View>
         </View>
       </ScrollView>
@@ -216,6 +214,81 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: UColor.mainColor
   },
+  headout: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 15
+  },
+  headimg: {
+    width: 42,
+    height: 52
+  },
+  headtext: {
+    color: UColor.fontColor,
+    fontSize: 17,
+    marginLeft: 15
+  },
+
+  signedout: {
+    flex: 1,
+    flexDirection: "row",
+    alignSelf: 'center',
+    justifyContent: "flex-end"
+  },
+  signedbtn: {
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 15
+  },
+  signedimg: {
+    width: 40,
+    height: 49
+  },
+
+  eosbtn: {
+    marginTop: 15
+  },
+  eosbtnout: {
+    flex: 1,
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    backgroundColor: UColor.mainColor,
+    justifyContent: 'space-between'
+  },
+  eosout: {
+    flex: 1,
+    flexDirection: "column",
+    paddingVertical: 12
+  },
+  eosbtntext: {
+    color: UColor.arrow,
+    fontSize: 11
+  },
+  eostext: {
+    color: UColor.fontColor,
+    fontSize: 15,
+    marginTop: 10
+  },
+
+  Withdrawout: {
+    flex: 1,
+    flexDirection: "row",
+    alignSelf: 'center',
+    justifyContent: "flex-end"
+  },
+  Withdrawbtn: {
+    backgroundColor: UColor.tintColor,
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 15
+  },
+  Withdrawtext: {
+    fontSize: 15,
+    color: UColor.fontColor,
+  },
+
+
   header: {
     borderColor: UColor.secdColor,
     borderWidth: 0.6,
@@ -227,8 +300,16 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: UColor.fontColor
   },
+
+  listItem: {
+    marginTop: 15,
+    backgroundColor: UColor.mainColor,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   listInfo: {
-    height: 60,
+    height: 55,
     flex: 1,
     paddingLeft: 16,
     paddingRight: 16,
@@ -236,12 +317,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderTopWidth:1,
-    borderTopColor: UColor.secdColor
+    borderTopColor: UColor.secdColor,
+  },
+  listInfoTitle: {
+    color:UColor.fontColor, 
+    fontSize:16
   },
   listInfoRight: {
     flexDirection: "row",
     alignItems: "center"
-  }
+  },
+
+  footer: {
+    flex: 1,
+    marginTop: 10,
+    flexDirection: 'column'
+  },
+  foottext: {
+    fontSize: 10,
+    color: UColor.arrow,
+    width: '100%',
+    textAlign: 'center',
+    marginTop: 5
+  },
 });
 
 export default Setting;

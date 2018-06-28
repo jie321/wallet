@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection:'column',
-      backgroundColor: UColor.secdColor,
+      backgroundColor: UColor.fontColor,
     },
 
     outsource: {
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     },
 
     imgtext: {
-        width: 33, 
-        height: 33,
+        width: 40, 
+        height: 40,
     },
 
     nametext: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     spstext: {  
        fontSize: 14,
        color: '#010101',
-       lineHeight: 20,
+       lineHeight: 25,
     },  
 
     
