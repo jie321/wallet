@@ -49,6 +49,9 @@ class Add_assets extends React.Component {
   componentDidMount() {
     this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
     this.props.dispatch({ type: 'assets/myAssetInfo'});
+    DeviceEventEmitter.addListener('updateAssetList', (data) => {
+      this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
+    });
   }
 
   _rightTopClick = () =>{

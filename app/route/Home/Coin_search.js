@@ -118,7 +118,7 @@ class Coin_search extends React.Component {
     });  
   }  
 
-  copy() {
+  submit() {
     if (this.state.tokenname == "") {
       EasyToast.show('请输入token名称');
       return;
@@ -127,6 +127,17 @@ class Coin_search extends React.Component {
       EasyToast.show('请输入合约地址');
       return;
     }
+
+    // EasyDialog.show();
+    this.props.dispatch({ type: 'assets/submitAssetInfoToServer', payload: { contractAccount: this.state.address, name: this.state.tokenname }, callback: (data) => {
+      if(data && data.code=='0'){
+        EasyToast.show('添加成功');
+        // this._setModalVisible();
+      }else{
+        EasyToast.show("添加失败：" + JSON.stringify(data.data));
+      }
+      // EasyDialog.dismis();
+    } });
   }
 
 
@@ -180,7 +191,7 @@ class Coin_search extends React.Component {
                                 placeholder="输入合约地址" underlineColorAndroid="transparent"  keyboardType="default"  
                                 onChangeText={(address) => this.setState({ address })}/>
                         </View>
-                        <Button onPress={() => { this.copy() }}>
+                        <Button onPress={() => { this.submit() }}>
                           <View style={styles.copyout}>
                             <Text style={styles.copytext}>提交</Text>
                           </View>
