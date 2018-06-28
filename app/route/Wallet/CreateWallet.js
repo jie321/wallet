@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Clipboard, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableHighlight } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Clipboard, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity,TouchableHighlight } from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Item from '../../components/Item'
@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
+import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
@@ -19,7 +20,7 @@ import { english } from '../../utils/english';
 // var {api, ecc, json, Fcbuffer, format} = Eos.modules;
 
 @connect(({ wallet }) => ({ ...wallet }))
-class Set extends React.Component {
+class createWallet extends React.Component {
 
   static navigationOptions = {
     title: '创建钱包'
@@ -48,6 +49,7 @@ class Set extends React.Component {
     navigate('ImportEosKey');
     // EasyToast.show('测试网络暂不开放');
   }
+
 
   createWallet() {
     AnalyticsUtil.onEvent('Create_wallet');
@@ -119,6 +121,7 @@ class Set extends React.Component {
                       DeviceEventEmitter.emit('updateDefaultWallet');
                       if (error != null) {
                         EasyToast.show('生成账号失败：' + error);
+                        this.ExplainPopup();
                       } else {
                         EasyToast.show('生成账号成功：');
                         DeviceEventEmitter.emit('updateDefaultWallet');
@@ -139,8 +142,10 @@ class Set extends React.Component {
                     }
                   });
                   EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
+                  this.ExplainPopup();
                 }else {
                   EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
+                  this.ExplainPopup();
                 }
               }
             })
@@ -159,6 +164,15 @@ class Set extends React.Component {
     DeviceEventEmitter.addListener('active_wallet', (tab) => {
       this.props.navigation.goBack();
     });
+  }
+
+  ExplainPopup(){
+  EasyDialog.show("EOS账号创建说明", (<View>
+     <Text style={styles.inptpasstext}>1.如果你没有注册EosToken账号，创建的EOS钱包将 无法激活</Text>
+     <Text style={styles.inptpasstext}>2.激活EOS钱包需消耗10点积分（每个用户仅限一个）</Text>
+     <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
+     <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>
+  </View>), "知道了", null,  () => { EasyDialog.dismis() });
   }
 
   getRandomWords() {
@@ -233,73 +247,149 @@ class Set extends React.Component {
     });
   }
 
+  dismissKeyboardClick() {
+    dismissKeyboard();
+}
+
   render() {
     return <View style={styles.container}>
-      <View>
-        <Text style={styles.welcome} style={{ color: '#8696B0', marginTop: 10, marginLeft: 10 }}>重要声明:</Text>
-        <Text style={styles.welcome} style={{ color: '#8696B0', marginTop: 10, marginLeft: 10 }}>密码用于保护私钥和交易授权，强度非常重要</Text>
-        <Text style={styles.welcome} style={{ color: '#8696B0', marginBottom: 10, marginLeft: 10 }}>EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
-        <View style={{ backgroundColor: '#586888', paddingBottom: 5,}}>
-          <View style={{ padding: 20, height: 55,   borderBottomWidth: 1, borderBottomColor: UColor.secdColor,}} >
-            <TextInput returnKeyType="next" selectionColor="#65CAFF"
-              ref={(ref) => this._raccount = ref}
-              style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)"
-              underlineColorAndroid="transparent" keyboardType="default" maxLength={12}
-              value={this.state.walletName}
-              onChangeText={(walletName) => this.setState({ walletName })}
+    <ScrollView  keyboardShouldPersistTaps="always">
+      <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+        <Text style={styles.significanttext} >重要声明:</Text>
+        <Text style={styles.significanttext} >密码用于保护私钥和交易授权，强度非常重要</Text>
+        <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
+        <View style={styles.outsource}>
+          <View style={styles.inptout} >
+            <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
+              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+              placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" 
+              keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
             />
           </View>
-          <View style={{ padding: 20, height: 55,  borderBottomWidth: 1, borderBottomColor: UColor.secdColor,}} >
-            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true}
-              returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0"
-              placeholder="密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-              onChangeText={(walletPassword) => this.setState({ walletPassword })}
+          <View style={styles.inptout} >
+            <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletPassword} returnKeyType="next" 
+              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+              placeholder="密码" underlineColorAndroid="transparent" secureTextEntry={true} 
+              onChangeText={(walletPassword) => this.setState({ walletPassword })} autoFocus={false} editable={true}
             />
           </View>
-          <View style={{ padding: 20, height: 55,  borderBottomWidth: 1, borderBottomColor: UColor.secdColor, }} >
-            <TextInput ref={(ref) => this._lrpass = ref} autoFocus={false} editable={true}
-              returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0"
-              placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-              onChangeText={(reWalletPassword) => this.setState({ reWalletPassword })}
+          <View style={styles.inptout} >
+            <TextInput ref={(ref) => this._lrpass = ref} value={this.state.reWalletPassword} returnKeyType="next"
+              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+              placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
+              onChangeText={(reWalletPassword) => this.setState({ reWalletPassword })}  autoFocus={false} editable={true}
             />
           </View>
-          <View style={{ padding: 20, height: 55,   borderBottomWidth: 1, borderBottomColor: UColor.secdColor, }} >
-            <TextInput ref={(ref) => this._lnote = ref} autoFocus={false} editable={true}
-              value={this.state.passwordNote}
-              returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0"
-              placeholder="密码提示(可不填)" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-              onChangeText={(passwordNote) => this.setState({ passwordNote })}
+          <View style={styles.inptout} >
+            <TextInput ref={(ref) => this._lnote = ref} value={this.state.passwordNote} returnKeyType="go"
+              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+              placeholder="密码提示(可不填)" underlineColorAndroid="transparent" secureTextEntry={true} 
+              onChangeText={(passwordNote) => this.setState({ passwordNote })} autoFocus={false} editable={true}
             />
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20, }}>
+        <View style={styles.clauseout}>
           <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
-            <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={{ width: 20, height: 20, }} />
+            <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
           </TouchableHighlight>
-          <Text style={styles.welcome} style={{ fontSize: 15, color: '#8696B0', marginLeft: 10 }}>我已经仔细阅读并同意</Text>
-          <Text onPress={() => this.prot()} style={{ fontSize: 15, color: '#65CAFF', marginLeft: 5 }}>服务及隐私条款</Text>
+          <Text style={styles.welcome} >我已经仔细阅读并同意</Text>
+          <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text>
         </View>
         <Button onPress={() => this.createWallet()}>
-          <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-            <Text style={{ fontSize: 15, color: '#fff' }}>创建钱包</Text>
+          <View style={styles.createWalletout}>
+            <Text style={styles.createWallet}>创建钱包</Text>
           </View>
         </Button>
         <Button onPress={() => this.importWallet()}>     
-            <Text style={{ fontSize: 15, color: '#65CAFF', textAlign: 'center' }}>导入钱包</Text>
+            <Text style={styles.importWallettext}>导入钱包</Text>
         </Button>
-      </View>
-    </View>
+      </TouchableOpacity>
+    </ScrollView>
+  </View>
   }
 }
 
 const styles = StyleSheet.create({
+  inptpasstext: {
+    fontSize: 12,
+    color: UColor.arrow,
+    marginBottom: 15,
+    lineHeight: 20,
+  },
+  Becarefultext: {
+     color: UColor.showy,
+     fontSize: 12,
+  },
+
   container: {
     flex: 1,
     flexDirection: 'column',
     backgroundColor: UColor.secdColor,
   },
+  significanttext: {
+    color: UColor.arrow,
+    marginHorizontal: 10,
+    marginVertical: 5,
+  },
+
+  outsource: {
+    backgroundColor: UColor.mainColor,
+    paddingBottom: 5,
+  },
+
+  inptout: {
+    padding: 20,
+    height: 55,
+    borderBottomWidth: 1,
+    borderBottomColor: UColor.secdColor,
+  },
+  inpt: {
+    color: UColor.arrow,
+    fontSize: 15,
+    height: 40,
+    paddingLeft: 2
+  },
+
+
+  clauseout: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  clauseimg: { 
+    width: 20, 
+    height: 20, 
+  },
+  welcome: {
+    fontSize: 15,
+    color: UColor.arrow,
+    marginLeft: 10
+  },
+  clausetext: {
+    fontSize: 15,
+    color: UColor.tintColor,
+    marginLeft: 5
+  },
+  createWalletout: {
+    height: 45,
+    backgroundColor: UColor.tintColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    borderRadius: 5
+  },
+  createWallet: {
+    fontSize: 15,
+    color: UColor.fontColor
+  },
+  importWallettext: {
+    fontSize: 15,
+    color: UColor.tintColor,
+    textAlign: 'center'
+  },
 
 });
 
-export default Set;
+export default createWallet;
