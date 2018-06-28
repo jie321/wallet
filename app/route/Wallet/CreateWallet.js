@@ -138,9 +138,9 @@ class Set extends React.Component {
                       // const { navigate } = this.props.navigation;
                     }
                   });
-                  EasyToast.show('生成账号失败：' + data.msg);
+                  EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                 }else {
-                  EasyToast.show('生成账号失败：' + data.data);
+                  EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                 }
               }
             })
