@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {pocketAsset, getBalance} from '../utils/Api';
+import {pocketAsset, getBalance, submitAssetInfo} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import { DeviceEventEmitter } from 'react-native';
@@ -119,7 +119,20 @@ export default {
         }catch(e){
             EasyToast.show('网络发生错误，请重试');
         }
-    }
+    },
+    *submitAssetInfoToServer({payload, callback},{call,put}){
+        try{
+            const resp = yield call(Request.request, submitAssetInfo, 'post', {contract_account: payload.contractAccount, name: payload.name});
+            if(resp && resp.code=='0'){
+                DeviceEventEmitter.emit('updateAssetList', payload);
+            }
+            if(callback){
+                callback(resp);
+            }
+        }catch(e){
+            EasyToast.show('网络发生错误，请重试');
+        }
+     },
 
     },
 

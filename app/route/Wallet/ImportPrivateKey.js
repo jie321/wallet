@@ -169,21 +169,23 @@ class Coins extends React.Component {
     const { navigate } = this.props.navigation;
     Eos.seedPrivateKey(this.state.words_owner, this.state.words_active, (result) => {
       if (result.isSuccess) {
-        alert('createWallet: ' + JSON.stringify(result));
-
-        result.data.words = wordsStr_owner;
-        result.data.words_active = wordsStr_active;
-        result.password = this.state.walletPassword;
-        result.name = this.state.walletName;
-        result.account = this.state.walletName;
-
-        this.props.dispatch({ type: 'wallet/saveWallet', wallet: result }, (r) => {
-          if(r.isSuccess){
-            EasyToast.show('导入成功');
-            this.props.navigation.goBack();
-          }else{
-            EasyToast.show('导入失败');
-          }
+        var salt;
+        Eos.randomPrivateKey((r)=>{
+          salt = r.data.ownerPrivate.substr(0, 18);
+          result.data.words = wordsStr_owner;
+          result.data.words_active = wordsStr_active;
+          result.password = this.state.walletPassword;
+          result.name = this.state.walletName;
+          result.account = this.state.walletName;
+          result.salt = salt;
+          this.props.dispatch({ type: 'wallet/saveWallet', wallet: result }, (r) => {
+            if(r.isSuccess){
+              EasyToast.show('导入成功');
+              this.props.navigation.goBack();
+            }else{
+              EasyToast.show('导入失败');
+            }
+          });
         });
 
       } else {
@@ -251,67 +253,7 @@ class Coins extends React.Component {
   }
 
   createWalletByPrivateKey(owner_privateKey, active_privatekey){
-    Eos.privateToPublic(active_privatekey,(r) => {
-      var active_publicKey = r.data.publicKey;
-      // Eos.privateToPublic(owner_privateKey, (r) => {
-        try {
-          var owner_publicKey = r.data.publicKey;
-          // 根据puk到eos主网上获取相关账户名称
-          this.props.dispatch({
-            type: 'wallet/getAccountsByPuk',
-            payload: {public_key: owner_publicKey}, callback: (data) => {
-              if (data.code != '0') {
-                alert('找不到' + owner_publicKey + "对应的账户名" + " "+JSON.stringify(data));
-                return;
-              }
-    
-              var result = {
-                data:{
-                  ownerPublic:'',
-                  activePublic:'',
-                  ownerPrivate:'',
-                  activePrivate:'',
-                  words_active:'',
-                  words:''
-                }
-              };
-              result.data.ownerPublic = owner_publicKey;
-              result.data.activePublic = active_publicKey;
-  
-              result.data.words = '';
-              result.data.words_active = '';
-              result.data.ownerPrivate = owner_privateKey;
-              result.data.activePrivate = active_privatekey;
-              result.password = this.state.walletpwd;
-              result.name = data.data.account_names[0];
-              result.account = data.data.account_names[0];
-              result.isactived = true;
-              // alert('result-> '+JSON.stringify(result));
-  
-              // 保存钱包信息
-              this.props.dispatch({
-                type: 'wallet/saveWallet', wallet: result, callback: (data) => {
-                    
-                  if (data.error != null) {
-                    EasyToast.show('导入私钥失败：' + data.error);
-                  } else {
-                    EasyToast.show('导入私钥成功！');
-                    DeviceEventEmitter.emit('updateDefaultWallet');
-                    this.props.navigation.goBack();
-                    
-                  }
-                }
-              });
-            }
-          });
-  
-          // 
-        } catch (e) {
-          alert('privateToPublic err: ' + JSON.stringify(e));
-        }
-      // });
 
-    });
   }
 
   //渲染页面
