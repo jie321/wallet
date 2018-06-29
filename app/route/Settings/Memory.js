@@ -312,7 +312,7 @@ class Memory extends React.Component {
                             <View style={styles.outsource}>
                                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                                 selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                                placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric" 
                                 onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
                                 />
                                 <Button onPress={this.buyram.bind()}>
@@ -327,7 +327,7 @@ class Memory extends React.Component {
                             <View style={styles.outsource}>
                                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                                 selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
-                                placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                                placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="numeric"
                                 onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
                                 />
                                 <Button onPress={this.sellram.bind()}>
