@@ -44,3 +44,4 @@ export const getAccountsByPuk = rootaddr + '/eosrpc/getKeyAccounts';
 export const getActions = rootaddr + '/eosrpc/getActions';
 export const pocketAsset = rootaddr + '/pocketAsset/list';
 export const submitAssetInfo = rootaddr + '/pocketAsset/add';
+export const getintegral = rootaddr + '/pocketAsset/getCreateEosAccountNeedPoint'
