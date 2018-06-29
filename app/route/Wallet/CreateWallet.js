@@ -32,6 +32,7 @@ class createWallet extends React.Component {
       weak: UColor.arrow,
       medium: UColor.arrow,
       strong: UColor.arrow,
+      CreateButton:  UColor.mainColor,
     }
   }
 
@@ -286,6 +287,11 @@ class createWallet extends React.Component {
       this.state.medium = UColor.arrow;
       this.state.weak = UColor.arrow;
      }
+    if(this.state.walletName != "" && this.state.walletPassword != "" && this.state.reWalletPassword != ""){
+      this.state.CreateButton = UColor.tintColor;
+    }else{
+      this.state.CreateButton =  UColor.mainColor;
+    }
   }
 
   dismissKeyboardClick() {
@@ -304,7 +310,7 @@ class createWallet extends React.Component {
             <Text style={styles.inptitle}>账号名称</Text>
             <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
               selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-              placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" 
+              placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" onChange={this.intensity()} 
               keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
             />
           </View>
@@ -327,7 +333,7 @@ class createWallet extends React.Component {
             <Text style={styles.inptitle}>确认密码</Text>
             <TextInput ref={(ref) => this._lrpass = ref} value={this.state.reWalletPassword} returnKeyType="next"
               selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-              placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
+              placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} onChange={this.intensity()}
               onChangeText={(reWalletPassword) => this.setState({ reWalletPassword })}  autoFocus={false} editable={true}
             />
           </View>
@@ -344,11 +350,11 @@ class createWallet extends React.Component {
           <TouchableHighlight  onPress={() => this.checkClick()}>
             <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
           </TouchableHighlight>
-          <Text style={styles.welcome} >我已经仔细阅读并同意</Text>
-          <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text>
+          <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}> 服务及隐私条款</Text></Text>
+          
         </View>
         <Button onPress={() => this.createWallet()}>
-          <View style={styles.createWalletout}>
+          <View style={styles.createWalletout} backgroundColor = {this.state.CreateButton}>
             <Text style={styles.createWallet}>创建钱包</Text>
           </View>
         </Button>
@@ -430,7 +436,6 @@ const styles = StyleSheet.create({
   },
   createWalletout: {
     height: 45,
-    backgroundColor: UColor.tintColor,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 20,
