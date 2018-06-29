@@ -105,7 +105,11 @@ class SignIn extends React.Component {
         } 
         if (data.code == 0) {
           EasyToast.show("签到成功");
-          this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
+          this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid },callback:(data) =>{
+            this.setState({
+              accumulative:this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout
+          })
+          } });
         } else {
           EasyToast.show(data.msg);
         }
