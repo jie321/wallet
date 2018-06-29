@@ -161,10 +161,10 @@ class SignIn extends React.Component {
           <Text style={styles.foottext}>1.签到每日可获得积分+1，连续签到可额外增加积分；</Text>
           <Text style={styles.foottext}>2.分享资讯到朋友圈或微信好友每日可获得积分+1；</Text>
           <Text style={styles.foottext}>3.资讯浏览评点每日可获得积分+1；</Text>
-          <Text style={styles.foottext}>4.转入资产成功，每笔可获得积分+5;</Text>
+          {/* <Text style={styles.foottext}>4.转入资产成功，每笔可获得积分+5;</Text>
           <Text style={styles.foottext}>5.转出资产成功，每笔可获得积分+2；</Text>
-          <Text style={styles.foottext}>6.定存EOS币，每日可获得2%比例的积分；</Text>
-          <Text style={styles.footbom}>7.积分可兑换官方礼品和提高用户权益，官方将会在后续开发积分价值体系，让拥有更多积分的用户享受官方VIP服务，敬请期待。</Text>
+          <Text style={styles.foottext}>6.定存EOS币，每日可获得2%比例的积分；</Text> */}
+          <Text style={styles.footbom}>4.积分可兑换官方礼品和提高用户权益，官方将会在后续开发积分价值体系，让拥有更多积分的用户享受官方VIP服务，敬请期待。</Text>
         </View>
       </ScrollView>
     </View>
