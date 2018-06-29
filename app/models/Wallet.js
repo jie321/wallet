@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { address, getAccountsByPuk, getActions } from '../utils/Api';
+import { address, getAccountsByPuk, getActions, getintegral } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
 import { EasyLoading } from '../components/Loading';
 import store from 'react-native-simple-store';
@@ -437,6 +437,19 @@ export default {
             } catch (error) {
                 EasyToast.show('网络发生错误，请重试');
                 EasyLoading.dismis();
+            }
+         },
+    
+         *getintegral({payload, callback},{call,put}) {
+            try{
+                const resp = yield call(Request.request, getintegral, "post", payload);
+                if(resp.code=='0'){              
+                    if (callback) callback(resp);
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+            } catch (error) {
+                EasyToast.show('网络发生错误，请重试');
             }
          },
     },

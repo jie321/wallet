@@ -12,13 +12,7 @@ import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
-// import { CollapsibleText } from '../News/CollapsibleText';
-
-// var eosjs = require('eosjs')
-
-// Eos = require('eosjs');
-// var {api, ecc, json, Fcbuffer, format} = Eos.modules;
-
+var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
 class createWallet extends React.Component {
 
@@ -33,8 +27,18 @@ class createWallet extends React.Component {
       walletPassword: "",
       reWalletPassword: "",
       passwordNote: "",
-      isChecked: this.props.isChecked || false
+      isChecked: this.props.isChecked || false,
+      integral: 0,
+      weak: UColor.arrow,
+      medium: UColor.arrow,
+      strong: UColor.arrow,
     }
+  }
+
+  componentDidMount() {
+    this.props.dispatch({ type: 'wallet/getintegral', payload:{},callback: (data) => { 
+      this.setState({integral: data.data});
+    } });
   }
 
   importKey() {
@@ -68,6 +72,10 @@ class createWallet extends React.Component {
     }
     if (this.state.reWalletPassword == "") {
       EasyToast.show('请输入钱包确认密码');
+      return;
+    }
+    if (this.state.walletPassword != this.state.reWalletPassword) {
+      EasyToast.show('两次密码不一致');
       return;
     }
     if (this.state.isChecked == false) {
@@ -114,6 +122,9 @@ class createWallet extends React.Component {
             this.props.dispatch({
               type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
                 EasyLoading.dismis();
+                this.setState({
+                  integral: data.data,
+                })
                 if (data.code == '0') {
                   result.isactived = true
                   this.props.dispatch({
@@ -123,7 +134,7 @@ class createWallet extends React.Component {
                         EasyToast.show('生成账号失败：' + error);
                         this.ExplainPopup();
                       } else {
-                        EasyToast.show('生成账号成功：');
+                        EasyToast.show('生成账号成功');
                         DeviceEventEmitter.emit('updateDefaultWallet');
                         this.props.navigation.goBack();
                         // const { navigate } = this.props.navigation;
@@ -169,7 +180,7 @@ class createWallet extends React.Component {
   ExplainPopup(){
   EasyDialog.show("EOS账号创建说明", (<View>
      <Text style={styles.inptpasstext}>1.如果你没有注册EosToken账号，创建的EOS钱包将 无法激活</Text>
-     <Text style={styles.inptpasstext}>2.激活EOS钱包需消耗10点积分（每个用户仅限一个）</Text>
+     <Text style={styles.inptpasstext}>2.激活EOS钱包需达到{this.state.integral}点积分（每个用户仅限一个）</Text>
      <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
      <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>
   </View>), "知道了", null,  () => { EasyDialog.dismis() });
@@ -247,9 +258,42 @@ class createWallet extends React.Component {
     });
   }
 
+  intensity() {
+    let string = this.state.walletPassword;
+    if(string.length >=8) {
+      if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+        this.state.strong = UColor.tintColor;
+        this.state.medium = UColor.arrow;
+        this.state.weak = UColor.arrow;
+      }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
+        if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.tintColor;
+          this.state.weak = UColor.arrow;
+        }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.tintColor;
+          this.state.weak = UColor.arrow;
+        }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.tintColor;
+          this.state.weak = UColor.arrow;
+        }else{
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.arrow;
+          this.state.weak = UColor.tintColor;
+        }
+      }
+     }else{
+      this.state.strong = UColor.arrow;
+      this.state.medium = UColor.arrow;
+      this.state.weak = UColor.arrow;
+     }
+  }
+
   dismissKeyboardClick() {
     dismissKeyboard();
-}
+  }
 
   render() {
     return <View style={styles.container}>
@@ -260,6 +304,7 @@ class createWallet extends React.Component {
         <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
         <View style={styles.outsource}>
           <View style={styles.inptout} >
+            <Text style={styles.inptitle}>账号名称</Text>
             <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
               selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
               placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" 
@@ -267,13 +312,22 @@ class createWallet extends React.Component {
             />
           </View>
           <View style={styles.inptout} >
-            <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletPassword} returnKeyType="next" 
-              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-              placeholder="密码" underlineColorAndroid="transparent" secureTextEntry={true} 
-              onChangeText={(walletPassword) => this.setState({ walletPassword })} autoFocus={false} editable={true}
-            />
+              <View style={{flexDirection: 'row',}}>
+                <Text style={styles.inptitle}>设置密码</Text>
+                <View style={{flexDirection: 'row',}}>
+                    <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
+                    <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
+                    <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
+                </View>
+              </View>
+              <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletPassword}  returnKeyType="next" editable={true}
+                  selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false}
+                  onChangeText={(walletPassword) => this.setState({walletPassword})} onChange={this.intensity()} 
+                  placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
+                />
           </View>
           <View style={styles.inptout} >
+            <Text style={styles.inptitle}>确认密码</Text>
             <TextInput ref={(ref) => this._lrpass = ref} value={this.state.reWalletPassword} returnKeyType="next"
               selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
               placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
@@ -290,7 +344,7 @@ class createWallet extends React.Component {
         </View>
 
         <View style={styles.clauseout}>
-          <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
+          <TouchableHighlight  onPress={() => this.checkClick()}>
             <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
           </TouchableHighlight>
           <Text style={styles.welcome} >我已经仔细阅读并同意</Text>
@@ -335,22 +389,27 @@ const styles = StyleSheet.create({
 
   outsource: {
     backgroundColor: UColor.mainColor,
-    paddingBottom: 5,
   },
 
   inptout: {
-    padding: 20,
-    height: 55,
+    paddingHorizontal: 15,
     borderBottomWidth: 1,
+    backgroundColor: UColor.mainColor,
     borderBottomColor: UColor.secdColor,
+  },
+  inptitle: {
+    flex: 1,
+    fontSize: 15,
+    lineHeight: 30,
+    paddingLeft: 5,
+    color: UColor.fontColor,
   },
   inpt: {
     color: UColor.arrow,
     fontSize: 15,
-    height: 40,
+    height: 50,
     paddingLeft: 2
   },
-
 
   clauseout: {
     flexDirection: 'row',
@@ -365,7 +424,7 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 15,
     color: UColor.arrow,
-    marginLeft: 10
+    marginLeft: 20
   },
   clausetext: {
     fontSize: 15,

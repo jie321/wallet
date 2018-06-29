@@ -279,9 +279,11 @@ intensity() {
         this.state.medium = UColor.arrow;
         this.state.weak = UColor.tintColor;
       }
-    }else{
-      
     }
+   }else{
+    this.state.strong = UColor.arrow;
+    this.state.medium = UColor.arrow;
+    this.state.weak = UColor.arrow;
    }
 }
 
@@ -340,8 +342,8 @@ dismissKeyboardClick() {
                     onChangeText={(password) => this.setState({walletpwd: password })} onChange={this.intensity()} 
                     placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
                   />
-                </View>
-                <View style={styles.inptout} >
+              </View>
+              <View style={styles.inptout} >
                   <Text style={styles.inptitle}>确认密码</Text>
                   <TextInput ref={(ref) => this._lpass = ref}  value={this.state.reWalletpwd}  returnKeyType="go"
                       selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
@@ -453,7 +455,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 30,
     paddingLeft: 5,
-    color: UColor.arrow,
+    color: UColor.fontColor,
   },
   inpt: {
     fontSize: 16,

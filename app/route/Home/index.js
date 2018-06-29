@@ -103,7 +103,7 @@ class Home extends React.Component {
               })
             } else {
               account: this.props.defaultWallet.name,
-                this.setState({ balance: data.data.replace(" EOS", "") })
+                this.setState({ balance: data.data.replace("EOS", "") })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
@@ -112,7 +112,7 @@ class Home extends React.Component {
         }
       })
     } else {
-      this.setState({ balance: '0.0000 ', account: 'xxxx' })
+      this.setState({ balance: '0.0000', account: 'xxxx' })
       // this.props.defaultWallet.name = 'xxxx';
       //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
       //   this.createWallet();
