@@ -130,11 +130,11 @@ class Memory extends React.Component {
     _getButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
-            <View style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}>  
-                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]} onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]} >  
                     {buttonTitle}  
                 </Text>  
-            </View>  
+            </TouchableOpacity>  
         );  
     }  
 
