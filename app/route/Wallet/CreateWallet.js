@@ -122,9 +122,6 @@ class createWallet extends React.Component {
             this.props.dispatch({
               type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
                 EasyLoading.dismis();
-                this.setState({
-                  integral: data.data,
-                })
                 if (data.code == '0') {
                   result.isactived = true
                   this.props.dispatch({
