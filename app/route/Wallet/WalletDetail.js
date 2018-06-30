@@ -318,7 +318,7 @@ class Set extends React.Component {
               {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
               <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
             </View>
-            <Text style={styles.walletname}>钱包名称：{this.props.navigation.state.params.data.name}</Text>
+            <Text style={styles.walletname}>账户名称：{this.props.navigation.state.params.data.name}</Text>
           </View>
 
           <View style={{ marginBottom: 50 }}>
@@ -333,14 +333,14 @@ class Set extends React.Component {
           {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
           <Button onPress={() => this.activeWallet()} style={{ flex: 1 }}>
             <View style={styles.acttiveout}>
-              <Text style={styles.delete}>激活钱包</Text>
+              <Text style={styles.delete}>激活账户</Text>
             </View>
           </Button>
           :null
           }
           <Button onPress={() => this.deleteWallet()} style={{ flex: 1 }}>
             <View style={styles.deleteout}>
-              <Text style={styles.delete}>删除钱包</Text>
+              <Text style={styles.delete}>删除账户</Text>
             </View>
           </Button>
 
@@ -353,7 +353,7 @@ class Set extends React.Component {
               <Button style={{ alignItems: 'flex-end', }} onPress={this._setModalVisible.bind(this)}>
                 <Text style={styles.closeText}>×</Text>
               </Button>
-              <Text style={styles.titleText}>备份钱包</Text>
+              <Text style={styles.titleText}>备份账户</Text>
               {/* <Text style={styles.noticeText}>安全警告：私钥未经加密，导出存在风险，建议使用助记词和Keystore进行备份。</Text> */}
               <View style={styles.contentText}>
                 <Text style={styles.textContent}>OwnerPrivateKey: {this.state.txt_owner}</Text>

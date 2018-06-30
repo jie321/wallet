@@ -49,7 +49,7 @@ class Coin_search extends React.Component {
 
   _leftTopClick =() => {
     if (this.state.labelname == "") {
-      EasyToast.show('请输入标签名称');
+      EasyToast.show('请输入token名称或合约地址');
       return;
     }
   }
@@ -154,7 +154,7 @@ class Coin_search extends React.Component {
                     <View style={styles.inptout} >
                         <TextInput ref={(ref) => this._raccount = ref} value={this.state.labelname} returnKeyType="go"
                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#b3b3b3" 
-                            placeholder="输入标签名称" underlineColorAndroid="transparent" keyboardType="default"
+                            placeholder="输入token名称或合约地址搜索" underlineColorAndroid="transparent" keyboardType="default"
                             onChangeText={(labelname) => this.setState({ labelname })}
                             />      
                     </View>     

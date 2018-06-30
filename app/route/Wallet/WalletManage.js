@@ -107,7 +107,7 @@ class WalletManage extends React.Component {
           <Button  onPress={() => this.createWallet()} style={{flex:1}}>
               <View  style={styles.footoutsource}>
                   <Image source={UImage.xin1} style={styles.footimg}/>
-                  <Text style={styles.footText}>创建钱包</Text>
+                  <Text style={styles.footText}>创建账户</Text>
               </View>
           </Button>
           <Button  onPress={this.importWallet.bind(this)} style={{flex:1}}>

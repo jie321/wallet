@@ -162,7 +162,7 @@ class Info extends React.Component {
                                 </Button>
                                 <Text style={styles.titleText}>你的{c.name}地址</Text>
                                 <Text style={styles.contentText}>{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
-                                <Text style={styles.prompttext}>提示：扫码同样可获取地址</Text>
+                                <Text style={styles.prompttext}>提示：扫码同样可获取账户</Text>
                                 <View style={styles.codeout}>
                                     <View style={styles.tab} />
                                     <QRCode size={170}  value={'{\"contract\":\"eos\",\"toaccount\":\"' + this.props.defaultWallet.account + '\",\"symbol\":\"EOS\"}'} />
@@ -170,7 +170,7 @@ class Info extends React.Component {
                                 </View>
                                 <Button onPress={() => { this.copy() }}>
                                     <View style={styles.copyout}>
-                                        <Text style={styles.copytext}>复制地址</Text>
+                                        <Text style={styles.copytext}>复制账户</Text>
                                     </View>
                                 </Button>
                             </View>
