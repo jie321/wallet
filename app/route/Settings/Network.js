@@ -258,11 +258,11 @@ class Network extends React.Component {
     _getButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
-            <View style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}>  
-                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]} onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>  
                     {buttonTitle}  
                 </Text>  
-            </View>  
+            </TouchableOpacity>  
         );  
     }  
 
@@ -325,7 +325,7 @@ class Network extends React.Component {
                             <View style={styles.outsource}>
                                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go"
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric" 
                                 onChangeText={(delegatebw) => this.setState({ delegatebw })}
                                 />
                                 <Button onPress={this.delegatebw.bind()}>
@@ -340,7 +340,7 @@ class Network extends React.Component {
                             <View style={styles.outsource}>
                                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" 
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="phone-pad"
+                                placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric"
                                 onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
                                 />
                                 <Button onPress={this.undelegatebw.bind()}>

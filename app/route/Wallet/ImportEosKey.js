@@ -48,6 +48,7 @@ class ImportEosKey extends React.Component {
       weak: UColor.arrow,
       medium: UColor.arrow,
       strong: UColor.arrow,
+      CreateButton:  UColor.mainColor,
     };
   }
   //组件加载完成
@@ -285,6 +286,11 @@ intensity() {
     this.state.medium = UColor.arrow;
     this.state.weak = UColor.arrow;
    }
+  if(this.state.activePk != "" && this.state.walletpwd != "" && this.state.reWalletpwd != ""){
+    this.state.CreateButton = UColor.tintColor;
+  }else{
+    this.state.CreateButton =  UColor.mainColor;
+  } 
 }
 
 dismissKeyboardClick() {
@@ -304,11 +310,10 @@ dismissKeyboardClick() {
               <View style={styles.inptoutbg}>
                 <View style={styles.inptoutgo} >
                   {/* <Text style={styles.inptitle}>私钥</Text> */}
-                  <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next" 
-                    selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} 
-                    onChangeText={(activePk) => this.setState({ activePk })}  autoFocus={false} editable={true}
-                    placeholder="粘贴或输入私钥" underlineColorAndroid="transparent" keyboardType="default" 
-                    multiline={true}  />
+                  <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next" editable={true}
+                    selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} autoFocus={false} 
+                    onChangeText={(activePk) => this.setState({ activePk })}  onChange={this.intensity()} keyboardType="default"
+                    placeholder="粘贴或输入私钥" underlineColorAndroid="transparent"  multiline={true}  />
                 </View>
                 {/* <View style={styles.inptout}>
                   <Text style={styles.inptitle}>账号名称</Text>
@@ -337,30 +342,27 @@ dismissKeyboardClick() {
                         <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
                     </View>
                   </View>
-                  <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletpwd}  returnKeyType="go" editable={true}
+                  <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletpwd}  returnKeyType="next" editable={true}
                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false}
-                    onChangeText={(password) => this.setState({walletpwd: password })} onChange={this.intensity()} 
-                    placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
-                  />
+                    onChangeText={(password) => this.setState({walletpwd: password })} underlineColorAndroid="transparent"
+                    placeholder="输入密码至少8位,建议大小字母与数字混合" secureTextEntry={true} onChange={this.intensity()} />
               </View>
               <View style={styles.inptout} >
                   <Text style={styles.inptitle}>确认密码</Text>
-                  <TextInput ref={(ref) => this._lpass = ref}  value={this.state.reWalletpwd}  returnKeyType="go"
-                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                      placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} editable={true} 
-                      autoFocus={false}  onChangeText={(reWalletpwd) => this.setState({ reWalletpwd })}
-                  />
+                  <TextInput ref={(ref) => this._lpass = ref} value={this.state.reWalletpwd} returnKeyType="next" editable={true} 
+                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} secureTextEntry={true} 
+                      placeholder="重复密码" underlineColorAndroid="transparent"  autoFocus={false} onChange={this.intensity()}
+                      onChangeText={(reWalletpwd) => this.setState({ reWalletpwd })} />  
                 </View>
               </View>
               <View style={styles.readout}>
                   <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
                       <Image source={this.state.isChecked?UImage.aab1:UImage.aab2} style={styles.readoutimg}/>
                   </TouchableHighlight>
-                <Text style={styles.readtext} >我已经仔细阅读并同意</Text>
-                <Text onPress={() => this.prot(this,'clause')} style={styles.servicetext}>服务及隐私条款</Text>
+                <Text style={styles.readtext} >我已经仔细阅读并同意 <Text onPress={() => this.prot(this,'clause')} style={styles.servicetext}> 服务及隐私条款</Text></Text> 
               </View> 
               <Button onPress={() => this.importPriKey()}>
-                <View style={styles.importPriout}>
+                <View style={styles.importPriout} backgroundColor={this.state.CreateButton}>
                   <Text style={styles.importPritext}>开始导入</Text>
                 </View>
               </Button>
@@ -458,6 +460,7 @@ const styles = StyleSheet.create({
     color: UColor.fontColor,
   },
   inpt: {
+    height: 50,
     fontSize: 16,
     color: UColor.arrow, 
   },
@@ -505,7 +508,6 @@ const styles = StyleSheet.create({
 
   importPriout: { 
     height: 45, 
-    backgroundColor: UColor.tintColor, 
     justifyContent: 'center', 
     alignItems: 'center', 
     marginTop: 20, 
