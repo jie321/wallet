@@ -19,7 +19,7 @@ export class EasyLoading {
         delete this.map[key];
     }
 
-    static show(text = 'Loading...', timeout = -1, key = 'default') {
+    static show(text = 'Loading...', timeout = 60000, key = 'default') {
         this.map[key] && this.map[key].setState({ "isShow": true, "text": text, "timeout": timeout });
     }
 
@@ -47,7 +47,7 @@ export class Loading extends React.Component {
         let handle = 0;
         this.state = {
             isShow: false,
-            timeout: -1,
+            timeout: 60000,
             text: "Loading..."
         }
         EasyLoading.bind(this, this.props.type || 'default');
