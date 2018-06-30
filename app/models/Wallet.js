@@ -220,9 +220,11 @@ export default {
                 var wallet = walletList[j];
                 for (var i = 0; i < walletArr.length; i++) {
                     if (walletArr[i].account == wallet.account) {
-                        if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
-                            break;
-                        }
+                        // if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
+                        //     break;
+                        // }
+                        if (callback) callback({error: wallet.account + "已存在"});
+                        return;
                     }
                 }
 
