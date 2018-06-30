@@ -332,10 +332,6 @@ class Home extends React.Component {
           </View>   
         <View style={{height: 75}}>
           <ListView  initialListSize={1} enableEmptySections={true}
-            // renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-            // onScroll={(event) => { 
-            //   if (event.nativeEvent.contentOffset.y > 280) { this.setState({ status: 'rgba(0, 0, 0,0.3)'});} 
-            //   else { this.setState({ status: 'rgba(255, 255, 255,0)' });}}}
             dataSource={this.state.dataSource.cloneWithRows((this.props.list == null ? [] : this.props.list))}
             renderRow={(rowData, sectionID, rowID ) => (
               <View style={{height: 90,}}>
@@ -385,63 +381,58 @@ class Home extends React.Component {
             </View>
           )}                
          />  
-
-
        <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
-                <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
-                  <View style={styles.touchableout}>
-                    <ListView initialListSize={5} style={styles.touchablelist}
-                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-                      enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
-                      renderRow={(rowData) => (
-                        (rowData.isactived || !rowData.hasOwnProperty('isactived')) ?
-                        <Button onPress={this.changeWallet.bind(this, rowData)}>
-                          <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
-                            <Text style={styles.walletname}>{rowData.name}</Text>
-                            <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
-                          </View>
-                        </Button>
-                        :
-                        null
-                      
-                      )}
-                    />
-                    <View style={styles.ebhbtnout}>
-                      <Button onPress={() => this.createWallet()} style={{height: 40,}}>
-                        <View style={styles.establishout}>
-                          <Image source={UImage.wallet_1} style={styles.establishimg} />
-                          <Text style={styles.establishtext}>创建钱包</Text>
-                        </View>
-                      </Button>
-                      {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
-                        <View style={{ flex: 1, flexDirection: "row", }}>
-                          <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
-                          <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
-                        </View>
-                      </Button> */}
+          <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
+            <View style={styles.touchableout}>
+              <ListView initialListSize={5} style={styles.touchablelist}
+                renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
+                enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
+                renderRow={(rowData) => (
+                  (rowData.isactived || !rowData.hasOwnProperty('isactived')) ?
+                  <Button onPress={this.changeWallet.bind(this, rowData)}>
+                    <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
+                      <Text style={styles.walletname}>{rowData.name}</Text>
+                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
                     </View>
+                  </Button> : null
+                )}
+              />
+              <View style={styles.ebhbtnout}>
+                <Button onPress={() => this.createWallet()} style={{height: 40,}}>
+                  <View style={styles.establishout}>
+                    <Image source={UImage.wallet_1} style={styles.establishimg} />
+                    <Text style={styles.establishtext}>创建钱包</Text>
                   </View>
-                </TouchableOpacity>
-              </Modal>
+                </Button>
+                {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
+                  <View style={{ flex: 1, flexDirection: "row", }}>
+                    <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
+                    <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
+                  </View>
+                </Button> */}
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
 
-              <View style={styles.pupuo}>
-                <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                  <View style={styles.modalStyle}>
-                    <View style={styles.subView} >
-                      <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                        <Text style={styles.butclose}>×</Text>
-                      </Button>
-                      <Text style={styles.titleText}>收款码</Text>
-                      <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name)}</Text>
-                      <Text style={styles.prompt}>提示：扫码同样可获取地址</Text>
-                      <View style={styles.codeout}>
-                        <View style={styles.tab} />
-                        <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
-                        <View style={styles.tab} />
-                      </View>
-                      <Button onPress={() => { this.copy() }}>
-                        <View style={styles.copyout}>
-                          <Text style={styles.copytext}>复制地址</Text>
+        <View style={styles.pupuo}>
+          <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+            <View style={styles.modalStyle}>
+              <View style={styles.subView} >
+                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
+                  <Text style={styles.butclose}>×</Text>
+                </Button>
+                <Text style={styles.titleText}>收款码</Text>
+                <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name)}</Text>
+                <Text style={styles.prompt}>提示：扫码同样可获取账户</Text>
+                <View style={styles.codeout}>
+                  <View style={styles.tab} />
+                  <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
+                  <View style={styles.tab} />
+                </View>
+                <Button onPress={() => { this.copy() }}>
+                  <View style={styles.copyout}>
+                    <Text style={styles.copytext}>复制账户</Text>
                   </View>
                 </Button>
               </View>
@@ -464,8 +455,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 15,
     justifyContent: "space-between",
-    // borderTopColor: '#2D354F', 
-    // borderTopWidth: 1,
+  },
+  listItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: UColor.secdColor
   },
 
   topbtn: {

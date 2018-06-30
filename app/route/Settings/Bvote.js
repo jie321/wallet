@@ -86,7 +86,7 @@ class Bvote extends React.Component {
                 </TouchableHighlight>  */}
                 <TouchableHighlight onPress={this.goPage.bind(this, 'Imvote')}>
                   <ImageBackground  style={styles.lockoutsource} source={UImage.votea_bj} resizeMode="stretch">              
-                    <Text style={styles.locktitle}>你的投票信息</Text>
+                    <Text style={styles.locktitle}>我的投票</Text>
                     <View style={styles.locktext}>
                         <Image source={UImage.voteb} style={styles.lockimg}/>
                     </View>     
@@ -94,7 +94,7 @@ class Bvote extends React.Component {
                 </TouchableHighlight> 
                 <TouchableHighlight onPress={this.goPage.bind(this, 'Nodevoting')} >      
                   <ImageBackground  style={styles.lockoutsource} source={UImage.votec_bj} resizeMode="stretch">              
-                    <Text style={styles.locktitle}>选择代理节点</Text>
+                    <Text style={styles.locktitle}>超级节点</Text>
                     <View style={styles.locktext}>
                         <Image source={UImage.votec} style={styles.lockimg}/>
                     </View>     
