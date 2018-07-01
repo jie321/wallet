@@ -365,7 +365,7 @@ class Home extends React.Component {
               <Button onPress={this.assetInfo.bind(this, rowData)}>
                 <View style={styles.row}>
                   <View style={styles.left}>
-                    <Image source={{ uri: rowData.asset.icon }} style={styles.leftimg} />
+                    <Image source={rowData.asset.icon==null ? UImage.eos : { uri: rowData.asset.icon }} style={styles.leftimg} />
                     <Text style={styles.lefttext}>{rowData.asset.name}</Text>
                   </View>
                   <View style={styles.right}>
