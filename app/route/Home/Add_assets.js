@@ -167,7 +167,7 @@ class Add_assets extends React.Component {
                   renderRow={(rowData, sectionID, rowID) => (      
                   <View style={styles.listItem}>
                       <View style={styles.listInfo}>
-                        <Image source={{ uri: rowData.icon }} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden", borderRadius: 18, marginRight:10,}}/>
+                        <Image source={rowData.icon==null ? UImage.eos : { uri: rowData.icon }} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden", borderRadius: 18, marginRight:10,}}/>
                         <View style={styles.scrollView}>
                           <Text style={styles.listInfoTitle}>{rowData.name}</Text>
                         </View>
