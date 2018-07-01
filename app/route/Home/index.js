@@ -74,8 +74,23 @@ class Home extends React.Component {
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
-    DeviceEventEmitter.addListener('updateMyAssets', (assets) => {
-      this.setState({myAssets: assets});
+    DeviceEventEmitter.addListener('updateMyAssets', (data) => {
+      for (var i = 0; i < this.state.myAssets.length; i++) {
+        if (this.state.myAssets[i].asset.name == data.asset.name) {
+            if(data.value){ // 添加资产,  但资产已存在
+              // 添加资产
+              var _asset = {
+              asset: data.asset,
+              value: data.value,
+              balance: '0',
+              }
+              this.state.myAssets[this.state.myAssets.length] = _asset;
+            }else{ // 删除资产
+              this.state.myAssets.splice(i, 1);
+            }
+        }
+      }
+      // this.setState({myAssets: assets});
       this.getBalance();
     });
   }
