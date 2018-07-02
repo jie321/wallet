@@ -345,11 +345,11 @@ class Home extends React.Component {
                   </Button>
               </View>
           </View>   
-        <View style={{height: 75}}>
+        <View style={styles.listout}>
           <ListView  initialListSize={1} enableEmptySections={true}
             dataSource={this.state.dataSource.cloneWithRows((this.props.list == null ? [] : this.props.list))}
             renderRow={(rowData, sectionID, rowID ) => (
-              <View style={{height: 90,}}>
+              <View>
                 <Button onPress={this.coinInfo.bind(this, rowData)}>
                   <View style={styles.row}>
                     <View style={styles.left}>
@@ -463,6 +463,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: UColor.secdColor,
+  },
+
+  listout: {
+    height: Platform.OS == 'ios' ? 70 : 75,
   },
 
   row: {
