@@ -396,8 +396,9 @@ class Home extends React.Component {
             </View>
           )}                
          />  
-       <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
-          <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
+       <Modal style={styles.touchableout} animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
+        <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable} activeOpacity={1.0}>
+          <TouchableOpacity style={styles.touchable} activeOpacity={1.0}>
             <View style={styles.touchableout}>
               <ListView initialListSize={5} style={styles.touchablelist}
                 renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
@@ -428,7 +429,8 @@ class Home extends React.Component {
               </View>
             </View>
           </TouchableOpacity>
-        </Modal>
+        </TouchableOpacity>
+      </Modal>
 
         <View style={styles.pupuo}>
           <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
@@ -572,7 +574,10 @@ const styles = StyleSheet.create({
     textAlign:'center'
   },
 
-
+  touchableout: {
+    flex: 1,
+    flexDirection: "column",
+  },
   touchable: {
     flex: 1, 
     justifyContent: 'center', 
