@@ -44,7 +44,7 @@ class ImportEosKey extends React.Component {
         // { key: '0', title: '助记词' },
         { key: '2', title: '私钥' },
       ],
-      isChecked: this.props.isChecked || false,
+      isChecked: this.props.isChecked || true,
       weak: UColor.arrow,
       medium: UColor.arrow,
       strong: UColor.arrow,
@@ -359,7 +359,7 @@ dismissKeyboardClick() {
                   <TouchableHighlight underlayColor={'transparent'} onPress={() => this.checkClick()}>
                       <Image source={this.state.isChecked?UImage.aab1:UImage.aab2} style={styles.readoutimg}/>
                   </TouchableHighlight>
-                <Text style={styles.readtext} >我已经仔细阅读并同意 <Text onPress={() => this.prot(this,'clause')} style={styles.servicetext}> 服务及隐私条款</Text></Text> 
+                <Text style={styles.readtext} >我已经仔细阅读并同意 <Text onPress={() => this.prot(this,'clause')} style={styles.servicetext}>服务及隐私条款</Text></Text> 
               </View> 
               <Button onPress={() => this.importPriKey()}>
                 <View style={styles.importPriout} backgroundColor={this.state.CreateButton}>
@@ -367,8 +367,8 @@ dismissKeyboardClick() {
                 </View>
               </Button>
               <Button onPress={() => this.prot(this,'privatekey')}>
-                <View style={styles.privatekeyout}>
-                  <Text style={styles.privatekeytext}>什么是 私钥 ？</Text>
+                <View style={styles.importPriout}>
+                  <Text style={styles.privatekeytext}>什么是私钥 ？</Text>
                 </View>
               </Button>
             </View>
@@ -494,25 +494,23 @@ const styles = StyleSheet.create({
   readoutimg: {
     width: 20,
     height: 20,
+    marginHorizontal: 10,
   },
   readtext: {
-    fontSize: 15,
+    fontSize: 14,
     color: UColor.arrow,
-    marginLeft: 10
   },
   servicetext: {
-    fontSize: 15,
+    fontSize: 14,
     color: UColor.tintColor,
-    marginLeft: 5
   },
 
   importPriout: { 
     height: 45, 
     justifyContent: 'center', 
     alignItems: 'center', 
+    marginHorizontal: 20,
     marginTop: 20, 
-    marginLeft: 20, 
-    marginRight: 20, 
     borderRadius: 5, 
   },
   importPritext: {
@@ -520,15 +518,6 @@ const styles = StyleSheet.create({
     color: UColor.fontColor,
   },
 
-
-  privatekeyout: { 
-    height: 45, 
-    backgroundColor: UColor.secdColor, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    margin: 20, 
-    borderRadius: 5,
-  },
   privatekeytext: { 
     fontSize: 15, 
     color: UColor.tintColor,

@@ -27,7 +27,7 @@ class createWallet extends React.Component {
       walletPassword: "",
       reWalletPassword: "",
       passwordNote: "",
-      isChecked: this.props.isChecked || false,
+      isChecked: this.props.isChecked || true,
       integral: 0,
       weak: UColor.arrow,
       medium: UColor.arrow,
@@ -350,7 +350,7 @@ class createWallet extends React.Component {
             <TouchableHighlight  onPress={() => this.checkClick()}>
               <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
             </TouchableHighlight>
-            <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}> 服务及隐私条款</Text></Text>
+            <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text></Text>
           </View>
         </KeyboardAvoidingView>
         <Button onPress={() => this.createWallet()}>
@@ -358,8 +358,10 @@ class createWallet extends React.Component {
             <Text style={styles.createWallet}>创建钱包</Text>
           </View>
         </Button>
-        <Button onPress={() => this.importWallet()}>     
+        <Button onPress={() => this.importWallet()}> 
+          <View style={styles.createWalletout}>    
             <Text style={styles.importWallettext}>导入钱包</Text>
+          </View>
         </Button>
       </TouchableOpacity>
     </ScrollView>
@@ -422,23 +424,23 @@ const styles = StyleSheet.create({
   },
   clauseimg: { 
     width: 20, 
-    height: 20, 
+    height: 20,
+    marginHorizontal: 10, 
   },
   welcome: {
-    fontSize: 15,
+    fontSize: 14,
     color: UColor.arrow,
-    marginLeft: 20
   },
   clausetext: {
-    fontSize: 15,
+    fontSize: 14,
     color: UColor.tintColor,
-    marginLeft: 5
   },
   createWalletout: {
     height: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
+    marginHorizontal: 20,
+    marginTop: 20,
     borderRadius: 5
   },
   createWallet: {
