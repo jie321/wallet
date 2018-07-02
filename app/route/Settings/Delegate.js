@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar, Modal,TextInput,TouchableOpacity} from 'react-native';
+import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar, Modal,TextInput,TouchableOpacity,KeyboardAvoidingView} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
@@ -326,47 +326,49 @@ class Nodevoting extends React.Component {
 
         return (
             <View style={styles.container}> 
-                <ScrollView keyboardShouldPersistTaps="always">
-                    <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-                        <View style={styles.outsource}>
-                            <View style={{}}>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{this.state.balance}</Text>
-                                    <Text style={styles.state}>余额</Text>
+                <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+                    <ScrollView keyboardShouldPersistTaps="always">
+                        <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                            <View style={styles.outsource}>
+                                <View style={{}}>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{this.state.balance}</Text>
+                                        <Text style={styles.state}>余额</Text>
+                                    </View>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{parseFloat(this.state.delegate_cpu) + parseFloat(this.state.delegate_net)}</Text>
+                                        <Text style={styles.state}>投票锁仓</Text>
+                                    </View>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{parseFloat(this.state.undelegate_cpu) + parseFloat(this.state.undelegate_net)}</Text>
+                                        <Text style={styles.state}>赎回中</Text>
+                                    </View>
+                                </View> 
+                                <View style={styles.tablayout}>  
+                                    {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '投票锁仓')}  
+                                    {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', 'EOS赎回')}  
+                                </View>  
+                                <View style={styles.inpoutsource}>
+                                    <Text style={styles.inptext}>{this.state.isAllSelected ? '投票锁仓':'EOS赎回'}</Text>
+                                    <View style={styles.inptoutsource}>
+                                        <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
+                                        selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                        placeholder="输入数量" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                                        onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                                        />
+                                        {/* <Text style={{ fontSize: 15, color: UColor.tintColor, width: 50, textAlign: 'center'}}>全部</Text> */}
+                                    </View>
                                 </View>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{parseFloat(this.state.delegate_cpu) + parseFloat(this.state.delegate_net)}</Text>
-                                    <Text style={styles.state}>投票锁仓</Text>
-                                </View>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{parseFloat(this.state.undelegate_cpu) + parseFloat(this.state.undelegate_net)}</Text>
-                                    <Text style={styles.state}>赎回中</Text>
-                                </View>
-                            </View> 
-                            <View style={styles.tablayout}>  
-                                {this._getButton(styles.buttontab, this.state.isAllSelected, 'isAllSelected', '投票锁仓')}  
-                                {this._getButton(styles.buttontab, this.state.isNotDealSelected, 'isNotDealSelected', 'EOS赎回')}  
-                            </View>  
-                            <View style={styles.inpoutsource}>
-                                <Text style={styles.inptext}>{this.state.isAllSelected ? '投票锁仓':'EOS赎回'}</Text>
-                                <View style={styles.inptoutsource}>
-                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
-                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                    placeholder="输入数量" underlineColorAndroid="transparent" keyboardType="phone-pad" 
-                                    onChangeText={(delegatebw) => this.setState({ delegatebw })}
-                                    />
-                                    {/* <Text style={{ fontSize: 15, color: UColor.tintColor, width: 50, textAlign: 'center'}}>全部</Text> */}
-                                </View>
+                                <Text style={styles.prompttext}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响你的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
                             </View>
-                            <Text style={styles.prompttext}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响你的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
-                        </View>
-                        <Button onPress={this.state.isAllSelected ? this.delegatebw.bind(): this.undelegatebw.bind()}>
-                            <View style={styles.btnoutsource}>
-                                <Text style={styles.btntext}>{this.state.isAllSelected ? '确定抵押':'确认赎回'}</Text>
-                            </View>
-                        </Button>   
-                    </TouchableOpacity>
-                </ScrollView>     
+                            <Button onPress={this.state.isAllSelected ? this.delegatebw.bind(): this.undelegatebw.bind()}>
+                                <View style={styles.btnoutsource}>
+                                    <Text style={styles.btntext}>{this.state.isAllSelected ? '确定抵押':'确认赎回'}</Text>
+                                </View>
+                            </Button>   
+                        </TouchableOpacity>
+                    </ScrollView>   
+                </KeyboardAvoidingView>  
             </View>
         );
     }

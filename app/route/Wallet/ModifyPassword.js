@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Item from '../../components/Item'
@@ -130,41 +130,43 @@ class ModifyPassword extends React.Component {
         return <View style={styles.container}>
           <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-                <View style={styles.outsource}>
-                    <View  style={styles.inptoutsource} >
-                        <TextInput ref={(ref) => this._lphone = ref} value={this.state.password} returnKeyType="next"
-                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                            secureTextEntry={true} placeholder="当前密码"  underlineColorAndroid="transparent" autoFocus={false}
-                            editable={true} onChangeText={(password) => this.setState({ password })}  
-                        />
+                <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+                    <View style={styles.outsource}>
+                        <View  style={styles.inptoutsource} >
+                            <TextInput ref={(ref) => this._lphone = ref} value={this.state.password} returnKeyType="next"
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                secureTextEntry={true} placeholder="当前密码"  underlineColorAndroid="transparent" autoFocus={false}
+                                editable={true} onChangeText={(password) => this.setState({ password })}  
+                            />
+                        </View>
+                        <View  style={styles.inptoutsource} >
+                            <TextInput ref={(ref) => this._lpass = ref} value={this.state.newPassword} returnKeyType="next"
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                secureTextEntry={true}  placeholder="新密码" underlineColorAndroid="transparent"  autoFocus={false} 
+                                editable={true} onChangeText={(newPassword) => this.setState({ newPassword })} 
+                            />
+                        </View>
+                        <View  style={styles.inptoutsource} >
+                            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next"
+                                value={this.state.newRePassword} onChangeText={(newRePassword) => this.setState({ newRePassword })}
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
+                            />
+                        </View>
+                        <View style={styles.inptoutsource} >
+                            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" 
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                placeholder="密码提示(可不填)" underlineColorAndroid="transparent" 
+                            />
+                        </View>
                     </View>
-                    <View  style={styles.inptoutsource} >
-                        <TextInput ref={(ref) => this._lpass = ref} value={this.state.newPassword} returnKeyType="next"
-                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                            secureTextEntry={true}  placeholder="新密码" underlineColorAndroid="transparent"  autoFocus={false} 
-                            editable={true} onChangeText={(newPassword) => this.setState({ newPassword })} 
-                        />
-                    </View>
-                    <View  style={styles.inptoutsource} >
-                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next"
-                            value={this.state.newRePassword} onChangeText={(newRePassword) => this.setState({ newRePassword })}
-                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                            placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
-                        />
-                    </View>
-                    <View style={styles.inptoutsource} >
-                        <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" 
-                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                            placeholder="密码提示(可不填)" underlineColorAndroid="transparent" 
-                        />
-                    </View>
-                </View>
-                {/* <Text style={styles.welcome}>忘记密码？导入助记词或私钥可重置密码。马上导入</Text> */}
-                <Button onPress={() => this.updatePassword()}>
-                    <View style={styles.btnout}>
-                        <Text style={styles.buttext}>确认</Text>
-                    </View>
-                </Button>
+                    {/* <Text style={styles.welcome}>忘记密码？导入助记词或私钥可重置密码。马上导入</Text> */}
+                    <Button onPress={() => this.updatePassword()}>
+                        <View style={styles.btnout}>
+                            <Text style={styles.buttext}>确认</Text>
+                        </View>
+                    </Button>
+                </KeyboardAvoidingView>
             </TouchableOpacity>
         </ScrollView>   
     </View>

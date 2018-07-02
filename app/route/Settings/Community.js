@@ -68,9 +68,8 @@ class Community extends React.Component {
       Clipboard.setString(this.state.telegraph);
       EasyToast.show('电报群号已复制成功');
     }
-}
+  }
   
-// <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
   render() {
     return <View style={styles.container}>    
           <Image source={UImage.cmyhead} style={{width:maxWidth, height:90, marginTop: 5,}} />
