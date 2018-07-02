@@ -75,32 +75,32 @@ class Community extends React.Component {
           <Image source={UImage.cmyhead} style={{width:maxWidth, height:90, marginTop: 5,}} />
           <View style={{padding: 4,}} >
             <View style={{flexDirection:'row', height: 118,}}>
-              <TouchableHighlight onPress={this.prot.bind(this, 'wechat')} style={{flex: 1}}>
+              <TouchableHighlight onPress={this.prot.bind(this, 'wechat')} style={{flex: 1}} underlayColor={UColor.secdColor}>
                 <ImageBackground  style={{ justifyContent: "center", alignItems: 'flex-start', flex: 1, flexDirection:'row', marginRight: 2, paddingLeft: 5, paddingTop: 5,}} source={UImage.cmy_wx} resizeMode="stretch">                  
                   <Text style={styles.textname}>官方微信：</Text>
                   <Text style={styles.textlink}>{this.state.wechat}</Text>           
                 </ImageBackground>
               </TouchableHighlight>
-              <TouchableHighlight onPress={this.prot.bind(this, 'qq')} style={{flex: 1}}>
+              <TouchableHighlight onPress={this.prot.bind(this, 'qq')} style={{flex: 1}} underlayColor={UColor.secdColor}>
                 <ImageBackground style={{ justifyContent: "center", alignItems: 'flex-start', flex: 1, flexDirection:'row', marginLeft: 2, paddingLeft: 5, paddingTop: 5,}} source={UImage.cmy_qq} resizeMode="stretch">          
                   <Text style={styles.textname}>官方QQ：</Text>
                   <Text style={styles.textlink}>{this.state.qq}</Text>           
                 </ImageBackground>  
               </TouchableHighlight>      
             </View>
-            <TouchableHighlight onPress={this.prot.bind(this, 'public')}>
+            <TouchableHighlight onPress={this.prot.bind(this, 'public')} underlayColor={UColor.secdColor}>
               <ImageBackground style={{ justifyContent: "flex-start", alignItems: 'flex-start', flexDirection:'row', width: maxWidth-10, height: 135, marginTop: 4, paddingLeft: 10, paddingTop: 10,}} source={UImage.cmy_gzh} resizeMode="stretch">              
                 <Text style={styles.textname}>官方公众号：</Text>
                 <Text style={styles.textlink}>{this.state.public}</Text>     
               </ImageBackground>
             </TouchableHighlight>
-            <TouchableHighlight onPress={this.prot.bind(this, 'microblog')}>
+            <TouchableHighlight onPress={this.prot.bind(this, 'microblog')} underlayColor={UColor.secdColor}>
               <ImageBackground style={{ justifyContent: "flex-start", alignItems: 'center',flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_wb} resizeMode="stretch">            
                 <Text style={styles.textname}>官方微博：</Text>
                 <Text style={styles.textlink}>weibo.com/eostoken</Text>         
               </ImageBackground>    
             </TouchableHighlight>   
-            <TouchableHighlight onPress={this.prot.bind(this, 'telegraph')}>      
+            <TouchableHighlight onPress={this.prot.bind(this, 'telegraph')} underlayColor={UColor.secdColor}>      
               <ImageBackground style={{ justifyContent: "flex-start",  alignItems: 'center', flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_db} resizeMode="stretch">       
                 <Text style={styles.textname}>EosToken电报群：</Text>
                 <Text style={styles.textlink}>{this.state.telegraph}</Text>
