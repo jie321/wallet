@@ -41,7 +41,8 @@ class Home extends React.Component {
       account: 'xxxx',
       show: false,
       init: true,
-      myAssets: []
+      myAssets: [],
+      totalBalance: '0.00'
     };
   }
 
@@ -94,11 +95,24 @@ class Home extends React.Component {
 
     DeviceEventEmitter.addListener('eos_balance', (data) => {
       this.setEosBalance(data);
+      this.calTotalBalance();
     });
 
     DeviceEventEmitter.addListener('asset_balance', (data) => {
       this.setAssetBalance(data);
     });
+  }
+
+  calTotalBalance(){
+    if(this.props.list == null){
+      return;
+    }
+    for(var i = 0; i < this.props.list.length; i++){
+      if(this.props.list[i].name == 'EOS' && this.props.list[i].value != null){
+        var total = (this.state.balance * this.props.list[i].value).toFixed(2);
+        this.setState({totalBalance: total});
+      }
+    }
   }
 
   componentWillUnmount(){
@@ -345,9 +359,9 @@ class Home extends React.Component {
               </ImageBackground>
               <View style={styles.addto}>
                   <View style={styles.addout}>
-                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name} 总资产（EOS）</Text>
+                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name} 总资产</Text>
                     <View style={styles.addtoout}>
-                      <Text style={styles.addtoouttext}>={this.state.balance}</Text>
+                      <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
                       {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
                     </View>
                   </View>
@@ -374,7 +388,7 @@ class Home extends React.Component {
                       <View style={styles.rightout}>
                         <View>
                           <Text style={styles.rightbalance}>{this.state.balance}</Text>
-                          <Text style={styles.rightmarket}>≈（￥）{(this.state.balance*rowData.value).toFixed(2)} </Text>
+                          <Text style={styles.rightmarket}>≈{(this.state.balance*rowData.value).toFixed(2)}（￥） </Text>
                         </View>
                         {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
                           <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />
@@ -401,7 +415,7 @@ class Home extends React.Component {
                     <View style={styles.rightout}>
                       <View>
                         <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈（￥）0.00</Text>
+                        <Text style={styles.rightmarket}>≈0.00（￥）</Text>
                       </View>
                     </View>
                   </View>
