@@ -35,7 +35,11 @@ class CoinDetail extends React.Component {
   };
 
   componentWillMount() {
+
+    
     const c = this.props.navigation.state.params.coins;
+    this.props.dispatch({type: 'coinLine/clear',payload:{id:c.id}});
+
     if(this.props.coinSelf && this.props.coinSelf[c.name.toLowerCase()]==1){
       this.props.navigation.setParams({img:UImage.fav_h,onPress:this.onPress});
     }else{
