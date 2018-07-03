@@ -86,6 +86,22 @@ class TurnOut extends React.Component {
 
     _rightButtonClick() {
         //   console.log('右侧按钮点击了');  
+        if (this.state.toAccount == "" || this.state.toAccount == undefined) {
+            EasyToast.show('请输入收款账号');
+            return;
+        }
+        if (this.state.toAccount.length > 12) {
+            EasyToast.show('请输入正确的收款账号');
+            return;
+        }
+        if (this.state.amount == "" || this.state.amount == undefined) {
+            EasyToast.show('请输入转账金额');
+            return;
+        }
+        // if (this.state.amount > this.state.balance) {
+        //     EasyToast.show('转账金额超出账户余额');
+        //     return;
+        // }
         this._setModalVisible();
     }
 
@@ -116,24 +132,6 @@ class TurnOut extends React.Component {
         navigate('Thin', { coinType });
     }
     inputPwd = () => {
-
-        if (this.state.toAccount == "") {
-            EasyToast.show('请输入收款账号');
-            return;
-        }
-        if (this.state.toAccount.length > 12) {
-            EasyToast.show('请输入正确的收款账号');
-            return;
-        }
-        if (this.state.amount == "") {
-            EasyToast.show('请输入转账数量');
-            return;
-        }
-
-        // if (this.state.amount > this.state.balance) {
-        //     EasyToast.show('转账金额超出账户余额');
-        //     return;
-        // }
 
         this._setModalVisible();
 
