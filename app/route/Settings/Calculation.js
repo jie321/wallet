@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar, Modal,TextInput,TouchableOpacity, ImageBackground} from 'react-native';
+import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar, Modal,TextInput,TouchableOpacity, ImageBackground,KeyboardAvoidingView} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
@@ -262,9 +262,7 @@ class Calculation extends React.Component {
         let BTN_SELECTED_STATE_ARRAY = ['isBuyOneself', 'isBuyForOther'];  
         return(  
             <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
-                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>  
-                    {buttonTitle}  
-                </Text>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
             </TouchableOpacity>  
         );  
     }  
@@ -275,92 +273,92 @@ class Calculation extends React.Component {
 
 
     render() {
-        // balance = balance.replace("EOS", "");
-
         return (
             <View style={styles.container}> 
-                <ScrollView keyboardShouldPersistTaps="always">
-                    <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-                        <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
-                            <View style={styles.frameoutsource}>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{this.state.staked}</Text>
-                                    <Text style={styles.state}>抵押(EOS)</Text>
+                <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+                    <ScrollView keyboardShouldPersistTaps="always">
+                        <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                            <ImageBackground  style={styles.headbj} source={UImage.resources_bj} resizeMode="stretch">
+                                <View style={styles.frameoutsource}>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{this.state.staked}</Text>
+                                        <Text style={styles.state}>抵押(EOS)</Text>
+                                    </View>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{this.state.unstaking}</Text>
+                                        <Text style={styles.state}>赎回中(EOS)</Text>
+                                    </View>
+                                </View> 
+                                <View style={styles.frameoutsource}>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{this.state.used}</Text>
+                                        <Text style={styles.state}>已用(ms)</Text>
+                                    </View>
+                                    <View style={styles.frame}>
+                                        <Text style={styles.number}>{this.state.available}</Text>
+                                        <Text style={styles.state}>可用(ms)</Text>
+                                    </View>
+                                </View> 
+                            </ImageBackground>  
+                            <View style={styles.tablayout}>  
+                                {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
+                                {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
+                            </View>  
+                            <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
+                            {this.state.isBuyOneself ? null:
+                            <View style={styles.inptoutsource}>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} returnKeyType="go" 
+                                        selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                        placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="default" 
+                                        onChangeText={(receiver) => this.setState({ receiver })}
+                                    />
+                                    <Button >
+                                        <View style={styles.botnimg}>
+                                            <Image source={UImage.al} style={{width: 26, height: 26, }} />
+                                        </View>
+                                    </Button> 
                                 </View>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{this.state.unstaking}</Text>
-                                    <Text style={styles.state}>赎回中(EOS)</Text>
+                            </View>}  
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>抵押（EOS）</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                    placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric" 
+                                    onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                                    />
+                                    <Button onPress={this.delegatebw.bind()}>
+                                        <View style={styles.botn}>
+                                            <Text style={styles.botText}>抵押</Text>
+                                        </View>
+                                    </Button> 
                                 </View>
-                            </View> 
-                            <View style={styles.frameoutsource}>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{this.state.used}</Text>
-                                    <Text style={styles.state}>已用(ms)</Text>
-                                </View>
-                                <View style={styles.frame}>
-                                    <Text style={styles.number}>{this.state.available}</Text>
-                                    <Text style={styles.state}>可用(ms)</Text>
-                                </View>
-                            </View> 
-                        </ImageBackground>  
-                        <View style={styles.tablayout}>  
-                            {this._getButton(styles.buttontab, this.state.isBuyOneself, 'isBuyOneself', '自己抵押')}  
-                            {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '替人抵押')}  
-                        </View>  
-                        <Text style={styles.showytext}>账户余额：{this.state.balance} EOS</Text>
-                        {this.state.isBuyOneself ? null:
-                        <View style={styles.inptoutsource}>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} returnKeyType="go" 
+                            </View>
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>赎回（EOS）</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                    placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="default" 
-                                    onChangeText={(receiver) => this.setState({ receiver })}
-                                />
-                                <Button >
-                                    <View style={styles.botnimg}>
-                                        <Image source={UImage.al} style={{width: 26, height: 26, }} />
-                                    </View>
-                                </Button> 
+                                    placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric" 
+                                    onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
+                                    />
+                                    <Button onPress={this.undelegatebw.bind()}>
+                                        <View style={styles.botn}>
+                                            <Text style={styles.botText}>赎回</Text>
+                                        </View>
+                                    </Button> 
+                                </View>
                             </View>
-                        </View>}  
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>抵押（EOS）</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric" 
-                                onChangeText={(delegatebw) => this.setState({ delegatebw })}
-                                />
-                                <Button onPress={this.delegatebw.bind()}>
-                                    <View style={styles.botn}>
-                                        <Text style={styles.botText}>抵押</Text>
-                                    </View>
-                                </Button> 
+                            <View style={styles.basc}>
+                                <Text style={styles.basctext}>重要提示</Text>
+                                <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
+                                <Text style={styles.basctext}>2.抵押的EOS可以赎回，并于3天后到账；</Text>
+                                <Text style={styles.basctext}>3.主网投票进度未满15%时，无法赎回；</Text>
                             </View>
-                        </View>
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>赎回（EOS）</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" 
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric" 
-                                onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
-                                />
-                                <Button onPress={this.undelegatebw.bind()}>
-                                    <View style={styles.botn}>
-                                        <Text style={styles.botText}>赎回</Text>
-                                    </View>
-                                </Button> 
-                            </View>
-                        </View>
-                        <View style={styles.basc}>
-                            <Text style={styles.basctext}>重要提示</Text>
-                            <Text style={styles.basctext}>1.获取资源需要抵押EOS；</Text>
-                            <Text style={styles.basctext}>2.抵押的EOS可以赎回，并于3天后到账；</Text>
-                            <Text style={styles.basctext}>3.主网投票进度未满15%时，无法赎回；</Text>
-                        </View>
-                    </TouchableOpacity>
-                </ScrollView>   
+                        </TouchableOpacity>
+                    </ScrollView>  
+                </KeyboardAvoidingView> 
             </View>
         );
     }
