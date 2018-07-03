@@ -45,7 +45,7 @@ class Coins extends React.Component {
         // { key: '0', title: '助记词' },
         { key: '2', title: '私钥' },
       ],
-      isChecked: this.props.isChecked || false
+      isChecked: this.props.isChecked || true,
     };
   }
   //组件加载完成
