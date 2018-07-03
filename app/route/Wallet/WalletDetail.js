@@ -18,7 +18,7 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
 @connect(({ wallet, login }) => ({ ...wallet, ...login }))
-class Set extends React.Component {
+class WalletDetail extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
     return {
@@ -337,6 +337,7 @@ class Set extends React.Component {
 
 
   render() {
+    const c = this.props.navigation.state.params.data
     return <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View>
@@ -345,16 +346,19 @@ class Set extends React.Component {
               {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
               <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
             </View>
-            <Text style={styles.walletname}>账户名称：{this.props.navigation.state.params.data.name}</Text>
+            <View style={styles.topout}>
+              <Text style={styles.outname}>账户名称：{c.name}</Text>
+              {(!c.isactived && c.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(c.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+            </View>
           </View>
-
+          
           <View style={{ marginBottom: 50 }}>
             {this._renderListItem()}
           </View>
 
           {/* <Button onPress={() => this.backupWords()} style={{ flex: 1 }}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>
+              <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>b
             </View>
           </Button> */}
           {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
@@ -460,6 +464,49 @@ const styles = StyleSheet.create({
     color:  UColor.arrow, 
     marginBottom: 10, 
   },
+
+
+
+  topout: {
+    flexDirection: "row",
+    flex: 1,
+  },
+  outname: {
+    fontSize: 14,
+    color: UColor.fontColor,
+    textAlign: 'left',
+    marginRight: 10,
+  },
+  stopoutBackups: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: '#2ACFFF',
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#2ACFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  notactived: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: UColor.showy,
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: UColor.showy,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+ 
+
   walletname: { 
     fontSize: 15, 
     color:  UColor.arrow, 
@@ -563,4 +610,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Set;
+export default WalletDetail;

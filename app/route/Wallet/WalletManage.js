@@ -87,7 +87,7 @@ class WalletManage extends React.Component {
                   <View style={styles.top}>
                       <View style={styles.topout}>
                           <Text style={styles.outname}>{rowData.name}</Text>
-                          {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(rowData.isBackups ? <Text style={styles.stopoutBackups}>已备份</Text> : <Text style={styles.notoutBackups}>未备份</Text>) }   
+                          {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
                       </View>
                       <View style={styles.topout}>               
                           <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
@@ -164,20 +164,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#2ACFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  notoutBackups: {
-    height: 18,
-    lineHeight: 18,
-    fontSize: 10,
-    color: UColor.arrow,
-    textAlign: 'left',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: UColor.arrow,
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 8,
