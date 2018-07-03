@@ -84,4 +84,6 @@ export default {
   nash:require('../img/nash.png'),
   network:require('../img/network.png'),
   Invitation_vote:require('../img/Invitation_vote.png'),
+  turnin_share:require('../img/turninshare.png'),
+  turnin_head:require('../img/turninhead.png'),
 }

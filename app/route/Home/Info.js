@@ -75,10 +75,10 @@ class Info extends React.Component {
         }
     }
 
-    _rightButtonClick() {
-        AnalyticsUtil.onEvent('To_change_into');
-        this._setModalVisible();
-    }
+    // _rightButtonClick() {
+    //     AnalyticsUtil.onEvent('To_change_into');
+    //     this._setModalVisible();
+    // }
 
     // 显示/隐藏 modal  
     _setModalVisible() {
@@ -86,6 +86,11 @@ class Info extends React.Component {
         this.setState({
             show: !isShow,
         });
+    }
+
+    turnIn(coins) {
+        const { navigate } = this.props.navigation;
+        navigate('TurnIn', {});
     }
 
     turnOut(coins) {
@@ -155,7 +160,7 @@ class Info extends React.Component {
                 </View>
 
                 <View style={styles.footer}>
-                    <Button onPress={this._rightButtonClick.bind(this)} style={{ flex: 1 }}>
+                    <Button onPress={this.turnIn.bind(this, c)} style={{ flex: 1 }}>
                         <View style={styles.shiftshiftturnout}>
                             <Image source={UImage.shift_to} style={styles.shiftturn} />
                             <Text style={styles.shifttoturnout}>转入</Text>
@@ -168,7 +173,7 @@ class Info extends React.Component {
                         </View>
                     </Button>
                 </View>
-                <View style={styles.pupuo}>
+                {/* <View style={styles.pupuo}>
                     <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
                         <View style={styles.modalStyle}>
                             <View style={styles.subView} >
@@ -191,7 +196,7 @@ class Info extends React.Component {
                             </View>
                         </View>
                     </Modal>
-                </View>
+                </View> */}
             </View>
         )
     }
