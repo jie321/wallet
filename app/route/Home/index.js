@@ -218,7 +218,7 @@ class Home extends React.Component {
 
   scan() {
     AnalyticsUtil.onEvent('Scavenging_transfer');
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       const { navigate } = this.props.navigation;
       navigate('BarCode', {});
     } else {
@@ -250,34 +250,32 @@ class Home extends React.Component {
 
   createWallet() {
     const { navigate } = this.props.navigation;
-    // navigate('CreateWallet', {});
     navigate('WalletManage', {});
-    // navigate('ImportEosKey', {});
     this.setState({
       modal: false
     });
-  }
-
-  walletDetail() {
-    // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
-    const { navigate } = this.props.navigation;
-    navigate('WalletManage', {});
   }
 
   changeWallet(data) {
-    this.setState({
-      modal: false
-    });
-    const { dispatch } = this.props;
-    this.props.dispatch({ type: 'wallet/changeWallet', payload: { data } });
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    if(!data.isactived && data.hasOwnProperty('isactived')){
+      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        this.WalletDetail(data);
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+    }else {
+      this.setState({
+        modal: false
+      });
+      const { dispatch } = this.props;
+      this.props.dispatch({ type: 'wallet/changeWallet', payload: { data } });
+      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    }
   }
 
   coinInfo(coinType) {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        // EasyToast.show('创建钱包');
         this.createWallet();
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
@@ -291,7 +289,6 @@ class Home extends React.Component {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        // EasyToast.show('创建钱包');
         this.createWallet();
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
