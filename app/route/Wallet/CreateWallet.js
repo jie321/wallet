@@ -115,6 +115,7 @@ class createWallet extends React.Component {
     EasyLoading.show('正在请求');
     Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
       if (result.isSuccess) {
+        EasyLoading.dismis();
         var salt;
         Eos.randomPrivateKey((r)=>{
             salt = r.data.ownerPrivate.substr(0, 18);
@@ -126,7 +127,6 @@ class createWallet extends React.Component {
             result.salt = salt;
             this.props.dispatch({
               type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
-                EasyLoading.dismis();
                 if (data.code == '0') {
                   result.isactived = true
                   this.props.dispatch({
@@ -140,8 +140,7 @@ class createWallet extends React.Component {
                         DeviceEventEmitter.emit('updateDefaultWallet');
                         this.props.navigation.goBack();
                         // const { navigate } = this.props.navigation;
-                        // navigate('BackupNote', data);
-                        
+                        // navigate('BackupNote', data); 
                       }
                     }
                   });
@@ -152,11 +151,12 @@ class createWallet extends React.Component {
                       DeviceEventEmitter.emit('updateDefaultWallet');
                       this.props.navigation.goBack();
                       // const { navigate } = this.props.navigation;
+                      this.ExplainPopup();
                     }
-                  });
+                  }); 
                   EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
-                }else {
+                }else { 
                   EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
                 }
@@ -167,7 +167,6 @@ class createWallet extends React.Component {
       } else {
         EasyLoading.dismis();
       }
-
     });
 
     DeviceEventEmitter.addListener('wallet_10', () => {
