@@ -49,6 +49,7 @@ export default {
                     myAssets.splice(i, 1);
                     yield call(store.save, 'myAssets', myAssets);
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+                    if(callback) callback(myAssets);
                     DeviceEventEmitter.emit('updateMyAssets', payload);
                     return;
                 }
@@ -64,12 +65,13 @@ export default {
         var _asset = {
             asset: payload.asset,
             value: payload.value,
-            balance: '0',
+            balance: '0.0000',
         }
         myAssets[myAssets.length] = _asset;
         // alert("777777777 " + JSON.stringify(payload.asset));
         yield call(store.save, 'myAssets', myAssets);
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        if(callback) callback(myAssets);
         DeviceEventEmitter.emit('updateMyAssets', payload);
      },
      *myAssetInfo({payload, callback},{call,put}){

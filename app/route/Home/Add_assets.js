@@ -14,6 +14,7 @@ import { EasyDialog } from "../../components/Dialog"
 import JPush from 'jpush-react-native';
 export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
+import { EasyLoading } from '../../components/Loading';
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
 class Add_assets extends React.Component {
@@ -134,7 +135,11 @@ class Add_assets extends React.Component {
       }, () => { EasyDialog.dismis() });
       return;
     }
-    this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value} });
+
+    EasyLoading.show();
+    this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
+      EasyLoading.dismis;
+    } });
   }
 
   isMyAsset(rowData){

@@ -399,8 +399,8 @@ class Home extends React.Component {
                   <View style={styles.right}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{rowData.balance==""? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈（￥）0 </Text>
+                        <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
+                        <Text style={styles.rightmarket}>≈（￥）0.00</Text>
                       </View>
                     </View>
                   </View>
