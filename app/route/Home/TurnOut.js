@@ -50,6 +50,9 @@ class TurnOut extends React.Component {
         })
         DeviceEventEmitter.addListener('scan_result', (data) => {
             this.setState({toAccount:data.toaccount})
+        });
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
           });
     }
 
@@ -57,18 +60,22 @@ class TurnOut extends React.Component {
         DeviceEventEmitter.removeListener('scan_result');
       }
 
+    setEosBalance(data){
+        if (data.code == '0') {
+            if (data.data == "") {
+                this.setState({ balance: '0.0000' })
+            } else {
+                this.setState({ balance: data.data })
+            }
+        } else {
+            EasyToast.show('获取余额失败：' + data.msg);
+        }
+    }
+
     getBalance(data) {
         this.props.dispatch({
             type: 'wallet/getBalance', payload: { contract: "eosio.token", account: data.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
-                if (data.code == '0') {
-                    if (data.data == "") {
-                        this.setState({ balance: '0.0000' })
-                    } else {
-                        this.setState({ balance: data.data })
-                    }
-                } else {
-                    EasyToast.show('获取余额失败：' + data.msg);
-                }
+                this.setEosBalance(data);
             }
         })
     }

@@ -58,22 +58,26 @@ class Memory extends React.Component {
         } });
     } 
     
+    setEosBalance(data){
+        if (data.code == '0') {
+            if (data.data == "") {
+              this.setState({
+                balance: '0',
+              })
+            } else {
+              account: this.props.defaultWallet.name,
+              this.setState({ balance: data.data.replace(" EOS", ""), })
+            }
+          } else {
+            EasyToast.show('获取余额失败：' + data.msg);
+          }
+    }
+
     getBalance() { 
         if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
           this.props.dispatch({
             type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
-              if (data.code == '0') {
-                if (data.data == "") {
-                  this.setState({
-                    balance: '0',
-                  })
-                } else {
-                  account: this.props.defaultWallet.name,
-                  this.setState({ balance: data.data.replace(" EOS", ""), })
-                }
-              } else {
-                EasyToast.show('获取余额失败：' + data.msg);
-              }
+                this.setEosBalance(data);
             }
           })
         } else {
@@ -98,13 +102,13 @@ class Memory extends React.Component {
             this.getBalance();
         });
 
-        this.timer = setInterval( ()  =>{
-            this.getBalance();
-        },10000)
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
+        });
     }
 
     componentWillUnmount(){
-        this.timer && clearTimeout(this.timer);
+
     }
     
      // 更新"全部/未处理/已处理"按钮的状态  

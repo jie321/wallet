@@ -497,6 +497,24 @@ class Route extends React.Component {
     }
   };
 
+  getBalance() { 
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
+
+      this.props.dispatch({
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }
+      })
+
+          // 其他资产
+      if(this.props.myAssets == null){
+        return;
+      }
+
+      this.props.dispatch({
+        type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}
+      });
+    }
+  }
+
   switchRoute = (prevNav, nav, action) => {
     //切换到个人中心，更新用户信息
     if (action && action.routeName && action.routeName == "Settings") {
@@ -518,7 +536,14 @@ class Route extends React.Component {
           }
         });
       }
+
+      this.timer = setInterval( ()  =>{
+        this.getBalance()
+      },30000)
+    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
+      this.timer && clearTimeout(this.timer);
     }
+
     if (action && action.routeName) {
       DeviceEventEmitter.emit('changeTab', action.routeName);
     }
