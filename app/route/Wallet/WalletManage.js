@@ -76,8 +76,8 @@ class WalletManage extends React.Component {
   render() {
     const v = (
     <View style={styles.container}>  
-      <View>
-        <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor }} enableEmptySections={true}
+      <View style={{paddingBottom: 60}}>
+        <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor, }} enableEmptySections={true}
           renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
           refreshControl={<RefreshControl refreshing={false} tintColor={UColor.fontColor} colors={['#ddd', UColor.tintColor]} progressBackgroundColor={UColor.fontColor} />}
           dataSource={this.state.dataSource.cloneWithRows(this.props.coinList == null ? [] : this.props.coinList)}
@@ -131,14 +131,15 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.secdColor,
   },
   row:{
-    height:110,
+    height: 110,
     backgroundColor:UColor.mainColor,
     flexDirection:"column",
-    paddingTop:10,
+    paddingTop: 10,
     paddingHorizontal: 20,
     justifyContent:"space-between",
-    borderRadius:5,
-    margin:10,
+    borderRadius: 5,
+    marginTop: 10,
+    marginHorizontal: 10,
   },
   top:{
       flex:2,
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: UColor.arrow,
+    borderColor: UColor.showy,
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 8,
