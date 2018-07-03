@@ -48,6 +48,21 @@ class Nodevoting extends React.Component {
         };
     }
 
+    setEosBalance(data){
+        if (data.code == '0') {
+            if (data.data == "") {
+              this.setState({
+                balance: '0',
+              })
+            } else {
+              account: this.props.defaultWallet.name,
+              this.setState({ balance: data.data.replace(" EOS", ""), })
+            }
+          } else {
+            EasyToast.show('获取余额失败：' + data.msg);
+          }
+    }
+
     componentDidMount() {
         EasyLoading.show();
         this.props.dispatch({
@@ -78,36 +93,27 @@ class Nodevoting extends React.Component {
         DeviceEventEmitter.addListener('wallet_info', (data) => {
             this.getBalance();
           });
-          DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
+
+        DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
             this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
             this.getBalance();
-          });
-          this.timer = setInterval( ()  =>{
-            this.getBalance()
-          },10000)
+        });
+
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
+        });
     }
 
 
     componentWillUnmount(){
-        this.timer && clearTimeout(this.timer);
+
       }
 
     getBalance() { 
         if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
           this.props.dispatch({
             type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
-              if (data.code == '0') {
-                if (data.data == "") {
-                  this.setState({
-                    balance: '0',
-                  })
-                } else {
-                  account: this.props.defaultWallet.name,
-                  this.setState({ balance: data.data.replace(" EOS", ""), })
-                }
-              } else {
-                EasyToast.show('获取余额失败：' + data.msg);
-              }
+                this.setEosBalance(data);
             }
           })
         } else {

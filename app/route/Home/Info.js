@@ -58,6 +58,21 @@ class Info extends React.Component {
         //     }
         // });
         // alert('updateDefaultWallet: '+(this.props.defaultWallet.name));
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
+        });
+    }
+
+    setEosBalance(data){
+        if (data.code == '0') {
+            if (data.data == "") {
+                this.setState({ balance: '0.0000' })
+            } else {
+                this.setState({ balance: data.data })
+            }
+        } else {
+            EasyToast.show('获取余额失败：' + data.msg);
+        }
     }
 
     _rightButtonClick() {
@@ -79,11 +94,11 @@ class Info extends React.Component {
     }
 
     getBalance() {
-        Eos.balance("eosio.token", this.props.defaultWallet.name, (r) => {
-            try {
-                this.setState({ balance: r.data[0] == null ? 0 : r.data[0] })
-            } catch (e) { }
-        });
+        this.props.dispatch({
+            type: 'wallet/getBalance', payload: { contract: "eosio.token", account: data.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
+                this.setEosBalance(data);
+            }
+        })
     }
 
     copy = () => {

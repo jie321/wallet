@@ -68,9 +68,7 @@ class Home extends React.Component {
       this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
       this.getBalance();
     });
-    this.timer = setInterval( ()  =>{
-      this.getBalance()
-    },30000)
+
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
@@ -93,12 +91,39 @@ class Home extends React.Component {
       // this.setState({myAssets: assets});
       this.getBalance();
     });
+
+    DeviceEventEmitter.addListener('eos_balance', (data) => {
+      this.setEosBalance(data);
+    });
+
+    DeviceEventEmitter.addListener('asset_balance', (data) => {
+      this.setAssetBalance(data);
+    });
   }
 
-
   componentWillUnmount(){
-    this.timer && clearTimeout(this.timer);
+    // this.timer && clearTimeout(this.timer);
     this.listener.remove();  
+  }
+
+  setEosBalance(data){
+    if (data.code == '0') {
+      if (data.data == "") {
+        this.setState({
+          balance: '0.0000 ',
+          account: this.props.defaultWallet.name
+        })
+      } else {
+        account: this.props.defaultWallet.name,
+          this.setState({ balance: data.data.replace("EOS", "") })
+      }
+    } else {
+      EasyToast.show('获取余额失败：' + data.msg);
+    }
+  }
+
+  setAssetBalance(asset){
+    this.setState({myAssets: asset});
   }
 
   getBalance() { 
@@ -110,19 +135,7 @@ class Home extends React.Component {
 
       this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
-          if (data.code == '0') {
-            if (data.data == "") {
-              this.setState({
-                balance: '0.0000 ',
-                account: this.props.defaultWallet.name
-              })
-            } else {
-              account: this.props.defaultWallet.name,
-                this.setState({ balance: data.data.replace("EOS", "") })
-            }
-          } else {
-            EasyToast.show('获取余额失败：' + data.msg);
-          }
+          this.setEosBalance(data);
           EasyLoading.dismis();
         }
       })
@@ -142,7 +155,7 @@ class Home extends React.Component {
 
     this.props.dispatch({
       type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
-        this.setState({myAssets: data});
+        this.setAssetBalance(data);
       }
     });
   }

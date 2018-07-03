@@ -399,6 +399,7 @@ export default {
             try {
                 const resp = yield call(Request.request, getBalance, 'post', payload);
                 if (callback) callback(resp);
+                DeviceEventEmitter.emit('eos_balance', resp);
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
