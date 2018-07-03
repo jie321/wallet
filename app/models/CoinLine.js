@@ -22,6 +22,7 @@ export default {
                 EasyToast.show('网络发生错误，请重试');
             }
         },
+
         *info({ payload }, { call, put }) {
             try {
                 const resp = yield call(Request.request, coinInfo + payload.id, 'get');
@@ -33,7 +34,17 @@ export default {
             } catch (error) {
                 EasyToast.show('网络发生错误，请重试');
             }
-        }
+        },
+
+        *clear({ payload }, { call, put }) {
+            try {
+                    yield put({ type: 'clearInfo', payload: { data: null, ...payload } });
+            } catch (error) {
+                EasyToast.show('网络发生错误，请重试');
+            }
+        },
+
+
     },
     reducers: {
         update(state, action) {
@@ -42,7 +53,11 @@ export default {
         },
         updateInfo(state, action) {
             return { ...state, ...action.payload };
-        }
+        },
+        clearInfo(state, action) {
+            let lineDatas = null;
+            return { ...state, lineDatas };
+        },
     }
 }
 
