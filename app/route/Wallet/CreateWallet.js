@@ -63,8 +63,12 @@ class createWallet extends React.Component {
       EasyToast.show('请输入钱包名称');
       return;
     }
-    if(!/^[1-5a-z.]+$/.test(this.state.walletName)){
-      EasyToast.show("钱包名称只能输入小写字母a-z和数字1-5");
+    if(this.state.walletName.length != 12 ){
+      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
+      return;
+    }
+    if(this.state.walletName.length == 12 && !/^[1-5a-z.]+$/.test(this.state.walletName)){
+      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
       return;
     }
     if (this.state.walletPassword == "") {
