@@ -68,22 +68,62 @@ class Home extends React.Component {
       this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
       this.getBalance();
     });
-    this.timer = setInterval( ()  =>{
-      this.getBalance()
-    },30000)
+
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
-    DeviceEventEmitter.addListener('updateMyAssets', (assets) => {
-      this.setState({myAssets: assets});
+    DeviceEventEmitter.addListener('updateMyAssets', (data) => {
+      for (var i = 0; i < this.state.myAssets.length; i++) {
+        if (this.state.myAssets[i].asset.name == data.asset.name) {
+            if(data.value){ // 添加资产,  但资产已存在
+              // 添加资产
+              var _asset = {
+              asset: data.asset,
+              value: data.value,
+              balance: '0',
+              }
+              this.state.myAssets[this.state.myAssets.length] = _asset;
+            }else{ // 删除资产
+              this.state.myAssets.splice(i, 1);
+            }
+        }
+      }
+      // this.setState({myAssets: assets});
       this.getBalance();
+    });
+
+    DeviceEventEmitter.addListener('eos_balance', (data) => {
+      this.setEosBalance(data);
+    });
+
+    DeviceEventEmitter.addListener('asset_balance', (data) => {
+      this.setAssetBalance(data);
     });
   }
 
-
   componentWillUnmount(){
-    this.timer && clearTimeout(this.timer);
+    // this.timer && clearTimeout(this.timer);
     this.listener.remove();  
+  }
+
+  setEosBalance(data){
+    if (data.code == '0') {
+      if (data.data == "") {
+        this.setState({
+          balance: '0.0000 ',
+          account: this.props.defaultWallet.name
+        })
+      } else {
+        account: this.props.defaultWallet.name,
+          this.setState({ balance: data.data.replace("EOS", "") })
+      }
+    } else {
+      EasyToast.show('获取余额失败：' + data.msg);
+    }
+  }
+
+  setAssetBalance(asset){
+    this.setState({myAssets: asset});
   }
 
   getBalance() { 
@@ -95,19 +135,7 @@ class Home extends React.Component {
 
       this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
-          if (data.code == '0') {
-            if (data.data == "") {
-              this.setState({
-                balance: '0.0000 ',
-                account: this.props.defaultWallet.name
-              })
-            } else {
-              account: this.props.defaultWallet.name,
-                this.setState({ balance: data.data.replace("EOS", "") })
-            }
-          } else {
-            EasyToast.show('获取余额失败：' + data.msg);
-          }
+          this.setEosBalance(data);
           EasyLoading.dismis();
         }
       })
@@ -127,7 +155,7 @@ class Home extends React.Component {
 
     this.props.dispatch({
       type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
-        this.setState({myAssets: data});
+        this.setAssetBalance(data);
       }
     });
   }
@@ -330,15 +358,11 @@ class Home extends React.Component {
                   </Button>
               </View>
           </View>   
-        <View style={{height: 75}}>
+        <View style={styles.listout}>
           <ListView  initialListSize={1} enableEmptySections={true}
-            // renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-            // onScroll={(event) => { 
-            //   if (event.nativeEvent.contentOffset.y > 280) { this.setState({ status: 'rgba(0, 0, 0,0.3)'});} 
-            //   else { this.setState({ status: 'rgba(255, 255, 255,0)' });}}}
             dataSource={this.state.dataSource.cloneWithRows((this.props.list == null ? [] : this.props.list))}
             renderRow={(rowData, sectionID, rowID ) => (
-              <View style={{height: 90,}}>
+              <View>
                 <Button onPress={this.coinInfo.bind(this, rowData)}>
                   <View style={styles.row}>
                     <View style={styles.left}>
@@ -369,7 +393,7 @@ class Home extends React.Component {
               <Button onPress={this.assetInfo.bind(this, rowData)}>
                 <View style={styles.row}>
                   <View style={styles.left}>
-                    <Image source={{ uri: rowData.asset.icon }} style={styles.leftimg} />
+                    <Image source={rowData.asset.icon==null ? UImage.eos : { uri: rowData.asset.icon }} style={styles.leftimg} />
                     <Text style={styles.lefttext}>{rowData.asset.name}</Text>
                   </View>
                   <View style={styles.right}>
@@ -385,63 +409,60 @@ class Home extends React.Component {
             </View>
           )}                
          />  
-
-
-       <Modal animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
-                <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable}>
-                  <View style={styles.touchableout}>
-                    <ListView initialListSize={5} style={styles.touchablelist}
-                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-                      enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
-                      renderRow={(rowData) => (
-                        (rowData.isactived || !rowData.hasOwnProperty('isactived')) ?
-                        <Button onPress={this.changeWallet.bind(this, rowData)}>
-                          <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
-                            <Text style={styles.walletname}>{rowData.name}</Text>
-                            <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
-                          </View>
-                        </Button>
-                        :
-                        null
-                      
-                      )}
-                    />
-                    <View style={styles.ebhbtnout}>
-                      <Button onPress={() => this.createWallet()} style={{height: 40,}}>
-                        <View style={styles.establishout}>
-                          <Image source={UImage.wallet_1} style={styles.establishimg} />
-                          <Text style={styles.establishtext}>创建钱包</Text>
-                        </View>
-                      </Button>
-                      {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
-                        <View style={{ flex: 1, flexDirection: "row", }}>
-                          <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
-                          <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
-                        </View>
-                      </Button> */}
+       <Modal style={styles.touchableout} animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
+        <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable} activeOpacity={1.0}>
+          <TouchableOpacity style={styles.touchable} activeOpacity={1.0}>
+            <View style={styles.touchableout}>
+              <ListView initialListSize={5} style={styles.touchablelist}
+                renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
+                enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
+                renderRow={(rowData) => (
+                  (rowData.isactived || !rowData.hasOwnProperty('isactived')) ?
+                  <Button onPress={this.changeWallet.bind(this, rowData)}>
+                    <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
+                      <Text style={styles.walletname}>{rowData.name}</Text>
+                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
                     </View>
+                  </Button> : null
+                )}
+              />
+              <View style={styles.ebhbtnout}>
+                <Button onPress={() => this.createWallet()} style={{height: 40,}}>
+                  <View style={styles.establishout}>
+                    <Image source={UImage.wallet_1} style={styles.establishimg} />
+                    <Text style={styles.establishtext}>创建钱包</Text>
                   </View>
-                </TouchableOpacity>
-              </Modal>
+                </Button>
+                {/* <Button onPress={() => this.walletTest()} style={{ height: 40, }}>
+                  <View style={{ flex: 1, flexDirection: "row", }}>
+                    <Image source={UImage.wallet_1} style={{ width: 25, height: 25, }} />
+                    <Text style={{ marginLeft: 20, fontSize: 15, color: '#8594AB', }}>钱包测试</Text>
+                  </View>
+                </Button> */}
+              </View>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
 
-              <View style={styles.pupuo}>
-                <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                  <View style={styles.modalStyle}>
-                    <View style={styles.subView} >
-                      <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                        <Text style={styles.butclose}>×</Text>
-                      </Button>
-                      <Text style={styles.titleText}>收款码</Text>
-                      <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name)}</Text>
-                      <Text style={styles.prompt}>提示：扫码同样可获取地址</Text>
-                      <View style={styles.codeout}>
-                        <View style={styles.tab} />
-                        <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
-                        <View style={styles.tab} />
-                      </View>
-                      <Button onPress={() => { this.copy() }}>
-                        <View style={styles.copyout}>
-                          <Text style={styles.copytext}>复制地址</Text>
+        <View style={styles.pupuo}>
+          <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+            <View style={styles.modalStyle}>
+              <View style={styles.subView} >
+                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
+                  <Text style={styles.butclose}>×</Text>
+                </Button>
+                <Text style={styles.titleText}>收款码</Text>
+                <Text style={styles.contentText}>{((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name)}</Text>
+                <Text style={styles.prompt}>提示：扫码同样可获取账户</Text>
+                <View style={styles.codeout}>
+                  <View style={styles.tab} />
+                  <QRCode size={200} value={'{\"contract\":\"eos\",\"toaccount\":\"' + ((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name) + '\",\"symbol\":\"EOS\"}'} />
+                  <View style={styles.tab} />
+                </View>
+                <Button onPress={() => { this.copy() }}>
+                  <View style={styles.copyout}>
+                    <Text style={styles.copytext}>复制账户</Text>
                   </View>
                 </Button>
               </View>
@@ -459,13 +480,19 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.secdColor,
   },
 
+  listout: {
+    height: Platform.OS == 'ios' ? 70 : 75,
+  },
+
   row: {
     backgroundColor: UColor.mainColor,
     flexDirection: "row",
     padding: 15,
     justifyContent: "space-between",
-    // borderTopColor: '#2D354F', 
-    // borderTopWidth: 1,
+  },
+  listItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: UColor.secdColor
   },
 
   topbtn: {
@@ -560,7 +587,10 @@ const styles = StyleSheet.create({
     textAlign:'center'
   },
 
-
+  touchableout: {
+    flex: 1,
+    flexDirection: "column",
+  },
   touchable: {
     flex: 1, 
     justifyContent: 'center', 

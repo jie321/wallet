@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Clipboard, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity,TouchableHighlight } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Clipboard, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity,TouchableHighlight,KeyboardAvoidingView } from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Item from '../../components/Item'
@@ -27,11 +27,12 @@ class createWallet extends React.Component {
       walletPassword: "",
       reWalletPassword: "",
       passwordNote: "",
-      isChecked: this.props.isChecked || false,
+      isChecked: this.props.isChecked || true,
       integral: 0,
       weak: UColor.arrow,
       medium: UColor.arrow,
       strong: UColor.arrow,
+      CreateButton:  UColor.mainColor,
     }
   }
 
@@ -62,8 +63,12 @@ class createWallet extends React.Component {
       EasyToast.show('请输入钱包名称');
       return;
     }
-    if(!/^[1-5a-z.]+$/.test(this.state.walletName)){
-      EasyToast.show("钱包名称只能输入小写字母a-z和数字1-5");
+    if(this.state.walletName.length != 12 ){
+      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
+      return;
+    }
+    if(this.state.walletName.length == 12 && !/^[1-5a-z.]+$/.test(this.state.walletName)){
+      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
       return;
     }
     if (this.state.walletPassword == "") {
@@ -286,6 +291,11 @@ class createWallet extends React.Component {
       this.state.medium = UColor.arrow;
       this.state.weak = UColor.arrow;
      }
+    if(this.state.walletName != "" && this.state.walletPassword != "" && this.state.reWalletPassword != ""){
+      this.state.CreateButton = UColor.tintColor;
+    }else{
+      this.state.CreateButton =  UColor.mainColor;
+    }
   }
 
   dismissKeyboardClick() {
@@ -296,64 +306,66 @@ class createWallet extends React.Component {
     return <View style={styles.container}>
     <ScrollView  keyboardShouldPersistTaps="always">
       <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-        <Text style={styles.significanttext} >重要声明:</Text>
-        <Text style={styles.significanttext} >密码用于保护私钥和交易授权，强度非常重要</Text>
-        <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
-        <View style={styles.outsource}>
-          <View style={styles.inptout} >
-            <Text style={styles.inptitle}>账号名称</Text>
-            <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
-              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-              placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" 
-              keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
-            />
-          </View>
-          <View style={styles.inptout} >
-              <View style={{flexDirection: 'row',}}>
-                <Text style={styles.inptitle}>设置密码</Text>
+        <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+          <Text style={styles.significanttext} >重要声明:</Text>
+          <Text style={styles.significanttext} >密码用于保护私钥和交易授权，强度非常重要</Text>
+          <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
+          <View style={styles.outsource}>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}>账号名称</Text>
+              <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" onChange={this.intensity()} 
+                keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
+              />
+            </View>
+            <View style={styles.inptout} >
                 <View style={{flexDirection: 'row',}}>
-                    <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
-                    <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
-                    <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
+                  <Text style={styles.inptitle}>设置密码</Text>
+                  <View style={{flexDirection: 'row',}}>
+                      <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
+                      <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
+                      <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
+                  </View>
                 </View>
-              </View>
-              <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletPassword}  returnKeyType="next" editable={true}
-                  selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false}
-                  onChangeText={(walletPassword) => this.setState({walletPassword})} onChange={this.intensity()} 
-                  placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
-                />
+                <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletPassword}  returnKeyType="next" editable={true}
+                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false}
+                    onChangeText={(walletPassword) => this.setState({walletPassword})} onChange={this.intensity()} 
+                    placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
+                  />
+            </View>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}>确认密码</Text>
+              <TextInput ref={(ref) => this._lrpass = ref} value={this.state.reWalletPassword} returnKeyType="next"
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} onChange={this.intensity()}
+                onChangeText={(reWalletPassword) => this.setState({ reWalletPassword })}  autoFocus={false} editable={true}
+              />
+            </View>
+            <View style={styles.inptout} >
+              <TextInput ref={(ref) => this._lnote = ref} value={this.state.passwordNote} returnKeyType="go"
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                placeholder="密码提示(可不填)" underlineColorAndroid="transparent" secureTextEntry={true} 
+                onChangeText={(passwordNote) => this.setState({ passwordNote })} autoFocus={false} editable={true}
+              />
+            </View>
           </View>
-          <View style={styles.inptout} >
-            <Text style={styles.inptitle}>确认密码</Text>
-            <TextInput ref={(ref) => this._lrpass = ref} value={this.state.reWalletPassword} returnKeyType="next"
-              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-              placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} 
-              onChangeText={(reWalletPassword) => this.setState({ reWalletPassword })}  autoFocus={false} editable={true}
-            />
+          <View style={styles.clauseout}>
+            <TouchableHighlight  onPress={() => this.checkClick()}>
+              <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
+            </TouchableHighlight>
+            <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text></Text>
           </View>
-          <View style={styles.inptout} >
-            <TextInput ref={(ref) => this._lnote = ref} value={this.state.passwordNote} returnKeyType="go"
-              selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-              placeholder="密码提示(可不填)" underlineColorAndroid="transparent" secureTextEntry={true} 
-              onChangeText={(passwordNote) => this.setState({ passwordNote })} autoFocus={false} editable={true}
-            />
-          </View>
-        </View>
-
-        <View style={styles.clauseout}>
-          <TouchableHighlight  onPress={() => this.checkClick()}>
-            <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
-          </TouchableHighlight>
-          <Text style={styles.welcome} >我已经仔细阅读并同意</Text>
-          <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text>
-        </View>
+        </KeyboardAvoidingView>
         <Button onPress={() => this.createWallet()}>
-          <View style={styles.createWalletout}>
+          <View style={styles.createWalletout} backgroundColor = {this.state.CreateButton}>
             <Text style={styles.createWallet}>创建钱包</Text>
           </View>
         </Button>
-        <Button onPress={() => this.importWallet()}>     
+        <Button onPress={() => this.importWallet()}> 
+          <View style={styles.createWalletout}>    
             <Text style={styles.importWallettext}>导入钱包</Text>
+          </View>
         </Button>
       </TouchableOpacity>
     </ScrollView>
@@ -416,24 +428,23 @@ const styles = StyleSheet.create({
   },
   clauseimg: { 
     width: 20, 
-    height: 20, 
+    height: 20,
+    marginHorizontal: 10, 
   },
   welcome: {
-    fontSize: 15,
+    fontSize: 14,
     color: UColor.arrow,
-    marginLeft: 20
   },
   clausetext: {
-    fontSize: 15,
+    fontSize: 14,
     color: UColor.tintColor,
-    marginLeft: 5
   },
   createWalletout: {
     height: 45,
-    backgroundColor: UColor.tintColor,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
+    marginHorizontal: 20,
+    marginTop: 20,
     borderRadius: 5
   },
   createWallet: {

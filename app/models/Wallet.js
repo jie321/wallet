@@ -220,9 +220,11 @@ export default {
                 var wallet = walletList[j];
                 for (var i = 0; i < walletArr.length; i++) {
                     if (walletArr[i].account == wallet.account) {
-                        if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
-                            break;
-                        }
+                        // if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
+                        //     break;
+                        // }
+                        if (callback) callback({error: wallet.account + "已存在"});
+                        return;
                     }
                 }
 
@@ -397,6 +399,7 @@ export default {
             try {
                 const resp = yield call(Request.request, getBalance, 'post', payload);
                 if (callback) callback(resp);
+                DeviceEventEmitter.emit('eos_balance', resp);
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }

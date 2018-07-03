@@ -58,6 +58,21 @@ class Info extends React.Component {
         //     }
         // });
         // alert('updateDefaultWallet: '+(this.props.defaultWallet.name));
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
+        });
+    }
+
+    setEosBalance(data){
+        if (data.code == '0') {
+            if (data.data == "") {
+                this.setState({ balance: '0.0000' })
+            } else {
+                this.setState({ balance: data.data })
+            }
+        } else {
+            EasyToast.show('获取余额失败：' + data.msg);
+        }
     }
 
     _rightButtonClick() {
@@ -79,11 +94,11 @@ class Info extends React.Component {
     }
 
     getBalance() {
-        Eos.balance("eosio.token", this.props.defaultWallet.name, (r) => {
-            try {
-                this.setState({ balance: r.data[0] == null ? 0 : r.data[0] })
-            } catch (e) { }
-        });
+        this.props.dispatch({
+            type: 'wallet/getBalance', payload: { contract: "eosio.token", account: data.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
+                this.setEosBalance(data);
+            }
+        })
     }
 
     copy = () => {
@@ -162,7 +177,7 @@ class Info extends React.Component {
                                 </Button>
                                 <Text style={styles.titleText}>你的{c.name}地址</Text>
                                 <Text style={styles.contentText}>{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
-                                <Text style={styles.prompttext}>提示：扫码同样可获取地址</Text>
+                                <Text style={styles.prompttext}>提示：扫码同样可获取账户</Text>
                                 <View style={styles.codeout}>
                                     <View style={styles.tab} />
                                     <QRCode size={170}  value={'{\"contract\":\"eos\",\"toaccount\":\"' + this.props.defaultWallet.account + '\",\"symbol\":\"EOS\"}'} />
@@ -170,7 +185,7 @@ class Info extends React.Component {
                                 </View>
                                 <Button onPress={() => { this.copy() }}>
                                     <View style={styles.copyout}>
-                                        <Text style={styles.copytext}>复制地址</Text>
+                                        <Text style={styles.copytext}>复制账户</Text>
                                     </View>
                                 </Button>
                             </View>

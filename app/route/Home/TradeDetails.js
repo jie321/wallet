@@ -37,6 +37,11 @@ class TradeDetails extends React.Component {
   componentDidMount() {
         // alert('trade: '+JSON.stringify(this.props.navigation.state.params.trade));
   }
+
+  prot(){
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "交易查询", url:'https://eosmonitor.io/txn/' + this.props.navigation.state.params.trade.transactionId});
+  }
   
   
   render() {
@@ -61,7 +66,7 @@ class TradeDetails extends React.Component {
                <QRCode size={105} value={'https://eosmonitor.io/txn/' + c.transactionId } />
             </View>
         </View>
-        <Text style={styles.tradehint}>交易号：{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text>
+        <Text style={styles.tradehint}>交易号：<Text style={{color: UColor.tintColor,}} onPress={() => this.prot()}>{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text></Text>
         <Text style={styles.tradehint}>提示：扫码可获取区块交易状态</Text>
     </View>
   }
