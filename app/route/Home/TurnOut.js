@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { NativeModules, StatusBar, BackHandler, DeviceEventEmitter, InteractionManager, Clipboard, ListView, StyleSheet, Image, ScrollView, View, RefreshControl, Text, TextInput, Platform, Dimensions, Modal, TouchableHighlight,TouchableOpacity } from 'react-native';
+import { NativeModules, StatusBar, BackHandler, DeviceEventEmitter, InteractionManager, Clipboard, ListView, StyleSheet, Image, ScrollView, View, RefreshControl, Text, TextInput, Platform, Dimensions, Modal, TouchableHighlight,TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -50,6 +50,9 @@ class TurnOut extends React.Component {
         })
         DeviceEventEmitter.addListener('scan_result', (data) => {
             this.setState({toAccount:data.toaccount})
+        });
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
           });
     }
 
@@ -57,18 +60,22 @@ class TurnOut extends React.Component {
         DeviceEventEmitter.removeListener('scan_result');
       }
 
+    setEosBalance(data){
+        if (data.code == '0') {
+            if (data.data == "") {
+                this.setState({ balance: '0.0000' })
+            } else {
+                this.setState({ balance: data.data })
+            }
+        } else {
+            EasyToast.show('获取余额失败：' + data.msg);
+        }
+    }
+
     getBalance(data) {
         this.props.dispatch({
             type: 'wallet/getBalance', payload: { contract: "eosio.token", account: data.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
-                if (data.code == '0') {
-                    if (data.data == "") {
-                        this.setState({ balance: '0.0000' })
-                    } else {
-                        this.setState({ balance: data.data })
-                    }
-                } else {
-                    EasyToast.show('获取余额失败：' + data.msg);
-                }
+                this.setEosBalance(data);
             }
         })
     }
@@ -211,55 +218,56 @@ class TurnOut extends React.Component {
         const c = this.props.navigation.state.params.coins;
         return (
         <View style={styles.container}>
-            <ScrollView  keyboardShouldPersistTaps="always">
-              <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-                <View style={styles.header}>
-                    <Text style={styles.headertext}>{this.state.balance}</Text>
-                    {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
-                </View>
-
-                <View style={styles.taboutsource}>
-                    <View style={styles.outsource}>
-                        <View style={styles.inptoutsource}>
-                            <View style={styles.accountoue} >
-                                <TextInput ref={(ref) => this._raccount = ref}  value={this.state.toAccount} returnKeyType="next"   
-                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}      
-                                    placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  
-                                    onChangeText={(toAccount) => this.setState({ toAccount })} 
-                                />
-                               <View style={styles.scanning}>
-                                    <Button onPress={() => this.scan()}>                                  
-                                        <Image source={UImage.scan} style={styles.scanningimg} />                                 
-                                    </Button>
+            <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+                <ScrollView  keyboardShouldPersistTaps="always">
+                    <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+                        <View style={styles.header}>
+                            <Text style={styles.headertext}>{this.state.balance}</Text>
+                            {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
+                        </View>
+                        <View style={styles.taboutsource}>
+                            <View style={styles.outsource}>
+                                <View style={styles.inptoutsource}>
+                                    <View style={styles.accountoue} >
+                                        <TextInput ref={(ref) => this._raccount = ref}  value={this.state.toAccount} returnKeyType="next"   
+                                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}      
+                                            placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  
+                                            onChangeText={(toAccount) => this.setState({ toAccount })} 
+                                        />
+                                    <View style={styles.scanning}>
+                                            <Button onPress={() => this.scan()}>                                  
+                                                <Image source={UImage.scan} style={styles.scanningimg} />                                 
+                                            </Button>
+                                        </View>
+                                    </View>
                                 </View>
+                                <View style={styles.separate}></View>
+                                <View style={styles.textinptoue} >
+                                    <TextInput  ref={(ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
+                                        selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
+                                        placeholder="转账金额"  underlineColorAndroid="transparent"   keyboardType="numeric"
+                                        onChangeText={(amount) => this.setState({ amount: this.chkPrice(amount) })}
+                                        />
+                                </View>
+                                <View style={styles.separate}></View>
+                                <View style={styles.textinptoue} >
+                                    <TextInput  ref={(ref) => this._rnote = ref}  value={this.state.memo} returnKeyType="next"
+                                        selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
+                                        placeholder="账户唯一的备注 (MEMO) 信息，选填" underlineColorAndroid="transparent" keyboardType="default" maxLength={20} 
+                                        onChangeText={(memo) => this.setState({ memo })}
+                                        />
+                                </View>
+                                <View style={styles.separate}></View>
+                                <Button onPress={this._rightButtonClick.bind(this)} style={styles.btnnextstep}>
+                                    <View style={styles.nextstep}>
+                                        <Text style={styles.nextsteptext}>下一步</Text>
+                                    </View>
+                                </Button>
                             </View>
                         </View>
-                        <View style={styles.separate}></View>
-                        <View style={styles.textinptoue} >
-                            <TextInput  ref={(ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
-                                selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                                placeholder="转账金额"  underlineColorAndroid="transparent"   keyboardType="numeric"
-                                onChangeText={(amount) => this.setState({ amount: this.chkPrice(amount) })}
-                                />
-                        </View>
-                        <View style={styles.separate}></View>
-                        <View style={styles.textinptoue} >
-                            <TextInput  ref={(ref) => this._rnote = ref}  value={this.state.memo} returnKeyType="next"
-                                selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
-                                placeholder="账户唯一的备注 (MEMO) 信息，选填" underlineColorAndroid="transparent" keyboardType="default" maxLength={20} 
-                                onChangeText={(memo) => this.setState({ memo })}
-                                />
-                        </View>
-                        <View style={styles.separate}></View>
-                        <Button onPress={this._rightButtonClick.bind(this)} style={styles.btnnextstep}>
-                            <View style={styles.nextstep}>
-                                <Text style={styles.nextsteptext}>下一步</Text>
-                            </View>
-                        </Button>
-                    </View>
-                </View>
-              </TouchableOpacity>
-            </ScrollView>
+                    </TouchableOpacity>
+                </ScrollView>
+            </KeyboardAvoidingView>
                 <View style={styles.pupuo}>
                     <Modal animationType='none' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
                         <View style={styles.modalStyle}>

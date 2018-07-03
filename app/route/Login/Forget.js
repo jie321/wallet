@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,TextInput,TouchableOpacity} from 'react-native';
+import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,TextInput,TouchableOpacity,KeyboardAvoidingView} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
@@ -177,43 +177,45 @@ class Forget extends React.Component {
     return <View style={styles.container}>
         <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-              <View style={styles.outsource}>
-                <View style={styles.phoneoue} >
-                    <Text style={styles.texttitle}> 手机号</Text>
-                    <TextInput ref={(ref) => this._rphone = ref}  value={this.state.phone}  returnKeyType="next" 
-                      selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
-                      placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
-                      onChangeText={(phone) => this.setState({phone})}
-                    />
+              <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+                <View style={styles.outsource}>
+                  <View style={styles.phoneoue} >
+                      <Text style={styles.texttitle}> 手机号</Text>
+                      <TextInput ref={(ref) => this._rphone = ref}  value={this.state.phone}  returnKeyType="next" 
+                        selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
+                        placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
+                        onChangeText={(phone) => this.setState({phone})}
+                      />
+                  </View>
+                  <View style={styles.separate}></View>
+                  <View style={styles.codeoutsource}>
+                      <View style={styles.codeout} >
+                          <Text style={styles.texttitle}> 验证码</Text>
+                          <TextInput  value={this.state.code} ref={(ref) => this._rcode = ref}  returnKeyType="next" 
+                            selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
+                            placeholder="输入验证码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={6}
+                            onChangeText={(code) => this.setState({code})}
+                          />
+                      </View>
+                      <View style={styles.btnoutsource}>
+                        <Button onPress={() => this.kcaptrue()}>
+                          <View style={styles.btnout}>
+                            <Text style={styles.btntext}>{this.state.capture}</Text>
+                          </View>
+                        </Button>
+                      </View>
+                  </View>
+                  <View style={styles.separate}></View>
+                  <View style={styles.phoneoue} >
+                      <Text style={styles.texttitle}> 设置新密码</Text>
+                      <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" 
+                        selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
+                        placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                        onChangeText={(password) => this.setState({password})}
+                      />
+                  </View>
                 </View>
-                <View style={styles.separate}></View>
-                <View style={styles.codeoutsource}>
-                    <View style={styles.codeout} >
-                        <Text style={styles.texttitle}> 验证码</Text>
-                        <TextInput  value={this.state.code} ref={(ref) => this._rcode = ref}  returnKeyType="next" 
-                          selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                          placeholder="输入验证码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={6}
-                          onChangeText={(code) => this.setState({code})}
-                        />
-                    </View>
-                    <View style={styles.btnoutsource}>
-                      <Button onPress={() => this.kcaptrue()}>
-                        <View style={styles.btnout}>
-                          <Text style={styles.btntext}>{this.state.capture}</Text>
-                        </View>
-                      </Button>
-                    </View>
-                </View>
-                <View style={styles.separate}></View>
-                <View style={styles.phoneoue} >
-                    <Text style={styles.texttitle}> 设置新密码</Text>
-                    <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" 
-                      selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                      placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                      onChangeText={(password) => this.setState({password})}
-                    />
-                </View>
-              </View>
+              </KeyboardAvoidingView>
               <Button onPress={() => this.regSubmit()}>
                 <View style={styles.referbtn}>
                   <Text style={styles.refertext}>提交</Text>
