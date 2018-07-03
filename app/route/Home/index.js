@@ -173,7 +173,8 @@ class Home extends React.Component {
       AnalyticsUtil.onEvent('Receipt_code');
 
       if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-        this._setModalVisible();
+        // this._setModalVisible();
+        navigate('TurnIn', {});
       } else {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
@@ -399,8 +400,8 @@ class Home extends React.Component {
                   <View style={styles.right}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{rowData.balance==""? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈（￥）0 </Text>
+                        <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
+                        <Text style={styles.rightmarket}>≈（￥）0.00</Text>
                       </View>
                     </View>
                   </View>
@@ -445,7 +446,7 @@ class Home extends React.Component {
         </TouchableOpacity>
       </Modal>
 
-        <View style={styles.pupuo}>
+        {/* <View style={styles.pupuo}>
           <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
             <View style={styles.modalStyle}>
               <View style={styles.subView} >
@@ -468,7 +469,7 @@ class Home extends React.Component {
               </View>
             </View>
           </Modal>
-        </View>
+        </View> */}
       </View>
     );
   }

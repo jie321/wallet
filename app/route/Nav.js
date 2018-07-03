@@ -23,6 +23,7 @@ import Info from './Home/Info'
 import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
 import TradeDetails from './Home/TradeDetails'
+import TurnIn from './Home/TurnIn'
 import TurnOut from './Home/TurnOut'
 import TurnOutAsset from './Home/TurnOutAsset'
 import Share from './ShareInvite'
@@ -255,6 +256,9 @@ const Nav = StackNavigator(
     TradeDetails: {
       screen: TradeDetails
     },
+    TurnIn: {
+      screen: TurnIn
+    },
     TurnOut: {
       screen: TurnOut
     },
@@ -313,8 +317,12 @@ class Route extends React.Component {
 
   state = {
     news: {},
+    turnintoaccount: '',
+    turninamount: '',
+    turninsymbol: '',
     showShare: false,
     showVoteShare:false,
+    showTurninShare:false,
     transformY: new Animated.Value(200),
     transformY1: new Animated.Value(-1000),
     vtransformY: new Animated.Value(200),
@@ -412,6 +420,41 @@ class Route extends React.Component {
     });
     DeviceEventEmitter.addListener('voteShare', (news) => {
       this.setState({showVoteShare: true });
+      this.state.vtransformY = new Animated.Value(200);
+      this.state.vtransformY1 = new Animated.Value(-1000);
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(this.state.vtransformY,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+          Animated.timing(this.state.vtransformY1,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+        ]).start();
+      }, 300);
+    });
+    DeviceEventEmitter.addListener('turninShare', (news) => {
+      this.setState({showTurninShare: true });
+      var result = JSON.parse(news);// 转成JSON对象
+ 
+      if(result.toaccount){
+        this.setState({turnintoaccount:result.toaccount});
+      }
+      if(result.amount){
+        this.setState({turninamount:result.amount});
+      }
+      if(result.symbol){
+        this.setState({turninsymbol:result.symbol});
+      }
+
       this.state.vtransformY = new Animated.Value(200);
       this.state.vtransformY1 = new Animated.Value(-1000);
       setTimeout(() => {
@@ -713,6 +756,75 @@ class Route extends React.Component {
                 </View>
               ) : null
               }    
+             
+        {this.state.showTurninShare ? (
+          <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+            <Animated.View style={{
+              height: ScreenHeight - 180, transform: [
+                { translateX: 0 },
+                { translateY: this.state.vtransformY1 },
+              ]
+            }}>
+              <ScrollView style={{ marginTop: 50 }}>
+                <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                  <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
+                    <View style={{ backgroundColor: "#fff", width: '100%', height: '100%' }}>
+                    
+                      <View style={{ padding: 10, }}>
+                        <Image source={UImage.turnin_head} resizeMode="stretch" style={{ width: '100%', height:50 }} />
+                        <Text style={{fontSize: 30, color:"#000000", padding: 10, textAlign: 'center',}}>{this.state.turninamount} <Text style={{fontSize: 22, color: "#818181"}}>{this.state.turninsymbol}</Text></Text>
+                        <View style={{ justifyContent: 'center', alignSelf: 'center',paddingTop:10, }}>
+                          <QRCode size={150}  value={'{\"toaccount\":\"' + this.state.turnintoaccount + '\",\"amount\":\"' + this.state.turninamount + '\",\"symbol\":\"' + this.state.turninsymbol + '\"}'} />
+                        </View>
+                        <Text style={{ color: '#5D5D5D', fontSize: 15, textAlign: 'center', marginTop: 10 }}>扫码向他支付</Text>
+                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'left', marginTop: 5, padding: 20,}}>账户:{this.state.turnintoaccount}</Text>
+                      </View>
+                    </View>
+                  </ViewShot>
+                </View>
+              </ScrollView>
+            </Animated.View>
+            <View style={{ height: 170, marginTop: 10 }}>
+              <Animated.View style={{
+                height: 170, flex: 1, backgroundColor: '#e7e7e7', transform: [
+                  { translateX: 0 },
+                  { translateY: this.state.vtransformY },
+                ]
+              }}>
+
+                <View style={{ height: 125 }}>
+                  <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Button style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(1) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(2) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%' }} onPress={() => { this.shareAction(3) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>
+                      </View>
+                    </Button>
+                  </View>
+                </View>
+                <Button onPress={() => { this.setState({ showTurninShare: false }) }}>
+                  <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
+                    <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
+                  </View>
+                </Button>
+              </Animated.View>
+            </View>
+          </View>
+        ) : null
+        }            
     </View>)
   }
 }
