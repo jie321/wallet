@@ -79,7 +79,14 @@ class Login extends React.Component {
     }
     let img = Constants.rootaddr+kapimg + this.state.loginPhone + "?v=" + Math.ceil(Math.random() * 100000);
 
-    const view = <View style={{ flexDirection: 'row' }}><Button onPress={() => { this.refreshLcode() }}><Image onError={(e) => { this.loaderror() }} style={{ width: 100, height: 45 }} source={{ uri: img }} /></Button><TextInput autoFocus={true} onChangeText={(lcode) => this.setState({ lcode })} returnKeyType="go" selectionColor={UColor.tintColor} keyboardType="ascii-capable" style={{ color: UColor.tintColor, marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} /></View>
+    const view = <View style={{ flexDirection: 'row' }}>
+      <Button onPress={() => { this.refreshLcode() }}>
+        <Image onError={(e) => { this.loaderror() }} style={{ width: 100, height: 45 }} source={{ uri: img }} />
+      </Button>
+      <TextInput autoFocus={true} onChangeText={(lcode) => this.setState({ lcode })} returnKeyType="go" 
+        selectionColor={UColor.tintColor} style={styles.inp} placeholderTextColor={UColor.arrow}
+        keyboardType="phone-pad" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} />
+    </View>
 
     EasyDialog.show("计算结果", view, "登陆", "取消", () => {
 
@@ -186,7 +193,14 @@ class Login extends React.Component {
     }
     let img =Constants.rootaddr+ kapimg + this.state.phone + "?v=" + Math.ceil(Math.random() * 100000);
 
-    const view = <View style={{ flexDirection: 'row' }}><Button onPress={() => { this.refresh() }}><Image onError={(e) => { this.loaderror() }} style={{ width: 100, height: 45 }} source={{ uri: img }} /></Button><TextInput autoFocus={true} onChangeText={(kcode) => this.setState({ kcode })} returnKeyType="go" selectionColor={UColor.tintColor} keyboardType="ascii-capable" style={{ color: UColor.tintColor, marginLeft: 10, width: 120, height: 45, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} /></View>
+    const view = <View style={{ flexDirection: 'row' }}>
+    <Button onPress={() => { this.refresh() }}>
+      <Image onError={(e) => { this.loaderror() }} style={styles.butimg} source={{ uri: img }} />
+    </Button>
+    <TextInput autoFocus={true} onChangeText={(kcode) => this.setState({ kcode })} returnKeyType="go" 
+      selectionColor={UColor.tintColor} style={styles.inp} placeholderTextColor={UColor.arrow}  
+      keyboardType="phone-pad" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} />
+    </View>
 
     EasyDialog.show("计算结果", view, "获取", "取消", () => {
       if (this.state.kcode == "") {
@@ -268,27 +282,32 @@ class Login extends React.Component {
     if (route.key == '1') {
       return (<ScrollView keyboardShouldPersistTaps="always">
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-          <View style={{ backgroundColor: '#43536D', flex: 1, flexDirection: 'column', }}>
-            <View style={{ padding: 20, height: 80, backgroundColor: '#586888' }} >
-              <Text style={{ fontSize: 12, color: '#8696B0' }}> 手机号</Text>
-              <TextInput ref={(ref) => this._lphone = ref} autoFocus={false} editable={true} value={this.state.loginPhone} returnKeyType="next" selectionColor={UColor.tintColor} style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
+          <View style={styles.outsource}>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}> 手机号</Text>
+              <TextInput ref={(ref) => this._lphone = ref} autoFocus={false} editable={true} 
+                value={this.state.loginPhone} returnKeyType="next" 
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
                 onChangeText={(loginPhone) => this.setState({ loginPhone })} />
             </View>
-            <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-            <View style={{ padding: 20, height: 80, backgroundColor: '#586888' }} >
-              <Text style={{ fontSize: 12, color: '#8696B0' }}> 密码</Text>
-              <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} value={this.state.loginPwd} returnKeyType="go" selectionColor={UColor.tintColor} style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="输入密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                onSubmitEditing={() => this.loginKcaptrue()}
-                onChangeText={(loginPwd) => this.setState({ loginPwd })}
+            <View style={styles.separate}></View>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}> 密码</Text>
+              <TextInput ref={(ref) => this._lpass = ref}  
+                value={this.state.loginPwd} returnKeyType="go" autoFocus={false} editable={true}
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                placeholder="输入密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                onSubmitEditing={() => this.loginKcaptrue()} onChangeText={(loginPwd) => this.setState({ loginPwd })}
               />
             </View>
           </View>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: 'flex-end', padding: 20 }}>
-            <Text style={{ fontSize: 15, color:UColor.tintColor }} onPress={() => this.forget()}>忘记密码</Text>
+          <View style={styles.forgetpass}>
+            <Text style={styles.forgettext} onPress={() => this.forget()}>忘记密码</Text>
           </View>
           <Button onPress={() => this.loginKcaptrue()}>
-            <View style={{ height: 45, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>登陆</Text>
+            <View style={styles.butout}>
+              <Text style={styles.buttext}>登陆</Text>
             </View>
           </Button>
         </TouchableOpacity>
@@ -296,54 +315,57 @@ class Login extends React.Component {
     } else {
       return (<ScrollView keyboardShouldPersistTaps="always">
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-          <View style={{ backgroundColor: '#43536D', flex: 1, flexDirection: 'column', }}>
-            <View style={{ padding: 20, height: 80, backgroundColor: '#586888' }} >
-              <Text style={{ fontSize: 12, color: '#8696B0' }}> 手机号</Text>
-              <TextInput ref={(ref) => this._rphone = ref} value={this.state.phone} returnKeyType="next" selectionColor={UColor.tintColor} style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
-                onChangeText={(phone) => this.setState({ phone })}
-              />
+          <View style={styles.outsource}>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}> 手机号</Text>
+              <TextInput ref={(ref) => this._rphone = ref} value={this.state.phone} returnKeyType="next" 
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
+                onChangeText={(phone) => this.setState({ phone })}/>
             </View>
-            <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-            <View style={{ flexDirection: 'row', backgroundColor: '#586888' }}>
-              <View style={{ padding: 20, height: 80, width: 200 }} >
-                <Text style={{ fontSize: 12, color: '#8696B0' }}> 验证码</Text>
-                <TextInput ref={(ref) => this._rcode = ref} value={this.state.code} returnKeyType="next" selectionColor={UColor.tintColor} style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="请输入验证码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={6}
-                  onChangeText={(code) => this.setState({ code })}
-                />
+            <View style={styles.separate}></View>
+            <View style={styles.vfanout}>
+              <View style={styles.vfantext} >
+                <Text style={styles.inptitle}> 验证码</Text>
+                <TextInput ref={(ref) => this._rcode = ref} value={this.state.code} returnKeyType="next" 
+                  selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                  placeholder="请输入验证码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={6}
+                  onChangeText={(code) => this.setState({ code })}/>
               </View>
-              <View style={{ flex: 1, flexDirection: "row", alignSelf: 'center', justifyContent: "flex-end", marginRight: 10 }}>
+              <View style={styles.verificationout}>
                 <Button onPress={() => this.kcaptrue()}>
-                  <View style={{ backgroundColor: UColor.tintColor, borderRadius: 5, width: 100, height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 12, color: '#fff' }}>{this.state.capture}</Text>
+                  <View style={styles.verification}>
+                    <Text style={styles.verificationtext}>{this.state.capture}</Text>
                   </View>
                 </Button>
               </View>
             </View>
-
-            <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-            <View style={{ padding: 20, height: 80, backgroundColor: '#586888' }} >
-              <Text style={{ fontSize: 12, color: '#8696B0' }}> 密码</Text>
-              <TextInput ref={(ref) => this._rpass = ref} value={this.state.password} returnKeyType="next" selectionColor={UColor.tintColor} style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="输入密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
-                onChangeText={(password) => this.setState({ password })}
-              />
+            <View style={styles.separate}></View>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}> 密码</Text>
+              <TextInput ref={(ref) => this._rpass = ref} value={this.state.password} returnKeyType="next" 
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                placeholder="输入密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                onChangeText={(password) => this.setState({ password })}/>
             </View>
-            <View style={{ height: 0.5, backgroundColor: '#43536D' }}></View>
-            <View style={{ padding: 20, height: 80, backgroundColor: '#586888' }} >
-              <Text style={{ fontSize: 12, color: '#8696B0' }}> 邀请码</Text>
-              <TextInput ref={(ref) => this._rrpass = ref} value={this.state.invite} returnKeyType="go" selectionColor={UColor.tintColor} style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 2 }} placeholderTextColor="#8696B0" placeholder="输入邀请码(非必填)" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8}
-                onSubmitEditing={() => this.regSubmit()}
-                onChangeText={(invite) => this.setState({ invite })}
+            <View style={styles.separate}></View>
+            <View style={styles.inptout} >
+              <Text style={styles.inptitle}> 邀请码</Text>
+              <TextInput ref={(ref) => this._rrpass = ref} value={this.state.invite} returnKeyType="go" 
+                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                placeholder="输入邀请码(非必填)" underlineColorAndroid="transparent" keyboardType="phone-pad" 
+                maxLength={8} onSubmitEditing={() => this.regSubmit()} onChangeText={(invite) => this.setState({ invite })}
               />
             </View>
           </View>
           <Button onPress={() => this.regSubmit()}>
-            <View style={{ height: 45, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center', marginTop: 20, marginHorizontal: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>注册</Text>
+            <View style={styles.butout}>
+              <Text style={styles.buttext}>注册</Text>
             </View>
           </Button>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: 'center', padding: 10 }}>
-            <Text style={{ fontSize: 13, color: '#8696B0', marginTop: 5 }}>注册即表示同意</Text>
-            <Text onPress={() => this.prot()} style={{ fontSize: 13, color: UColor.tintColor, marginTop: 5 }}>EosToken用户协议</Text>
+          <View style={styles.readout}>
+            <Text style={styles.readtext}>注册即表示同意</Text>
+            <Text onPress={() => this.prot()} style={styles.servicetext}>EosToken用户协议</Text>
           </View>
         </TouchableOpacity>
       </ScrollView>)
@@ -358,7 +380,11 @@ class Login extends React.Component {
           lazy={true}
           navigationState={this.state}
           renderScene={this.renderScene.bind(this)}
-          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 15, paddingTop: 15, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth / 2 }} style={{ backgroundColor: "#586888" }} tabStyle={{ width: ScreenWidth / 2, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
+          renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} 
+          labelStyle={{ fontSize: 15, margin: 0, marginBottom: 15, paddingTop: 15, color: '#8696B0' }} 
+          indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth / 2 }} 
+          style={{ backgroundColor: "#586888" }} tabStyle={{ width: ScreenWidth / 2, padding: 0, margin: 0 }} 
+          scrollEnabled={true} {...props} />}
           onIndexChange={this._handleIndexChange}
           initialLayout={{ height: 0, width: Dimensions.get('window').width }}
         />
@@ -368,11 +394,120 @@ class Login extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  butimg: { 
+    width: 100, 
+    height: 45 },
+  inp: {
+    color: UColor.tintColor,
+    marginLeft: 10,
+    width: 120,
+    height: 45,
+    fontSize: 15,
+    backgroundColor: '#EFEFEF'
+  },
+
   container: {
     flex: 1,
     flexDirection: 'column',
     backgroundColor: "#43536D"
-  }
+  },
+  
+  outsource: {
+    backgroundColor: '#43536D',
+    flex: 1,
+    flexDirection: 'column',
+  },
+
+  inptout: {
+    padding: 20, 
+    height: 80, 
+    backgroundColor: '#586888'
+  },
+  inpt: {
+    color: '#8696B0',
+    fontSize: 15,
+    height: 40,
+    paddingLeft: 2
+  },
+  inptitle: {
+    fontSize: 12, 
+    color: '#8696B0'
+  },
+  separate: {
+    height: 0.5,
+    backgroundColor: UColor.secdColor
+  },
+
+  forgetpass: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: 'flex-end',
+    padding: 20
+  },
+  forgettext: {
+    fontSize: 15,
+    color: UColor.tintColor
+  },
+ 
+
+  vfanout: {
+      flexDirection: 'row',
+      backgroundColor: '#586888'
+    },
+    vfantext: {
+      padding: 20,
+      height: 80,
+      width: 200
+    },
+  verificationout: {
+    flex: 1,
+    flexDirection: "row",
+    alignSelf: 'center',
+    justifyContent: "flex-end",
+    marginRight: 10
+  },
+  verification: {
+    backgroundColor: UColor.tintColor,
+    borderRadius: 5,
+    width: 100,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  verificationtext: {
+    fontSize: 12,
+    color: '#fff'
+  },
+
+  butout: {
+    height: 45,
+    backgroundColor: UColor.tintColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    marginHorizontal: 20,
+    borderRadius: 5
+  },
+  buttext: {
+    fontSize: 15,
+    color: '#fff'
+  },
+
+  readout: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  readtext: {
+    fontSize: 14,
+    color: UColor.arrow,
+  },
+  servicetext: {
+    fontSize: 14, 
+    color: UColor.tintColor,  
+    paddingLeft: 5,
+  },
 });
 
 export default Login;

@@ -33,8 +33,7 @@ class SignIn extends React.Component {
     img: Constants.rootaddr+kapimg,
     kcode: "",
     currentPoint: 0,
-    Sign_in: '立即签到',
-    sign_in_bg: UColor.tintColor,
+    Sign_in: false,
     accumulative: 0,
   }
 
@@ -45,29 +44,14 @@ class SignIn extends React.Component {
 
   componentDidMount() {
     EasyLoading.show();
-    this.props.dispatch({ type: 'login/signin', payload: { uid: Constants.uid }, callback: (data) => {
-      if(data.msg == "今天您已签到"){
-        this.setState({
-        Sign_in: '已签到',
-        sign_in_bg: UColor.mainColor
-        })
-      }else{
-        this.setState({
-          Sign_in: '立即签到',
-          sign_in_bg: UColor.tintColor
-          })
-      } 
-    } });
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
         EasyLoading.dismis();
-        // alert("--"+ JSON.stringify(data));
         if (data.code == 403) {
           this.props.dispatch({
             type: 'login/logout', payload: {}, callback: () => {
               this.props.navigation.goBack();
               EasyToast.show("登陆已失效, 请重新登陆!");
-              // navigate('Login', {});
             }
           });         
         }else if(data.code == 0) {
@@ -77,41 +61,33 @@ class SignIn extends React.Component {
         }
       },
     });
-    // const { dispatch } = this.props;
-
-    // this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid } });
-    // dispatch({ type: 'login/fetchPoint'});
-    //   DeviceEventEmitter.addListener('coinSlefChange', (tab) => {
-    //     dispatch({type:'sticker/list',payload:{type:0}});
-    //  });
-
-    
+    this.props.dispatch({ type: 'login/isSigned', payload:{name: this.state.phone},callback: (data) => { 
+      EasyLoading.dismis();
+      this.setState({Sign_in: data.data});
+    } });
   }
 
   signIn = () => {
     const { dispatch } = this.props;
     this.props.dispatch({
       type: 'login/signin', payload: { name: this.state.phone }, callback: (data) => {
-        if(data.msg == "今天您已签到"){
+        if(data.code == 509){
           this.setState({
-          Sign_in: '已签到',
-          sign_in_bg: UColor.mainColor
+            Sign_in: true,
           })
-        }else{
-          this.setState({
-            Sign_in: '立即签到',
-            sign_in_bg: UColor.tintColor
-            })
-        } 
-        if (data.code == 0) {
+        }else if(data.code == 0) {
           EasyToast.show("签到成功");
           this.props.dispatch({ type: 'login/fetchPoint', payload: { uid: Constants.uid },callback:(data) =>{
             this.setState({
+              Sign_in: true,
               accumulative:this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout
           })
           } });
         } else {
           EasyToast.show(data.msg);
+            this.setState({
+              Sign_in: false,
+            })
         }
         EasyLoading.dismis();
       }
@@ -153,8 +129,8 @@ class SignIn extends React.Component {
             </View>
           </View>
           <Button onPress={() => this.signIn()}>
-            <View style={{ height: 45, justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }} backgroundColor={this.state.sign_in_bg}  >
-              <Text style={{ fontSize: 15, color: UColor.fontColor }}>{this.state.Sign_in}</Text>
+            <View style={{ height: 45, justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }} backgroundColor={this.state.Sign_in ? UColor.mainColor:UColor.tintColor}  >
+              <Text style={{ fontSize: 15, color: UColor.fontColor }}>{this.state.Sign_in ? "已签到": "立即签到"}</Text>
             </View>
           </Button>
           <Text style={styles.foottop}>积分细则：</Text>

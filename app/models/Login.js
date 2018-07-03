@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { capture, register, login, changePwd, userInfo, signin, fetchPoint } from '../utils/Api';
+import { capture, register, login, changePwd, userInfo, signin, fetchPoint, isSigned } from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import Constants from '../utils/Constants'
@@ -152,13 +152,29 @@ export default {
         jpush = !jpush;
       }
       yield call(store.save, 'jpush', jpush);
-    },*getJpush({ payload,callback }, { call, put }) {
+    },
+    *getJpush({ payload,callback }, { call, put }) {
       var jpush = yield call(store.get, 'jpush');
       if (jpush == null) {
         jpush = false;              
       }
       if (callback) callback({ jpush: jpush });
     },
+    *isSigned({ payload, callback }, { call, put }) {
+      try {
+        const resp = yield call(Request.request, isSigned, 'post', payload);
+        if (resp.code == 0) {
+          // const userpoint = resp.data;
+          // alert(userpoint);
+          // yield put({ type: 'update', payload: { pointInfo: resp.data } });
+          // yield call(store.save, 'userpoint',userpoint);
+        }
+        if (callback) callback(resp);
+      } catch (error) {
+        if (callback) callback({ code: 500, msg: "网络异常" });
+      }
+    },
+
   },
   // *fetchPoint({ payload }, { call, put }) {
   //   alert('fetchPoint');
