@@ -144,7 +144,10 @@ class createWallet extends React.Component {
                       }
                     }
                   });
-                }else if(data.code != '515') {
+                }else if(data.code == '511' || data.code == '515') {  // 511: 已经创建过账户， 515：账户已经被占用
+                  EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
+                  this.ExplainPopup();
+                }else { 
                   result.isactived = false
                   this.props.dispatch({
                     type: 'wallet/saveWallet', wallet: result, callback: (data) => {
@@ -154,9 +157,6 @@ class createWallet extends React.Component {
                       this.ExplainPopup();
                     }
                   }); 
-                  EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
-                  this.ExplainPopup();
-                }else { 
                   EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
                 }
