@@ -66,7 +66,7 @@ export default {
   xin0:require('../img/xin0.png'),
   xin1:require('../img/xin1.png'),
   vote:require('../img/vote.png'),
-  
+  guide:require('../img/guide.png'),
   votea:require('../img/votea.png'),
   voteb:require('../img/voteb.png'),
   votec:require('../img/votec.png'),
