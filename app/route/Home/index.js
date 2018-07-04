@@ -362,7 +362,7 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView>
-            <Image source={UImage.guide} style={styles.imgTop} />
+            <Image source={UImage.guide} style={styles.imgTop} resizeMode="contain"/>
             <Button onPress={() => this.Establish()}>
               <View style={styles.btnestablish}>
                   <Text style={styles.btntext}>创建账号</Text>
@@ -937,7 +937,7 @@ const styles = StyleSheet.create({
 
   imgTop: {
     width: maxWidth,
-    height:maxHeight/2,
+    height: maxWidth*0.72,
  },
  outsource: {
    height: 50,
