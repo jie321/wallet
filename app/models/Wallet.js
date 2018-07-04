@@ -189,8 +189,8 @@ export default {
             DeviceEventEmitter.emit('key_created');
             if(wallet.isactived){
                 yield call(store.save, 'defaultWallet', _wallet);
+                yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
             }
-            yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
             // DeviceEventEmitter.emit('wallet_backup', _wallet);
             JPushModule.addTags([_wallet.name], map => {
 
@@ -253,8 +253,10 @@ export default {
 
                 yield call(store.save, 'walletArr', walletArr);
                 DeviceEventEmitter.emit('key_created');
-                yield call(store.save, 'defaultWallet', _wallet);
-                yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
+                if(wallet.isactived){
+                    yield call(store.save, 'defaultWallet', _wallet);
+                    yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
+                }
                 // DeviceEventEmitter.emit('wallet_backup', _wallet);
                 JPushModule.addTags([_wallet.name], map => {
     
