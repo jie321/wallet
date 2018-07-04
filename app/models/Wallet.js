@@ -407,8 +407,13 @@ export default {
                         walletArr[i].balance = resp.data.replace("EOS", "");
                     }
                 }
+                yield call(store.save, 'walletArr', walletArr);
                 yield put({ type: 'updateAction', payload: { data: walletArr, ...payload } });
-                DeviceEventEmitter.emit('eos_balance', resp);
+
+                var defaultWallet = yield call(store.get, 'defaultWallet');
+                if(defaultWallet.name != null && defaultWallet.name == payload.account){
+                    DeviceEventEmitter.emit('eos_balance', resp);
+                }
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }

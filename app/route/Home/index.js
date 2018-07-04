@@ -449,7 +449,7 @@ class Home extends React.Component {
                         <Text style={styles.outname}>{rowData.name}</Text>
                         {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text>)}  
                       </View>
-                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived ? rowData.balance : '0.0000'} EOS</Text>
+                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000'} EOS</Text>
                     </View>
                   </Button> 
                 )}

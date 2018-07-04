@@ -552,24 +552,25 @@ class Route extends React.Component {
       return;
     }
 
-    for(var i = 0; i < this.props.coinList.length; i++)    this.props.dispatch({ type: 'wallet/walletList' });
-
+    for(var i = 0; i < this.props.coinList.length; i++) {
       if (this.props.coinList[i] != null && this.props.coinList[i].name != null && (this.props.coinList[i].isactived || !this.props.coinList[i].hasOwnProperty('isactived'))) {
 
         this.props.dispatch({
           type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.coinList[i].name, symbol: 'EOS' }
         })
   
-            // 其他资产
-        if(this.props.myAssets == null){
-          return;
-        }
-  
-        this.props.dispatch({
-          type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.coinList[i].name}
-        });
       }
     }
+
+    // 其他资产
+    if(this.props.myAssets == null){
+      return;
+    }
+          
+    this.props.dispatch({
+      type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}
+    });
+  }
 
   switchRoute = (prevNav, nav, action) => {
     //切换到个人中心，更新用户信息
