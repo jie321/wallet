@@ -42,13 +42,14 @@ class Home extends React.Component {
       show: false,
       init: true,
       myAssets: [],
-      totalBalance: '0.00'
+      totalBalance: '0.00',
+      increase:0
     };
   }
 
   componentDidMount() {
     this.getBalance();
-
+    this.getIncrease();
     //加载地址数据
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     this.props.dispatch({ type: 'wallet/walletList' });
@@ -92,6 +93,13 @@ class Home extends React.Component {
       }
       // this.setState({myAssets: assets});
       this.getBalance();
+    });
+
+    DeviceEventEmitter.addListener('eos_increase', (data) => {
+      if(data == null || data == undefined){
+        reurn;
+      }
+      this.setState({increase: data});
     });
 
     DeviceEventEmitter.addListener('eos_balance', (data) => {
@@ -139,6 +147,17 @@ class Home extends React.Component {
 
   setAssetBalance(asset){
     this.setState({myAssets: asset});
+  }
+
+  getIncrease(){
+    this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
+        if(data == null || data == undefined){
+          reurn;
+        }
+        if(data[0].increase){
+          this.setState({increase: data[0].increase});
+        }
+    } });
   }
 
   getBalance() { 
@@ -373,7 +392,7 @@ class Home extends React.Component {
 
                     <View style={styles.addtoout}>
                       <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
-                      {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
+                      <Text style={this.state.increase>0?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.totalBalance * this.state.increase) / 100).toFixed(2)}</Text>
                     </View>
                   </View>
                   <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
@@ -895,6 +914,16 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 3
   },
+  incup:{
+    marginLeft: 5, 
+    fontSize: 16, 
+    color: '#F25C49'
+  },
+  incdo:{
+    marginLeft: 5, 
+    fontSize: 16, 
+    color: '#25B36B'
+  }
 });
 
 export default Home;

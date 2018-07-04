@@ -12,6 +12,25 @@ export default {
         loading:false
     },
     effects: {
+      *listincrease({payload,callback},{call,put}) {
+        try{
+          
+          yield put({type:'updateLoading',payload:{loading:true}});
+          
+          const resp = yield call(Request.request,sticker,'get');
+          if(resp.code=='0'){
+              yield put({type:'update',payload:{...payload,data:resp.data}});
+              if (callback) callback(resp.data);
+          }else{
+            yield put({type:'updateLoading',payload:{loading:false}});
+            EasyToast.show(resp.msg);
+            if (callback) callback(null);
+          }
+        }catch(err){
+          yield put({type:'updateLoading',payload:{loading:false}});
+          EasyToast.show('网络发生错误，请重试');
+        }
+      },
       *list({payload,callback},{call,put}) {
         try{
           

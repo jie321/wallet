@@ -546,7 +546,15 @@ class Route extends React.Component {
       return false;
     }
   };
-
+  getIncrease(){
+    this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
+        if(data){
+           if(data[0].increase){
+            DeviceEventEmitter.emit('eos_increase', data[0].increase);
+           }
+        }
+    } });
+  }
   getBalance() { 
     if(this.props.coinList == null){
       return;
@@ -595,7 +603,8 @@ class Route extends React.Component {
       }
 
       this.timer = setInterval( ()  =>{
-        this.getBalance()
+        this.getBalance();
+        this.getIncrease();
       },30000)
     }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
       this.timer && clearTimeout(this.timer);
