@@ -178,7 +178,10 @@ class WalletDetail extends React.Component {
     }, () => { EasyDialog.dismis() });
   }
 
-  activeWallet() {
+  activeWallet(data) {
+    if(data.name.length != 12){
+      EasyToast.show('该账号格式无效，无法进行激活！');
+    }else{
     EasyDialog.dismis();
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
@@ -266,7 +269,7 @@ class WalletDetail extends React.Component {
       },
       
     });
-    
+  }
   }
 
   prot(data = {}, key){
@@ -361,7 +364,7 @@ class WalletDetail extends React.Component {
             </View>
           </Button> */}
           {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
-          <Button onPress={() => this.activeWallet()} style={{ flex: 1 }}>
+          <Button onPress={this.activeWallet.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.acttiveout}>
               <Text style={styles.delete}>激活账户</Text>
             </View>
