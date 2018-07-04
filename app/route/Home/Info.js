@@ -124,7 +124,7 @@ class Info extends React.Component {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.headbalance}>{this.state.balance}</Text>
-                    <Text style={styles.headmarket}>≈ {(this.state.balance.replace(" EOS", "")*c.value).toFixed(2)} ￥</Text>
+                    <Text style={styles.headmarket}>≈ {(this.state.balance==null || this.state.balance == "")? '0.00' : (this.state.balance.replace(" EOS", "")*c.value).toFixed(2)} ￥</Text>
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
