@@ -34,19 +34,19 @@ class ModifyPassword extends React.Component {
 
     updatePassword = () => {
 
-        if (this.setState.password == "") {
+        if (this.state.password == "") {
             EasyToast.show('请输入旧密码');
             return;
         }
-        if (this.setState.newPassword == "") {
+        if (this.state.newPassword == "") {
             EasyToast.show('请输入新密码');
             return;
         }
-        if (this.setState.newRePassword == "") {
+        if (this.state.newRePassword == "") {
             EasyToast.show('请输入确认密码');
             return;
         }
-        if (this.setState.newRePassword != this.setState.newPassword) {
+        if (this.state.newRePassword != this.state.newPassword) {
             EasyToast.show('两次密码不一致');
             return;
         }
