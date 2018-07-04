@@ -13,6 +13,7 @@ import Splash from './Splash'
 import Web from '../route/Web'
 import Coin from './Coins/Detail'
 import Login from './Login'
+import AssistantQrcode from './Login/AssistantQrcode'
 import Forget from './Login/Forget'
 import Helpcenter from './Login/Helpcenter'
 import ProblemFeedback from './Login/ProblemFeedback'
@@ -204,6 +205,9 @@ const Nav = StackNavigator(
     },
     SignIn: {
       screen: SignIn
+    },
+    AssistantQrcode: {
+      screen: AssistantQrcode
     },
     Forget: {
       screen: Forget

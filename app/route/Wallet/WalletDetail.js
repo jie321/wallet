@@ -254,11 +254,11 @@ class WalletDetail extends React.Component {
           }else {
             EasyDialog.show("EOS账号创建说明", (<View>
               <Text style={styles.inptpasstext}>1.系统检测到你当前的积分不足，无法获得免费激活账户权益；</Text>
-              <Text style={styles.inptpasstext}>2.你可以联系官方小助手进行激活，激活需缴纳一定的EOS资源费用我们将按市场浮动时时调整价格；</Text>
+              <Text style={styles.inptpasstext}>2.你可以联系官方小助手进行激活，我们将按市场行情收取一定的费用；</Text>
               <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
               <View style={styles.linkout}>
                 <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-                <Text style={styles.linktext} onPress={() => this.prot(this,'assistant')}>官方小助手</Text>
+                <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
               </View>
               </View>), "知道了", null,  () => { EasyDialog.dismis() });
           } 
@@ -274,10 +274,9 @@ class WalletDetail extends React.Component {
     if (key == 'Explain') {
       EasyDialog.dismis()
     navigate('Web', { title: "积分说明", url: "http://static.eostoken.im/html/20180703/1530587725565.html" });
-    }else  if (key == 'assistant') {
+    }else  if (key == 'EOS-TOKEN') {
       EasyDialog.dismis()
-      Clipboard.setString("EOS-TOKEN");
-      EasyToast.show('官方小助手已复制成功,请往微信添加');
+      navigate('AssistantQrcode', key);
     }
   }
 
