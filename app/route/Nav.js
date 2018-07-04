@@ -13,6 +13,7 @@ import Splash from './Splash'
 import Web from '../route/Web'
 import Coin from './Coins/Detail'
 import Login from './Login'
+import AssistantQrcode from './Login/AssistantQrcode'
 import Forget from './Login/Forget'
 import Helpcenter from './Login/Helpcenter'
 import ProblemFeedback from './Login/ProblemFeedback'
@@ -205,6 +206,9 @@ const Nav = StackNavigator(
     SignIn: {
       screen: SignIn
     },
+    AssistantQrcode: {
+      screen: AssistantQrcode
+    },
     Forget: {
       screen: Forget
     },
@@ -351,7 +355,10 @@ class Route extends React.Component {
 
   componentDidMount() {
     //调取是否有钱包账户
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+      this.props.dispatch({ type: 'wallet/walletList' });
+    } });
+
     //回到app触发检测更新
     AppState.addEventListener("change", (newState) => {
       newState === "active" && codePush.sync({ installMode: codePush.InstallMode.ON_NEXT_RESUME });
@@ -541,21 +548,28 @@ class Route extends React.Component {
   };
 
   getBalance() { 
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-
-      this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }
-      })
-
-          // 其他资产
-      if(this.props.myAssets == null){
-        return;
-      }
-
-      this.props.dispatch({
-        type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}
-      });
+    if(this.props.coinList == null){
+      return;
     }
+
+    for(var i = 0; i < this.props.coinList.length; i++) {
+      if (this.props.coinList[i] != null && this.props.coinList[i].name != null && (this.props.coinList[i].isactived || !this.props.coinList[i].hasOwnProperty('isactived'))) {
+
+        this.props.dispatch({
+          type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.coinList[i].name, symbol: 'EOS' }
+        })
+  
+      }
+    }
+
+    // 其他资产
+    if(this.props.myAssets == null){
+      return;
+    }
+          
+    this.props.dispatch({
+      type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}
+    });
   }
 
   switchRoute = (prevNav, nav, action) => {

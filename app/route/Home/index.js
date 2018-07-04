@@ -41,7 +41,8 @@ class Home extends React.Component {
       account: 'xxxx',
       show: false,
       init: true,
-      myAssets: []
+      myAssets: [],
+      totalBalance: '0.00'
     };
   }
 
@@ -50,6 +51,7 @@ class Home extends React.Component {
 
     //加载地址数据
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (data) => { 
       this.setState({myAssets: data});
     } });
@@ -94,11 +96,24 @@ class Home extends React.Component {
 
     DeviceEventEmitter.addListener('eos_balance', (data) => {
       this.setEosBalance(data);
+      this.calTotalBalance();
     });
 
     DeviceEventEmitter.addListener('asset_balance', (data) => {
       this.setAssetBalance(data);
     });
+  }
+
+  calTotalBalance(){
+    if(this.props.list == null){
+      return;
+    }
+    for(var i = 0; i < this.props.list.length; i++){
+      if(this.props.list[i].name == 'EOS' && this.props.list[i].value != null){
+        var total = (this.state.balance * this.props.list[i].value).toFixed(2);
+        this.setState({totalBalance: total});
+      }
+    }
   }
 
   componentWillUnmount(){
@@ -217,7 +232,7 @@ class Home extends React.Component {
 
   scan() {
     AnalyticsUtil.onEvent('Scavenging_transfer');
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       const { navigate } = this.props.navigation;
       navigate('BarCode', {});
     } else {
@@ -249,34 +264,32 @@ class Home extends React.Component {
 
   createWallet() {
     const { navigate } = this.props.navigation;
-    // navigate('CreateWallet', {});
     navigate('WalletManage', {});
-    // navigate('ImportEosKey', {});
     this.setState({
       modal: false
     });
-  }
-
-  walletDetail() {
-    // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
-    const { navigate } = this.props.navigation;
-    navigate('WalletManage', {});
   }
 
   changeWallet(data) {
-    this.setState({
-      modal: false
-    });
-    const { dispatch } = this.props;
-    this.props.dispatch({ type: 'wallet/changeWallet', payload: { data } });
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    if(!data.isactived && data.hasOwnProperty('isactived')){
+      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        this.WalletDetail(data);
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+    }else {
+      this.setState({
+        modal: false
+      });
+      const { dispatch } = this.props;
+      this.props.dispatch({ type: 'wallet/changeWallet', payload: { data } });
+      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    }
   }
 
   coinInfo(coinType) {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        // EasyToast.show('创建钱包');
         this.createWallet();
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
@@ -290,7 +303,6 @@ class Home extends React.Component {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        // EasyToast.show('创建钱包');
         this.createWallet();
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
@@ -299,6 +311,14 @@ class Home extends React.Component {
 
     const { navigate } = this.props.navigation;
     navigate('AssetInfo', { asset, account: this.props.defaultWallet.name });
+  }
+
+  WalletDetail(data) {
+    const { navigate } = this.props.navigation;
+    navigate('WalletDetail', { data});
+    this.setState({
+      modal: false
+    });
   }
 
   render() {
@@ -345,9 +365,14 @@ class Home extends React.Component {
               </ImageBackground>
               <View style={styles.addto}>
                   <View style={styles.addout}>
-                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) ? this.state.account : this.props.defaultWallet.name} 总资产（EOS）</Text>
+
+                    <View style={styles.topout}>
+                      <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
+                      {(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(this.props.defaultWallet != null &&this.props.defaultWallet.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+                    </View>
+
                     <View style={styles.addtoout}>
-                      <Text style={styles.addtoouttext}>={this.state.balance}</Text>
+                      <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
                       {/* <Text style={{ marginLeft: 5, fontSize: 16, color: '#98DD3E',}}>今日+{this.state.balance}</Text> */}
                     </View>
                   </View>
@@ -374,7 +399,7 @@ class Home extends React.Component {
                       <View style={styles.rightout}>
                         <View>
                           <Text style={styles.rightbalance}>{this.state.balance}</Text>
-                          <Text style={styles.rightmarket}>≈（￥）{(this.state.balance*rowData.value).toFixed(2)} </Text>
+                          <Text style={styles.rightmarket}>≈{(this.state.balance*rowData.value).toFixed(2)}（￥） </Text>
                         </View>
                         {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
                           <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />
@@ -401,7 +426,7 @@ class Home extends React.Component {
                     <View style={styles.rightout}>
                       <View>
                         <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈（￥）0.00</Text>
+                        <Text style={styles.rightmarket}>≈0.00（￥）</Text>
                       </View>
                     </View>
                   </View>
@@ -416,15 +441,17 @@ class Home extends React.Component {
             <View style={styles.touchableout}>
               <ListView initialListSize={5} style={styles.touchablelist}
                 renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-                enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.walletList == null ? [] : this.props.walletList)}
+                enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.coinList == null ? [] : this.props.coinList)}
                 renderRow={(rowData) => (
-                  (rowData.isactived || !rowData.hasOwnProperty('isactived')) ?
                   <Button onPress={this.changeWallet.bind(this, rowData)}>
-                    <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
-                      <Text style={styles.walletname}>{rowData.name}</Text>
-                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+                    <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
+                      <View style={styles.topout}>
+                        <Text style={styles.outname}>{rowData.name}</Text>
+                        {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text>)}  
+                      </View>
+                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000'} EOS</Text>
                     </View>
-                  </Button> : null
+                  </Button> 
                 )}
               />
               <View style={styles.ebhbtnout}>
@@ -563,6 +590,7 @@ const styles = StyleSheet.create({
     color: UColor.fontColor
   },
   addtoout: {
+    flex: 1,
     flexDirection: "row",
     alignItems: 'center', 
     justifyContent: "center", 
@@ -668,13 +696,60 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     height: 67,
   },
+
+
+  topout: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: 'center',
+  },
+  outname: {
+    fontSize: 14,
+    color: UColor.fontColor,
+    textAlign: 'left',
+    marginRight: 10,
+  },
+  stopoutBackups: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: '#2ACFFF',
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#2ACFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  notactived: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: UColor.showy,
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: UColor.showy,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+
+
+
+
+
   walletname: {
     color: '#EFEFEF', 
     lineHeight: 28,
   },
   walletaccount: {
+    flex:1,
+    alignItems: 'center',
     color: '#8594AB', 
-    lineHeight: 28,
   },
 
 

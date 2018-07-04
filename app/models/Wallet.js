@@ -187,7 +187,9 @@ export default {
 
             yield call(store.save, 'walletArr', walletArr);
             DeviceEventEmitter.emit('key_created');
-            yield call(store.save, 'defaultWallet', _wallet);
+            if(wallet.isactived){
+                yield call(store.save, 'defaultWallet', _wallet);
+            }
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
             // DeviceEventEmitter.emit('wallet_backup', _wallet);
             JPushModule.addTags([_wallet.name], map => {
@@ -399,7 +401,19 @@ export default {
             try {
                 const resp = yield call(Request.request, getBalance, 'post', payload);
                 if (callback) callback(resp);
-                DeviceEventEmitter.emit('eos_balance', resp);
+                const walletArr = yield call(store.get, 'walletArr');
+                for(var i = 0; i < walletArr.length; i++){
+                    if(walletArr[i].name == payload.account && resp.code == '0' && resp.data != null && resp.data != ""){
+                        walletArr[i].balance = resp.data.replace("EOS", "");
+                    }
+                }
+                yield call(store.save, 'walletArr', walletArr);
+                yield put({ type: 'updateAction', payload: { data: walletArr, ...payload } });
+
+                var defaultWallet = yield call(store.get, 'defaultWallet');
+                if(defaultWallet.name != null && defaultWallet.name == payload.account){
+                    DeviceEventEmitter.emit('eos_balance', resp);
+                }
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
@@ -407,7 +421,7 @@ export default {
         *getAccountsByPuk({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request,getAccountsByPuk,"post", payload);
-                // alert('getAccountsByPuk: '+JSON.stringify(resp));
+                alert('getAccountsByPuk: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
                     // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });

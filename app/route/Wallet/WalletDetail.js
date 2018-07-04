@@ -18,7 +18,7 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
 @connect(({ wallet, login }) => ({ ...wallet, ...login }))
-class Set extends React.Component {
+class WalletDetail extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
     return {
@@ -178,7 +178,10 @@ class Set extends React.Component {
     }, () => { EasyDialog.dismis() });
   }
 
-  activeWallet() {
+  activeWallet(data) {
+    if(data.name.length != 12){
+      EasyToast.show('该账号格式无效，无法进行激活！');
+    }else{
     EasyDialog.dismis();
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
@@ -254,11 +257,11 @@ class Set extends React.Component {
           }else {
             EasyDialog.show("EOS账号创建说明", (<View>
               <Text style={styles.inptpasstext}>1.系统检测到你当前的积分不足，无法获得免费激活账户权益；</Text>
-              <Text style={styles.inptpasstext}>2.你可以联系官方小助手进行激活，激活需缴纳一定的EOS资源费用我们将按市场浮动时时调整价格；</Text>
+              <Text style={styles.inptpasstext}>2.你可以联系官方小助手进行激活，我们将按市场行情收取一定的费用；</Text>
               <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
               <View style={styles.linkout}>
                 <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-                <Text style={styles.linktext} onPress={() => this.prot(this,'assistant')}>官方小助手</Text>
+                <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
               </View>
               </View>), "知道了", null,  () => { EasyDialog.dismis() });
           } 
@@ -266,7 +269,7 @@ class Set extends React.Component {
       },
       
     });
-    
+  }
   }
 
   prot(data = {}, key){
@@ -274,10 +277,9 @@ class Set extends React.Component {
     if (key == 'Explain') {
       EasyDialog.dismis()
     navigate('Web', { title: "积分说明", url: "http://static.eostoken.im/html/20180703/1530587725565.html" });
-    }else  if (key == 'assistant') {
+    }else  if (key == 'EOS-TOKEN') {
       EasyDialog.dismis()
-      Clipboard.setString("EOS-TOKEN");
-      EasyToast.show('官方小助手已复制成功,请往微信添加');
+      navigate('AssistantQrcode', key);
     }
   }
 
@@ -337,6 +339,7 @@ class Set extends React.Component {
 
 
   render() {
+    const c = this.props.navigation.state.params.data
     return <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View>
@@ -345,20 +348,23 @@ class Set extends React.Component {
               {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
               <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
             </View>
-            <Text style={styles.walletname}>账户名称：{this.props.navigation.state.params.data.name}</Text>
+            <View style={styles.topout}>
+              <Text style={styles.outname}>账户名称：{c.name}</Text>
+              {(!c.isactived && c.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(c.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+            </View>
           </View>
-
+          
           <View style={{ marginBottom: 50 }}>
             {this._renderListItem()}
           </View>
 
           {/* <Button onPress={() => this.backupWords()} style={{ flex: 1 }}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
-              <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>
+              <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>b
             </View>
           </Button> */}
           {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
-          <Button onPress={() => this.activeWallet()} style={{ flex: 1 }}>
+          <Button onPress={this.activeWallet.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.acttiveout}>
               <Text style={styles.delete}>激活账户</Text>
             </View>
@@ -460,6 +466,49 @@ const styles = StyleSheet.create({
     color:  UColor.arrow, 
     marginBottom: 10, 
   },
+
+
+
+  topout: {
+    flexDirection: "row",
+    flex: 1,
+  },
+  outname: {
+    fontSize: 14,
+    color: UColor.fontColor,
+    textAlign: 'left',
+    marginRight: 10,
+  },
+  stopoutBackups: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: '#2ACFFF',
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#2ACFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  notactived: {
+    height: 18,
+    lineHeight: 18,
+    fontSize: 10,
+    color: UColor.showy,
+    textAlign: 'left',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: UColor.showy,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+ 
+
   walletname: { 
     fontSize: 15, 
     color:  UColor.arrow, 
@@ -563,4 +612,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Set;
+export default WalletDetail;
