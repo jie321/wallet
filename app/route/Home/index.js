@@ -368,7 +368,7 @@ class Home extends React.Component {
 
                     <View style={styles.topout}>
                       <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
-                      {(!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(this.props.defaultWallet.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+                      {(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(this.props.defaultWallet != null &&this.props.defaultWallet.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
                     </View>
 
                     <View style={styles.addtoout}>
@@ -449,7 +449,7 @@ class Home extends React.Component {
                         <Text style={styles.outname}>{rowData.name}</Text>
                         {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text>)}  
                       </View>
-                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
+                      <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived ? rowData.balance : '0.0000'} EOS</Text>
                     </View>
                   </Button> 
                 )}
