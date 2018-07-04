@@ -403,11 +403,8 @@ export default {
                 if (callback) callback(resp);
                 const walletArr = yield call(store.get, 'walletArr');
                 for(var i = 0; i < walletArr.length; i++){
-                    if(walletArr[i].name == payload.account && resp.code == '0'){
-                        EasyToast.show("=====" + JSON.stringify(resp));
-                        if(resp.data != null){
-                            walletArr[i].balance = resp.data.replace("EOS", "");
-                        }
+                    if(walletArr[i].name == payload.account && resp.code == '0' && resp.data != null && resp.data != ""){
+                        walletArr[i].balance = resp.data.replace("EOS", "");
                     }
                 }
                 yield put({ type: 'updateAction', payload: { data: walletArr, ...payload } });
@@ -419,7 +416,7 @@ export default {
         *getAccountsByPuk({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request,getAccountsByPuk,"post", payload);
-                // alert('getAccountsByPuk: '+JSON.stringify(resp));
+                alert('getAccountsByPuk: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
                     // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
