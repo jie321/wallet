@@ -38,7 +38,7 @@ import Constants from '../utils/Constants'
 // };
 
 const requestO = (url,method, body) => {
-  let timeout=10000
+  let timeout=30000
   const request1 = new Promise((resolve, reject) => {
     fetch(url,{
         method: method,
