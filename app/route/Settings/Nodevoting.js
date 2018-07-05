@@ -12,6 +12,7 @@ import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
+const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     inptpass: {
         color: UColor.tintColor,
         height: 45,
-        width: '100%',
+        width: maxWidth-100,
         paddingBottom: 5,
         fontSize: 16,
         backgroundColor: UColor.fontColor,

@@ -13,7 +13,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import JPushModule from 'jpush-react-native';
 import JPush from '../../utils/JPush'
-
+const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
@@ -484,8 +484,8 @@ const styles = StyleSheet.create({
   },
   inptpass: {
     color: UColor.tintColor,
+    width: maxWidth-100,
     height: 45,
-    width: '100%',
     paddingBottom: 5,
     fontSize: 16,
     backgroundColor: UColor.fontColor,
