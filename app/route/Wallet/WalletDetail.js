@@ -36,6 +36,7 @@ class WalletDetail extends React.Component {
     super(props);
     this.config = [
       { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
+      { first: true, name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
       { first: true, name: "导出私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
     ];
     this.state = {
@@ -45,6 +46,9 @@ class WalletDetail extends React.Component {
       txt_active: '',
       integral: 0,
       accumulative: 0,
+      showpublickey: false,
+      txt_ownerpublic: '',
+      txt_activepublic: '',
     }
     DeviceEventEmitter.addListener('modify_password', () => {
       this.props.navigation.goBack();
@@ -71,6 +75,13 @@ class WalletDetail extends React.Component {
     let isShow = this.state.show;
     this.setState({
       show: !isShow,
+    });
+  }
+
+  _setModalVisiblePublicKey() {
+    let isShow = this.state.showpublickey;
+    this.setState({
+      showpublickey: !isShow,
     });
   }
 
@@ -113,6 +124,14 @@ class WalletDetail extends React.Component {
         }
         EasyDialog.dismis();
       }, () => { EasyDialog.dismis() });
+    } else if(key == 'ExportPublicKey') {
+      var ownerPublicKey = this.props.navigation.state.params.data.ownerPublic;
+      var activePublicKey = this.props.navigation.state.params.data.activePublic;
+      this.setState({
+        txt_activepublic: activePublicKey,
+        txt_ownerpublic: ownerPublicKey
+      });
+      this._setModalVisiblePublicKey();
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
     } else {
@@ -131,6 +150,12 @@ class WalletDetail extends React.Component {
       show: !isShow,
     });
     Clipboard.setString('OwnerPrivateKey: ' + this.state.txt_owner + "\n" + 'ActivePrivateKey: ' + this.state.txt_active);
+    EasyToast.show("复制成功")
+  }
+
+  copyPublicKey() {
+    this._setModalVisiblePublicKey();
+    Clipboard.setString('OwnerPublicKey: ' + this.state.txt_ownerpublic + "\n" + 'ActivePublicKey: ' + this.state.txt_activepublic);
     EasyToast.show("复制成功")
   }
 
@@ -395,6 +420,29 @@ class WalletDetail extends React.Component {
                 <Text style={styles.textContent}>ActivePrivateKey: {this.state.txt_active}</Text>
               </View>
               <Button onPress={() => { this.copy() }}>
+                <View style={styles.buttonView}>
+                  <Text style={styles.buttonText}>复制</Text>
+                </View>
+              </Button>
+            </View>
+          </View>
+        </Modal>
+      </View>
+      <View style={styles.pupuo}>
+        <Modal animationType='slide' transparent={true} visible={this.state.showpublickey} onShow={() => { }} onRequestClose={() => { }} >
+          <View style={styles.modalStyle}>
+            <View style={styles.subView} >
+              <Button style={{ alignItems: 'flex-end', }} onPress={this._setModalVisiblePublicKey.bind(this)}>
+                <Text style={styles.closeText}>×</Text>
+              </Button>
+              <Text style={styles.titleText}>导出公钥</Text>
+              <View style={styles.contentText}>
+                <Text style={styles.textContent}>OwnerPublicKey: {this.state.txt_ownerpublic}</Text>
+              </View>
+              <View style={styles.contentText}>
+                <Text style={styles.textContent}>ActivePublicKey: {this.state.txt_activepublic}</Text>
+              </View>
+              <Button onPress={() => { this.copyPublicKey() }}>
                 <View style={styles.buttonView}>
                   <Text style={styles.buttonText}>复制</Text>
                 </View>
