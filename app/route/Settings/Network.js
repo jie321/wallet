@@ -139,7 +139,9 @@ class Network extends React.Component {
             EasyToast.show('请输入密码');
             return;
         }
-        EasyLoading.show();
+        if(Platform.OS == 'android' ){
+            EasyLoading.show();
+        }
 
         var privateKey = this.props.defaultWallet.activePrivate;
         try {
@@ -200,7 +202,9 @@ class Network extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            EasyLoading.show();
+            if(Platform.OS == 'android' ){
+                EasyLoading.show();
+            }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
