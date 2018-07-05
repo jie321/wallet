@@ -90,7 +90,7 @@
     #endif
   
   [UMConfigure setLogEnabled:YES];
-  [RNUMConfigure initWithAppkey:@"5abddfbab27b0a2e67000060" channel:@"App Store"];
+  [RNUMConfigure initWithAppkey:@"5b3dc5def29d9844d40000e1" channel:@"App Store"];
   [MobClick setScenarioType:E_UM_NORMAL];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"eostoken"
