@@ -348,11 +348,9 @@ class createWallet extends React.Component {
               />
             </View>
             <View style={styles.inptout} >
-              <TextInput ref={(ref) => this._lnote = ref} value={this.state.passwordNote} returnKeyType="go"
-                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                placeholder="密码提示(可不填)" underlineColorAndroid="transparent" secureTextEntry={true} 
-                onChangeText={(passwordNote) => this.setState({ passwordNote })} autoFocus={false} editable={true}
-              />
+              <TextInput ref={(ref) => this._lnote = ref} value={this.state.passwordNote} selectionColor={UColor.tintColor} 
+                returnKeyType="go" placeholderTextColor={UColor.arrow} placeholder="密码提示(可不填)"  style={styles.inpt}
+                underlineColorAndroid="transparent" onChangeText={(passwordNote) => this.setState({ passwordNote })}  />
             </View>
           </View>
           <View style={styles.clauseout}>
