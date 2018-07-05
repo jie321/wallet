@@ -208,7 +208,10 @@ class WalletDetail extends React.Component {
       EasyToast.show('该账号格式无效，无法进行激活！');
     }else{
     EasyDialog.dismis();
-    EasyLoading.show();
+    if(Platform.OS == 'android' ){
+      EasyLoading.show();
+    }
+
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
         EasyLoading.dismis();
@@ -216,7 +219,7 @@ class WalletDetail extends React.Component {
           this.props.dispatch({
             type: 'login/logout', payload: {}, callback: () => {
               EasyDialog.show("EOS账号创建说明", (<View>
-                <Text style={styles.inptpasstext}>激活账户需达到{this.state.integral}积分，请先登录EosToken；</Text>
+                <Text style={styles.inptpasstext}>免费激活账户需达到{this.state.integral}积分，请先登录EosToken；</Text>
                 <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
                 </View>), "知道了", null,  () => { EasyDialog.dismis() });
               return;
