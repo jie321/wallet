@@ -105,6 +105,7 @@ class ModifyPassword extends React.Component {
                     words: _words.toString(),
                     words_active: _words_active.toString(),
                     salt: wallet.salt,
+                    isactived: wallet.isactived,
                     isBackups: wallet.isBackups
                 }
                 const { dispatch } = this.props;

@@ -13,7 +13,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import JPushModule from 'jpush-react-native';
 import JPush from '../../utils/JPush'
-
+const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
@@ -208,6 +208,7 @@ class WalletDetail extends React.Component {
       EasyToast.show('该账号格式无效，无法进行激活！');
     }else{
     EasyDialog.dismis();
+    EasyLoading.show();
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
         EasyLoading.dismis();
@@ -282,7 +283,8 @@ class WalletDetail extends React.Component {
           }else {
             EasyDialog.show("EOS账号创建说明", (<View>
               <Text style={styles.inptpasstext}>1.系统检测到你当前的积分不足，无法获得免费激活账户权益；</Text>
-              <Text style={styles.inptpasstext}>2.你可以联系官方小助手进行激活，我们将按市场行情收取一定的费用；</Text>
+              <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
+              <Text style={styles.inptpasstext}>3.你可以联系官方小助手购买积分进行激活；</Text>
               <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
               <View style={styles.linkout}>
                 <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
@@ -291,8 +293,7 @@ class WalletDetail extends React.Component {
               </View>), "知道了", null,  () => { EasyDialog.dismis() });
           } 
         }
-      },
-      
+      }, 
     });
   }
   }
@@ -484,8 +485,8 @@ const styles = StyleSheet.create({
   },
   inptpass: {
     color: UColor.tintColor,
+    width: maxWidth-100,
     height: 45,
-    width: '100%',
     paddingBottom: 5,
     fontSize: 16,
     backgroundColor: UColor.fontColor,

@@ -153,7 +153,12 @@ class createWallet extends React.Component {
                   this.props.dispatch({
                     type: 'wallet/saveWallet', wallet: result, callback: (data) => {
                       DeviceEventEmitter.emit('updateDefaultWallet');
-                      this.props.navigation.goBack();
+                      if(this.props.navigation.state.params.entry == "wallet_home"){
+                        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
+                          this.props.navigation.goBack();
+                        }});
+                      }
+                
                       // const { navigate } = this.props.navigation;
                       this.ExplainPopup();
                     }
