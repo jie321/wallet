@@ -33,6 +33,8 @@ class createWallet extends React.Component {
       medium: UColor.arrow,
       strong: UColor.arrow,
       CreateButton:  UColor.mainColor,
+      errorcode: '',
+      errormsg: '',
     }
   }
 
@@ -127,13 +129,14 @@ class createWallet extends React.Component {
             result.salt = salt;
             this.props.dispatch({
               type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
+                this.setState({errorcode: data.code,errormsg: data.msg});
                 if (data.code == '0') {
                   result.isactived = true
                   this.props.dispatch({
                     type: 'wallet/saveWallet', wallet: result, callback: (data,error) => {
                       DeviceEventEmitter.emit('updateDefaultWallet');
                       if (error != null) {
-                        EasyToast.show('生成账号失败：' + error);
+                        // EasyToast.show('生成账号失败：' + error);
                         this.ExplainPopup();
                       } else {
                         EasyToast.show('生成账号成功');
@@ -146,7 +149,7 @@ class createWallet extends React.Component {
                     }
                   });
                 }else if(data.code == '511' || data.code == '515') {  // 511: 已经创建过账户， 515：账户已经被占用
-                  EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
+                  // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
                 }else { 
                   result.isactived = false
@@ -158,12 +161,11 @@ class createWallet extends React.Component {
                           this.props.navigation.goBack();
                         }});
                       }
-                
                       // const { navigate } = this.props.navigation;
                       this.ExplainPopup();
                     }
                   }); 
-                  EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
+                  // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
                 }
               }
@@ -186,7 +188,11 @@ class createWallet extends React.Component {
 
   ExplainPopup(){
   EasyDialog.show("EOS账号创建说明", (<View>
-     <Text style={styles.inptpasstext}>1.如果你没有注册EosToken账号，创建的EOS钱包将 无法激活</Text>
+     <View style={{flexDirection: 'row', marginBottom: 10,}}>
+       <Text style={{textAlign: 'left', color: UColor.showy, flex: 1}}>生成账号失败：{this.state.errormsg}</Text>
+       <Text style={{textAlign: 'right', color: UColor.showy,}}>错误码：{this.state.errorcode}</Text>
+     </View>
+     <Text style={styles.inptpasstext}>1.如果你没有注册EosToken账号，创建的EOS钱包将无法激活</Text>
      <Text style={styles.inptpasstext}>2.激活EOS钱包需达到{this.state.integral}点积分（每个用户仅限一个）</Text>
      <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
      <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>
