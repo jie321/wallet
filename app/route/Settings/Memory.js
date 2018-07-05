@@ -67,7 +67,7 @@ class Memory extends React.Component {
               })
             } else {
               account: this.props.defaultWallet.name,
-              this.setState({ balance: data.data.replace(" EOS", ""), })
+              this.setState({ balance: data.data.replace("EOS", ""), })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);

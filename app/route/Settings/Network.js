@@ -58,7 +58,7 @@ class Network extends React.Component {
               })
             } else {
               account: this.props.defaultWallet.name,
-              this.setState({ balance: data.data.replace(" EOS", ""), })
+              this.setState({ balance: data.data.replace("EOS", ""), })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
@@ -106,8 +106,8 @@ class Network extends React.Component {
     getAccountInfo(){
         this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
             this.setState({
-                staked:(data.total_resources.net_weight? data.total_resources.net_weight.replace(" EOS", "") : "0"),
-                unstaking:(data.refund_request?data.refund_request.net_amount.replace(" EOS", "") : "0"),
+                staked:(data.total_resources.net_weight? data.total_resources.net_weight.replace("EOS", "") : "0"),
+                unstaking:(data.refund_request?data.refund_request.net_amount.replace("EOS", "") : "0"),
                 used:(data.net_limit.used / 1024).toFixed(3),
                 available:(data.net_limit.available / 1024).toFixed(3),
             });

@@ -56,7 +56,7 @@ class Nodevoting extends React.Component {
               })
             } else {
               account: this.props.defaultWallet.name,
-              this.setState({ balance: data.data.replace(" EOS", ""), })
+              this.setState({ balance: data.data.replace("EOS", ""), })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
@@ -70,8 +70,8 @@ class Nodevoting extends React.Component {
                 this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
                     // alert("----------" + JSON.stringify(data));
                     this.setState({
-                        delegate_net:data.total_resources.net_weight.replace(" EOS", ""),
-                        delegate_cpu:data.total_resources.cpu_weight.replace(" EOS", ""),
+                        delegate_net:data.total_resources.net_weight.replace("EOS", ""),
+                        delegate_cpu:data.total_resources.cpu_weight.replace("EOS", ""),
                     });
                 } });
 
@@ -79,8 +79,8 @@ class Nodevoting extends React.Component {
                     // alert("getundelegatebwInfo1: " + (data.rows.length));
                     if(data.rows.length > 0){
                         this.setState({
-                            undelegate_net:data.rows[0].net_amount.replace(" EOS", ""),
-                            undelegate_cpu:data.rows[0].cpu_amount.replace(" EOS", ""),
+                            undelegate_net:data.rows[0].net_amount.replace("EOS", ""),
+                            undelegate_cpu:data.rows[0].cpu_amount.replace("EOS", ""),
                         });
                     }
                     EasyLoading.dismis();
