@@ -50,7 +50,7 @@ export default {
                     yield call(store.save, 'myAssets', myAssets);
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
                     if(callback) callback(myAssets);
-                    DeviceEventEmitter.emit('updateMyAssets', payload);
+                    // DeviceEventEmitter.emit('updateMyAssets', payload);
                     return;
                 }
             }
@@ -72,7 +72,7 @@ export default {
         yield call(store.save, 'myAssets', myAssets);
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         if(callback) callback(myAssets);
-        DeviceEventEmitter.emit('updateMyAssets', payload);
+        // DeviceEventEmitter.emit('updateMyAssets', payload);
      },
      *myAssetInfo({payload, callback},{call,put}){
         const myAssets = yield call(store.get, 'myAssets');
@@ -115,6 +115,8 @@ export default {
                     item.balance = resp.data;
                 }
             }
+            yield call(store.save, 'myAssets', payload.assets);
+            yield put({ type: 'updateMyAssets', payload: {myAssets: payload.assets} });
             if(callback){
                 callback(payload.assets);
             }

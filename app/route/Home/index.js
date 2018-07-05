@@ -41,7 +41,7 @@ class Home extends React.Component {
       account: 'xxxx',
       show: false,
       init: true,
-      myAssets: [],
+      // myAssets: [],
       totalBalance: '0.00',
       increase:0,
     };
@@ -54,7 +54,7 @@ class Home extends React.Component {
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (data) => { 
-      this.setState({myAssets: data});
+      // this.setState({myAssets: data});
     } });
     Animated.timing(
       this.state.fadeAnim,  //初始值
@@ -75,25 +75,25 @@ class Home extends React.Component {
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
-    DeviceEventEmitter.addListener('updateMyAssets', (data) => {
-      for (var i = 0; i < this.state.myAssets.length; i++) {
-        if (this.state.myAssets[i].asset.name == data.asset.name) {
-            if(data.value){ // 添加资产,  但资产已存在
-              // 添加资产
-              var _asset = {
-              asset: data.asset,
-              value: data.value,
-              balance: '0',
-              }
-              this.state.myAssets[this.state.myAssets.length] = _asset;
-            }else{ // 删除资产
-              this.state.myAssets.splice(i, 1);
-            }
-        }
-      }
+    // DeviceEventEmitter.addListener('updateMyAssets', (data) => {
+      // for (var i = 0; i < this.state.myAssets.length; i++) {
+      //   if (this.state.myAssets[i].asset.name == data.asset.name) {
+      //       if(data.value){ // 添加资产,  但资产已存在
+      //         // 添加资产
+      //         var _asset = {
+      //         asset: data.asset,
+      //         value: data.value,
+      //         balance: '0',
+      //         }
+      //         this.state.myAssets[this.state.myAssets.length] = _asset;
+      //       }else{ // 删除资产
+      //         this.state.myAssets.splice(i, 1);
+      //       }
+      //   }
+      // }
       // this.setState({myAssets: assets});
-      this.getBalance();
-    });
+      // this.getBalance();
+    // });
 
     DeviceEventEmitter.addListener('eos_increase', (data) => {
       if(data == null || data == undefined){
@@ -107,9 +107,9 @@ class Home extends React.Component {
       this.calTotalBalance();
     });
 
-    DeviceEventEmitter.addListener('asset_balance', (data) => {
-      this.setAssetBalance(data);
-    });
+    // DeviceEventEmitter.addListener('asset_balance', (data) => {
+      // this.setAssetBalance(data);
+    // });
   }
 
   calTotalBalance(){
@@ -145,9 +145,9 @@ class Home extends React.Component {
     }
   }
 
-  setAssetBalance(asset){
-    this.setState({myAssets: asset});
-  }
+  // setAssetBalance(asset){
+  //   this.setState({myAssets: asset});
+  // }
 
   getIncrease(){
     this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
@@ -189,7 +189,7 @@ class Home extends React.Component {
 
     this.props.dispatch({
       type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
-        this.setAssetBalance(data);
+        // this.setAssetBalance(data);
       }
     });
   }
@@ -419,7 +419,7 @@ class Home extends React.Component {
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
-                  <Text style={this.state.increase>=0?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.totalBalance * this.state.increase) / 100).toFixed(2)}</Text>
+                  <Text style={this.state.increase>=0?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "-") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))}</Text>
                 </View>
               </View>
               <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
@@ -459,7 +459,7 @@ class Home extends React.Component {
           />   
         </View>
         <ListView initialListSize={1} enableEmptySections={true} 
-          dataSource={this.state.dataSource.cloneWithRows(this.state.myAssets == null ? [] : this.state.myAssets)} 
+          dataSource={this.state.dataSource.cloneWithRows(this.props.myAssets == null ? [] : this.props.myAssets)} 
           renderRow={(rowData, sectionID, rowID) => (      
             <View style={styles.listItem}>
               <Button onPress={this.assetInfo.bind(this, rowData)}>

@@ -406,15 +406,15 @@ export default {
                 for(var i = 0; i < walletArr.length; i++){
                     if(walletArr[i].name == payload.account && resp.code == '0' && resp.data != null && resp.data != ""){
                         walletArr[i].balance = resp.data.replace("EOS", "");
+                        var defaultWallet = yield call(store.get, 'defaultWallet');
+                        if(defaultWallet.name != null && defaultWallet.name == payload.account){
+                            DeviceEventEmitter.emit('eos_balance', resp);
+                        }
                     }
                 }
                 yield call(store.save, 'walletArr', walletArr);
                 yield put({ type: 'updateAction', payload: { data: walletArr, ...payload } });
 
-                var defaultWallet = yield call(store.get, 'defaultWallet');
-                if(defaultWallet.name != null && defaultWallet.name == payload.account){
-                    DeviceEventEmitter.emit('eos_balance', resp);
-                }
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
