@@ -208,6 +208,7 @@ class WalletDetail extends React.Component {
       EasyToast.show('该账号格式无效，无法进行激活！');
     }else{
     EasyDialog.dismis();
+    EasyLoading.show();
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
         EasyLoading.dismis();
@@ -291,8 +292,7 @@ class WalletDetail extends React.Component {
               </View>), "知道了", null,  () => { EasyDialog.dismis() });
           } 
         }
-      },
-      
+      }, 
     });
   }
   }
