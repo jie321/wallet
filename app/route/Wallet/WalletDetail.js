@@ -37,7 +37,7 @@ class WalletDetail extends React.Component {
     this.config = [
       { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
       { first: true, name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
-      { first: true, name: "导出私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { name: "导出私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
     ];
     this.state = {
       password: '',
