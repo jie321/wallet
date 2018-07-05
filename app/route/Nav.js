@@ -589,21 +589,17 @@ class Route extends React.Component {
     }
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
-        if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
-          // this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-          // if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
-            this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}, callback: (data) => {  
+      if(this.props.coinList == null || this.props.coinList.length == 0){
+        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}, callback: (data) => {  
              
-              if (action && action.routeName) {
-                DeviceEventEmitter.emit('changeTab', action.routeName);
-              }
-              routeLength = nav.routes.length;
-            }
-            });
-            this.timer && clearTimeout(this.timer);
-        //   }
-        //   }
-        // });
+          if (action && action.routeName) {
+            DeviceEventEmitter.emit('changeTab', action.routeName);
+          }
+          routeLength = nav.routes.length;
+        }
+        });
+        this.timer && clearTimeout(this.timer);
+
       }else{
         this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
           this.timer = setInterval( ()  =>{

@@ -342,7 +342,7 @@ class Home extends React.Component {
 
   Establish() {
     const { navigate } = this.props.navigation;
-    navigate('CreateWallet', {});
+    navigate('CreateWallet', {entry: "wallet_home"});
   }
   
   Import() {
