@@ -86,4 +86,5 @@ export default {
   Invitation_vote:require('../img/Invitation_vote.png'),
   turnin_share:require('../img/turninshare.png'),
   turnin_head:require('../img/turninhead.png'),
+  transfer:require('../img/transfer.png'),
 }

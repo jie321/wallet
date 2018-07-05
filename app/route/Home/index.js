@@ -224,8 +224,8 @@ class Home extends React.Component {
         return;
       }
       navigate('Bvote', {data, balance: this.state.balance});
-    }else if (key == 'sweet') {
-      navigate('Web', { title: "糖果信息总汇", url: "https://www.eosdrops.io/" });
+    }else if (key == 'transfer') {
+      navigate('TurnOut', { coins:'EOS', balance: this.state.balance });
     }else if (key == 'Resources') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
@@ -390,10 +390,10 @@ class Home extends React.Component {
                   <Text style={styles.headbtntext}>收币</Text>
                 </View>
               </Button>
-              <Button onPress={this.onPress.bind(this, 'sweet')} style={styles.headbtn}>
+              <Button onPress={this.onPress.bind(this, 'transfer')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>
-                  <Image source={UImage.candy} style={styles.imgBtn} />
-                  <Text style={styles.headbtntext}>领取糖果</Text>
+                  <Image source={UImage.transfer} style={styles.imgBtn} />
+                  <Text style={styles.headbtntext}>转账</Text>
                 </View>
               </Button>
               <Button onPress={this.onPress.bind(this, 'Bvote')} style={styles.headbtn}>
