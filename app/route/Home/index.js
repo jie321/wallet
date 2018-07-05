@@ -44,7 +44,6 @@ class Home extends React.Component {
       myAssets: [],
       totalBalance: '0.00',
       increase:0,
-      guide: false,
     };
   }
 
@@ -111,12 +110,6 @@ class Home extends React.Component {
     DeviceEventEmitter.addListener('asset_balance', (data) => {
       this.setAssetBalance(data);
     });
-
-    if((this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')))){
-      this.state.guide = true;  
-    }else{
-      this.state.guide = false; 
-    }
   }
 
   calTotalBalance(){
@@ -358,11 +351,11 @@ class Home extends React.Component {
   }
 
   render() {
-  if(this.state.guide){
+  if(this.props.guide){
     return (
       <View style={styles.container}>
         <ScrollView>
-            <Image source={UImage.guide} style={styles.imgTop} />
+            <Image source={UImage.guide} style={styles.imgTop} resizeMode="contain"/>
             <Button onPress={() => this.Establish()}>
               <View style={styles.btnestablish}>
                   <Text style={styles.btntext}>创建账号</Text>
@@ -426,7 +419,7 @@ class Home extends React.Component {
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
-                  <Text style={this.state.increase>0?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.totalBalance * this.state.increase) / 100).toFixed(2)}</Text>
+                  <Text style={this.state.increase>=0?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.totalBalance * this.state.increase) / 100).toFixed(2)}</Text>
                 </View>
               </View>
               <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
@@ -937,7 +930,7 @@ const styles = StyleSheet.create({
 
   imgTop: {
     width: maxWidth,
-    height:maxHeight/2,
+    height: maxWidth*0.72,
  },
  outsource: {
    height: 50,

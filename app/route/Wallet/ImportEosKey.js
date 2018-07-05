@@ -234,6 +234,7 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
                       EasyToast.show('导入私钥失败：' + data.error);
                     } else {
                       EasyToast.show('导入私钥成功！');
+                      this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
                       DeviceEventEmitter.emit('updateDefaultWallet');
                       this.props.navigation.goBack();
                                     

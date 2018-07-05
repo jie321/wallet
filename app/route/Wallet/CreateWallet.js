@@ -137,6 +137,7 @@ class createWallet extends React.Component {
                         this.ExplainPopup();
                       } else {
                         EasyToast.show('生成账号成功');
+                        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
                         DeviceEventEmitter.emit('updateDefaultWallet');
                         this.props.navigation.goBack();
                         // const { navigate } = this.props.navigation;

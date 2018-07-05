@@ -399,7 +399,6 @@ export default {
             }
         }, 
         *getBalance({ payload, callback }, { call, put }) {
-            // alert('getBalance: '+JSON.stringify(payload));
             try {
                 const resp = yield call(Request.request, getBalance, 'post', payload);
                 if (callback) callback(resp);
@@ -423,7 +422,6 @@ export default {
         *getAccountsByPuk({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request,getAccountsByPuk,"post", payload);
-                alert('getAccountsByPuk: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
                     // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
@@ -441,7 +439,6 @@ export default {
             try{
                 const resp = yield call(Request.request,getActions,"post", payload);
                 // alert('getTradeDetails: '+JSON.stringify(resp));
-               
                 if(resp.code=='0'){               
                     // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
                     yield put({ type: 'updateDetails', payload: { DetailsData:resp.data } });
@@ -471,6 +468,10 @@ export default {
                 EasyToast.show('网络发生错误，请重试');
             }
          },
+         *updateGuideState({payload, callback},{call,put}) {
+            yield put({ type: 'updateGuide', payload: { guide: payload.guide } });
+            if (callback) callback(payload);
+         },
     },
     reducers: {
         update(state, action) {
@@ -488,8 +489,10 @@ export default {
             return { ...state, ...action.payload };
         },
         updateDetails(state, action) {
-            //  alert('getTradeDetails: '+JSON.stringify(action.payload.DetailsData.actions));
             return {...state,DetailsData:action.payload.DetailsData.actions};
         },
+        updateGuide(state, action){
+            return { ...state, ...action.payload };
+        }
     }
 }
