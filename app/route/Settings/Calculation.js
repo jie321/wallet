@@ -46,6 +46,7 @@ class Calculation extends React.Component {
             unstaking: '0', // 赎回中的
             used: '0', // 已使用的
             available: '0', // 可用的
+            show: false,
         };
     }
 
@@ -113,6 +114,14 @@ class Calculation extends React.Component {
         } });
     } 
 
+    // 显示/隐藏 modal  
+    _setModalVisible() {
+        let isShow = this.state.show;
+        this.setState({
+        show: !isShow,
+        });
+    }
+
     // 抵押
     delegatebw = () => {
         if(!this.props.defaultWallet){
@@ -161,8 +170,14 @@ class Calculation extends React.Component {
                         this.getAccountInfo();
                         EasyToast.show("抵押成功");
                     }else{
-                        var errmsg = "抵押失败: "+ JSON.stringify(r);
-                        alert(errmsg);
+                        // var errmsg = "抵押失败: ";
+                        // if(r.data){
+                        //     if(r.data.msg){
+                        //         errmsg += r.data.msg;
+                        //     }
+                        // }
+                        // EasyToast.show(errmsg);
+                        this._setModalVisible();
                     }
                 });
             } else {
@@ -225,8 +240,14 @@ class Calculation extends React.Component {
                             this.getAccountInfo();
                             EasyToast.show("赎回成功");
                         }else{
-                            var errmsg = "赎回失败: "+ JSON.stringify(r);
-                            alert(errmsg);
+                            // var errmsg = "抵押失败: ";
+                            // if(r.data){
+                            //     if(r.data.msg){
+                            //         errmsg += r.data.msg;
+                            //     }
+                            // }
+                            // EasyToast.show(errmsg);
+                            this._setModalVisible();
                         }
                     })
                 } else {
@@ -363,6 +384,26 @@ class Calculation extends React.Component {
                         </TouchableOpacity>
                     </ScrollView>  
                 </KeyboardAvoidingView> 
+                <View style={styles.pupuo}>
+                    <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+                    <View style={styles.modalStyle}>
+                        <View style={styles.subView} >
+                        <Button style={{ alignItems: 'flex-end', }} onPress={this._setModalVisible.bind(this)}>
+                            <Text style={styles.closeText}>×</Text>
+                        </Button>
+                        <Text style={styles.titleText}>资源受限</Text>
+                        <View style={styles.contentText}>
+                            <Text style={styles.textContent}>抱歉,该账号资源(NET/CPU)不足以支持本次操作,请设置小的额度尝试或联系身边的朋友帮你抵押。</Text>
+                        </View>
+                        <Button onPress={() => { this._setModalVisible() }}>
+                            <View style={styles.buttonView}>
+                            <Text style={styles.buttonText}>知道了</Text>
+                            </View>
+                        </Button>
+                        </View>
+                    </View>
+                    </Modal>
+                </View>
             </View>
         );
     }
@@ -515,6 +556,69 @@ const styles = StyleSheet.create({
         fontSize: 12, 
         color: UColor.arrow,  
         lineHeight: 25,
+    },
+    pupuo: {
+        backgroundColor: '#ECECF0',
+      },
+      // modal的样式  
+      modalStyle: {
+        backgroundColor: UColor.mask,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+      },
+      // modal上子View的样式  
+      subView: {
+        marginLeft: 10,
+        marginRight: 10,
+        backgroundColor:  UColor.fontColor,
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        borderRadius: 10,
+        borderWidth: 0.5,
+        borderColor: UColor.baseline,
+      },
+      closeText: {
+        width: 30,
+        height: 30,
+        marginBottom: 0,
+        color: '#CBCBCB',
+        fontSize: 28,
+      },
+       // 标题  
+    titleText: {
+        color: '#000000',
+        marginBottom: 5,
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    // 内容  
+  contentText: {
+    margin: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: "row",
+  },
+  textContent: {
+    color: '#999999',
+    fontSize: 14,
+    textAlign: 'left',
+    lineHeight: 25,
+  },
+  // 按钮  
+  buttonView: {
+    margin: 10,
+    height: 46,
+    borderRadius: 6,
+    backgroundColor:  UColor.showy,
+    justifyContent: 'center',
+    alignItems: 'center'
+    },
+    buttonText: {
+    fontSize: 16,
+    color:  UColor.fontColor,
     }
 
     
