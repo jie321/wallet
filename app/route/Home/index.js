@@ -44,7 +44,6 @@ class Home extends React.Component {
       myAssets: [],
       totalBalance: '0.00',
       increase:0,
-      guide: false,
     };
   }
 
@@ -111,12 +110,6 @@ class Home extends React.Component {
     DeviceEventEmitter.addListener('asset_balance', (data) => {
       this.setAssetBalance(data);
     });
-
-    if((this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')))){
-      this.state.guide = true;  
-    }else{
-      this.state.guide = false; 
-    }
   }
 
   calTotalBalance(){
@@ -358,7 +351,7 @@ class Home extends React.Component {
   }
 
   render() {
-  if(this.state.guide){
+  if(this.props.guide){
     return (
       <View style={styles.container}>
         <ScrollView>
