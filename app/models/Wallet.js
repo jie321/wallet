@@ -187,7 +187,7 @@ export default {
 
             yield call(store.save, 'walletArr', walletArr);
             DeviceEventEmitter.emit('key_created');
-            if(wallet.isactived){
+            if(wallet.isactived || (walletArr.length == 1)){
                 yield call(store.save, 'defaultWallet', _wallet);
                 yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
             }
@@ -253,7 +253,7 @@ export default {
 
                 yield call(store.save, 'walletArr', walletArr);
                 DeviceEventEmitter.emit('key_created');
-                if(wallet.isactived){
+                if(wallet.isactived || (walletArr.length == 1)){
                     yield call(store.save, 'defaultWallet', _wallet);
                     yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
                 }
