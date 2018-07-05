@@ -283,7 +283,8 @@ class WalletDetail extends React.Component {
           }else {
             EasyDialog.show("EOS账号创建说明", (<View>
               <Text style={styles.inptpasstext}>1.系统检测到你当前的积分不足，无法获得免费激活账户权益；</Text>
-              <Text style={styles.inptpasstext}>2.你可以联系官方小助手进行激活，我们将按市场行情收取一定的费用；</Text>
+              <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
+              <Text style={styles.inptpasstext}>3.你可以联系官方小助手购买积分进行激活；</Text>
               <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
               <View style={styles.linkout}>
                 <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
