@@ -101,7 +101,7 @@ const TabContainer = TabNavigator(
         return (<Image source={iconName} style={{ width: 20, height: 20, padding: 0 }} />);
       },
     }),
-    initialRouteName: "Coins",
+    initialRouteName: "News",
     lazy: true,
     tabBarPosition: 'bottom',
     swipeEnabled: false,

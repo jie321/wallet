@@ -419,7 +419,7 @@ class Home extends React.Component {
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
-                  <Text style={this.state.increase>=0?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "-") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))}</Text>
+                  <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))}</Text>
                 </View>
               </View>
               <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
