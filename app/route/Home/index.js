@@ -52,20 +52,10 @@ class Home extends React.Component {
     this.getIncrease();
     //加载地址数据
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-    this.props.dispatch({ type: 'wallet/walletList', callback: (walletList) => {
-
-      var noValidWalletList = [];
-      for(var i = 0; i < walletList.length; i++){
-        if(walletList[i].name.length < 12 || walletList[i].name.left == "genesisblock"){
-          noValidWalletList.push(walletList);
-        }
-      }
-      if(noValidWalletList.length != 0){
-        // 提示删除无效钱包
-
-      }
-
-    } });
+    this.props.dispatch({ type: 'wallet/walletList' });
+    this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
+      alert(JSON.stringify(invalidWalletList));
+    }});
     this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (data) => { 
       // this.setState({myAssets: data});
     } });

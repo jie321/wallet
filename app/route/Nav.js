@@ -607,6 +607,7 @@ class Route extends React.Component {
         this.timer && clearTimeout(this.timer);
 
       }else{
+        this.props.dispatch({ type: 'wallet/scanInvalidWallet'});
         this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
           this.timer = setInterval( ()  =>{
             this.getBalance();

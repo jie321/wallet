@@ -474,6 +474,21 @@ export default {
             yield put({ type: 'updateGuide', payload: { guide: payload.guide } });
             if (callback) callback(payload);
          },
+         *scanInvalidWallet({},{call,put}) {
+            const walletArr = yield call(store.get, 'walletArr');
+            var invalidWalletArr = [];
+            for(var i = 0; i < walletArr.length; i++){
+              if(walletArr[i].name.length < 12 || walletArr[i].name == "genesisblock"){
+                invalidWalletArr.push(walletArr[i]);
+              }
+            }
+            yield call(store.save, 'invalidWalletArr', invalidWalletArr);
+         },
+         *invalidWalletList({ callback }, { call, put }) {
+            const invalidWalletArr = yield call(store.get, 'invalidWalletArr');
+            yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr } });
+            if(callback) callback(invalidWalletArr);
+        }, 
     },
     reducers: {
         update(state, action) {
@@ -495,6 +510,9 @@ export default {
         },
         updateGuide(state, action){
             return { ...state, ...action.payload };
-        }
+        },
+        updateInvalidWalletArr(state, action) {
+            return { ...state, ...action.payload };
+        },
     }
 }
