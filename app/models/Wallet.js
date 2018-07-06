@@ -299,10 +299,10 @@ export default {
             yield call(store.save, 'defaultWallet', _wallet);
             DeviceEventEmitter.emit('prikey_imported', _wallet);
         },
-        *walletList({ payload }, { call, put }) {
+        *walletList({ payload, callback }, { call, put }) {
             const walletArr = yield call(store.get, 'walletArr');
             yield put({ type: 'updateAction', payload: { data: walletArr, ...payload } });
-
+            if(callback) callback(walletArr);
         }, 
         *getWalletDetail({ payload }, { call, put }) {
             const walletArr = yield call(store.get, 'walletArr');
