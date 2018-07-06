@@ -148,7 +148,29 @@ class Memory extends React.Component {
         show: !isShow,
         });
     }
-
+    chkPrice(obj) {
+        obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
+        obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
+        obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
+        obj = obj
+          .replace(".", "$#$")
+          .replace(/\./g, "")
+          .replace("$#$", ".");
+        obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
+        var max = 9999999999.9999;  // 100亿 -1
+        var min = 0.0000;
+        var value = 0.0000;
+        try {
+          value = parseFloat(obj);
+        } catch (error) {
+          value = 0.0000;
+        }
+        if(value < min|| value > max){
+          EasyToast.show("输入错误");
+          obj = "";
+        }
+        return obj;
+      }
     buyram = (rowData) => { // 选中用户
         if(!this.props.defaultWallet){
             EasyToast.show('请先创建钱包');
@@ -339,8 +361,8 @@ class Memory extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                                    placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric" 
-                                    onChangeText={(buyRamAmount) => this.setState({ buyRamAmount })}
+                                    placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount)})}
                                     />
                                     <Button onPress={this.buyram.bind()}>
                                         <View style={styles.botn}>
@@ -354,8 +376,8 @@ class Memory extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
-                                    placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="numeric"
-                                    onChangeText={(sellRamBytes) => this.setState({ sellRamBytes })}
+                                    placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes)})}
                                     />
                                     <Button onPress={this.sellram.bind()}>
                                         <View style={styles.botn}>

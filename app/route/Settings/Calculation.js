@@ -121,7 +121,29 @@ class Calculation extends React.Component {
         show: !isShow,
         });
     }
-
+    chkPrice(obj) {
+        obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
+        obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
+        obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
+        obj = obj
+          .replace(".", "$#$")
+          .replace(/\./g, "")
+          .replace("$#$", ".");
+        obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
+        var max = 9999999999.9999;  // 100亿 -1
+        var min = 0.0000;
+        var value = 0.0000;
+        try {
+          value = parseFloat(obj);
+        } catch (error) {
+          value = 0.0000;
+        }
+        if(value < min|| value > max){
+          EasyToast.show("输入错误");
+          obj = "";
+        }
+        return obj;
+      }
     // 抵押
     delegatebw = () => {
         if(!this.props.defaultWallet){
@@ -350,8 +372,8 @@ class Calculation extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                    placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric" 
-                                    onChangeText={(delegatebw) => this.setState({ delegatebw })}
+                                    placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(delegatebw) => this.setState({ delegatebw: this.chkPrice(delegatebw)})}
                                     />
                                     <Button onPress={this.delegatebw.bind()}>
                                         <View style={styles.botn}>
@@ -365,8 +387,8 @@ class Calculation extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegatebw} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                    placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric" 
-                                    onChangeText={(undelegatebw) => this.setState({ undelegatebw })}
+                                    placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(undelegatebw) => this.setState({ undelegatebw: this.chkPrice(undelegatebw)})}   
                                     />
                                     <Button onPress={this.undelegatebw.bind()}>
                                         <View style={styles.botn}>
