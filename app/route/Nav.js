@@ -454,12 +454,18 @@ class Route extends React.Component {
  
       if(result.toaccount){
         this.setState({turnintoaccount:result.toaccount});
+      }else{
+        this.setState({turnintoaccount:""});
       }
       if(result.amount){
         this.setState({turninamount:result.amount});
+      }else{
+        this.setState({turninamount:""});
       }
       if(result.symbol){
         this.setState({turninsymbol:result.symbol});
+      }else{
+        this.setState({turninamount:""});
       }
 
       this.state.vtransformY = new Animated.Value(200);
