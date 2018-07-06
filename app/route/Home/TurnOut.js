@@ -66,7 +66,7 @@ class TurnOut extends React.Component {
             if (data.data == "") {
                 this.setState({ balance: '0.0000' })
             } else {
-                this.setState({ balance: data.data })
+                this.setState({ balance: data.data.replace("EOS", "") })
             }
         } else {
             EasyToast.show('获取余额失败：' + data.msg);
