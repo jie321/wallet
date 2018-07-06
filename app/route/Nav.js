@@ -809,7 +809,10 @@ class Route extends React.Component {
                     
                       <View style={{ padding: 10, }}>
                         <Image source={UImage.turnin_head} resizeMode="stretch" style={{ width: '100%', height:50 }} />
-                        <Text style={{fontSize: 30, color:"#000000", padding: 10, textAlign: 'center',}}>{this.state.turninamount} <Text style={{fontSize: 22, color: "#818181"}}>{this.state.turninsymbol}</Text></Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center',alignItems: 'center',}}>
+                          <Text style={{fontSize: 30, color:"#000000", padding: 10, textAlign: 'center',}}>{this.state.turninamount}</Text>
+                          <Text style={{fontSize: 22, color: "#818181"}}>{this.state.turninsymbol}</Text>
+                        </View>
                         <View style={{ justifyContent: 'center', alignSelf: 'center',paddingTop:10, }}>
                           <QRCode size={150}  value={'{\"toaccount\":\"' + this.state.turnintoaccount + '\",\"amount\":\"' + this.state.turninamount + '\",\"symbol\":\"' + this.state.turninsymbol + '\"}'} />
                         </View>
