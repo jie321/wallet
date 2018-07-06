@@ -418,7 +418,7 @@ class Home extends React.Component {
                   {(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(this.props.defaultWallet != null &&this.props.defaultWallet.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
                 </View>
                 <View style={styles.addtoout}>
-                  <Text style={styles.addtoouttext}>≈{this.state.totalBalance}（￥）</Text>
+                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.state.totalBalance}（￥）</Text>
                   <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))}</Text>
                 </View>
               </View>
