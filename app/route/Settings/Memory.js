@@ -196,9 +196,6 @@ class Memory extends React.Component {
                 return;
             }
 
-            if(Platform.OS == 'android' ){
-                EasyLoading.show();
-            }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -207,7 +204,7 @@ class Memory extends React.Component {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-
+                    EasyLoading.show();
                     if(this.state.isBuyOneself){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
@@ -267,9 +264,7 @@ class Memory extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            if(Platform.OS == 'android' ){
-                EasyLoading.show();
-            }
+
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -278,7 +273,7 @@ class Memory extends React.Component {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-
+                    EasyLoading.show();
                     // alert("receiver: "+this.props.defaultWallet.account+" " + "sellBytes: " + this.state.sellRamBytes);
                     Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes, (r) => {
                         EasyLoading.dismis();

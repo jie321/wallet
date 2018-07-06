@@ -170,9 +170,9 @@ class Network extends React.Component {
             EasyToast.show('请输入密码');
             return;
         }
-        if(Platform.OS == 'android' ){
-            EasyLoading.show();
-        }
+        // if(Platform.OS == 'android' ){
+        //     EasyLoading.show();
+        // }
 
         var privateKey = this.props.defaultWallet.activePrivate;
         try {
@@ -184,7 +184,7 @@ class Network extends React.Component {
                 if(this.state.isBuyOneself){
                     this.state.receiver = this.props.defaultWallet.account;
                 }
-
+                EasyLoading.show();
                 // 抵押
                 Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegatebw + " EOS", (r) =>{
                     EasyLoading.dismis();
@@ -239,9 +239,9 @@ class Network extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            if(Platform.OS == 'android' ){
-                EasyLoading.show();
-            }
+            // if(Platform.OS == 'android' ){
+            //     EasyLoading.show();
+            // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -254,7 +254,7 @@ class Network extends React.Component {
                     if(this.state.isBuyOneself){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-
+                    EasyLoading.show();
                     // 解除抵押
                     Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegatebw + " EOS", (r) => {
                         EasyLoading.dismis();
