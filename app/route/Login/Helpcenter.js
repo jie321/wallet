@@ -40,7 +40,8 @@ class Helpcenter extends React.Component {
     }
     
     this.config = [
-      { first: true, name: "什么是钱包？", onPress: this.goPage.bind(this, "wallet") },
+      { first: true, name: "EOS常见问题？", onPress: this.goPage.bind(this, "commonproblem") },
+      { name: "什么是钱包？", onPress: this.goPage.bind(this, "wallet") },
       { name: "什么是私钥？", onPress: this.goPage.bind(this, "ks") },
       { name: "什么是助记词？", onPress: this.goPage.bind(this, "mw") },
       { first: true, name: "如何导入EOS钱包？", onPress: this.goPage.bind(this, "iw") },
@@ -81,7 +82,9 @@ class Helpcenter extends React.Component {
 
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
-    if (key == "wallet") {
+    if (key == "commonproblem"){
+      navigate('Web', { title: "关于EosToken常见问题及解答", url: "http://static.eostoken.im/html/20180705/1530781835326.html" });
+    } else if (key == "wallet") {
       navigate('Web', { title: "帮助中心", url: "http://static.eostoken.im/html/Wallet.html" });
     } else if (key == 'ks') {
       navigate('Web', { title: "帮助中心", url: "http://static.eostoken.im/html/Keystore.html" });
