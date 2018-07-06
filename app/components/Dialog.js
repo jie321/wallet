@@ -36,6 +36,7 @@ export class EasyDialog {
     }
 
     static show(title,content,okLable,disLabel,okHandler) {
+      this.tm=setTimeout(()=>{
         this.map["dialog"].setState({ 
             "visible": true,
             title,
@@ -43,7 +44,9 @@ export class EasyDialog {
             okLable,
             disLabel,
             okHandler
-        })
+        });
+        clearTimeout(this.tm);
+      },500);
     }
 
     static dismis() {

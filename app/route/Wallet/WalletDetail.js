@@ -208,9 +208,9 @@ class WalletDetail extends React.Component {
       EasyToast.show('该账号格式无效，无法进行激活！');
     }else{
     EasyDialog.dismis();
-    if(Platform.OS == 'android' ){
+    // if(Platform.OS == 'android' ){
       EasyLoading.show();
-    }
+    // }
 
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
