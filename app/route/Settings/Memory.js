@@ -366,7 +366,7 @@ class Memory extends React.Component {
                             </View>}
                             <View style={styles.basc}>
                                 <Text style={styles.basctext}>提示</Text>
-                                <Text style={styles.basctext}>1.购买资源内存，你将获得更多权限的使用；</Text>
+                                <Text style={styles.basctext}>1.购买资源内存，您将获得更多权限的使用；</Text>
                                 <Text style={styles.basctext}>2.购买和出售资源成功，主网将收取0.5%手续费用；</Text>
                                 <Text style={styles.basctext}>3.购买后如过多闲置可进行出售；</Text>
                             </View>
@@ -382,7 +382,7 @@ class Memory extends React.Component {
                         </Button>
                         <Text style={styles.titleText}>资源受限</Text>
                         <View style={styles.contentText}>
-                            <Text style={styles.textContent}>抱歉,该账号资源(NET/CPU)不足以支持本次操作,请设置小的额度尝试或联系身边的朋友帮你抵押。</Text>
+                            <Text style={styles.textContent}>抱歉,该账号资源(NET/CPU)不足以支持本次操作,请设置小的额度尝试或联系身边的朋友帮您抵押。</Text>
                         </View>
                         <Button onPress={() => { this._setModalVisible() }}>
                             <View style={styles.buttonView}>

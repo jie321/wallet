@@ -171,7 +171,7 @@ class AssetInfo extends React.Component {
                                 <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
                                     <Text style={styles.buttoncols}>×</Text>
                                 </Button>
-                                <Text style={styles.titleText}>你的{c.name}地址</Text>
+                                <Text style={styles.titleText}>您的{c.name}地址</Text>
                                 <Text style={styles.contentText}>{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
                                 <Text style={styles.prompttext}>提示：扫码同样可获取地址</Text>
                                 <View style={styles.codeout}>

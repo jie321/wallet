@@ -38,11 +38,18 @@ class TradeDetails extends React.Component {
         // alert('trade: '+JSON.stringify(this.props.navigation.state.params.trade));
   }
 
-  prot(){
+  prot(key, data = {}) {
     const { navigate } = this.props.navigation;
+    if (key == 'transactionId') {
     navigate('Web', { title: "交易查询", url:'https://eosmonitor.io/txn/' + this.props.navigation.state.params.trade.transactionId});
+    }else  if (key == 'from') {
+    navigate('Web', { title: "发送方", url:'https://eosmonitor.io/account/' + this.props.navigation.state.params.trade.from});
+    }else  if (key == 'to') {
+    navigate('Web', { title: "接受方", url:'https://eosmonitor.io/account/' + this.props.navigation.state.params.trade.to});
+    }else  if (key == 'blockNum') {
+    navigate('Web', { title: "区块高度", url:'https://eosmonitor.io/blocks/' + this.props.navigation.state.params.trade.blockNum});
+    }
   }
-  
   
   render() {
     const c = this.props.navigation.state.params.trade;
@@ -55,9 +62,9 @@ class TradeDetails extends React.Component {
             <Text style={styles.description}>（{c.description} {c.bytes? c.bytes + " bytes":""}）</Text>
         </View>
         <View style={styles.conout}>
-            <Text style={styles.context}>发送方：{c.from}</Text>
-            <Text style={styles.context}>接受方：{c.to}</Text>
-            <Text style={styles.context}>区块高度：{c.blockNum}</Text>
+            <Text style={styles.context}>发送方：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'from')}>{c.from}</Text></Text>
+            <Text style={styles.context}>接受方：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'to')}>{c.to}</Text></Text>
+            <Text style={styles.context}>区块高度：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text></Text>
             <Text style={styles.context}>备注：{c.memo}</Text>
         </View>
         <Text style={styles.blocktime}>{c.blockTime}</Text>
@@ -66,7 +73,7 @@ class TradeDetails extends React.Component {
                <QRCode size={105} value={'https://eosmonitor.io/txn/' + c.transactionId } />
             </View>
         </View>
-        <Text style={styles.tradehint}>交易号：<Text style={{color: UColor.tintColor,}} onPress={() => this.prot()}>{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text></Text>
+        <Text style={styles.tradehint}>交易号：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'transactionId')}>{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text></Text>
         <Text style={styles.tradehint}>提示：扫码可获取区块交易状态</Text>
     </View>
   }

@@ -83,7 +83,7 @@ class Set extends React.Component {
                 <View>
                     <Text style={styles.welcome} style={{  }}>柚子粉，请立即备份钱包！</Text>
                     <Text style={styles.welcome} >区块链钱包不同于传统网站账户，它是基于密码学的去中心化账户系统。</Text>
-                    <Text style={styles.welcome} >你必须自己保管好钱包的私钥和交易密码，任何意外发生将会导致资产丢失。</Text>
+                    <Text style={styles.welcome} >您必须自己保管好钱包的私钥和交易密码，任何意外发生将会导致资产丢失。</Text>
                     <Text style={styles.welcome} >我们建议先做双重备份，再打入小额测试，最 后开始愉快使用。</Text>
                     <Text style={styles.welcome} >丢失钱包或忘记密码时，可帮助恢复 钱包。</Text>
                     <Button onPress={() => this.decryptWords()}>

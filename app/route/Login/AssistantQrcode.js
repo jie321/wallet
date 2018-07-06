@@ -46,7 +46,7 @@ class AssistantQrcode extends React.Component {
         <Text style={styles.prompttext}>微信扫一扫，添加</Text>
         <Button onPress={() => this.copy()}>
           <View style={styles.btnloginUser}>
-              <Text style={styles.btntext}>复制微信公众号</Text>
+              <Text style={styles.btntext}>复制微信号</Text>
           </View>
         </Button>
   </View>

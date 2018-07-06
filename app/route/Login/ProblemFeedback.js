@@ -39,7 +39,7 @@ class ProblemFeedback extends React.Component {
         EasyLoading.show('正在提交');
         setTimeout( ()  =>{
             EasyLoading.dismis();
-            EasyToast.show("提交成功，非常感谢你对E-Token的支持！");
+            EasyToast.show("提交成功，非常感谢您对E-Token的支持！");
             this.setState({
                 delegatebw: '',
             });
@@ -60,10 +60,10 @@ class ProblemFeedback extends React.Component {
                 <TextInput ref={(ref) => this._rrpass = ref} value={this.state.delegatebw} 
                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#B3B3B3" 
                 onChangeText={(delegatebw) => this.setState({ delegatebw })} autoFocus={false} editable={true}
-                placeholder="请详细描述你的问题......" underlineColorAndroid="transparent"   
+                placeholder="请详细描述您的问题......" underlineColorAndroid="transparent"   
                 multiline={true}  maxLength={500}/>
                 </View>
-                <Text style={{fontSize: 14, color: '#8696B0', lineHeight: 25, paddingHorizontal: 5,}}>说明：如果你提交的问题或建议被官方采纳，我们将进行电话回访和颁发一定的奖励作为鼓励。</Text>
+                <Text style={{fontSize: 14, color: '#8696B0', lineHeight: 25, paddingHorizontal: 5,}}>说明：如果您提交的问题或建议被官方采纳，我们将进行电话回访和颁发一定的奖励作为鼓励。</Text>
                 <Button onPress={() => this.logout()}>
                     <View style={{height:47, marginTop: 30, backgroundColor:  UColor.tintColor,justifyContent:'center',alignItems:'center',borderRadius:5}}>
                     <Text style={{fontSize:15,color:'#fff'}}>提交</Text>

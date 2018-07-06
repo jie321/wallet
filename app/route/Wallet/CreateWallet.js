@@ -192,7 +192,7 @@ class createWallet extends React.Component {
        <Text style={{textAlign: 'left', color: UColor.showy, flex: 1}}>生成账号失败：{this.state.errormsg}</Text>
        <Text style={{textAlign: 'right', color: UColor.showy,}}>错误码：{this.state.errorcode}</Text>
      </View>
-     <Text style={styles.inptpasstext}>1.如果你没有注册EosToken账号，创建的EOS钱包将无法激活</Text>
+     <Text style={styles.inptpasstext}>1.如果您没有注册EosToken账号，创建的EOS钱包将无法激活</Text>
      <Text style={styles.inptpasstext}>2.激活EOS钱包需达到{this.state.integral}点积分（每个用户仅限一个）</Text>
      <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
      <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>

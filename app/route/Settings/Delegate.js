@@ -369,7 +369,7 @@ class Nodevoting extends React.Component {
                                         {/* <Text style={{ fontSize: 15, color: UColor.tintColor, width: 50, textAlign: 'center'}}>全部</Text> */}
                                     </View>
                                 </View>
-                                <Text style={styles.prompttext}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响你的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
+                                <Text style={styles.prompttext}>{this.state.isNotDealSelected ? '提示：解锁已经投票EOS可能会影响您的投票结果，一般投票三天后解锁不影响投票':'提示：在投票前必须将EOS划转至投票锁仓中，否则 无法进行投票。'}</Text>
                             </View>
                             <Button onPress={this.state.isAllSelected ? this.delegatebw.bind(): this.undelegatebw.bind()}>
                                 <View style={styles.btnoutsource}>

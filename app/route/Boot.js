@@ -50,8 +50,8 @@ class Boot extends React.Component {
             </View>
             <View style={{justifyContent:'center',alignItems:'center',height:'100%'}}>
                 <View style={{height:'30%',justifyContent:'center',alignItems:'center'}}>
-                    <Text style={{color:"#fff",fontSize:24,textAlign:'center'}}>你关心的EOS资讯</Text>
-                    <Text style={{color:"#586888",fontSize:18,marginTop:30,textAlign:'center'}}>你最关心的EOS独家情报</Text>
+                    <Text style={{color:"#fff",fontSize:24,textAlign:'center'}}>您关心的EOS资讯</Text>
+                    <Text style={{color:"#586888",fontSize:18,marginTop:30,textAlign:'center'}}>您最关心的EOS独家情报</Text>
                     <Text style={{color:"#586888",fontSize:18,textAlign:'center',marginTop:10}}>最新、最快、最全面</Text>
                 </View>
                 <View style={{height:'50%',alignItems:'center'}}>
@@ -61,7 +61,7 @@ class Boot extends React.Component {
             <View style={{justifyContent:'center',alignItems:'center',height:'100%'}}>
                 <View style={{height:'30%',justifyContent:'center',alignItems:'center'}}>
                     <Text style={{color:"#fff",fontSize:24,textAlign:'center'}}>欢迎 EosToken</Text>
-                    <Text style={{color:"#586888",fontSize:18,marginTop:30,textAlign:'center'}}>你的EOS数字资产管家</Text>
+                    <Text style={{color:"#586888",fontSize:18,marginTop:30,textAlign:'center'}}>您的EOS数字资产管家</Text>
                 </View>
                 <View style={{height:'50%',alignItems:'center'}}>
                     <Image source={UImage.d} style={{width:215,height:283,marginTop:50}} />

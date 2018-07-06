@@ -394,7 +394,7 @@ class Network extends React.Component {
                         </Button>
                         <Text style={styles.titleText}>资源受限</Text>
                         <View style={styles.contentText}>
-                            <Text style={styles.textContent}>抱歉,该账号资源(NET/CPU)不足以支持本次操作,请设置小的额度尝试或联系身边的朋友帮你抵押。</Text>
+                            <Text style={styles.textContent}>抱歉,该账号资源(NET/CPU)不足以支持本次操作,请设置小的额度尝试或联系身边的朋友帮您抵押。</Text>
                         </View>
                         <Button onPress={() => { this._setModalVisible() }}>
                             <View style={styles.buttonView}>

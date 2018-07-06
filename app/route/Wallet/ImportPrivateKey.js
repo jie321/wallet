@@ -439,7 +439,7 @@ class Coins extends React.Component {
     //           </View>
     //         </Button>
     //         <View style={{ height: 80, margin: 10, backgroundColor: '#536482' }}>
-    //           <Text style={styles.welcome} style={{ color: '#8696B0', padding: 10 }}>注意：观察钱包发送交易时需要冷钱包配合 签名。你可以使用另一台闲置手机，开飞行 模式作为冷钱包，导入钱包私钥，配合离线 签名。</Text>
+    //           <Text style={styles.welcome} style={{ color: '#8696B0', padding: 10 }}>注意：观察钱包发送交易时需要冷钱包配合 签名。您可以使用另一台闲置手机，开飞行 模式作为冷钱包，导入钱包私钥，配合离线 签名。</Text>
     //         </View>
     //       </View>
     //     </ScrollView>
