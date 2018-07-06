@@ -41,9 +41,12 @@ class Home extends React.Component {
       account: 'xxxx',
       show: false,
       init: true,
-      // myAssets: [],
+      invalidWalletList: [],
       totalBalance: '0.00',
       increase:0,
+      Invalid: false,
+      arr1: 0,
+      isChecked: true,
     };
   }
 
@@ -54,8 +57,16 @@ class Home extends React.Component {
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
-      alert(JSON.stringify(invalidWalletList));
+      if(invalidWalletList != null){
+        this.setState({ 
+          Invalid: true,
+          arr1 : invalidWalletList.length,
+          invalidWalletList : invalidWalletList
+         })
+      }
+      // alert(JSON.stringify(invalidWalletList));
     }});
+
     this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (data) => { 
       // this.setState({myAssets: data});
     } });
@@ -202,6 +213,34 @@ class Home extends React.Component {
     this.setState({
       modal: false
     });
+  }
+
+  // 显示/隐藏 modal  
+  _setModalInvalid() {
+    let isShow = this.state.Invalid;
+    this.setState({
+      Invalid: !isShow,
+    });
+  }
+
+  selectItem = (item,section) => { 
+    this.props.dispatch({ type: 'wallet/up', payload: { item:item} });
+    let arr = this.props.invalidWalletList;
+    var cnt = 0;
+    for(var i = 0; i < arr.length; i++){ 
+        if(arr[i].isChecked == true){
+            cnt++;              
+        }     
+    }
+    if(cnt == 0 && this.props.invalidWalletList){
+        this.state.arr1 = this.state.invalidWalletList.length;
+    }else{
+        this.state.arr1 = cnt;
+    }
+  }
+
+  delInvalidWallet = (rowData) => { // 选中账号
+    alert("11: "+JSON.stringify(this.props.voteData))
   }
 
   onPress(key, data = {}) {
@@ -520,6 +559,45 @@ class Home extends React.Component {
               </View>
             </TouchableOpacity>
           </TouchableOpacity>
+        </Modal>
+
+         <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.state.Invalid} onRequestClose={()=>{}}>
+            <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
+              <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
+                <View style={{flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, paddingHorizontal: 10,}}> 
+                  <Text style={{width: 30,}}/>
+                  <Text style={{flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',}}>无效账户删除提示</Text>
+                  <Button style={{}} onPress={this._setModalInvalid.bind(this)}>
+                    <Text style={{ width: 30, color: '#CBCBCB', fontSize: 28, textAlign: 'center',}}>×</Text>
+                  </Button>
+                </View>
+                <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
+                      dataSource={this.state.dataSource.cloneWithRows(this.props.invalidWalletList == null ? [] : this.props.invalidWalletList)} 
+                      renderRow={(rowData, sectionID, rowID) => (                 
+                      <View>
+                          <Button > 
+                              <View style={{height: 50,flexDirection: "row", alignItems: 'center', marginHorizontal: 15, borderBottomColor: '#E5E5E5', borderBottomWidth: 1, }} >
+                                  <View style={{flex: 1, paddingLeft: 30,}}>
+                                      <Text style={{fontSize: 15, color: '#4D4D4D'}}>{rowData.name}</Text>
+                                  </View>
+                                  <TouchableOpacity style={styles.taboue} onPress={ () => this.selectItem(rowData)}>
+                                      <View style={styles.tabview} >
+                                          <Image source={rowData.isChecked ? UImage.Tick:null} style={styles.tabimg} />
+                                      </View>  
+                                  </TouchableOpacity>  
+                              </View> 
+                          </Button>  
+                      </View>      
+                       )}                   
+                  /> 
+                  <Text style={{fontSize: 12, color: UColor.showy, textAlign: 'center', marginVertical: 20,}}>系统检测到你有无效账号残留，我们建议删除让钱包更清爽。</Text>
+                  <Button onPress={this.delInvalidWallet.bind()}>
+                      <View style={{height: 50, marginHorizontal: 28, marginBottom: 28, borderRadius: 6, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                          <Text style={{fontSize: 16, color: UColor.fontColor}}>一键删除</Text>
+                      </View>
+                  </Button>  
+              </View>
+            </TouchableOpacity>
         </Modal>
       </View>
     )
@@ -964,6 +1042,24 @@ const styles = StyleSheet.create({
    fontSize:17,
    color: UColor.fontColor,
  },
+
+
+
+ taboue: {
+  justifyContent: 'center', 
+  alignItems: 'center',
+},
+tabview: {
+  width: 24,
+  height: 24,
+  margin: 5,
+  borderColor: '#D2D2D2',
+  borderWidth: 1,
+},
+tabimg: {
+  width: 24, 
+  height: 24
+},
 });
 
 export default Home;

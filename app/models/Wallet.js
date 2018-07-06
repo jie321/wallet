@@ -489,6 +489,13 @@ export default {
             yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr } });
             if(callback) callback(invalidWalletArr);
         }, 
+        *up({payload},{call,put}) {
+            try{
+                yield put({ type: 'updateSelect', payload: { ...payload } });
+            } catch (error) {
+                EasyToast.show('网络发生错误，请重试');
+            }
+         },
     },
     reducers: {
         update(state, action) {
@@ -512,7 +519,22 @@ export default {
             return { ...state, ...action.payload };
         },
         updateInvalidWalletArr(state, action) {
-            return { ...state, ...action.payload };
+            return {...state,invalidWalletList:action.payload.invalidWalletArr}; 
+        },
+        updateSelect(state, action) {
+            let dts = state.invalidWalletList;
+            let newarr = new Array();
+            dts.map((item)=>{
+                if(item==action.payload.item){
+                    if(item.isChecked){
+                        item.isChecked=false;
+                    }else{
+                        item.isChecked=true;
+                    }
+                }
+                newarr.push(item);
+            })
+            return {...state,voteData:newarr}; 
         },
     }
 }
