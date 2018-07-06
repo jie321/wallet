@@ -332,11 +332,11 @@ export default {
             } else {
                 for (var i = 0; i < walletArr.length; i++) {
                     if (walletArr[i].account == payload.data.account) {
-                        if (walletArr[i].account == defaultWallet.account) {
+                        walletArr.splice(i, 1);
+                        if (payload.data.account == defaultWallet.account) {
                             yield call(store.save, 'defaultWallet', walletArr[0]);
                             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
                         }
-                        walletArr.splice(i, 1);
                         yield call(store.save, 'walletArr', walletArr);
                         DeviceEventEmitter.emit('delete_wallet', payload);
                     }
