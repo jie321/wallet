@@ -38,6 +38,7 @@ export default {
   cmy_qq:require('../img/cmy_qq.png'),
   cmy_wb:require('../img/cmy_wb.png'),
   cmy_wx:require('../img/cmy_wx.png'),
+  cmy_kydz:require('../img/cmy_kydz.png'),
   cmyhead:require('../img/cmyhead_by.png'),
   Calculation:require('../img/Calculation.png'),
   d:require('../img/d.png'),

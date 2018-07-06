@@ -34,6 +34,7 @@ class Community extends React.Component {
         public: 'Etoken钱包',
         qq: '3090679927',
         telegraph: 't.me/eostokens',
+        source: 'github.com/eostoken/wallet',
     }
   }
   
@@ -49,9 +50,9 @@ class Community extends React.Component {
     } 
   }
 
-  prot(key, data = {}) { 
+  prot(key, data = {}) {
+    const { navigate } = this.props.navigation; 
     if (key == 'microblog') {
-      const { navigate } = this.props.navigation;
         navigate('Web', { title: "官网微博", url: "http://weibo.com/eostoken" });   
     } else if(key == 'wechat'){
         // let wechat = this.state.wechat;
@@ -67,6 +68,8 @@ class Community extends React.Component {
     }else if(key == 'telegraph'){
       Clipboard.setString(this.state.telegraph);
       EasyToast.show('电报群号已复制成功');
+    }else if (key == 'source') {
+      navigate('Web', { title: "代码开源地址", url: "https://github.com/eostoken/wallet" });   
     }
   }
   
@@ -105,7 +108,13 @@ class Community extends React.Component {
                 <Text style={styles.textname}>EosToken电报群：</Text>
                 <Text style={styles.textlink}>{this.state.telegraph}</Text>
               </ImageBackground>   
-            </TouchableHighlight>     
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.prot.bind(this, 'source')} underlayColor={UColor.secdColor}>      
+              <ImageBackground style={{ justifyContent: "flex-start",  alignItems: 'center', flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_kydz} resizeMode="stretch">       
+                <Text style={styles.textname}>代码开源地址：</Text>
+                <Text style={styles.textlink}>{this.state.source}</Text>
+              </ImageBackground>   
+            </TouchableHighlight>        
           </View>   
     </View>
   }
