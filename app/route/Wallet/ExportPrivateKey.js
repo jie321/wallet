@@ -38,8 +38,8 @@ class Set extends React.Component {
       <ScrollView keyboardShouldPersistTaps="always">
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
           <View>
-            <Text style={styles.welcome}>抄写下你的钱包助记词:</Text>
-            <Text style={styles.welcome}>助记词用于恢复钱包或重置钱包密码，将它准确的抄写 到纸上，并存放在只有你知道的安全地方。</Text>
+            <Text style={styles.welcome}>抄写下您的钱包助记词:</Text>
+            <Text style={styles.welcome}>助记词用于恢复钱包或重置钱包密码，将它准确的抄写 到纸上，并存放在只有您知道的安全地方。</Text>
             {/* <Button onPress={() => this.logout()}>
               <View style={{height:45,backgroundColor:'#65CAFF',justifyContent:'center',alignItems:'center',margin:20,borderRadius:5}}>
                 <Text style={{fontSize:15,color:'#fff'}}>{this.props.loginUser?"退出":"登陆"}</Text>

@@ -163,7 +163,7 @@ class Coin_search extends React.Component {
                     </TouchableOpacity>  
                 </View> 
 
-                <Text style={styles.prompttext}>提示：如果你没有搜索到你要找的Token，可以使用手动添加。</Text>
+                <Text style={styles.prompttext}>提示：如果您没有搜索到您要找的Token，可以使用手动添加。</Text>
                 <View style={styles.btnout}>
                     <Button onPress={() => this.logout()}>
                         <View style={styles.btnloginUser}>

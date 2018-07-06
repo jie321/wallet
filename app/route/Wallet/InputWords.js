@@ -108,8 +108,8 @@ rem = (world) =>{
                     </View>
                 </View> */}
         <View>
-          <Text  style={{color:'#FFFFFF',marginTop:30,marginLeft:10,fontSize:17}}>确认你的钱包助记词</Text>
-          <Text  style={{color:'#8696B0',marginLeft:10}}>请按顺序点击助记词，以确认你的备份助记词正确</Text>
+          <Text  style={{color:'#FFFFFF',marginTop:30,marginLeft:10,fontSize:17}}>确认您的钱包助记词</Text>
+          <Text  style={{color:'#8696B0',marginLeft:10}}>请按顺序点击助记词，以确认您的备份助记词正确</Text>
           <View style={{backgroundColor:'#586888',marginTop:40}} >
             <View style={{height:100,margin:10,backgroundColor:'#4F617D',flexDirection:'row',flexWrap:'wrap',}} >
                 {this._select()}

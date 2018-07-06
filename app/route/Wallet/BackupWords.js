@@ -38,8 +38,8 @@ class Set extends React.Component {
 
       <ScrollView style={styles.scrollView}>
         <View>
-          <Text style={styles.welcome} style={{ color: '#FFFFFF', fontSize: 15, marginTop: 15, marginLeft: 10 }}>抄写下你的钱包助记词</Text>
-          <Text style={styles.welcome} style={{ color: '#8696B0', marginTop: 5, marginLeft: 10, marginBottom: 25 }}>助记词用于恢复钱包或重置钱包密码，将它准确的抄写到纸上，并存放在只有你知道的安全地方。</Text>
+          <Text style={styles.welcome} style={{ color: '#FFFFFF', fontSize: 15, marginTop: 15, marginLeft: 10 }}>抄写下您的钱包助记词</Text>
+          <Text style={styles.welcome} style={{ color: '#8696B0', marginTop: 5, marginLeft: 10, marginBottom: 25 }}>助记词用于恢复钱包或重置钱包密码，将它准确的抄写到纸上，并存放在只有您知道的安全地方。</Text>
           <View style={{ backgroundColor: '#43536D' }} style={{ marginBottom: 20 }}>
             <View style={{ padding: 20, height: 100, backgroundColor: '#586888' }} >
               <Text style={{ fontSize: 15, color: '#8696B0', height: 100 }}>{

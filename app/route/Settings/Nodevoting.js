@@ -96,7 +96,7 @@ class Nodevoting extends React.Component {
             <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
                 selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass}
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
-            <Text style={styles.inptpasstext}>提示：为确保你的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
+            <Text style={styles.inptpasstext}>提示：为确保您的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
         </View>
 
         EasyDialog.show("请输入密码", view, "确认", "取消", () => {
