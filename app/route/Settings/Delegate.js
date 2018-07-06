@@ -11,7 +11,7 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
-
+const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
@@ -56,7 +56,7 @@ class Nodevoting extends React.Component {
               })
             } else {
               account: this.props.defaultWallet.name,
-              this.setState({ balance: data.data.replace(" EOS", ""), })
+              this.setState({ balance: data.data.replace("EOS", ""), })
             }
           } else {
             EasyToast.show('获取余额失败：' + data.msg);
@@ -70,8 +70,8 @@ class Nodevoting extends React.Component {
                 this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
                     // alert("----------" + JSON.stringify(data));
                     this.setState({
-                        delegate_net:data.total_resources.net_weight.replace(" EOS", ""),
-                        delegate_cpu:data.total_resources.cpu_weight.replace(" EOS", ""),
+                        delegate_net:data.total_resources.net_weight.replace("EOS", ""),
+                        delegate_cpu:data.total_resources.cpu_weight.replace("EOS", ""),
                     });
                 } });
 
@@ -79,8 +79,8 @@ class Nodevoting extends React.Component {
                     // alert("getundelegatebwInfo1: " + (data.rows.length));
                     if(data.rows.length > 0){
                         this.setState({
-                            undelegate_net:data.rows[0].net_amount.replace(" EOS", ""),
-                            undelegate_cpu:data.rows[0].cpu_amount.replace(" EOS", ""),
+                            undelegate_net:data.rows[0].net_amount.replace("EOS", ""),
+                            undelegate_cpu:data.rows[0].cpu_amount.replace("EOS", ""),
                         });
                     }
                     EasyLoading.dismis();
@@ -161,7 +161,9 @@ class Nodevoting extends React.Component {
             EasyToast.show('请输入密码');
             return;
         }
-        EasyLoading.show();
+        if(Platform.OS == 'android' ){
+            EasyLoading.show();
+        }
 
         var privateKey = this.props.defaultWallet.activePrivate;
         try {
@@ -238,7 +240,9 @@ class Nodevoting extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            EasyLoading.show();
+            if(Platform.OS == 'android' ){
+                EasyLoading.show();
+            }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -389,7 +393,7 @@ const styles = StyleSheet.create({
     inptpass: {
         color: UColor.tintColor,
         height: 45,
-        width: '100%',
+        width: maxWidth-100,
         paddingBottom: 5,
         fontSize: 16,
         backgroundColor: UColor.fontColor,

@@ -10,7 +10,7 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
-
+const maxWidth = Dimensions.get('window').width;
 import { Eos } from "react-native-eosjs";
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -105,7 +105,9 @@ class Imvote extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            EasyLoading.show();
+            if(Platform.OS == 'android' ){
+                EasyLoading.show();
+            }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -237,7 +239,7 @@ const styles = StyleSheet.create({
     inptpass: {
         color: UColor.tintColor,
         height: 45,
-        width: '100%',
+        width: maxWidth-100,
         paddingBottom: 5,
         fontSize: 16,
         backgroundColor: UColor.fontColor,
