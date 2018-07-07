@@ -106,8 +106,8 @@ class Network extends React.Component {
     getAccountInfo(){
         this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
             this.setState({
-                staked:(data.total_resources.net_weight? data.total_resources.net_weight.replace("EOS", "") : "0"),
-                unstaking:(data.refund_request?data.refund_request.net_amount.replace("EOS", "") : "0"),
+                staked:(data.total_resources.net_weight? data.total_resources.net_weight.replace("EOS", "") : "0.0000"),
+                unstaking:(data.refund_request?data.refund_request.net_amount.replace("EOS", "") : "0.0000"),
                 used:(data.net_limit.used / 1024).toFixed(3),
                 available:(data.net_limit.available / 1024).toFixed(3),
             });
@@ -358,7 +358,7 @@ class Network extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} returnKeyType="go"
                                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                        placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="default" 
+                                        placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" 
                                         onChangeText={(receiver) => this.setState({ receiver })}
                                     />
                                     <Button >

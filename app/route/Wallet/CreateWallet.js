@@ -17,7 +17,11 @@ var dismissKeyboard = require('dismissKeyboard');
 class createWallet extends React.Component {
 
   static navigationOptions = {
-    title: '创建钱包'
+    title: '创建钱包',
+    headerStyle:{
+        paddingTop:Platform.OS == 'ios' ? 30 : 20,
+        backgroundColor: UColor.mainColor,
+    }    
   };
 
   constructor(props) {
@@ -318,9 +322,11 @@ class createWallet extends React.Component {
     <ScrollView  keyboardShouldPersistTaps="always">
       <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
-          <Text style={styles.significanttext} >重要声明:</Text>
-          <Text style={styles.significanttext} >密码用于保护私钥和交易授权，强度非常重要</Text>
-          <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
+          <View style={styles.significantout}>
+            <Text style={styles.significanttext} >重要声明:</Text>
+            <Text style={styles.significanttext} >密码用于保护私钥和交易授权，强度非常重要</Text>
+            <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
+          </View>
           <View style={styles.outsource}>
             <View style={styles.inptout} >
               <Text style={styles.inptitle}>账号名称</Text>
@@ -399,10 +405,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: UColor.secdColor,
   },
+  significantout: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
   significanttext: {
     color: UColor.arrow,
-    marginHorizontal: 10,
-    marginVertical: 5,
+    fontSize: 12, 
   },
 
   outsource: {

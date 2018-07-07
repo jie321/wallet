@@ -327,7 +327,7 @@ class Memory extends React.Component {
                                     </View>
                                 </View> 
                                 <View style={styles.headoutsource}>
-                                    <Text style={styles.headText}>*内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
+                                    <Text style={styles.headText}>内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
                                 </View> 
                             </ImageBackground>  
                             <View style={styles.tablayout}>  
@@ -341,7 +341,7 @@ class Memory extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.receiver}  returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                                    placeholder="输入接受账号" underlineColorAndroid="transparent" keyboardType="default" 
+                                    placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" 
                                     onChangeText={(receiver) => this.setState({ receiver })}
                                     />
                                     <Button >
