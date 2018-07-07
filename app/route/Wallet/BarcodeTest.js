@@ -54,9 +54,60 @@ export default class App extends React.Component {
         // console.log(`e.nativeEvent.data.type = ${e.nativeEvent.data.type}, e.nativeEvent.data.code = ${e.nativeEvent.data.code}`)
         this._stopScan();
         try {
-            var coins = JSON.parse(e.nativeEvent.data.code);
-            if (coins.toaccount != null) {
-                coins.name = coins.symbol;
+            var strcoins = e.nativeEvent.data.code;
+            if(strcoins == undefined || strcoins == null){
+                EasyToast.show('无效的二维码');
+                return;
+            }
+            var length = strcoins.length;
+            var index = strcoins.lastIndexOf("eos:");
+            if (index == 0) {
+                index += 4; //"eos:"
+                var point = strcoins.lastIndexOf("?");
+                if(point <= index || point >= length)
+                {
+                    EasyToast.show('无效的二维码');
+                    return;
+                }
+                var account = strcoins.substring(index,point);
+                if(account == undefined || account == null || account == ""){
+                    EasyToast.show('无效的二维码');
+                    return;
+                }
+                index = point + 1; //"?"
+                var pointamount = strcoins.lastIndexOf("amount=");    
+                if(index != pointamount || pointamount >= length){
+                    EasyToast.show('无效的二维码');
+                    return;
+                }
+                index += 7; //"amount="
+                var point2 = strcoins.lastIndexOf("&");    
+                if(point2 <= index || point2 >= length){
+                    EasyToast.show('无效的二维码');
+                    return;
+                }
+                var amount = strcoins.substring(index,point2);
+                if(amount == undefined || amount == null){
+                    EasyToast.show('无效的二维码');
+                    return;
+                }
+                index = point2 + 1; //"&"
+                var pointtoken = strcoins.lastIndexOf("token=");   
+                if(index != pointtoken || pointtoken >= length){
+                    EasyToast.show('无效的二维码');
+                    return;
+                } 
+                index += 6; //"token="
+                var symbol = strcoins.substring(index,length);
+                if(symbol == null || symbol != 'EOS')
+                {
+                    EasyToast.show('无效的二维码');
+                    return;
+                }
+                var jsoncode = '{"toaccount":"' + account + '","amount":"' + amount + '","symbol":"EOS"}';
+                // // coins.name = coins.symbol;
+                 var coins = JSON.parse(jsoncode);
+
                 this.props.navigation.goBack();
                 if(this.state.isTurnOut){
                     DeviceEventEmitter.emit('scan_result',coins);
@@ -66,7 +117,20 @@ export default class App extends React.Component {
                 }
                 
             } else {
-                EasyToast.show('无效的二维码');
+                 //兼容上一版本
+                 var coins = JSON.parse(e.nativeEvent.data.code);
+                 if (coins.toaccount != null) {
+                     coins.name = coins.symbol;
+                     this.props.navigation.goBack();
+                     if(this.state.isTurnOut){
+                         DeviceEventEmitter.emit('scan_result',coins);
+                     }else{
+                         const { navigate } = this.props.navigation;
+                         navigate('TurnOut', { coins: coins });
+                     }
+                 } else {
+                     EasyToast.show('无效的二维码');
+                 }
             }
         } catch (error) {
             EasyToast.show('无效的二维码');

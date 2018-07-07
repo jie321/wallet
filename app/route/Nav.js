@@ -840,7 +840,8 @@ class Route extends React.Component {
                           <Text style={{fontSize: 22, color: "#818181"}}>{this.state.turninsymbol}</Text>
                         </View>
                         <View style={{ justifyContent: 'center', alignSelf: 'center',paddingTop:10, }}>
-                          <QRCode size={150}  value={'{\"toaccount\":\"' + this.state.turnintoaccount + '\",\"amount\":\"' + this.state.turninamount + '\",\"symbol\":\"' + this.state.turninsymbol + '\"}'} />
+                          {/* <QRCode size={150}  value={'":\"' + this.state.turnintoaccount + '\",\"amount\":\"' + this.state.turninamount + '\",\"symbol\":\"' + this.state.turninsymbol + '\"}'} /> */}
+                          <QRCode size={150}  value={'eos:' + this.state.turnintoaccount + '?amount=' + ((this.state.turninamount == "")?'0':this.state.turninamount) + '&token=EOS'}/>
                         </View>
                         <Text style={{ color: '#5D5D5D', fontSize: 15, textAlign: 'center', marginTop: 10 }}>扫码向他支付</Text>
                         <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'left', marginTop: 5, padding: 20,}}>账户:{this.state.turnintoaccount}</Text>

@@ -171,11 +171,11 @@ class TurnIn extends React.Component {
                       size={170}
                       style={{ width: 170 }}
                       value={
-                        '{"toaccount":"' +
+                        'eos:' +
                         this.props.defaultWallet.account +
-                        '","amount":"' +
-                        this.state.amount +
-                        '","symbol":"EOS"}'
+                        '?amount=' +
+                        ((this.state.amount == "")?'0':this.state.amount) +
+                        '&token=EOS'
                       }
                     />
                   </View>
