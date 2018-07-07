@@ -65,7 +65,7 @@ class Bvote extends React.Component {
             <View style={styles.container}>
                  <View style={styles.outsource}>
                     <View style={styles.headoutsource}>
-                        <Text style={styles.headSizeone}>进度：24.2218%</Text>
+                        <Text style={styles.headSizeone}>进度：30.3664%</Text>
                         <Text style={styles.headSizetwo}>可投票数：0</Text>
                     </View>
                     <View>
