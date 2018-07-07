@@ -630,7 +630,7 @@ class Home extends React.Component {
                       </View>      
                        )}                   
                   /> 
-                  <Text style={{fontSize: 12, color: UColor.showy, textAlign: 'center', marginVertical: 20,}}>系统检测到你有无效账号残留，我们建议删除让钱包更清爽。</Text>
+                  <Text style={{fontSize: 12, color: UColor.showy, textAlign: 'left', marginVertical: 20, paddingHorizontal: 20,}}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
                   <Button onPress={this.delInvalidWallet.bind()}>
                       <View style={{height: 50, marginHorizontal: 28, marginBottom: 28, borderRadius: 6, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
                           <Text style={{fontSize: 16, color: UColor.fontColor}}>一键删除</Text>
