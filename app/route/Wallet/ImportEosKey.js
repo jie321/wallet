@@ -1,17 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Image, View, RefreshControl, Text, Platform, TextInput, ScrollView, TouchableHighlight, Animated,  Easing, TouchableOpacity  } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Image, View, RefreshControl, Text, Platform, TextInput, ScrollView, TouchableHighlight, Animated,  Easing, TouchableOpacity, Modal  } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import store from 'react-native-simple-store';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
 import JPush from '../../utils/JPush'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import { EasyDialog } from '../../components/Dialog';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
-
+const maxWidth = Dimensions.get('window').width;
+const maxHeight = Dimensions.get('window').height;
 var dismissKeyboard = require('dismissKeyboard');
 const pages = [];
 let loadMoreTime = 0;
@@ -49,13 +52,14 @@ class ImportEosKey extends React.Component {
       medium: UColor.arrow,
       strong: UColor.arrow,
       CreateButton:  UColor.mainColor,
+      show: false,
+      Invalid: false,
+
     };
   }
   //组件加载完成
   componentDidMount() {
-   
     const { dispatch } = this.props;
-
     //推送初始化
     const { navigate } = this.props.navigation;
     JPush.init(navigate);
@@ -140,12 +144,16 @@ class ImportEosKey extends React.Component {
 
   checkClick() {
     this.setState({
-        isChecked: !this.state.isChecked
+      show: false
     });
  }
 
 
  importPriKey() {
+  // this.setState({
+  //   show: true
+  // });
+  
   if (this.state.activePk == '') {
     EasyToast.show('请输入私钥');
     return;
@@ -228,8 +236,7 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
     
                 // 保存钱包信息
                 this.props.dispatch({
-                  type: 'wallet/saveWalletList', walletList: walletList, callback: (data) => {
-                                    
+                  type: 'wallet/saveWalletList', walletList: walletList, callback: (data) => {            
                     if (data.error != null) {
                       EasyToast.show('导入私钥失败：' + data.error);
                     } else {
@@ -242,19 +249,72 @@ createWalletByPrivateKey(owner_privateKey, active_privatekey){
                   }
                 });
             });
-
           }
         });
-
-        // 
       } catch (e) {
         EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
       }
-    // });
-
   });
 }
 
+onRequestClose() {
+  let isShow = this.state.Invalid;
+  this.setState({
+    errorcode: !isShow,
+  });
+//  if(errorcode){
+  // this.setState({
+  //   errorcode = true
+  // })
+//  }else{
+//   this.setState({
+//     errorcode = false
+//   })
+//  }
+   
+ 
+}
+_onPressListItem (Invalid, data = {}) {
+  if(Invalid){
+    this.setState({show: false,});
+    alert(this.state.show)
+  }else{
+    this.setState({show: true,});
+  }
+
+  this.setState((previousState) => {
+    return ({
+        show: !previousState.show,
+    })
+});
+}
+
+_setModalInvalid() {
+  let isShow = this.state.show;
+  this.setState({
+    show: !isShow,
+  });
+}
+
+// ExplainPopup(){
+//   let v = 
+//   EasyDialog.show("导入失败", (
+//   <View>
+//       <Text style={{textAlign: 'left', color: UColor.showy,}}>该私钥信息导入失败，请仔细核对私钥是否正确</Text>
+//       <View>
+//                 <TouchableOpacity onPress={() => this._onPressListItem()}>
+//                     <View>
+//                         <Text>点我</Text>
+//                     </View>
+//                 </TouchableOpacity>
+//                 {this.state.show ? <Text>待显示的内容</Text> : null}
+//         </View>
+//       <View style={{ marginBottom: 10,}}>
+        
+//         {/* {this.state.show ? <Text style={styles.inptpasstext}>2.激活EOS钱包需达到100点积分（每个用户仅限一个）</Text>:null} */}
+//       </View>
+//   </View>), "知道了", null,  () => { EasyDialog.dismis() });
+//   }
 
 intensity() {
   let string = this.state.walletpwd;
@@ -297,6 +357,14 @@ intensity() {
 dismissKeyboardClick() {
   dismissKeyboard();
 }
+_onPressListItem() {
+  this.setState((previousState) => {
+      return ({
+        Invalid: !previousState.Invalid,
+      })
+  });
+}
+
 
   render() {
     let {feedBackText, selection} = this.state;
@@ -374,7 +442,35 @@ dismissKeyboardClick() {
               </Button>
             </View>
           </TouchableOpacity>
-        </ScrollView>   
+        </ScrollView> 
+        <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.state.show} onRequestClose={()=>{}}>
+            <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} activeOpacity={1.0}>
+              <View style={{ width: maxWidth-20,    backgroundColor: UColor.fontColor, borderRadius: 5,paddingHorizontal: 25,}}>
+                <View style={{flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, }}> 
+                  <Text style={{width: 30,}}/>
+                  <Text style={{flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',}}>导入失败</Text>
+                  <Button style={{}} onPress={this._setModalInvalid.bind(this)}>
+                    <Text style={{ width: 30, color: '#CBCBCB', fontSize: 28, textAlign: 'center',}}>×</Text>
+                  </Button>
+                </View>
+                <Text style={{fontSize: 14, color: UColor.showy, textAlign: 'left', marginVertical: 20,}}>该私钥信息导入失败，请仔细核对私钥是否正确</Text>
+                <View>
+                    <TouchableOpacity onPress={() => this._onPressListItem()}>
+                        <View style={{flexDirection: "row",alignItems: 'center', justifyContent: 'flex-end',}}>
+                            <Text style={{fontSize: 14, color: UColor.tintColor, marginHorizontal: 5, }}>查看原因</Text>
+                            <Ionicons name="ios-arrow-forward-outline" size={14} color={UColor.tintColor}/>
+                        </View>
+                    </TouchableOpacity>
+                    {this.state.Invalid ? <Text style={{fontSize: 14, color: '#808080', textAlign: 'left'}}>待显示的内容</Text> : null}
+                </View>
+                  <Button onPress={this._setModalInvalid.bind()}>
+                      <View style={{height: 50, marginVertical: 10, borderRadius: 6, backgroundColor: UColor.showy, justifyContent: 'center', alignItems: 'center'}}>
+                          <Text style={{fontSize: 16, color: UColor.fontColor}}>知道了</Text>
+                      </View>
+                  </Button>  
+              </View>
+            </TouchableOpacity>
+        </Modal>  
       </View>
     );
   }

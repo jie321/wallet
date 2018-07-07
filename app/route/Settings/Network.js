@@ -61,7 +61,7 @@ class Network extends React.Component {
               this.setState({ balance: data.data.replace("EOS", ""), })
             }
           } else {
-            EasyToast.show('获取余额失败：' + data.msg);
+            // EasyToast.show('获取余额失败：' + data.msg);
           }
     }
 
