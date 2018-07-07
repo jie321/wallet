@@ -28,7 +28,7 @@ export default {
           }
         }catch(err){
           yield put({type:'updateLoading',payload:{loading:false}});
-          EasyToast.show('网络发生错误，请重试');
+          EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *list({payload,callback},{call,put}) {
@@ -46,7 +46,7 @@ export default {
           if (callback) callback();
         }catch(err){
           yield put({type:'updateLoading',payload:{loading:false}});
-          EasyToast.show('网络发生错误，请重试');
+          EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *loadStorage(action,{ call, put }) {

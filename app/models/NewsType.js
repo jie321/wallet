@@ -19,7 +19,7 @@ export default {
                 EasyToast.show(resp.msg);
             }
         }catch(error){
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *loadStorage(action, { call, put }) {

@@ -31,7 +31,7 @@ export default {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
         } catch (error) {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
     
@@ -121,7 +121,7 @@ export default {
                 callback(payload.assets);
             }
         }catch(e){
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
     },
     *submitAssetInfoToServer({payload, callback},{call,put}){
@@ -134,7 +134,7 @@ export default {
                 callback(resp);
             }
         }catch(e){
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
      },
 
