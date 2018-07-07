@@ -51,6 +51,9 @@ class TurnOut extends React.Component {
         })
         DeviceEventEmitter.addListener('scan_result', (data) => {
             this.setState({toAccount:data.toaccount})
+            if(data.amount){
+                this.setState({amount:data.amount})
+            }
         });
         DeviceEventEmitter.addListener('eos_balance', (data) => {
             this.setEosBalance(data);
@@ -139,12 +142,12 @@ class TurnOut extends React.Component {
         const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
+                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}  maxLength={18} 
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             </View>
             EasyDialog.show("密码", view, "确认", "取消", () => {
 
-            if (this.state.password == "") {
+            if (this.state.password == "" || this.state.password.length < 8) {
                 EasyToast.show('请输入密码');
                 return;
             }
@@ -247,7 +250,7 @@ class TurnOut extends React.Component {
                                     <View style={styles.accountoue} >
                                         <TextInput ref={(ref) => this._raccount = ref}  value={this.state.toAccount} returnKeyType="next"   
                                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}      
-                                            placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  
+                                            placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  maxLength = {12}
                                             onChangeText={(toAccount) => this.setState({ toAccount })} 
                                         />
                                     <View style={styles.scanning}>

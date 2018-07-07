@@ -253,6 +253,15 @@ class Home extends React.Component {
 
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
+    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
+      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        this.WalletDetail(this.props.defaultWallet);
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+
+      return;
+    }
+
     if (key == 'qr') {
       AnalyticsUtil.onEvent('Receipt_code');
 
@@ -275,6 +284,13 @@ class Home extends React.Component {
       }
       navigate('Bvote', {data, balance: this.state.balance});
     }else if (key == 'transfer') {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          this.createWallet();
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });  
+        return;
+      }
       navigate('TurnOut', { coins:'EOS', balance: this.state.balance });
     }else if (key == 'Resources') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
@@ -300,6 +316,14 @@ class Home extends React.Component {
   }
 
   scan() {
+    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
+      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        this.WalletDetail(this.props.defaultWallet);
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+
+      return;
+    }
     AnalyticsUtil.onEvent('Scavenging_transfer');
     if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       const { navigate } = this.props.navigation;
@@ -356,6 +380,14 @@ class Home extends React.Component {
   }
 
   coinInfo(coinType) {
+    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
+      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        this.WalletDetail(this.props.defaultWallet);
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+
+      return;
+    }
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
