@@ -344,6 +344,37 @@ export default {
             }
             DeviceEventEmitter.emit('updateDefaultWallet');
         }, 
+        *delWalletList({ payload, callback }, { call, put }) {
+            if(payload.walletList == null){
+                return;
+            }
+            var walletArr = yield call(store.get, 'walletArr');
+            var defaultWallet = yield call(store.get, 'defaultWallet');
+            if (walletArr.length == 1) {
+                walletArr = [];
+                yield call(store.save, 'defaultWallet', []);
+                yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: [] } });
+                yield call(store.save, 'walletArr', walletArr);
+                DeviceEventEmitter.emit('delete_wallet', payload);
+            } else {
+                for(var j = 0; j < payload.walletList.length; j++){
+                    for (var i = 0; i < walletArr.length; i++) {
+                        if (walletArr[i].account == payload.walletList[j].account) {
+                            walletArr.splice(i, 1);
+                            if (payload.walletList[j].account == defaultWallet.account) {
+                                yield call(store.save, 'defaultWallet', walletArr[0]);
+                                yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
+                            }
+                            yield call(store.save, 'walletArr', walletArr);
+                            DeviceEventEmitter.emit('delete_wallet', {data: payload.walletList[j]});
+                        }
+                    }
+                }
+            }
+            if (callback) callback({ walletArr });
+
+            DeviceEventEmitter.emit('updateDefaultWallet');
+        }, 
         *getDefaultWallet({ payload, callback }, { call, put }) {
             var defaultWallet = yield call(store.get, 'defaultWallet');
             if (callback) callback({ defaultWallet });
@@ -474,7 +505,11 @@ export default {
             yield put({ type: 'updateGuide', payload: { guide: payload.guide } });
             if (callback) callback(payload);
          },
-         *scanInvalidWallet({},{call,put}) {
+         *updateInvalidState({payload, callback},{call,put}) {
+            yield put({ type: 'updateInvalid', payload: { Invalid: payload.Invalid } });
+            if (callback) callback(payload);
+         },
+         *scanInvalidWallet({callback},{call,put}) {
             const walletArr = yield call(store.get, 'walletArr');
             var invalidWalletArr = [];
             for(var i = 0; i < walletArr.length; i++){
@@ -482,13 +517,11 @@ export default {
                 invalidWalletArr.push(walletArr[i]);
               }
             }
+            if(callback) callback(invalidWalletArr);
+            yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr} });
             yield call(store.save, 'invalidWalletArr', invalidWalletArr);
          },
-         *invalidWalletList({ callback }, { call, put }) {
-            const invalidWalletArr = yield call(store.get, 'invalidWalletArr');
-            yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr } });
-            if(callback) callback(invalidWalletArr);
-        }, 
+        
         *up({payload},{call,put}) {
             try{
                 yield put({ type: 'updateSelect', payload: { ...payload } });
@@ -518,6 +551,10 @@ export default {
         updateGuide(state, action){
             return { ...state, ...action.payload };
         },
+        updateInvalid(state, action){
+            // alert('11: ' + JSON.stringify(action.payload))
+            return { ...state, ...action.payload };
+        },
         updateInvalidWalletArr(state, action) {
             return {...state,invalidWalletList:action.payload.invalidWalletArr}; 
         },
@@ -534,7 +571,7 @@ export default {
                 }
                 newarr.push(item);
             })
-            return {...state,voteData:newarr}; 
+            return {...state,allInvalidWalletList:newarr}; 
         },
     }
 }

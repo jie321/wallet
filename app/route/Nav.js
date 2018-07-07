@@ -603,7 +603,6 @@ class Route extends React.Component {
           this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
             if(walletArr == null || walletArr.length == 0){
               this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}, callback: (data) => {  
-             
                 if (action && action.routeName) {
                   DeviceEventEmitter.emit('changeTab', action.routeName);
                 }
@@ -611,8 +610,8 @@ class Route extends React.Component {
               }
               });
               this.timer && clearTimeout(this.timer);
+              return;
             }else{
-              this.props.dispatch({ type: 'wallet/scanInvalidWallet'});
               this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
                 this.timer = setInterval( ()  =>{
                   this.getBalance();
@@ -628,10 +627,7 @@ class Route extends React.Component {
           }
           });
         } });
-
-
       }else{
-        this.props.dispatch({ type: 'wallet/scanInvalidWallet'});
         this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
           this.timer = setInterval( ()  =>{
             this.getBalance();
@@ -644,7 +640,13 @@ class Route extends React.Component {
           routeLength = nav.routes.length;
         }});
       }
-
+      this.props.dispatch({ type: 'wallet/scanInvalidWallet', callback: (invalidWalletArr) => {
+        if(invalidWalletArr == null || invalidWalletArr.length == 0){
+          this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
+        }else{
+          this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: true}});
+        }
+      }});
     }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
       this.timer && clearTimeout(this.timer);
       if (action && action.routeName) {

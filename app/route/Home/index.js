@@ -54,6 +54,7 @@ class Home extends React.Component {
     this.getBalance();
     this.getIncrease();
     //加载地址数据
+    this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
@@ -227,31 +228,28 @@ class Home extends React.Component {
 
   // 显示/隐藏 modal  
   _setModalInvalid() {
-    let isShow = this.state.Invalid;
-    this.setState({
-      Invalid: !isShow,
-    });
+    this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
   }
 
   selectItem = (item,section) => { 
     this.props.dispatch({ type: 'wallet/up', payload: { item:item} });
-    let arr = this.props.invalidWalletList;
-    var cnt = 0;
-    for(var i = 0; i < arr.length; i++){ 
-        if(arr[i].isChecked == true){
-            cnt++;              
-        }     
-    }
-    if(cnt == 0 && this.props.invalidWalletList){
-        this.state.arr1 = this.state.invalidWalletList.length;
-    }else{
-        this.state.arr1 = cnt;
-    }
   }
 
-  delInvalidWallet = (rowData) => { // 选中账号
-    alert("11: "+JSON.stringify(this.props.voteData))
+ delInvalidWallet = (rowData) => {
+    if(this.props.allInvalidWalletList == null || this.props.allInvalidWalletList.length == 0){
+      return;
+    }
+    var arr = [];
+    for(var i = 0; i < this.props.invalidWalletList.length; i++){ 
+        if(this.props.invalidWalletList[i].isChecked == true){
+          arr.push(this.props.invalidWalletList[i]);
+        }     
+    }
+    this.props.dispatch({ type: 'wallet/delWalletList', payload: { walletList: arr } });
+    EasyToast.show("删除无效账号成功！");
+    this._setModalInvalid(); 
   }
+
 
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
@@ -571,7 +569,7 @@ class Home extends React.Component {
           </TouchableOpacity>
         </Modal>
 
-         <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.state.Invalid} onRequestClose={()=>{}}>
+         <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.props.Invalid} onRequestClose={()=>{}}>
             <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
               <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
                 <View style={{flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, paddingHorizontal: 10,}}> 

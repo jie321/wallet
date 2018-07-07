@@ -21,7 +21,7 @@ var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
 var cangoback = false;
 
-@connect(({ banner, newsType, news }) => ({ ...banner, ...newsType, ...news }))
+@connect(({ banner, newsType, news, wallet}) => ({ ...banner, ...newsType, ...news, ...wallet }))
 class News extends React.Component {
 
   static navigationOptions = {
@@ -40,6 +40,17 @@ class News extends React.Component {
   }
   //组件加载完成
   componentDidMount() {
+    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+      this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
+        if(walletArr == null || walletArr.length == 0){
+          this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}});
+          return;
+        }else{
+          this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}});
+        }
+      }
+      });
+    } });
     //切换tab完成后执行,不影响ui流畅度
     InteractionManager.runAfterInteractions(() => {
       let i = 0;
