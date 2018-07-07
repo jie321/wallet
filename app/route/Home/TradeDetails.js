@@ -64,19 +64,19 @@ class TradeDetails extends React.Component {
         <View style={styles.conout}>
           <View style={styles.conouttext}>
             <Text style={styles.context}>发 送 方：</Text> 
-            <Text style={{color: UColor.tintColor, flex: 1}} onPress={this.prot.bind(this, 'from')}>{c.from}</Text>
+            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'from')}>{c.from}</Text>
           </View>
           <View style={styles.conouttext}>
             <Text style={styles.context}>接 受 方：</Text>
-            <Text style={{color: UColor.tintColor, flex: 1}} onPress={this.prot.bind(this, 'to')}>{c.to}</Text>
+            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'to')}>{c.to}</Text>
           </View>
           <View style={styles.conouttext}> 
             <Text style={styles.context}>区块高度：</Text>
-            <Text style={{color: UColor.tintColor, flex: 1}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text>
+            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text>
           </View>
           <View style={styles.conouttext}>
             <Text style={styles.context}>备 注：</Text>
-            <Text style={{color: UColor.arrow, flex: 1,}} >{c.memo}</Text>
+            <Text style={{color: UColor.arrow, flex: 1,fontSize: 14,}} >{c.memo}</Text>
           </View>
         </View>
         <Text style={styles.blocktime}>{c.blockTime}</Text>

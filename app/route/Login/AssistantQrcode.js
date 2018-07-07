@@ -43,7 +43,7 @@ class AssistantQrcode extends React.Component {
                 <QRCode size={170} style={{ width: 170 }}  value={"https://u.wechat.com/IFNmi5QiQirtoO-MrzB55EE"}/>
             </View>
         </View>
-        <Text style={styles.prompttext}>微信扫一扫，添加</Text>
+        <Text style={styles.prompttext}>微信扫一扫，添加好友</Text>
         <Button onPress={() => this.copy()}>
           <View style={styles.btnloginUser}>
               <Text style={styles.btntext}>复制微信号</Text>
