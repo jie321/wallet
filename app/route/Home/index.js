@@ -465,7 +465,7 @@ class Home extends React.Component {
               <View style={styles.addout}>
                 <View style={styles.topout}>
                   <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
-                  {(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:(this.props.defaultWallet != null &&this.props.defaultWallet.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
+                  {(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
