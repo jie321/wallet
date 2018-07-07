@@ -247,10 +247,10 @@ class Memory extends React.Component {
         }
 
         if(this.state.sellRamBytes == ""){
-            EasyToast.show('请输入出售内存字节数量');
+            EasyToast.show('请输入出售内存kb数量');
             return;
         }
-this. dismissKeyboardClick();
+        this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
@@ -276,7 +276,7 @@ this. dismissKeyboardClick();
                     // alert("plaintext_privateKey "+plaintext_privateKey);
                     EasyLoading.show();
                     // alert("receiver: "+this.props.defaultWallet.account+" " + "sellBytes: " + this.state.sellRamBytes);
-                    Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes, (r) => {
+                    Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
                         EasyLoading.dismis();
                         if(r.isSuccess){
                             this.getAccountInfo();
@@ -353,7 +353,7 @@ this. dismissKeyboardClick();
                             </View>
                             }
                             <View style={styles.inptoutsource}>
-                                <Text style={styles.inptTitle}>购买内存（0.0000 EOS）</Text>
+                                <Text style={styles.inptTitle}>购买内存（EOS）</Text>
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
@@ -368,7 +368,7 @@ this. dismissKeyboardClick();
                                 </View>
                             </View>
                             {this.state.isBuyForOther ? null:<View style={styles.inptoutsource}>
-                                <Text style={styles.inptTitle}>出售内存（3081 Bytes）</Text>
+                                <Text style={styles.inptTitle}>出售内存（KB）</Text>
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
