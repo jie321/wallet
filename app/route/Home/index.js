@@ -37,7 +37,7 @@ class Home extends React.Component {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       fadeAnim: new Animated.Value(15),  //设置初始值
       modal: false,
-      balance: 0,
+      balance: '0',
       account: 'xxxx',
       show: false,
       init: true,

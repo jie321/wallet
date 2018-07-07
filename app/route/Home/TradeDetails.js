@@ -59,13 +59,25 @@ class TradeDetails extends React.Component {
                 <Text style={styles.quantitytext}>{c.quantity}</Text>
                 {/* <Text style={styles.headtext}> bytes</Text> */}
             </View>
-            <Text style={styles.description}>（{c.description} {c.bytes? c.bytes + " bytes":""}）</Text>
+            <Text style={styles.description}>({c.description}{c.bytes? c.bytes + " bytes":""})</Text>
         </View>
         <View style={styles.conout}>
-            <Text style={styles.context}>发送方：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'from')}>{c.from}</Text></Text>
-            <Text style={styles.context}>接受方：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'to')}>{c.to}</Text></Text>
-            <Text style={styles.context}>区块高度：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text></Text>
-            <Text style={styles.context}>备注：{c.memo}</Text>
+          <View style={styles.conouttext}>
+            <Text style={styles.context}>发 送 方：</Text> 
+            <Text style={{color: UColor.tintColor, flex: 1}} onPress={this.prot.bind(this, 'from')}>{c.from}</Text>
+          </View>
+          <View style={styles.conouttext}>
+            <Text style={styles.context}>接 受 方：</Text>
+            <Text style={{color: UColor.tintColor, flex: 1}} onPress={this.prot.bind(this, 'to')}>{c.to}</Text>
+          </View>
+          <View style={styles.conouttext}> 
+            <Text style={styles.context}>区块高度：</Text>
+            <Text style={{color: UColor.tintColor, flex: 1}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text>
+          </View>
+          <View style={styles.conouttext}>
+            <Text style={styles.context}>备 注：</Text>
+            <Text style={{color: UColor.arrow, flex: 1,}} >{c.memo}</Text>
+          </View>
         </View>
         <Text style={styles.blocktime}>{c.blockTime}</Text>
         <View style={styles.codeout}>
@@ -74,7 +86,7 @@ class TradeDetails extends React.Component {
             </View>
         </View>
         <Text style={styles.tradehint}>交易号：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'transactionId')}>{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text></Text>
-        <Text style={styles.tradehint}>提示：扫码可获取区块交易状态</Text>
+        <Text style={styles.tradehint}>提 示：扫码可获取区块交易状态</Text>
     </View>
   }
 }
@@ -114,15 +126,24 @@ const styles = StyleSheet.create({
     color: UColor.tintColor,
   },
   conout: {
+    flexDirection: "column",
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderBottomColor: UColor.mainColor,
     borderBottomWidth: 0.5,
+    
+  },
+  conouttext: {
+    flexDirection: "row",
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10,
   },
   context: {
+    textAlign: 'right',
     fontSize: 14,
     color: UColor.arrow,
-    paddingTop: 10,
+    width: 70,
   },
 
   blocktime: {
