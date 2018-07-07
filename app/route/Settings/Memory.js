@@ -181,6 +181,7 @@ class Memory extends React.Component {
             EasyToast.show('请输入购买金额');
             return;
         }
+        this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
@@ -249,7 +250,7 @@ class Memory extends React.Component {
             EasyToast.show('请输入出售内存字节数量');
             return;
         }
-
+this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 

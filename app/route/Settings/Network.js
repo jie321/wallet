@@ -155,7 +155,7 @@ class Network extends React.Component {
             EasyToast.show('请输入抵押的EOS数量');
             return;
         }
-
+        this. dismissKeyboardClick();
         const view =
         <View style={styles.passoutsource}>
             <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
@@ -224,7 +224,7 @@ class Network extends React.Component {
             EasyToast.show('请输入赎回的EOS数量');
             return;
         }
-
+        this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
