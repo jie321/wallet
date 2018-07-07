@@ -32,7 +32,7 @@ export default {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
         } catch (error) {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *up({payload},{call,put}) {
@@ -52,7 +52,7 @@ export default {
                 EasyToast.show(resp.msg);
             }
         } catch (error) {
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *down({payload},{call,put}) {
@@ -72,7 +72,7 @@ export default {
                 EasyToast.show(resp.msg);
             }
         } catch (error) {
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *view({payload},{call,put}) {
@@ -85,7 +85,7 @@ export default {
                 EasyToast.show(resp.msg);
             }
         } catch (error) {
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *share({payload},{call,put}) {
@@ -98,7 +98,7 @@ export default {
                 EasyToast.show(resp.msg);
             }
         } catch (error) {
-            EasyToast.show('网络发生错误，请重试');
+            EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *openView({payload},{call,put}) {

@@ -89,7 +89,7 @@ class CoinDetail extends React.Component {
   }
 
   setSelectedOption(opt){
-    if(opt=="5分种"){
+    if(opt=="5分钟"){
       type=0;
       this.fetchLine(0,opt);
     }else if(opt=="1小时"){
@@ -166,7 +166,7 @@ class CoinDetail extends React.Component {
           selectedTint= {'#43536D'}
           onSelection={this.setSelectedOption.bind(this) }
           selectedOption={ this.state.selectedSegment }
-          backTint= {'#43536D'} options={['5分种','1小时','6小时','24小时']} />
+          backTint= {'#43536D'} options={['5分钟','1小时','6小时','24小时']} />
         </View>
         <View style={{flex:1,paddingTop:10}}>
           {

@@ -21,7 +21,7 @@ export default {
                 }
                 if(callback)callback(resp)
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
         },
         *getBind({payload,callback},{call, put}) {
@@ -30,7 +30,7 @@ export default {
                 const resp = yield call(Request.request,getbind+payload.uid,'get');
                 if(callback)callback(resp);
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
         },
         *bind({payload,callback},{call, put}) {
@@ -39,7 +39,7 @@ export default {
                 const resp = yield call(Request.request,bindCode,'post',payload);
                 if(callback)callback(resp);
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
         }
     },

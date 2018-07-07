@@ -105,7 +105,7 @@ export default {
                 }
 
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
 
             var walletList = yield call(store.get, 'walletArr');
@@ -464,7 +464,7 @@ export default {
                 }
                 if (callback) callback(resp);
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
          },
          *getTradeDetails({payload, callback},{call,put}) {
@@ -484,7 +484,7 @@ export default {
                 }
                 if (callback) callback(resp);
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
                 EasyLoading.dismis();
             }
          },
@@ -498,7 +498,7 @@ export default {
                     EasyToast.show(resp.msg);
                 }
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
          },
          *updateGuideState({payload, callback},{call,put}) {
@@ -526,7 +526,7 @@ export default {
             try{
                 yield put({ type: 'updateSelect', payload: { ...payload } });
             } catch (error) {
-                EasyToast.show('网络发生错误，请重试');
+                EasyToast.show('网络繁忙,请稍后!');
             }
          },
     },
