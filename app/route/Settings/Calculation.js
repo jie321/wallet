@@ -106,8 +106,8 @@ class Calculation extends React.Component {
     getAccountInfo(){
         this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
             this.setState({
-                staked:(data.total_resources.cpu_weight?data.total_resources.cpu_weight.replace("EOS", "") : "0"),
-                unstaking:(data.refund_request?data.refund_request.cpu_amount.replace("EOS", "") : "0"),
+                staked:(data.total_resources.cpu_weight?data.total_resources.cpu_weight.replace("EOS", "") : "0.0000"),
+                unstaking:(data.refund_request?data.refund_request.cpu_amount.replace("EOS", "") : "0.0000"),
                 used:(data.cpu_limit.used / 1000).toFixed(3),
                 available:(data.cpu_limit.available / 1000).toFixed(3),
             });

@@ -406,11 +406,12 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.secdColor,
   },
   significantout: {
-    padding: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   significanttext: {
     color: UColor.arrow,
-    
+    fontSize: 12, 
   },
 
   outsource: {
