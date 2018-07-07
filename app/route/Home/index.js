@@ -571,7 +571,7 @@ class Home extends React.Component {
 
          <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.props.Invalid} onRequestClose={()=>{}}>
             <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
-              <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
+              <View style={{ width: maxWidth,  height: maxHeight*2/3,  backgroundColor: UColor.fontColor,}}>
                 <View style={{flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, paddingHorizontal: 10,}}> 
                   <Text style={{width: 30,}}/>
                   <Text style={{flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',}}>无效账户删除提示</Text>
@@ -579,9 +579,10 @@ class Home extends React.Component {
                     <Text style={{ width: 30, color: '#CBCBCB', fontSize: 28, textAlign: 'center',}}>×</Text>
                   </Button>
                 </View>
+                <Text style={{fontSize: 12, color: UColor.showy, textAlign: 'left', marginBottom: 20, paddingHorizontal: 20,}}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
                 <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
-                      dataSource={this.state.dataSource.cloneWithRows(this.props.invalidWalletList == null ? [] : this.props.invalidWalletList)} 
-                      renderRow={(rowData, sectionID, rowID) => (                 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.invalidWalletList == null ? [] : this.props.invalidWalletList)} 
+                    renderRow={(rowData, sectionID, rowID) => (                 
                       <View>
                           <Button > 
                               <View style={{height: 50,flexDirection: "row", alignItems: 'center', marginHorizontal: 15, borderBottomColor: '#E5E5E5', borderBottomWidth: 1, }} >
@@ -596,11 +597,10 @@ class Home extends React.Component {
                               </View> 
                           </Button>  
                       </View>      
-                       )}                   
+                    )}                   
                   /> 
-                  <Text style={{fontSize: 12, color: UColor.showy, textAlign: 'left', marginVertical: 20, paddingHorizontal: 20,}}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
                   <Button onPress={this.delInvalidWallet.bind()}>
-                      <View style={{height: 50, marginHorizontal: 28, marginBottom: 28, borderRadius: 6, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                      <View style={{height: 50, marginHorizontal: 28, marginTop: 10, marginBottom: 28, borderRadius: 6, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
                           <Text style={{fontSize: 16, color: UColor.fontColor}}>一键删除</Text>
                       </View>
                   </Button>  
