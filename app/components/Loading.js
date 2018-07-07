@@ -25,9 +25,10 @@ export class EasyLoading {
 
     static dismis(key = 'default') {
         var th = this;
-        setTimeout(function(){
+        this.tm=setTimeout(function(){
             th.map[key] && th.map[key].setState({ "isShow": false });
-        },500);
+            clearTimeout(this.tm);
+        },300);
     }
 }
 

@@ -105,9 +105,9 @@ class Imvote extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            if(Platform.OS == 'android' ){
-                EasyLoading.show();
-            }
+            // if(Platform.OS == 'android' ){
+            //     EasyLoading.show();
+            // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -116,7 +116,7 @@ class Imvote extends React.Component {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-
+                    EasyLoading.show();
                     //撤票
                     Eos.transaction({
                         actions:[

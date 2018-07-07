@@ -104,9 +104,9 @@ class Nodevoting extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            if(Platform.OS == 'android' ){
-                EasyLoading.show();
-            }
+            // if(Platform.OS == 'android' ){
+            //     EasyLoading.show();
+            // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -114,6 +114,7 @@ class Nodevoting extends React.Component {
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    EasyLoading.show();
                     //投票
                     Eos.transaction({
                         actions:[

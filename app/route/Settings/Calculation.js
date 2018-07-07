@@ -155,7 +155,7 @@ class Calculation extends React.Component {
             EasyToast.show('请输入抵押的EOS数量');
             return;
         }
-
+        this. dismissKeyboardClick();
         const view =
         <View style={styles.passoutsource}>
             <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
@@ -170,9 +170,9 @@ class Calculation extends React.Component {
             EasyToast.show('请输入密码');
             return;
         }
-        if(Platform.OS == 'android' ){
-            EasyLoading.show();
-        }
+        // if(Platform.OS == 'android' ){
+        //     EasyLoading.show();
+        // }
 
         var privateKey = this.props.defaultWallet.activePrivate;
         try {
@@ -184,7 +184,7 @@ class Calculation extends React.Component {
                 if(this.state.isBuyOneself){
                     this.state.receiver = this.props.defaultWallet.account;
                 }
-
+                EasyLoading.show();
                 // 抵押
                 Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegatebw + " EOS", "0 EOS", (r) =>{
                     EasyLoading.dismis();
@@ -224,7 +224,7 @@ class Calculation extends React.Component {
             EasyToast.show('请输入赎回的EOS数量');
             return;
         }
-
+        this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
@@ -239,9 +239,9 @@ class Calculation extends React.Component {
                 EasyToast.show('请输入密码');
                 return;
             }
-            if(Platform.OS == 'android' ){
-                EasyLoading.show();
-            }
+            // if(Platform.OS == 'android' ){
+            //     EasyLoading.show();
+            // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
@@ -254,7 +254,7 @@ class Calculation extends React.Component {
                     if(this.state.isBuyOneself){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-
+                    EasyLoading.show();
                     // 解除抵押
                     Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegatebw + " EOS", "0 EOS", (r) => {
                         EasyLoading.dismis();
