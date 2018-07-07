@@ -182,7 +182,7 @@ class TurnIn extends React.Component {
                 </View>
                 <Text style={styles.prompttext}>扫一扫，向我转账</Text>
                 <View style={styles.inptoutsource}>
-                  <Text style={styles.accountText}>收款金额: </Text>
+                <Text style={styles.tokenText} />
                   <TextInput
                     autoFocus={false}
                     onChangeText={amount =>
@@ -194,7 +194,7 @@ class TurnIn extends React.Component {
                     selectionColor={UColor.tintColor}
                     style={styles.inpt}
                     placeholderTextColor={UColor.tintColor}
-                    placeholder="请输入(可不填)"
+                    placeholder="请输入金额"
                     underlineColorAndroid="transparent"
                     secureTextEntry={false}
                     keyboardType="numeric"
@@ -309,6 +309,7 @@ const styles = StyleSheet.create({
   tokenText: {
     color: UColor.arrow,
     fontSize: 15,
+    width: 60,
     height: 40,
     paddingLeft: 2,
     textAlign: "left",
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     height: 40,
     paddingLeft: 2,
-    textAlign: "left"
+    textAlign: "center"
   },
   btnnextstep: {
     height: 85,
