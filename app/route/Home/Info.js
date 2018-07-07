@@ -39,8 +39,11 @@ class Info extends React.Component {
             type: '',
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
-            this.getBalance();
-            DeviceEventEmitter.emit('wallet_info');
+            try {
+                this.getBalance();
+                DeviceEventEmitter.emit('wallet_info');
+            } catch (error) {
+            }
         });
     }
 
@@ -100,7 +103,7 @@ class Info extends React.Component {
 
     getBalance() {
         this.props.dispatch({
-            type: 'wallet/getBalance', payload: { contract: "eosio.token", account: data.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
+            type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
                 this.setEosBalance(data);
             }
         })
@@ -123,7 +126,7 @@ class Info extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headbalance}>{this.state.balance}</Text>
+                    <Text style={styles.headbalance}>{this.state.balance.replace("EOS", "")} EOS</Text>
                     <Text style={styles.headmarket}>≈ {(this.state.balance==null || this.state.balance == "")? '0.00' : (this.state.balance.replace("EOS", "")*c.value).toFixed(2)} ￥</Text>
                 </View>
                 <View style={styles.btn}>

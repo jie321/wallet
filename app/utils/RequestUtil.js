@@ -37,8 +37,8 @@ import Constants from '../utils/Constants'
 //   });
 // };
 
-const requestO = (url,method, body) => {
-  let timeout=30000
+const requestO = (url,method, body, timeout=30000) => {
+  //  timeout=60000
   const request1 = new Promise((resolve, reject) => {
     fetch(url,{
         method: method,
@@ -88,7 +88,7 @@ const requestO = (url,method, body) => {
     });
 };
 
-const request = (url,method,body)=>{
+const request = (url,method,body, timeout = 30000)=>{
    return getRootaddr().then(res=>{
       let okUrl = url
       let rootaddr = res
@@ -96,7 +96,7 @@ const request = (url,method,body)=>{
         okUrl = rootaddr+url
       }
       
-      return requestO(okUrl, method, body)
+      return requestO(okUrl, method, body, timeout)
    }).catch(e=>{
     console.log(e);
    })

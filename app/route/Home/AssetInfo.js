@@ -39,8 +39,11 @@ class AssetInfo extends React.Component {
             type: '',
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
-            this.getBalance();
-            DeviceEventEmitter.emit('wallet_info');
+            try{
+                this.getBalance();
+                DeviceEventEmitter.emit('wallet_info');
+            }catch(e)
+            {}
         });
     }
 

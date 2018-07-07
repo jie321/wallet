@@ -126,7 +126,7 @@ class TurnOut extends React.Component {
             amount: '',
             memo: '',
             defaultWallet: null,
-            balance: 0,
+            balance: '0',
             name: '',
         };
     }
@@ -164,10 +164,11 @@ class TurnOut extends React.Component {
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
                             type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
                                 EasyLoading.dismis();
+                                // alert("++++ " + JSON.stringify(result));
                                 if (result.code == '0') {
                                     AnalyticsUtil.onEvent('Turn_out');
                                     EasyToast.show('交易成功');
-                                    DeviceEventEmitter.emit('transaction_success');
+                                    DeviceEventEmitter.emit('transaction_success');                               
                                     this.props.navigation.goBack();
                                 } else {
                                     EasyToast.show('交易失败');
@@ -241,7 +242,7 @@ class TurnOut extends React.Component {
                 <ScrollView  keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                         <View style={styles.header}>
-                            <Text style={styles.headertext}>{this.state.balance}</Text>
+                            <Text style={styles.headertext}>{this.state.balance.replace("EOS", "")} EOS</Text>
                             {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
                         </View>
                         <View style={styles.taboutsource}>
@@ -295,9 +296,10 @@ class TurnOut extends React.Component {
                                     <Text style={styles.buttontext}>×</Text>
                                 </Button>
                                 {/* <Text style={styles.titleText}>转出 {c.name}</Text> */}
+                                <Text style={styles.contentText}>转出账户：{this.props.defaultWallet.account}</Text>
+                                <Text style={styles.contentText}>收款账户：{this.state.toAccount}</Text>
+                                <Text style={styles.contentText}>数   量：{this.state.amount}</Text>
                                 <Text style={styles.contentText}>MEMO信息：{this.state.memo}</Text>
-                                <Text style={styles.contentText}>转出地址：{this.state.toAccount}</Text>
-                                <Text style={styles.contentText}> 数量：{this.state.amount}</Text>
                                 <Button onPress={() => { this.inputPwd() }}>
                                     <View style={styles.btnoutsource}>
                                         <Text style={styles.btntext}>确认转出</Text>
