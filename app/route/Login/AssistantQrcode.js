@@ -36,7 +36,7 @@ class AssistantQrcode extends React.Component {
   render() {
     return <View style={styles.container}>
         <View style={styles.outsource}>
-            <Text style={styles.accountText}>公众号：{this.state.WeChat}</Text>
+            <Text style={styles.accountText}>微信号：{this.state.WeChat}</Text>
         </View>
         <View style={styles.codeout}>
             <View style={styles.qrcode}>
