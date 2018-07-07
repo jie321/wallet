@@ -348,17 +348,20 @@ class Route extends React.Component {
   }
 
   componentWillMount() {
-
+    //调取是否有钱包账户
+    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+      this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
+        if(walletArr == null || walletArr.length == 0){
+          this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}});  
+        }
+      }
+      });
+    } });
   }
  
   
 
   componentDidMount() {
-    //调取是否有钱包账户
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-      this.props.dispatch({ type: 'wallet/walletList' });
-    } });
-
     //回到app触发检测更新
     AppState.addEventListener("change", (newState) => {
       newState === "active" && codePush.sync({ installMode: codePush.InstallMode.ON_NEXT_RESUME });
@@ -596,15 +599,36 @@ class Route extends React.Component {
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
       if(this.props.coinList == null || this.props.coinList.length == 0){
-        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}, callback: (data) => {  
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+          this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
+            if(walletArr == null || walletArr.length == 0){
+              this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: true}, callback: (data) => {  
              
-          if (action && action.routeName) {
-            DeviceEventEmitter.emit('changeTab', action.routeName);
+                if (action && action.routeName) {
+                  DeviceEventEmitter.emit('changeTab', action.routeName);
+                }
+                routeLength = nav.routes.length;
+              }
+              });
+              this.timer && clearTimeout(this.timer);
+            }else{
+              this.props.dispatch({ type: 'wallet/scanInvalidWallet'});
+              this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
+                this.timer = setInterval( ()  =>{
+                  this.getBalance();
+                  this.getIncrease();
+                },30000);
+      
+                if (action && action.routeName) {
+                  DeviceEventEmitter.emit('changeTab', action.routeName);
+                }
+                routeLength = nav.routes.length;
+              }});
+            }
           }
-          routeLength = nav.routes.length;
-        }
-        });
-        this.timer && clearTimeout(this.timer);
+          });
+        } });
+
 
       }else{
         this.props.dispatch({ type: 'wallet/scanInvalidWallet'});
