@@ -118,7 +118,9 @@ class Home extends React.Component {
     });
 
     DeviceEventEmitter.addListener('eos_balance', (data) => {
-      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      if(this.props.list == null || this.props.list.length == 0){
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      }
       this.setEosBalance(data);
       this.calTotalBalance();
     });
