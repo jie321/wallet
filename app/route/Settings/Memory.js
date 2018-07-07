@@ -327,7 +327,7 @@ class Memory extends React.Component {
                                     </View>
                                 </View> 
                                 <View style={styles.headoutsource}>
-                                    <Text style={styles.headText}>*内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
+                                    <Text style={styles.headText}>内存资源，可以使用EOS买入，也可以卖出获得EOS</Text>
                                 </View> 
                             </ImageBackground>  
                             <View style={styles.tablayout}>  
