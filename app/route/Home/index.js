@@ -367,18 +367,15 @@ class Home extends React.Component {
   }
 
   changeWallet(data) {
+    this.setState({
+      modal: false
+    });
     if(!data.isactived && data.hasOwnProperty('isactived')){
-      // EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
-      //   this.WalletDetail(data);
-      //   EasyDialog.dismis()
-      // }, () => { EasyDialog.dismis() });
-
-      this.WalletDetail(data);
-
+      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        this.WalletDetail(data);
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
     }else {
-      this.setState({
-        modal: false
-      });
       const { dispatch } = this.props;
       this.props.dispatch({ type: 'wallet/changeWallet', payload: { data } });
       this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
