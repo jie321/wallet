@@ -124,7 +124,7 @@ class Coin_search extends React.Component {
       return;
     }
     if (this.state.address == "") {
-      EasyToast.show('请输入合约地址');
+      EasyToast.show('请输入合约账户');
       return;
     }
 
@@ -154,7 +154,7 @@ class Coin_search extends React.Component {
                     <View style={styles.inptout} >
                         <TextInput ref={(ref) => this._raccount = ref} value={this.state.labelname} returnKeyType="go"
                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#b3b3b3" 
-                            placeholder="输入token名称或合约地址搜索" underlineColorAndroid="transparent" keyboardType="default"
+                            placeholder="输入token名称或合约账户搜索" underlineColorAndroid="transparent" keyboardType="default"
                             onChangeText={(labelname) => this.setState({ labelname })}
                             />      
                     </View>     
@@ -188,7 +188,7 @@ class Coin_search extends React.Component {
                                 
                             <TextInput ref={(ref) => this._raccount = ref} value={this.state.address}   returnKeyType="go" 
                                 selectionColor={UColor.tintColor}  style={styles.inptpass} placeholderTextColor="#b3b3b3" 
-                                placeholder="输入合约地址" underlineColorAndroid="transparent"  keyboardType="default"  
+                                placeholder="输入合约账户" underlineColorAndroid="transparent"  keyboardType="default"  
                                 onChangeText={(address) => this.setState({ address })}/>
                         </View>
                         <Button onPress={() => { this.submit() }}>
