@@ -77,11 +77,11 @@ class createWallet extends React.Component {
       EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
       return;
     }
-    if (this.state.walletPassword == "") {
+    if (this.state.walletPassword == "" || this.state.walletPassword < 8) {
       EasyToast.show('请输入钱包密码');
       return;
     }
-    if (this.state.reWalletPassword == "") {
+    if (this.state.reWalletPassword == "" || this.state.reWalletPassword < 8) {
       EasyToast.show('请输入钱包确认密码');
       return;
     }
@@ -192,9 +192,9 @@ class createWallet extends React.Component {
 
   ExplainPopup(){
   EasyDialog.show("EOS账号创建说明", (<View>
-     <View style={{flexDirection: 'row', marginBottom: 10,}}>
-       <Text style={{textAlign: 'left', color: UColor.showy, flex: 1}}>生成账号失败：{this.state.errormsg}</Text>
-       <Text style={{textAlign: 'right', color: UColor.showy,}}>错误码：{this.state.errorcode}</Text>
+     <View style={{flexDirection: 'column', marginBottom: 10,}}>
+       <Text style={{textAlign: 'left', color: UColor.showy,}}>生成账号失败：{this.state.errormsg}</Text>
+       <Text style={{textAlign: 'left', color: UColor.showy,}}>错误码：{this.state.errorcode}</Text>
      </View>
      <Text style={styles.inptpasstext}>1.如果您没有注册EosToken账号，创建的EOS钱包将无法激活</Text>
      <Text style={styles.inptpasstext}>2.激活EOS钱包需达到{this.state.integral}点积分（每个用户仅限一个）</Text>
