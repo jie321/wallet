@@ -138,8 +138,9 @@ export default {
             // }
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == wallet.account) {
-                    if (callback) callback({error: wallet.account + "已存在"});
-                    return;
+                    walletArr.splice(i, 1);
+                    // if (callback) callback({error: wallet.account + "已存在"});
+                    // return;
                     // if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
                     //     if (callback) callback({}, error);
                     //     return;
@@ -224,11 +225,12 @@ export default {
                 var wallet = walletList[j];
                 for (var i = 0; i < walletArr.length; i++) {
                     if (walletArr[i].account == wallet.account) {
+                        walletArr.splice(i, 1);
                         // if(walletArr[i].isactived || !walletArr[i].hasOwnProperty('isactived') ){
                         //     break;
                         // }
-                        if (callback) callback({error: wallet.account + "已存在"});
-                        return;
+                        // if (callback) callback({error: wallet.account + "已存在"});
+                        // return;
                     }
                 }
 
@@ -263,10 +265,9 @@ export default {
                 JPushModule.addTags([_wallet.name], map => {
     
                 })
-                DeviceEventEmitter.emit('updateDefaultWallet', {});
-                if (callback) callback(_wallet,null);
             }
-
+            DeviceEventEmitter.emit('updateDefaultWallet', {});
+            if (callback) callback(_wallet,null);
         },
         *importPrivateKey({ payload, callback }, { call, put }) {
             var AES = require("crypto-js/aes");
@@ -512,11 +513,14 @@ export default {
          *scanInvalidWallet({callback},{call,put}) {
             const walletArr = yield call(store.get, 'walletArr');
             var invalidWalletArr = [];
-            for(var i = 0; i < walletArr.length; i++){
-              if(walletArr[i].name.length < 12 || walletArr[i].name == "genesisblock"){
-                invalidWalletArr.push(walletArr[i]);
-              }
+            if(walletArr != null){
+                for(var i = 0; i < walletArr.length; i++){
+                    if(walletArr[i].name.length < 12 || walletArr[i].name == "genesisblock"){
+                      invalidWalletArr.push(walletArr[i]);
+                    }
+                  }
             }
+
             if(callback) callback(invalidWalletArr);
             yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr} });
             yield call(store.save, 'invalidWalletArr', invalidWalletArr);
