@@ -522,11 +522,11 @@ class Home extends React.Component {
               <View>
                 <Button onPress={this.coinInfo.bind(this, rowData)}>
                   <View style={styles.row}>
-                    <View style={styles.left}>
+                    <View style={styles.lefts}>
                       <Image source={{ uri: rowData.img }} style={styles.leftimg} />
                       <Text style={styles.lefttext}>{rowData.name}</Text>
                     </View>
-                    <View style={styles.right}>
+                    <View style={styles.rights}>
                       <View style={styles.rightout}>
                         <View>
                           <Text style={styles.rightbalance}>{this.state.balance}</Text>
@@ -549,11 +549,11 @@ class Home extends React.Component {
             <View style={styles.listItem}>
               <Button onPress={this.assetInfo.bind(this, rowData)}>
                 <View style={styles.row}>
-                  <View style={styles.left}>
+                  <View style={styles.lefts}>
                     <Image source={rowData.asset.icon==null ? UImage.eos : { uri: rowData.asset.icon }} style={styles.leftimg} />
                     <Text style={styles.lefttext}>{rowData.asset.name}</Text>
                   </View>
-                  <View style={styles.right}>
+                  <View style={styles.rights}>
                     <View style={styles.rightout}>
                       <View>
                         <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
@@ -566,7 +566,7 @@ class Home extends React.Component {
             </View>
           )}                
          />  
-        <Modal style={styles.touchableout} animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
+        <Modal style={styles.touchableouts} animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
           <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable} activeOpacity={1.0}>
             <TouchableOpacity style={styles.touchable} activeOpacity={1.0}>
               <View style={styles.touchableout}>
@@ -604,25 +604,25 @@ class Home extends React.Component {
           </TouchableOpacity>
         </Modal>
 
-         <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.props.Invalid} onRequestClose={()=>{}}>
-            <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
-              <View style={{ width: maxWidth,  height: maxHeight*2/3,  backgroundColor: UColor.fontColor,}}>
-                <View style={{flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, paddingHorizontal: 10,}}> 
-                  <Text style={{width: 30,}}/>
-                  <Text style={{flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',}}>无效账户删除提示</Text>
-                  <Button style={{}} onPress={this._setModalInvalid.bind(this)}>
-                    <Text style={{ width: 30, color: '#CBCBCB', fontSize: 28, textAlign: 'center',}}>×</Text>
+         <Modal style={styles.touchableouts} animationType={'slide'} transparent={true}  visible={this.props.Invalid} onRequestClose={()=>{}}>
+            <TouchableOpacity style={styles.pupuo} activeOpacity={1.0}>
+              <View style={styles.modalStyle}>
+                <View style={styles.subView}> 
+                  <Text style={styles.titleText}/>
+                  <Text style={styles.contentText}>无效账户删除提示</Text>
+                  <Button onPress={this._setModalInvalid.bind(this)}>
+                    <Text style={styles.titleText}>×</Text>
                   </Button>
                 </View>
-                <Text style={{fontSize: 12, color: UColor.showy, textAlign: 'left', marginBottom: 20, paddingHorizontal: 20,}}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
+                <Text style={styles.prompt}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
                 <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.invalidWalletList == null ? [] : this.props.invalidWalletList)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                       <View>
                           <Button > 
-                              <View style={{height: 50,flexDirection: "row", alignItems: 'center', marginHorizontal: 15, borderBottomColor: '#E5E5E5', borderBottomWidth: 1, }} >
-                                  <View style={{flex: 1, paddingLeft: 30,}}>
-                                      <Text style={{fontSize: 15, color: '#4D4D4D'}}>{rowData.name}</Text>
+                              <View style={styles.codeout} >
+                                  <View style={styles.copyout}>
+                                      <Text style={styles.copytext}>{rowData.name}</Text>
                                   </View>
                                   <TouchableOpacity style={styles.taboue} onPress={ () => this.selectItem(rowData)}>
                                       <View style={styles.tabview} >
@@ -635,8 +635,8 @@ class Home extends React.Component {
                     )}                   
                   /> 
                   <Button onPress={this.delInvalidWallet.bind()}>
-                      <View style={{height: 50, marginHorizontal: 28, marginTop: 10, marginBottom: 28, borderRadius: 6, backgroundColor: UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
-                          <Text style={{fontSize: 16, color: UColor.fontColor}}>一键删除</Text>
+                      <View style={styles.deleteout}>
+                          <Text style={styles.deletetext}>一键删除</Text>
                       </View>
                   </Button>  
               </View>
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
     textAlign:'center'
   },
 
-  touchableout: {
+  touchableouts: {
     flex: 1,
     flexDirection: "column",
   },
@@ -785,55 +785,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#4D607E', 
   },
 
-
-  totalbg: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    height: '100%',
-    width: "100%",
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 999
-  },
-  homebg: {
-    width: Dimensions.get('window').width,
-    height: 300,
-    resizeMode: 'cover',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
- 
-  botbtn: {
-    width: Dimensions.get('window').width,
-    height: 50,
-    alignItems: 'center',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 250,
-    bottom: 0,
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
   imgBtn: {
     width: 30,
     height: 30,
     margin:5,
-  },
-  item: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
 
   walletlist: {
@@ -884,14 +839,6 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
 
-
-
-
-
-  walletname: {
-    color: '#EFEFEF', 
-    lineHeight: 28,
-  },
   walletaccount: {
     flex:1,
     alignItems: 'center',
@@ -909,10 +856,7 @@ const styles = StyleSheet.create({
   borderTopWidth: 1, 
   borderTopColor: UColor.mainColor, 
  },
- ebhbtn: {
-  height: 40,
- },
-  
+
   establishout: {
     flex: 1, 
     flexDirection: "row",
@@ -928,83 +872,40 @@ const styles = StyleSheet.create({
     color: '#8594AB',
   },
 
-
-
   pupuo: {
-    // flex:1,  
-    backgroundColor: '#ECECF0',
-  },
-  // modal的样式  
-  modalStyle: {
-    backgroundColor: UColor.mask,
+    flex: 1, 
+    justifyContent: 'flex-end', 
     alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
   },
-  // modal上子View的样式  
+  modalStyle: {
+    width: maxWidth,  height: maxHeight*2/3,  backgroundColor: UColor.fontColor,
+  }, 
   subView: {
-    marginLeft: 10,
-    marginRight: 10,
-    backgroundColor: UColor.fontColor,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: UColor.mask,
+    flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, paddingHorizontal: 10,
   },
-  // 标题  
   titleText: {
-    marginBottom: 5,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    width: 40, color: '#CBCBCB', fontSize: 28, textAlign: 'center',
   },
-  // 内容  
   contentText: {
-    fontSize: 15,
-    textAlign: 'center',
+    flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',
   },
-  // 按钮  
   buttonView: {
     alignItems: 'flex-end',
   },
-  butclose: {
-    width: 30,
-    height: 30,
-    marginBottom: 0,
-    color: '#CBCBCB',
-    fontSize: 28,
-  },
   prompt: {
-    color: '#F45353',
-    fontSize: 12,
-    textAlign: 'center',
+    fontSize: 12, color: UColor.showy, textAlign: 'left', marginBottom: 20, paddingHorizontal: 20,
   },
   codeout: {
-    margin: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: "row",
+    height: 50,flexDirection: "row", alignItems: 'center', marginHorizontal: 15, borderBottomColor: '#E5E5E5', borderBottomWidth: 1, 
   },
   copyout: {
-    margin: 10, 
-    height: 40, 
-    borderRadius: 6, 
-    backgroundColor: UColor.tintColor, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+    flex: 1, paddingLeft: 30,
   },
   copytext: {
-    fontSize: 16, 
-    color: UColor.fontColor,
+    fontSize: 15, color: '#4D4D4D'
   },
 
-  tab: {
-    flex: 1,
-  },
-
-  left: {
+  lefts: {
     flex: 1,
     flexDirection: "row",
     alignItems: 'center',
@@ -1018,7 +919,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: UColor.fontColor
   },
-  right: {
+  rights: {
     flex: 1,
     flexDirection: "row",
     alignItems: 'center',
@@ -1056,13 +957,6 @@ const styles = StyleSheet.create({
     width: maxWidth,
     height: maxWidth*0.72,
  },
- outsource: {
-   height: 50,
-   marginVertical: 20,
-   paddingHorizontal: 25,
-   backgroundColor: UColor.mainColor,
-   justifyContent: "center",
- },  
  btnestablish: {
    height: 50,
    backgroundColor:  UColor.tintColor,
@@ -1086,8 +980,6 @@ const styles = StyleSheet.create({
    color: UColor.fontColor,
  },
 
-
-
  taboue: {
   justifyContent: 'center', 
   alignItems: 'center',
@@ -1102,6 +994,21 @@ tabview: {
 tabimg: {
   width: 24, 
   height: 24
+},
+
+deleteout: {
+  height: 50,
+  marginHorizontal: 28,
+  marginTop: 10,
+  marginBottom: 28,
+  borderRadius: 6,
+  backgroundColor: UColor.tintColor,
+  justifyContent: 'center',
+  alignItems: 'center'
+},
+deletetext: {
+  fontSize: 16,
+  color: UColor.fontColor
 },
 });
 

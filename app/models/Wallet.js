@@ -556,7 +556,13 @@ export default {
             return { ...state, ...action.payload };
         },
         updateInvalidWalletArr(state, action) {
-            return {...state,invalidWalletList:action.payload.invalidWalletArr}; 
+            let dts = action.payload.invalidWalletArr;
+            let newarr = new Array();
+            dts.map((item)=>{
+                item.isChecked=true;
+                newarr.push(item);
+            })
+            return {...state,invalidWalletList:newarr}; 
         },
         updateSelect(state, action) {
             let dts = state.invalidWalletList;
