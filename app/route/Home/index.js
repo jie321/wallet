@@ -857,7 +857,7 @@ const styles = StyleSheet.create({
   },
   stopoutBackups: {
     height: 18,
-    lineHeight: 18,
+    lineHeight: 15,
     fontSize: 10,
     color: '#2ACFFF',
     textAlign: 'left',
@@ -871,7 +871,7 @@ const styles = StyleSheet.create({
   },
   notactived: {
     height: 18,
-    lineHeight: 18,
+    lineHeight: 15,
     fontSize: 10,
     color: UColor.showy,
     textAlign: 'left',
