@@ -203,47 +203,11 @@ class createWallet extends React.Component {
   </View>), "知道了", null,  () => { EasyDialog.dismis() });
   }
 
-  getRandomWords() {
-    var words = '';
-    for (var i = 0; i < 15; i++) {
-      var randomNum = this.getx(arr_owner);
-      words_owner.push(english[randomNum]);
-    }
-    for (var i = 0; i < arr_owner.length; i++) {
-      words_owner[i] = english[arr_owner[i]];
-      wordsStr_owner = wordsStr_owner + "," + words_owner[i];
-    }
-    return words;
-  }
-
-
-  getAccountInfo() {
-    Eos.balance("eosio.token", "morning", (r) => {
-      try {
-        alert('getAccountInfo: ' + JSON.stringify(r));
-      } catch (e) {
-        alert('getAccountInfo err: ' + JSON.stringify(e));
-      }
-    });
-  }
-
-
   clearFoucs = () => {
     this._raccount.blur();
     this._lpass.blur();
     this._lrpass.blur();
     this._lnote.blur();
-  }
-
-  transfer() {
-    Eos.transfer("tt", "marco", "1.0000 EOS", "", "5JqqwFTALaJPVtSRNhsVFFN5de7d6j239YSVDMeKfNHXYc5F2oP", false, (r) => {
-      alert(JSON.stringify(r));
-      this.props.dispatch({
-        type: 'wallet/pushTransaction', payload: r.data.transaction, callback: (data) => {
-          alert('pushTransaction :' + JSON.stringify(data));
-        }
-      });
-    });
   }
 
   getx(arr) {
@@ -407,7 +371,7 @@ const styles = StyleSheet.create({
   },
   significantout: {
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 16,
   },
   significanttext: {
     color: UColor.arrow,
