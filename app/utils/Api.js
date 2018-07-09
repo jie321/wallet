@@ -9,6 +9,7 @@ export const address = rootaddr + '/coins/address';
 export const newsList = rootaddr + '/news/';
 export const sticker = rootaddr + '/coins/deep';
 export const line = rootaddr + '/coins/line/';
+export const existRegisteredUser = rootaddr + '/existRegisteredUser';
 export const capture = rootaddr + '/capture';
 export const login = rootaddr + '/login';
 export const signin = rootaddr + '/user/signin';

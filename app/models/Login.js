@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { capture, register, login, changePwd, userInfo, signin, fetchPoint, isSigned } from '../utils/Api';
+import { existRegisteredUser,capture, register, login, changePwd, userInfo, signin, fetchPoint, isSigned } from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import Constants from '../utils/Constants'
@@ -22,6 +22,15 @@ export default {
         Constants.token = token;
         Constants.uid = loginUser.uid;
         yield put({ type: 'update', payload: { loginUser, token, invite, reward } });
+      }
+    },
+    *existRegisteredUser({ payload, callback }, { call, put }) {
+      try {
+        const resp = yield call(Request.request, existRegisteredUser, 'post', payload);
+        // const resp = yield call(Request.requestO, "http://192.168.1.19:8088/api" + existRegisteredUser, 'post', payload);
+        if (callback) callback(resp);
+      } catch (error) {
+        if (callback) callback({ code: 500, msg: "网络异常" });
       }
     },
     *getCapture({ payload, callback }, { call, put }) {
