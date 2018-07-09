@@ -127,6 +127,12 @@ class ModifyPassword extends React.Component {
         dismissKeyboard();
     }
 
+    importEosKey() {
+        // 导入钱包
+        const { navigate } = this.props.navigation;
+        navigate('ImportEosKey');
+    }
+
     render() {
         return <View style={styles.container}>
           <ScrollView keyboardShouldPersistTaps="always">
@@ -155,11 +161,14 @@ class ModifyPassword extends React.Component {
                             />
                         </View>
                         <View style={styles.inptoutsource} >
-                            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" 
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" style={styles.inpt} placeholderTextColor={UColor.arrow}
                                 placeholder="密码提示(可不填)" underlineColorAndroid="transparent" 
                             />
                         </View>
+                    </View>
+                    <View style={{paddingTop: 10, paddingHorizontal: 20, flexDirection: 'row'}}>
+                        <Text style={{fontSize: 14, color: UColor.arrow}} >忘记密码? 导入助记词或私钥可重置密码。</Text>
+                        <Text onPress={() => this.importEosKey()} style={styles.servicetext}>马上导入</Text>
                     </View>
                     {/* <Text style={styles.welcome}>忘记密码？导入助记词或私钥可重置密码。马上导入</Text> */}
                     <Button onPress={() => this.updatePassword()}>
@@ -216,6 +225,11 @@ const styles = StyleSheet.create({
     buttext: {
         fontSize: 15, 
         color: UColor.fontColor
+    },
+    servicetext: {
+        fontSize: 14, 
+        color: UColor.tintColor,  
+        paddingLeft: 5,
     },
 });
 
