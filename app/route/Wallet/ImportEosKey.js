@@ -54,7 +54,8 @@ class ImportEosKey extends React.Component {
       CreateButton:  UColor.mainColor,
       show: false,
       Invalid: false,
-
+      publicKey: '',
+      ReturnData: '',
     };
   }
   //组件加载完成
@@ -129,7 +130,6 @@ class ImportEosKey extends React.Component {
     this.setState({ index });
   };
   
-
   prot(data = {}, key){
     const { navigate } = this.props.navigation;
     if (key == 'clause') {
@@ -141,230 +141,173 @@ class ImportEosKey extends React.Component {
     }
   }
 
-
   checkClick() {
     this.setState({
       show: false
     });
- }
+  }
 
-
- importPriKey() {
-  // this.setState({
-  //   show: true
-  // });
-  
-  if (this.state.activePk == '') {
-    EasyToast.show('请输入私钥');
-    return;
-  }
-  if (this.state.walletpwd == '') {
-    EasyToast.show('请输入密码');
-    return;
-  }
-  if (this.state.reWalletpwd == '') {
-    EasyToast.show('请输入确认密码');
-    return;
-  }
-  if (this.state.walletpwd.length < 8 && this.state.reWalletpwd.length < 8) {
-    EasyToast.show('密码不能少于8位');
-    return;
-  }
-  if (this.state.walletpwd != this.state.reWalletpwd) {
-    EasyToast.show('两次密码不一致');
-    return;
-  }
-  if (this.state.isChecked == false) {
-    EasyToast.show('请确认已阅读并同意条款');
-    return;
-  }
-  Eos.checkPrivateKey(this.state.activePk, (r) => {
-    if (!r.isSuccess) {
-      EasyToast.show('私钥格式不正确');
+  importPriKey() {
+    if (this.state.activePk == '') {
+      EasyToast.show('请输入私钥');
       return;
     }
-    this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
-  });
-}
-
-createWalletByPrivateKey(owner_privateKey, active_privatekey){
-  EasyLoading.show('正在请求');
-  Eos.privateToPublic(active_privatekey,(r) => {
-    var active_publicKey = r.data.publicKey;
-    // alert("active_publicKey "+active_publicKey);
-    // Eos.privateToPublic(owner_privateKey, (r) => {
-      try {
-        var owner_publicKey = r.data.publicKey;
-        // 根据puk到eos主网上获取相关账户名称
-        this.props.dispatch({
-          type: 'wallet/getAccountsByPuk',
-          payload: {public_key: owner_publicKey}, callback: (data) => {
-            EasyLoading.dismis();
-            if (data.code != '0') {
-              EasyToast.show('找不到' + owner_publicKey + "对应的账户名" + " "+JSON.stringify(data));
-              return;
-            }
-  
-            var walletList = [];
-            var salt;
-            Eos.randomPrivateKey((r)=>{
-                salt = r.data.ownerPrivate.substr(0, 18);
-                for(var i = 0; i < data.data.account_names.length; i++){
-                  var result = {
-                    data:{
-                      ownerPublic:'',
-                      activePublic:'',
-                      ownerPrivate:'',
-                      activePrivate:'',
-                      words_active:'',
-                      words:'',
-                    }
-                  };
-                  result.data.ownerPublic = owner_publicKey;
-                  result.data.activePublic = active_publicKey;
-                  result.data.words = '';
-                  result.data.words_active = '';
-                  result.data.ownerPrivate = owner_privateKey;
-                  result.data.activePrivate = active_privatekey;
-                  result.password = this.state.walletpwd;
-                  result.name = data.data.account_names[i];
-                  result.account = data.data.account_names[i];
-                  result.isactived = true;
-                  result.salt=salt;
-                  walletList[i] = result;
-                }
-    
-                // 保存钱包信息
-                this.props.dispatch({
-                  type: 'wallet/saveWalletList', walletList: walletList, callback: (data) => {            
-                    if (data.error != null) {
-                      EasyToast.show('导入私钥失败：' + data.error);
-                    } else {
-                      EasyToast.show('导入私钥成功！');
-                      this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
-                      DeviceEventEmitter.emit('updateDefaultWallet');
-                      this.props.navigation.goBack();
-                                    
-                    }
-                  }
-                });
-            });
-          }
-        });
-      } catch (e) {
-        EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
+    if (this.state.walletpwd == '') {
+      EasyToast.show('请输入密码');
+      return;
+    }
+    if (this.state.reWalletpwd == '') {
+      EasyToast.show('请输入确认密码');
+      return;
+    }
+    if (this.state.walletpwd.length < 8 && this.state.reWalletpwd.length < 8) {
+      EasyToast.show('密码不能少于8位');
+      return;
+    }
+    if (this.state.walletpwd != this.state.reWalletpwd) {
+      EasyToast.show('两次密码不一致');
+      return;
+    }
+    if (this.state.isChecked == false) {
+      EasyToast.show('请确认已阅读并同意条款');
+      return;
+    }
+    Eos.checkPrivateKey(this.state.activePk, (r) => {
+      if (!r.isSuccess) {
+        EasyToast.show('私钥格式不正确');
+        return;
       }
-  });
-}
-
-onRequestClose() {
-  let isShow = this.state.Invalid;
-  this.setState({
-    errorcode: !isShow,
-  });
-//  if(errorcode){
-  // this.setState({
-  //   errorcode = true
-  // })
-//  }else{
-//   this.setState({
-//     errorcode = false
-//   })
-//  }
-   
- 
-}
-_onPressListItem (Invalid, data = {}) {
-  if(Invalid){
-    this.setState({show: false,});
-    alert(this.state.show)
-  }else{
-    this.setState({show: true,});
+      this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+    });
   }
 
-  this.setState((previousState) => {
-    return ({
-        show: !previousState.show,
-    })
-});
-}
+  createWalletByPrivateKey(owner_privateKey, active_privatekey){
+    EasyLoading.show('正在请求');
+    Eos.privateToPublic(active_privatekey,(r) => {
+      var active_publicKey = r.data.publicKey;
+        try {
+          var owner_publicKey = r.data.publicKey;
+          this.props.dispatch({
+            type: 'wallet/getAccountsByPuk',
+            payload: {public_key: owner_publicKey}, callback: (data) => {
+              EasyLoading.dismis();
+              if (data.code != '0') {
+                this.setState({
+                  show: true,
+                  Invalid: false,
+                  publicKey:'找不到' + owner_publicKey,
+                  ReturnData:"对应的账户名" + " "+JSON.stringify(data),
+                });
+                return;
+              }
+              var walletList = [];
+              var salt;
+              Eos.randomPrivateKey((r)=>{
+                  salt = r.data.ownerPrivate.substr(0, 18);
+                  for(var i = 0; i < data.data.account_names.length; i++){
+                    var result = {
+                      data:{
+                        ownerPublic:'',
+                        activePublic:'',
+                        ownerPrivate:'',
+                        activePrivate:'',
+                        words_active:'',
+                        words:'',
+                      }
+                    };
+                    result.data.ownerPublic = owner_publicKey;
+                    result.data.activePublic = active_publicKey;
+                    result.data.words = '';
+                    result.data.words_active = '';
+                    result.data.ownerPrivate = owner_privateKey;
+                    result.data.activePrivate = active_privatekey;
+                    result.password = this.state.walletpwd;
+                    result.name = data.data.account_names[i];
+                    result.account = data.data.account_names[i];
+                    result.isactived = true;
+                    result.salt=salt;
+                    walletList[i] = result;
+                  }
+                  // 保存钱包信息
+                  this.props.dispatch({
+                    type: 'wallet/saveWalletList', walletList: walletList, callback: (data) => {  
+                      EasyLoading.dismis();          
+                      if (data.error != null) {
+                        EasyToast.show('导入私钥失败：' + data.error);
+                      } else {
+                        EasyToast.show('导入私钥成功！');
+                        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
+                        DeviceEventEmitter.emit('updateDefaultWallet');
+                        this.props.navigation.goBack();
+                                      
+                      }
+                    }
+                  });
+              });
+            }
+          });
+        } catch (e) {
+          EasyLoading.dismis();
+          EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
+        }
+    });
+  }
 
-_setModalInvalid() {
-  let isShow = this.state.show;
-  this.setState({
-    show: !isShow,
-  });
-}
-
-// ExplainPopup(){
-//   let v = 
-//   EasyDialog.show("导入失败", (
-//   <View>
-//       <Text style={{textAlign: 'left', color: UColor.showy,}}>该私钥信息导入失败，请仔细核对私钥是否正确</Text>
-//       <View>
-//                 <TouchableOpacity onPress={() => this._onPressListItem()}>
-//                     <View>
-//                         <Text>点我</Text>
-//                     </View>
-//                 </TouchableOpacity>
-//                 {this.state.show ? <Text>待显示的内容</Text> : null}
-//         </View>
-//       <View style={{ marginBottom: 10,}}>
-        
-//         {/* {this.state.show ? <Text style={styles.inptpasstext}>2.激活EOS钱包需达到100点积分（每个用户仅限一个）</Text>:null} */}
-//       </View>
-//   </View>), "知道了", null,  () => { EasyDialog.dismis() });
-//   }
-
-intensity() {
-  let string = this.state.walletpwd;
-  if(string.length >=8) {
-    if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
-      this.state.strong = UColor.tintColor;
+  _onRequestClose() {
+    let isShow = this.state.show;
+    this.setState({
+      show: !isShow,
+    });
+  }
+  _onPressListItem() {
+    this.setState((previousState) => {
+        return ({
+          Invalid: !previousState.Invalid,
+        })
+    });
+  }
+  
+  intensity() {
+    let string = this.state.walletpwd;
+    if(string.length >=8) {
+      if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+        this.state.strong = UColor.tintColor;
+        this.state.medium = UColor.arrow;
+        this.state.weak = UColor.arrow;
+      }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
+        if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.tintColor;
+          this.state.weak = UColor.arrow;
+        }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.tintColor;
+          this.state.weak = UColor.arrow;
+        }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.tintColor;
+          this.state.weak = UColor.arrow;
+        }else{
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.arrow;
+          this.state.weak = UColor.tintColor;
+        }
+      }
+    }else{
+      this.state.strong = UColor.arrow;
       this.state.medium = UColor.arrow;
       this.state.weak = UColor.arrow;
-    }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
-      if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
-        this.state.strong = UColor.arrow;
-        this.state.medium = UColor.tintColor;
-        this.state.weak = UColor.arrow;
-      }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
-        this.state.strong = UColor.arrow;
-        this.state.medium = UColor.tintColor;
-        this.state.weak = UColor.arrow;
-      }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
-        this.state.strong = UColor.arrow;
-        this.state.medium = UColor.tintColor;
-        this.state.weak = UColor.arrow;
-      }else{
-        this.state.strong = UColor.arrow;
-        this.state.medium = UColor.arrow;
-        this.state.weak = UColor.tintColor;
-      }
     }
-   }else{
-    this.state.strong = UColor.arrow;
-    this.state.medium = UColor.arrow;
-    this.state.weak = UColor.arrow;
-   }
-  if(this.state.activePk != "" && this.state.walletpwd != "" && this.state.reWalletpwd != ""){
-    this.state.CreateButton = UColor.tintColor;
-  }else{
-    this.state.CreateButton =  UColor.mainColor;
-  } 
-}
+    if(this.state.activePk != "" && this.state.walletpwd != "" && this.state.reWalletpwd != ""){
+      this.state.CreateButton = UColor.tintColor;
+    }else{
+      this.state.CreateButton =  UColor.mainColor;
+    } 
+  }
 
-dismissKeyboardClick() {
-  dismissKeyboard();
-}
-_onPressListItem() {
-  this.setState((previousState) => {
-      return ({
-        Invalid: !previousState.Invalid,
-      })
-  });
-}
-
+  dismissKeyboardClick() {
+    dismissKeyboard();
+  }
 
   render() {
     let {feedBackText, selection} = this.state;
@@ -444,28 +387,28 @@ _onPressListItem() {
           </TouchableOpacity>
         </ScrollView> 
         <Modal style={styles.touchableout} animationType={'slide'} transparent={true}  visible={this.state.show} onRequestClose={()=>{}}>
-            <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} activeOpacity={1.0}>
-              <View style={{ width: maxWidth-20,    backgroundColor: UColor.fontColor, borderRadius: 5,paddingHorizontal: 25,}}>
-                <View style={{flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, }}> 
-                  <Text style={{width: 30,}}/>
-                  <Text style={{flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',}}>导入失败</Text>
-                  <Button style={{}} onPress={this._setModalInvalid.bind(this)}>
-                    <Text style={{ width: 30, color: '#CBCBCB', fontSize: 28, textAlign: 'center',}}>×</Text>
+            <TouchableOpacity style={styles.pupuo} activeOpacity={1.0}>
+              <View style={styles.modalStyle}>
+                <View style={styles.subView}> 
+                  <Text style={styles.titleout}/>
+                  <Text style={styles.titleText}>导入失败</Text>
+                  <Button style={{}} onPress={this._onRequestClose.bind(this)}>
+                    <Text style={styles.titleout}>×</Text>
                   </Button>
                 </View>
-                <Text style={{fontSize: 14, color: UColor.showy, textAlign: 'left', marginVertical: 20,}}>该私钥信息导入失败，请仔细核对私钥是否正确</Text>
+                <Text style={styles.contentText}>该私钥信息导入失败，请仔细核对私钥是否正确</Text>
                 <View>
                     <TouchableOpacity onPress={() => this._onPressListItem()}>
-                        <View style={{flexDirection: "row",alignItems: 'center', justifyContent: 'flex-end',}}>
-                            <Text style={{fontSize: 14, color: UColor.tintColor, marginHorizontal: 5, }}>查看原因</Text>
-                            <Ionicons name="ios-arrow-forward-outline" size={14} color={UColor.tintColor}/>
+                        <View style={styles.codeout}>
+                            <Text style={styles.prompttext}>查看原因</Text>
+                            <Ionicons name={this.state.Invalid ? "ios-arrow-down-outline" : "ios-arrow-forward-outline"} size={14} color={UColor.tintColor}/>
                         </View>
                     </TouchableOpacity>
-                    {this.state.Invalid ? <Text style={{fontSize: 14, color: '#808080', textAlign: 'left'}}>待显示的内容</Text> : null}
+                    {this.state.Invalid ? <Text style={styles.copytext}>{this.state.publicKey}{this.state.ReturnData}</Text> : null}
                 </View>
-                  <Button onPress={this._setModalInvalid.bind()}>
-                      <View style={{height: 50, marginVertical: 10, borderRadius: 6, backgroundColor: UColor.showy, justifyContent: 'center', alignItems: 'center'}}>
-                          <Text style={{fontSize: 16, color: UColor.fontColor}}>知道了</Text>
+                  <Button onPress={this._onRequestClose.bind()}>
+                      <View style={styles.buttonView}>
+                          <Text style={styles.buttoncols}>知道了</Text>
                       </View>
                   </Button>  
               </View>
@@ -619,6 +562,69 @@ const styles = StyleSheet.create({
     fontSize: 15, 
     color: UColor.tintColor,
   },
+  pupuo: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalStyle: {
+    width: maxWidth - 20,
+    backgroundColor: UColor.fontColor,
+    borderRadius: 5,
+    paddingHorizontal: 25,
+  },
+  subView: {
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
+    marginVertical: 15,
+  },
+  buttonView: {
+    height: 50,
+    marginVertical: 10,
+    borderRadius: 6,
+    backgroundColor: UColor.showy,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  buttoncols: {
+    fontSize: 16,
+    color: UColor.fontColor
+  },
+  titleText: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  titleout: {
+    width: 40,
+    color: '#CBCBCB',
+    fontSize: 28,
+    textAlign: 'center',
+  },
+  contentText: {
+      fontSize: 14,
+      color: UColor.showy,
+      textAlign: 'left',
+      marginVertical: 20,
+    },
+    prompttext: {
+      fontSize: 14,
+      color: UColor.tintColor,
+      marginHorizontal: 5,
+    },
+    codeout: {
+      flexDirection: "row",
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+    },
+    copytext: {
+      fontSize: 14,
+      color: '#808080',
+      textAlign: 'left'
+    },
 });
 
 export default ImportEosKey;
