@@ -45,7 +45,7 @@ class Forget extends React.Component {
       EasyToast.show('请输入验证码');
       return;
     }
-    if(this.state.password==""){
+    if(this.state.password=="" || this.state.password.length < 8){
       EasyToast.show('请输入密码');
       return;
     }
@@ -210,7 +210,7 @@ class Forget extends React.Component {
                       <Text style={styles.texttitle}> 设置新密码</Text>
                       <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                        placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={20}
+                        placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
                         onChangeText={(password) => this.setState({password})}
                       />
                   </View>
