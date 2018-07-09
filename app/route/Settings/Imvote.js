@@ -140,16 +140,9 @@ class Imvote extends React.Component {
                         if(r.data && r.data.transaction_id){
                             this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
                             EasyToast.show("撤票成功");
-                        }else if(r.data && JSON.parse(r.data).code != 0){
-                            var jdata = JSON.parse(r.data);
-                            var errmsg = "撤票失败: "+ JSON.stringify(jdata);
-                            alert(errmsg);
-                            // var jdata = JSON.parse(r.data);
-                            // var errmsg = "撤票失败: ";
-                            // if(jdata.error.details[0].message){
-                            //     errmsg = errmsg + jdata.error.details[0].message;
-                            // }
-                            // EasyToast.show(errmsg);
+                        }else{
+                            var errmsg = "撤票失败: "+ r.data.msg;
+                            EasyToast.show(errmsg);
                         }
                     }); 
                 } else {
