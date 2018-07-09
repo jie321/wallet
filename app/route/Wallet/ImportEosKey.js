@@ -238,6 +238,7 @@ class ImportEosKey extends React.Component {
                         EasyToast.show('导入私钥成功！');
                         this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
                         DeviceEventEmitter.emit('updateDefaultWallet');
+                        DeviceEventEmitter.emit('modify_password');
                         this.props.navigation.goBack();
                                       
                       }

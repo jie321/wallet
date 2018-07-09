@@ -128,6 +128,7 @@ class ModifyPassword extends React.Component {
     }
 
     importEosKey() {
+        this.props.navigation.goBack();                                  
         // 导入钱包
         const { navigate } = this.props.navigation;
         navigate('ImportEosKey');
