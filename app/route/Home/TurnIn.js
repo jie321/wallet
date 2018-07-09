@@ -194,7 +194,7 @@ class TurnIn extends React.Component {
                     selectionColor={UColor.tintColor}
                     style={styles.inpt}
                     placeholderTextColor={UColor.tintColor}
-                    placeholder="请输入金额"
+                    placeholder="请输入金额(可不填)"
                     underlineColorAndroid="transparent"
                     secureTextEntry={false}
                     keyboardType="numeric"

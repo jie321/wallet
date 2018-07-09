@@ -90,22 +90,15 @@ class TurnOut extends React.Component {
 
     _rightButtonClick() {
         //   console.log('右侧按钮点击了');  
-        if (this.state.toAccount == "" || this.state.toAccount == undefined) {
+        if (this.state.toAccount == null || this.state.toAccount == "") {
             EasyToast.show('请输入收款账号');
-            return;
+            return;  
         }
-        if (this.state.toAccount.length > 12) {
-            EasyToast.show('请输入正确的收款账号');
-            return;
-        }
-        if (this.state.amount == "" || this.state.amount == undefined) {
+        
+        if (this.state.amount == null || this.state.amount == "") {
             EasyToast.show('请输入转账金额');
             return;
         }
-        // if (this.state.amount > this.state.balance) {
-        //     EasyToast.show('转账金额超出账户余额');
-        //     return;
-        // }
         this._setModalVisible();
     }
 
@@ -196,7 +189,27 @@ class TurnOut extends React.Component {
         }
     }
 
-
+    chkAccount(obj) {
+        var charmap = '.12345abcdefghijklmnopqrstuvwxyz';
+        for(var i = 0 ; i < obj.length;i++){
+            var tmp = obj.charAt(i);
+            for(var j = 0;j < charmap.length; j++){
+                if(tmp == charmap.charAt(j)){
+                    break;
+                }
+            }
+            if(j >= charmap.length){
+                //非法字符
+                obj = obj.replace(tmp, ""); 
+                EasyToast.show('请输入正确的账号');
+            }
+        }
+        if (obj == this.props.defaultWallet.account) {
+            EasyToast.show('收款账户和转出账户不能相同，请重输');
+            obj = "";
+        }
+        return obj;
+    }
     chkPrice(obj) {
         obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
         obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
@@ -209,15 +222,23 @@ class TurnOut extends React.Component {
         var max = 9999999999.9999;  // 100亿 -1
         var min = 0.0000;
         var value = 0.0000;
+        var floatbalance;
         try {
           value = parseFloat(obj);
+          floatbalance = parseFloat(this.state.balance);
         } catch (error) {
           value = 0.0000;
+          floatbalance = 0.0000;
         }
         if(value < min|| value > max){
           EasyToast.show("输入错误");
           obj = "";
         }
+        if (value > floatbalance) {
+            EasyToast.show('账户余额不足,请重输');
+            obj = "";
+        }
+
         return obj;
       }
 
@@ -252,7 +273,7 @@ class TurnOut extends React.Component {
                                         <TextInput ref={(ref) => this._raccount = ref}  value={this.state.toAccount} returnKeyType="next"   
                                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}      
                                             placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  maxLength = {12}
-                                            onChangeText={(toAccount) => this.setState({ toAccount })} 
+                                            onChangeText={(toAccount) => this.setState({ toAccount: this.chkAccount(toAccount)})} 
                                         />
                                     <View style={styles.scanning}>
                                             <Button onPress={() => this.scan()}>                                  
