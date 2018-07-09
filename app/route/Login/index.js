@@ -227,25 +227,38 @@ class Login extends React.Component {
     if (this.state.capture != "获取短信验证码") {
       return;
     }
-
+    
     var th = this;
-    EasyLoading.show('获取中...');
+
+    EasyLoading.show('查询中...');
     this.props.dispatch({
-      type: 'login/getCapture', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
+      type: 'login/existRegisteredUser', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
         EasyLoading.dismis();
-        if (data.code == 0) {
-          EasyToast.show("验证码已发送，请注意查收");
-          th.setState({ capture: "60s" })
-          th.doTick();
-          EasyDialog.dismis();
+        if (data == false) {
+          EasyLoading.show('获取中...');
+          this.props.dispatch({
+            type: 'login/getCapture', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
+              EasyLoading.dismis();
+              if (data.code == 0) {
+                EasyToast.show("验证码已发送，请注意查收");
+                th.setState({ capture: "60s" })
+                th.doTick();
+                EasyDialog.dismis();
+              } else {
+                EasyToast.show(data.msg);
+                if (data.code != 505) {
+                  EasyDialog.dismis();
+                }
+              }
+            }
+          });
+
         } else {
-          EasyToast.show(data.msg);
-          if (data.code != 505) {
-            EasyDialog.dismis();
-          }
+          EasyToast.show("该号码已被注册过");
         }
       }
     });
+
   }
 
 
