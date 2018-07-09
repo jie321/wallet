@@ -121,6 +121,27 @@ class Calculation extends React.Component {
         show: !isShow,
         });
     }
+    chkAccount(obj) {
+        var charmap = '.12345abcdefghijklmnopqrstuvwxyz';
+        for(var i = 0 ; i < obj.length;i++){
+            var tmp = obj.charAt(i);
+            for(var j = 0;j < charmap.length; j++){
+                if(tmp == charmap.charAt(j)){
+                    break;
+                }
+            }
+            if(j >= charmap.length){
+                //非法字符
+                obj = obj.replace(tmp, ""); 
+                EasyToast.show('请输入正确的账号');
+            }
+        }
+        if (obj == this.props.defaultWallet.account) {
+            EasyToast.show('接收账号和抵押账号不能相同，请重输');
+            obj = "";
+        }
+        return obj;
+    }
     chkPrice(obj) {
         obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
         obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
@@ -159,14 +180,14 @@ class Calculation extends React.Component {
         const view =
         <View style={styles.passoutsource}>
             <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
+                selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}>提示：抵押 {this.state.delegatebw} EOS</Text>
         </View>
 
         EasyDialog.show("请输入密码", view, "确认", "取消", () => {
 
-        if (this.state.password == "") {
+        if (this.state.password == "" || this.state.password.length < 8) {
             EasyToast.show('请输入密码');
             return;
         }
@@ -227,15 +248,15 @@ class Calculation extends React.Component {
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
-                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go"  
+                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}>提示：赎回 {this.state.undelegatebw} EOS</Text>
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
     
-            if (this.state.password == "") {
+            if (this.state.password == "" || this.state.password.length < 8) {
                 EasyToast.show('请输入密码');
                 return;
             }
@@ -357,8 +378,8 @@ class Calculation extends React.Component {
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} returnKeyType="go" 
                                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                        placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" 
-                                        onChangeText={(receiver) => this.setState({ receiver })}
+                                        placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" maxLength={12}
+                                        onChangeText={(receiver) => this.setState({ receiver : this.chkAccount(receiver) })}
                                     />
                                     <Button >
                                         <View style={styles.botnimg}>
