@@ -164,6 +164,16 @@ class WalletDetail extends BaseComponent {
     EasyToast.show("复制成功")
   }
 
+  deleteWarning(){
+    EasyDialog.show("重要提示",  (<View>
+        <Text style={{color: UColor.showy,fontSize: 15,paddingBottom: 15,}}>若您的积分达到100以上，创建的账号存在未激活现象，请不要删除！若删除激活中的账号将可能给您带来损失！</Text>
+        <Text style={{color: UColor.showy,fontSize: 15,}}>建议您间隔5-10分钟，再次点击激活账户！如还是不能激活帐号，请联系客服！</Text>
+      </View>),"执意删除","返回钱包",  () => {
+        this.deleteWallet();
+        EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });
+  }
+
   deleteWallet() {
     EasyDialog.dismis();
     const view =
@@ -405,7 +415,7 @@ class WalletDetail extends BaseComponent {
           </Button>
           :null
           }
-          <Button onPress={() => this.deleteWallet()} style={{ flex: 1 }}>
+          <Button onPress={() => this.deleteWarning()} style={{ flex: 1 }}>
             <View style={styles.deleteout}>
               <Text style={styles.delete}>删除账户</Text>
             </View>
