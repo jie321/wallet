@@ -11,13 +11,14 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
+import BaseComponent from "../../components/BaseComponent";
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({wallet, vote}) => ({...wallet, ...vote}))
-class Calculation extends React.Component {
+class Calculation extends BaseComponent {
 
   
     static navigationOptions = ({ navigation }) => {
@@ -100,6 +101,8 @@ class Calculation extends React.Component {
     }
 
     componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
         this.timer && clearTimeout(this.timer);
     }
 

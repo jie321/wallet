@@ -7,9 +7,10 @@ import QRCode from "react-native-qrcode-svg";
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 
 
-class AssistantQrcode extends React.Component {
+class AssistantQrcode extends BaseComponent {
   static navigationOptions = {
     headerTitle: '小助手二维码',
     headerStyle: {
@@ -27,7 +28,11 @@ class AssistantQrcode extends React.Component {
 
   componentDidMount() {
   }
-  
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   copy() {
     Clipboard.setString(this.state.WeChat);
     EasyToast.show("复制成功")

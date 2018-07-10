@@ -9,9 +9,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 var ScreenWidth = Dimensions.get('window').width;
 @connect(({login}) => ({...login}))
-class InputWords extends React.Component {
+class InputWords extends BaseComponent {
 
   static navigationOptions = {
     title: '助记词确认',
@@ -29,7 +30,11 @@ class InputWords extends React.Component {
     }
    
   }
-  
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   logout = () =>{
     // if(this.props.loginUser){
     //   this.props.dispatch({type:'login/logout',payload:{},callback:()=>{

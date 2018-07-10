@@ -12,12 +12,13 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog'
 import {kapimg} from '../../utils/Api'
 import Constants from '../../utils/Constants'
+import BaseComponent from "../../components/BaseComponent";
 
 var ScreenWidth = Dimensions.get('window').width;
 var tick=60;
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({login}) => ({...login}))
-class Forget extends React.Component {
+class Forget extends BaseComponent {
 
   static navigationOptions = {
     title: '忘记密码'
@@ -36,6 +37,11 @@ class Forget extends React.Component {
     super(props);
   }
 
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   regSubmit = () =>{
     if(this.state.phone==""){
       EasyToast.show('请输入手机号');

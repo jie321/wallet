@@ -10,12 +10,13 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
+import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
 @connect(({ login }) => ({ ...login }))
-class Set extends React.Component {
+class Set extends BaseComponent {
 
     static navigationOptions = {
         title: '备份助记词'
@@ -27,7 +28,11 @@ class Set extends React.Component {
             password: "",
         }
     }
-
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+      }
     toBackup = (data) => {
         this.props.navigation.goBack();
         const { navigate } = this.props.navigation;

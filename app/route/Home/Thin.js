@@ -14,9 +14,10 @@ const maxHeight = Dimensions.get('window').height;
 const {width, height} = Dimensions.get('window');
 import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({contracts}) => ({...contracts}))
-class Thin extends React.Component {
+class Thin extends BaseComponent {
     static navigationOptions = {
         title: 'EOS地址薄',  
         headerStyle:{
@@ -66,7 +67,11 @@ class Thin extends React.Component {
         this.props.dispatch({ type: 'contracts/info'});
     }
 
-
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+      }
     confirm() {
         if (this.state.labelname == "") {
             EasyToast.show('请输入标签名称');

@@ -13,12 +13,13 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import JPushModule from 'jpush-react-native';
 import JPush from '../../utils/JPush'
+import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
 @connect(({ wallet, login }) => ({ ...wallet, ...login }))
-class WalletDetail extends React.Component {
+class WalletDetail extends BaseComponent {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
     return {
@@ -64,7 +65,11 @@ class WalletDetail extends React.Component {
       const { navigate } = this.props.navigation;
       JPush.init(navigate);
     }
-
+    componentWillUnmount(){
+      //结束页面前，资源释放操作
+      super.componentWillUnmount();
+      
+    }
   _rightButtonClick() {
     //   console.log('右侧按钮点击了');  
     this._setModalVisible();

@@ -9,9 +9,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
-
+import BaseComponent from "../../components/BaseComponent";
 @connect(({login}) => ({...login}))
-class Set extends React.Component {
+class Set extends BaseComponent {
 
   static navigationOptions = {
     title: '导出私钥'
@@ -21,6 +21,11 @@ class Set extends React.Component {
     super(props);
   }
   
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   logout = () =>{
     if(this.props.loginUser){
       this.props.dispatch({type:'login/logout',payload:{},callback:()=>{

@@ -12,9 +12,10 @@ import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
+import BaseComponent from "../../components/BaseComponent";
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
-class createWallet extends React.Component {
+class createWallet extends BaseComponent {
 
   static navigationOptions = {
     title: '创建钱包',
@@ -47,7 +48,11 @@ class createWallet extends React.Component {
       this.setState({integral: data.data});
     } });
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   importKey() {
      // 钱包
      const { navigate } = this.props.navigation;

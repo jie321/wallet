@@ -8,12 +8,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
-class ModifyPassword extends React.Component {
+class ModifyPassword extends BaseComponent {
 
     static navigationOptions = {
         title: '更改密码',
@@ -31,7 +32,11 @@ class ModifyPassword extends React.Component {
             newRePassword: "",
         }
     }
-
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+      }
     updatePassword = () => {
 
         if (this.state.password == "") {

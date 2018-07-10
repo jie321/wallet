@@ -15,9 +15,10 @@ import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({ wallet }) => ({ ...wallet }))
-class Info extends React.Component {
+class Info extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
@@ -65,7 +66,11 @@ class Info extends React.Component {
             this.setEosBalance(data);
         });
     }
-
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+      }
     setEosBalance(data){
         if (data.code == '0') {
             if (data.data == "") {

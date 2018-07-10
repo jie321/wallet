@@ -12,11 +12,12 @@ import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 
 const type = 1;
 
 @connect(({coinLine,sticker}) => ({...coinLine,...sticker}))
-class CoinDetail extends React.Component {
+class CoinDetail extends BaseComponent {
 
   static navigationOptions = ({ navigation }) => {
     
@@ -36,7 +37,8 @@ class CoinDetail extends React.Component {
 
   componentWillMount() {
 
-    
+    super.componentWillMount();
+
     const c = this.props.navigation.state.params.coins;
     this.props.dispatch({type: 'coinLine/clear',payload:{id:c.id}});
 
@@ -78,7 +80,11 @@ class CoinDetail extends React.Component {
     this.fetchLine(1,'1小时');
     this.props.dispatch({type: 'coinLine/info',payload:{id:c.id}});
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   fetchLine(type,opt){
     this.setState({selectedSegment:opt});
     const {dispatch} =  this.props;

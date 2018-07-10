@@ -14,12 +14,13 @@ import { EasyToast } from '../../components/Toast';
 import { kapimg } from '../../utils/Api'
 import { EasyDialog } from '../../components/Dialog'
 import Constants from '../../utils/Constants'
+import BaseComponent from "../../components/BaseComponent";
 
 var ScreenWidth = Dimensions.get('window').width;
 var tick = 60;
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({ login }) => ({ ...login }))
-class Login extends React.Component {
+class Login extends BaseComponent {
 
   static navigationOptions = {
     title: '登陆',
@@ -53,6 +54,12 @@ class Login extends React.Component {
 
   }
 
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
+  
   //切换tab
   _handleIndexChange = index => {
     this.setState({ index });

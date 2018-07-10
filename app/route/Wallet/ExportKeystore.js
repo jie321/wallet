@@ -7,6 +7,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
 import JPush from '../../utils/JPush'
+import BaseComponent from "../../components/BaseComponent";
 
 const pages = [];
 
@@ -21,7 +22,7 @@ let currentTab = 0;
 const _index = 0;
 
 @connect(({ sticker }) => ({ ...sticker }))
-class Coins extends React.Component {
+class Coins extends BaseComponent {
 
     static navigationOptions = {
         title: '导出Keystore'
@@ -64,6 +65,8 @@ class Coins extends React.Component {
     }
 
     componentWillUnmount() {
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
         if (timer) {
             clearInterval(timer);
         }

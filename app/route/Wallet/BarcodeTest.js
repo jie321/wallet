@@ -18,7 +18,9 @@ import { EasyToast } from '../../components/Toast';
 
 import PropTypes from 'prop-types'
 
-export default class App extends React.Component {
+import BaseComponent from "../../components/BaseComponent";
+
+export default class App extends BaseComponent {
 
     static navigationOptions = ({ navigation }) => {
     }
@@ -46,6 +48,8 @@ export default class App extends React.Component {
     }
     //组件销毁生命周期
     componentWillUnmount() {
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
         //清楚定时器
         this.timer && clearTimeout(this.timer);
     }

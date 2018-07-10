@@ -10,10 +10,11 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
+import BaseComponent from "../../components/BaseComponent";
 var DeviceInfo = require('react-native-device-info');
 
 @connect(({login}) => ({...login}))
-class Setting extends React.Component {
+class Setting extends BaseComponent {
 
   static navigationOptions = {
     title: '钱包测试'
@@ -36,7 +37,11 @@ class Setting extends React.Component {
       {name:"密钥恢复",onPress:this.goPage.bind(this, "Test")}
     ];
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   goPage(key, data = {}){
     const { navigate } = this.props.navigation;
     if(key=="share"){
