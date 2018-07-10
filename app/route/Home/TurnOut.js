@@ -147,13 +147,14 @@ class TurnOut extends BaseComponent {
                 EasyToast.show('请输入密码');
                 return;
             }
-            EasyLoading.show();
+            
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
                 var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    EasyLoading.show();
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     Eos.transfer("eosio.token", this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
