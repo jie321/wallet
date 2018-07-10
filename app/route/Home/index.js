@@ -440,7 +440,6 @@ class Home extends React.Component {
     var ret ;
     if(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')){
       ret = '+0.00';  //未激活直接返回
-      this.setState({totalBalance: "0.00"});
     }else{
       ret = (this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))
     }
