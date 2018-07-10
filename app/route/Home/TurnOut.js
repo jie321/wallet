@@ -310,24 +310,56 @@ class TurnOut extends React.Component {
                 </ScrollView>
             </KeyboardAvoidingView>
                 <View style={styles.pupuo}>
-                    <Modal animationType='none' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                        <View style={styles.modalStyle}>
-                            <View style={styles.subView} >
-                                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                                    <Text style={styles.buttontext}>×</Text>
-                                </Button>
-                                {/* <Text style={styles.titleText}>转出 {c.name}</Text> */}
-                                <Text style={styles.contentText}>转出账户：{this.props.defaultWallet.account}</Text>
-                                <Text style={styles.contentText}>收款账户：{this.state.toAccount}</Text>
-                                <Text style={styles.contentText}>数   量：{this.state.amount}</Text>
-                                <Text style={styles.contentText}>MEMO信息：{this.state.memo}</Text>
-                                <Button onPress={() => { this.inputPwd() }}>
-                                    <View style={styles.btnoutsource}>
-                                        <Text style={styles.btntext}>确认转出</Text>
+                    <Modal animationType={'slide'} transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+                        <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
+                        <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
+                        
+                                <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
+                                    <Text style={{flex: 1,paddingVertical: 5,marginLeft: 135,fontSize: 18,fontWeight: 'bold',color:'#4d4d4d'}}>订单详情</Text>
+                                    <Button  onPress={this._setModalVisible.bind(this)}>
+                                        <Text style={styles.buttontext}>×</Text>
+                                    </Button>
+                                </View>
+
+                                <View style={styles.separationline} >
+                                    <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
+                                    {/* <View style={styles.rowInfo}> */}
+                                        <Text style={{fontSize: 26,paddingVertical: 15, lineHeight: 10,color:'#000000',textAlign: 'center',}}>{this.state.amount} </Text>
+                                        <Text style={{fontSize: 13,paddingVertical: 10, lineHeight: 10,color:'#000000',textAlign: 'center',}}> EOS</Text>
                                     </View>
-                                </Button>
-                            </View>
+                                </View>
+
+                                <View style={{flex: 1, paddingLeft: 10, paddingRight:10,paddingHorizontal: 20}}>
+
+                                    <View style={styles.separationline} >
+                                        <View style={styles.rowInfo}>
+                                            <Text style={styles.contentText}>收款账户：</Text>
+                                            <Text style={styles.contentText}>{this.state.toAccount}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.separationline} >
+                                        <View style={styles.rowInfo}>
+                                            <Text style={styles.contentText}>转出账户：</Text>
+                                            <Text style={styles.contentText}>{this.props.defaultWallet.account}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.separationline} >
+                                        <View style={styles.rowInfo}>
+                                            <Text style={styles.contentText}>备注：</Text> 
+                                            <Text style={styles.contentText}>{this.state.memo}</Text> 
+                                        </View>
+                                    </View>
+
+                                    <Button onPress={() => { this.inputPwd() }}>
+                                        <View style={styles.btnoutsource}>
+                                            <Text style={styles.btntext}>确认</Text>
+                                        </View>
+                                    </Button>
+                                </View>
                         </View>
+                        </TouchableOpacity>
                     </Modal>
                 </View>
         </View>
@@ -419,8 +451,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     buttontext: {
-        width: 30,
-        height: 30,
+        // width: 30,
+        // height: 30,
+        // marginTop:1,
+        // marginRight: 1,
+        // paddingVertical: 12, 
+        lineHeight: 25,
         color: '#CBCBCB',
         marginBottom: 0,
         fontSize: 28,
@@ -434,16 +470,34 @@ const styles = StyleSheet.create({
     },
     // 内容  
     contentText: {
-        marginLeft: 15,
-        marginRight: 15,
-        lineHeight: 30,
-        fontSize: 14,
+        marginLeft: 10,
+        marginRight: 10,
+        lineHeight: 10,
+        paddingVertical: 15,
+        fontSize: 18,
         textAlign: 'left',
-
+        color: '#4D4D4D',
     },
+
+    rowInfo: {
+        flexDirection: "row",
+        padding: 15,
+        justifyContent: "space-between",
+      },
+
+    //转帐信息提示分隔线
+    separationline: {
+        paddingLeft: 10,
+        height: 50,
+        marginBottom: 10,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#e5e5e5',
+        justifyContent: 'center',
+    },
+
     // 按钮  
     btnoutsource: {
-        margin: 10,
+        margin: 15,
         height: 40,
         borderRadius: 6,
         backgroundColor: UColor.tintColor,
