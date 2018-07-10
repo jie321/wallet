@@ -658,7 +658,15 @@ class Route extends React.Component {
   createWallet() {
     DeviceEventEmitter.emit('createWallet');
   }
-
+  getTime(obj){
+    var date;
+    try {
+      date = moment(obj).format('YYYY.MM.DD HH:mm:ss');
+    } catch (error) {
+      date = "";
+    }
+    return date;
+  }
   render() {
 
     return (<View style={{ flex: 1 }}>
@@ -674,22 +682,30 @@ class Route extends React.Component {
             <ScrollView style={{ marginTop: 50 }}>
               <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                 <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
-                  <View style={{ backgroundColor: "#fff", width: '100%', height: '100%' }}>
-                    <Image source={UImage.share_banner} resizeMode="cover" style={{ width: '100%', height: (ScreenWidth - 40) * 0.32 }} />
-                    <View style={{ padding: 20 }}>
-                      <Text style={{ color: '#000', fontSize: 24, marginTop: 5 }}>{this.state.news.title}</Text>
-                      <Text style={{ color: '#000', fontSize: 15, marginTop: 15 }}>{this.state.news.content}......</Text>
-                      <View style={{ flexDirection: "row", width: '100%', justifyContent: "space-between" }}>
-                        <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>来源:{this.state.news.source}</Text>
-                        <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>{moment(this.state.news.createdate).fromNow()}</Text>
-                      </View>
+                  <View style={{ backgroundColor: "#fff", flex: 1}}>
+                    <Image source={UImage.share_banner} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40) * 0.238 }} />
+                    
+                   <View style={{ backgroundColor: UColor.fontColor,flexDirection: "row",marginTop: 10,paddingHorizontal: 20,paddingVertical: 5, justifyContent: "flex-start",}}>
+                      <Image source={UImage.share_time} style={{width: 25,height: 25}} />
+                      <Text style={{marginLeft: 5,fontSize: 15,color: '#000'}}> {this.getTime(this.state.news.createdate)}</Text>
+                  </View>
 
+                  <View style={{ marginTop:10,paddingHorizontal: 20, paddingBottom: 5, }}>
+                    <Text style={{ color: '#000', fontSize: 24,}}>{this.state.news.title}</Text>
+                    <Text style={{ color: '#000', fontSize: 15, marginTop: 15 }}>{this.state.news.content}......</Text>
+                    <View style={{ marginTop: 15,flexDirection: "row", width: '100%', justifyContent: "space-between" }}>
+                      <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>来源:{this.state.news.source}</Text>
+                      <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>{moment(this.state.news.createdate).fromNow()}</Text>
                     </View>
-                    <View style={{ backgroundColor: '#F2F2F2', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
+
+                  </View>
+                  <View style={{borderBottomWidth: 1,borderBottomColor: '#e5e5e5' ,justifyContent: 'center',}} >
+                  </View>
+                  <View style={{ backgroundColor: '#FFFFFF', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
                       <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
-                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>E-Token钱包</Text>
-                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>专注于柚子生态</Text>
-                        <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#306eb1', margin: 10 }}>识别二维码 查看完整的资讯</Text>
+                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>E-Token</Text>
+                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 3 }}>专注于柚子生态</Text>
+                        <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#47546e', margin: 15 }}>更多精彩下载APP</Text>
                       </View>
                       <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
                         <QRCode size={(ScreenWidth - 40) * 0.319 - 20} value={Constants.rootaddr+redirect + (Constants.loginUser ? Constants.loginUser.uid : "nuid") + "/" + (Constants.token ? Constants.token.substr(0, 4) : "ntk") + "/" + this.state.news.id} />

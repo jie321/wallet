@@ -51,6 +51,7 @@ export default {
   down_h:require('../img/down_h.png'),
   share:require('../img/share.png'),
   share_banner:require('../img/share_banner.png'),
+  share_time:require('../img/share_time.png'),
   share_bottom:require('../img/share_bottom.png'),
   share_wx:require('../img/share_wx.png'),
   share_qq:require('../img/share_qq.png'),
