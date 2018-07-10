@@ -435,6 +435,16 @@ class Home extends React.Component {
     navigate('ImportEosKey', {});
   }
 
+  getTodayIncrease()
+  {
+    var ret ;
+    if(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')){
+      ret = '+0.00';  //未激活直接返回
+    }else{
+      ret = (this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))
+    }
+    return ret;
+  }
   render() {
   if(this.props.guide){
     return (
@@ -504,7 +514,7 @@ class Home extends React.Component {
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
-                  <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {(this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))}</Text>
+                  <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
                 </View>
               </View>
               <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
