@@ -15,9 +15,10 @@ const ScreenHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import ViewShot from "react-native-view-shot";
 import { EasyLoading } from '../../components/Loading';
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({wallet}) => ({...wallet}))
-class Bvote extends React.Component {
+class Bvote extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
     
         const params = navigation.state.params || {};
@@ -54,7 +55,11 @@ class Bvote extends React.Component {
         EasyLoading.dismis();
     }}); 
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   getAccountInfo(){
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
         this.setState({

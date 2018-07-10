@@ -10,11 +10,12 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 let {width, height} = Dimensions.get('window');
 
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({login}) => ({...login}))
-class ProblemFeedback extends React.Component {
+class ProblemFeedback extends BaseComponent {
 
   static navigationOptions = {
     title: '问题反馈',
@@ -30,7 +31,11 @@ class ProblemFeedback extends React.Component {
         delegatebw: "",
     };
   }
-  
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   logout = () =>{
     if (this.state.delegatebw == '') {
         EasyToast.show('请输入问题反馈');

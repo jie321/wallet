@@ -9,9 +9,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({ wallet }) => ({ ...wallet }))
-class Set extends React.Component {
+class Set extends BaseComponent {
 
   static navigationOptions = {
     title: '备份助记词'
@@ -24,7 +25,11 @@ class Set extends React.Component {
       data: ''
     }
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   nextStep = () => {
     this.props.navigation.goBack();
     const { dispatch } = this.props;

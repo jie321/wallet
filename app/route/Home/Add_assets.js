@@ -15,11 +15,11 @@ import JPush from 'jpush-react-native';
 export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
 import { EasyLoading } from '../../components/Loading';
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
-class Add_assets extends React.Component {
+class Add_assets extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
-    
        
         return {                       
           headerTitle:'添加资产',
@@ -61,16 +61,22 @@ class Add_assets extends React.Component {
     navigate('Coin_search', {});
   }
 
-  onBackAndroid = () => {
-    if (cangoback) {
-      let type = this.state.routes[this.state.index]
-      let w = this.web[type.key];
-      if (w) {
-        w.goBack();
-        return true;
-      }
-    }
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
   }
+  
+  // onBackAndroid = () => {
+  //   if (cangoback) {
+  //     let type = this.state.routes[this.state.index]
+  //     let w = this.web[type.key];
+  //     if (w) {
+  //       w.goBack();
+  //       return true;
+  //     }
+  //   }
+  // }
 
   //获得typeid坐标
   getRouteIndex(typeId) {

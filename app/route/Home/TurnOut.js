@@ -13,12 +13,13 @@ import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
+import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
-class TurnOut extends React.Component {
+class TurnOut extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
@@ -61,6 +62,8 @@ class TurnOut extends React.Component {
     }
 
     componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
         DeviceEventEmitter.removeListener('scan_result');
       }
 

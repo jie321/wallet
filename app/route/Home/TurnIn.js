@@ -33,12 +33,13 @@ import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from "../../components/Toast";
 import { EasyLoading } from "../../components/Loading";
 import { Eos } from "react-native-eosjs";
+import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require("dismissKeyboard");
 @connect(({ wallet }) => ({ ...wallet }))
-class TurnIn extends React.Component {
+class TurnIn extends BaseComponent {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
     return {
@@ -72,12 +73,11 @@ class TurnIn extends React.Component {
       toAccount: this.props.defaultWallet.account,
     });
   }
-
-  componentWillUnmount() {}
-
-  // onPress(action) {
-  //     EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
-  // }
+  
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+  }
 
   copy = () => {
     let address = this.props.defaultWallet.account;

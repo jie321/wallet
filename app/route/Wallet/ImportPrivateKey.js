@@ -10,6 +10,7 @@ import JPush from '../../utils/JPush'
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
+import BaseComponent from "../../components/BaseComponent";
 
 const pages = [];
 
@@ -24,7 +25,7 @@ let currentTab = 0;
 const _index = 0;
 
 @connect(({ wallet }) => ({ ...wallet }))
-class Coins extends React.Component {
+class Coins extends BaseComponent {
 
   static navigationOptions = {
     title: '导入钱包'
@@ -74,6 +75,8 @@ class Coins extends React.Component {
   }
 
   componentWillUnmount() {
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
     // if (timer) {
     //   clearInterval(timer);
     // }

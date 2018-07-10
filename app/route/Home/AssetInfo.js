@@ -15,9 +15,10 @@ import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({ wallet }) => ({ ...wallet }))
-class AssetInfo extends React.Component {
+class AssetInfo extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
@@ -62,7 +63,11 @@ class AssetInfo extends React.Component {
         // });
         // alert('updateDefaultWallet: '+(this.props.defaultWallet.name));
     }
-
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+      }
     _rightButtonClick() {
         AnalyticsUtil.onEvent('To_change_into');
         this._setModalVisible();

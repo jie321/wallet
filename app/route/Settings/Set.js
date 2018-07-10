@@ -15,9 +15,10 @@ import { EasyToast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
 export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
+import BaseComponent from "../../components/BaseComponent";
 const Font = { Ionicons }
 @connect(({login,jPush}) => ({...login,...JPush}))
-class Set extends React.Component {
+class Set extends BaseComponent {
 
   static navigationOptions = {
     title: '系统设置',
@@ -40,7 +41,11 @@ class Set extends React.Component {
       });
     }});
   }
-  
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   logout = () =>{
     if(this.props.loginUser){
       this.props.dispatch({type:'login/logout',payload:{},callback:()=>{

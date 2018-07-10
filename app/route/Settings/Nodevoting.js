@@ -12,6 +12,7 @@ import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
+import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
@@ -19,7 +20,7 @@ var CryptoJS = require("crypto-js");
 
 
 @connect(({vote, wallet}) => ({...vote, ...wallet}))
-class Nodevoting extends React.Component {
+class Nodevoting extends BaseComponent {
 
   
     static navigationOptions = ({ navigation }) => {
@@ -73,8 +74,11 @@ class Nodevoting extends React.Component {
         })
     }
 
-   
-
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+      }
 
     addvote = (rowData) => { // 选中用户
         if(!this.props.defaultWallet){

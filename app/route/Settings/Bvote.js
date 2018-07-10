@@ -13,9 +13,10 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import ViewShot from "react-native-view-shot";
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({wallet}) => ({...wallet}))
-class Bvote extends React.Component {
+class Bvote extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
     
         const params = navigation.state.params || {};
@@ -58,7 +59,11 @@ class Bvote extends React.Component {
       EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
     render() {
         const c = this.props.navigation.state.params.coinType;
         return (

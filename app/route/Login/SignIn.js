@@ -12,11 +12,12 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog'
 import { kapimg } from '../../utils/Api'
 import Constants from '../../utils/Constants'
+import BaseComponent from "../../components/BaseComponent";
 var ScreenWidth = Dimensions.get('window').width;
 var tick = 60;
 
 @connect(({ login }) => ({ ...login }))
-class SignIn extends React.Component {
+class SignIn extends BaseComponent {
 
   static navigationOptions = {
     title: '用户积分',
@@ -66,7 +67,11 @@ class SignIn extends React.Component {
       this.setState({Sign_in: data.data});
     } });
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   signIn = () => {
     const { dispatch } = this.props;
     this.props.dispatch({

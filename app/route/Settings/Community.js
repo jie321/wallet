@@ -11,12 +11,13 @@ import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
+import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 
 
 @connect(({login}) => ({...login}))
-class Community extends React.Component {
+class Community extends BaseComponent {
 
 
   static navigationOptions = {
@@ -36,6 +37,12 @@ class Community extends React.Component {
         telegraph: 't.me/eostokens',
         source: 'github.com/eostoken/wallet',
     }
+  }
+  
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
   }
   
   logout = () =>{

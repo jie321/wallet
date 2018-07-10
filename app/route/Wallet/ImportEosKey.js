@@ -13,6 +13,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
+import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 var dismissKeyboard = require('dismissKeyboard');
@@ -24,7 +25,7 @@ let currentTab = 0;
 const _index = 0;
 
 @connect(({ wallet }) => ({ ...wallet }))
-class ImportEosKey extends React.Component {
+class ImportEosKey extends BaseComponent {
 
   static navigationOptions = {
     title: '导入EOS私钥'
@@ -83,6 +84,8 @@ class ImportEosKey extends React.Component {
 
 
   componentWillUnmount() {
+     //结束页面前，资源释放操作
+     super.componentWillUnmount();
     // if (timer) {
     //   clearInterval(timer);
     // }

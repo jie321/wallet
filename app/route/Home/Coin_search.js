@@ -15,9 +15,10 @@ import { EasyToast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
 export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
+import BaseComponent from "../../components/BaseComponent";
 
 @connect(({assets}) => ({...assets}))
-class Coin_search extends React.Component {
+class Coin_search extends BaseComponent {
 
   static navigationOptions = {
     header:null,  //隐藏顶部导航栏
@@ -53,17 +54,21 @@ class Coin_search extends React.Component {
       return;
     }
   }
-
-  onBackAndroid = () => {
-    if (cangoback) {
-      let type = this.state.routes[this.state.index]
-      let w = this.web[type.key];
-      if (w) {
-        w.goBack();
-        return true;
-      }
-    }
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
   }
+  // onBackAndroid = () => {
+  //   if (cangoback) {
+  //     let type = this.state.routes[this.state.index]
+  //     let w = this.web[type.key];
+  //     if (w) {
+  //       w.goBack();
+  //       return true;
+  //     }
+  //   }
+  // }
 
   //获得typeid坐标
   getRouteIndex(typeId) {

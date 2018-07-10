@@ -11,11 +11,12 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import store from 'react-native-simple-store';
+import BaseComponent from "../../components/BaseComponent";
 
 let timer;
 
 @connect(({ wallet }) => ({ ...wallet }))
-class WalletManage extends React.Component {
+class WalletManage extends BaseComponent {
 
   static navigationOptions = {
     headerTitle:'钱包管理',
@@ -47,7 +48,11 @@ class WalletManage extends React.Component {
       this.props.dispatch({ type: 'wallet/walletList' });
     });
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   onPress = (data, sectionID, rowID) => {
     const { navigate } = this.props.navigation;
     var func = this.updateState;

@@ -11,11 +11,12 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
+import BaseComponent from "../../components/BaseComponent";
 let {width, height} = Dimensions.get('window');
 
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({login}) => ({...login}))
-class TradeDetails extends React.Component {
+class TradeDetails extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
@@ -37,7 +38,11 @@ class TradeDetails extends React.Component {
   componentDidMount() {
         // alert('trade: '+JSON.stringify(this.props.navigation.state.params.trade));
   }
-
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+    
+  }
   prot(key, data = {}) {
     const { navigate } = this.props.navigation;
     if (key == 'transactionId') {

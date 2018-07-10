@@ -10,12 +10,13 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
+import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 
 @connect(({wallet}) => ({...wallet}))
-class AgentInfo extends React.Component {
+class AgentInfo extends BaseComponent {
 
   
     static navigationOptions = ({ navigation }) => {
@@ -38,7 +39,11 @@ class AgentInfo extends React.Component {
             isNotDealSelected: false,        
         };
     }
-  
+    componentWillUnmount(){
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+        
+    }
  
     prot = () => {
         const { navigate } = this.props.navigation;
