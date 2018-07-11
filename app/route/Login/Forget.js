@@ -28,7 +28,7 @@ class Forget extends BaseComponent {
     phone:"",
     password:"",
     code:"",
-    capture:'获取验证码',
+    capture:'发送验证码',
     img:Constants.rootaddr+kapimg,
     kcode:"",
   }
@@ -189,7 +189,7 @@ class Forget extends BaseComponent {
                       <Text style={styles.texttitle}> 手机号</Text>
                       <TextInput ref={(ref) => this._rphone = ref}  value={this.state.phone}  returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
-                        placeholder="输入手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
+                        placeholder="请输入您注册时的手机号" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={11}
                         onChangeText={(phone) => this.setState({phone})}
                       />
                   </View>
@@ -213,10 +213,10 @@ class Forget extends BaseComponent {
                   </View>
                   <View style={styles.separate}></View>
                   <View style={styles.phoneoue} >
-                      <Text style={styles.texttitle}> 设置新密码</Text>
+                      <Text style={styles.texttitle}> 新密码</Text>
                       <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                        placeholder="输入密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
+                        placeholder="设置新的登录密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
                         onChangeText={(password) => this.setState({password})}
                       />
                   </View>
@@ -269,8 +269,8 @@ const styles = StyleSheet.create({
   },
 
   texttitle:{
-    fontSize:12,
-    color: UColor.arrow
+    fontSize:14,
+    color: UColor.fontColor
   },
   codeoutsource: {
     flexDirection:'row',
@@ -303,12 +303,13 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.tintColor,
     borderRadius: 5,
     width: 100,
-    height: 30,
+    height: 40,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 15
   },
   btntext: {
-    fontSize:12,
+    fontSize:15,
     color: UColor.fontColor
   },
   separate: {
@@ -321,7 +322,9 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.tintColor,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
+    marginTop:180,
+    marginLeft: 10,
+    marginRight: 10,
     borderRadius: 5
   },
   refertext: {
