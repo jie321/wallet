@@ -141,7 +141,11 @@ class ImportEosKey extends BaseComponent {
     navigate('Web', { title: "什么是助记词", url: "http://static.eostoken.im/html/MemorizingWords.html" });
     }else  if (key == 'privatekey') {
     navigate('Web', { title: "什么是私钥", url: "http://static.eostoken.im/html/Keystore.html" });
+    }else  if (key == 'howImportPrivatekey') {
+    navigate('Web', { title: "如何导入私钥", url: "http://static.eostoken.im/html/importPrivatekey.html" });
     }
+
+
   }
 
   checkClick() {
@@ -382,11 +386,18 @@ class ImportEosKey extends BaseComponent {
                   <Text style={styles.importPritext}>开始导入</Text>
                 </View>
               </Button>
-              <Button onPress={() => this.prot(this,'privatekey')}>
+              {/* <Button onPress={() => this.prot(this,'privatekey')}>
                 <View style={styles.importPriout}>
                   <Text style={styles.privatekeytext}>什么是私钥 ？</Text>
                 </View>
+              </Button> */}
+
+              <Button onPress={() => this.prot(this,'howImportPrivatekey')}>
+                <View style={styles.importPriout}>
+                  <Text style={styles.privatekeytext}>如何导入私钥？</Text>
+                </View>
               </Button>
+
             </View>
           </TouchableOpacity>
         </ScrollView> 
