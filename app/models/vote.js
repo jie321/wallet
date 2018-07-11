@@ -61,7 +61,6 @@ export default {
      *getundelegatebwInfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getUndelegatebwInfo, 'post', payload);
-            // alert("getundelegatebwInfo : " + JSON.stringify(resp));
             if(resp.code=='0'){               
                 // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
             }else{
@@ -72,7 +71,20 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
      },
-     
+     *getGlobalInfo({payload,callback},{call,put}) {
+        try{
+            const resp = yield call(Request.request, "http://192.168.1.66:8088/api/eosrpc/getGlobalInfo", 'post', payload);
+            // alert("getundelegatebwInfo : " +JSON.stringify(resp.data.rows));
+            if(resp.code=='0'){               
+                // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
+            }else{
+                EasyToast.show(resp.msg);
+            }
+            if (callback) callback(resp.data);
+        } catch (error) {
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+     },
     },
 
     reducers : {
