@@ -448,12 +448,11 @@ export default {
     },
     reducers: {
         update(state, action) {
-            let coinList = action.payload.data;
             return { ...state, ...action.payload };
         },
         updateAction(state, action) {
-            let coinList = action.payload.data;
-            return { ...state, coinList };
+            let walletList = action.payload.data;
+            return { ...state, walletList };
         },
         walletCreated(state, action) {
             let data = action.payload.data;

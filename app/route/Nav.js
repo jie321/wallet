@@ -316,7 +316,7 @@ const Nav = StackNavigator(
 
 let routeLength = 0;
 
-@connect(({ banner, newsType, common, login, wallet }) => ({ ...banner, ...newsType, ...common, ...login,  ...wallet }))
+@connect(({ banner, newsType, common, login, wallet, asset }) => ({ ...banner, ...newsType, ...common, ...login,  ...wallet, ...asset }))
 class Route extends React.Component {
 
   state = {
@@ -359,8 +359,6 @@ class Route extends React.Component {
     } });
   }
  
-  
-
   componentDidMount() {
     //回到app触发检测更新
     AppState.addEventListener("change", (newState) => {
@@ -565,15 +563,14 @@ class Route extends React.Component {
     } });
   }
   getBalance() { 
-    if(this.props.coinList == null){
+    if(this.props.walletList == null){
       return;
     }
 
-    for(var i = 0; i < this.props.coinList.length; i++) {
-      if (this.props.coinList[i] != null && this.props.coinList[i].name != null && (this.props.coinList[i].isactived && this.props.coinList[i].hasOwnProperty('isactived'))) {
-
+    for(var i = 0; i < this.props.walletList.length; i++) {
+      if (this.props.walletList[i] != null && this.props.walletList[i].name != null && (this.props.walletList[i].isactived && this.props.walletList[i].hasOwnProperty('isactived'))) {
         this.props.dispatch({
-          type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.coinList[i].name, symbol: 'EOS' }
+          type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.walletList[i].name, symbol: 'EOS' }
         })
   
       }
@@ -598,7 +595,7 @@ class Route extends React.Component {
     }
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
-      if(this.props.coinList == null || this.props.coinList.length == 0){
+      if(this.props.walletList == null || this.props.walletList.length == 0){
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
           this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
             if(walletArr == null || walletArr.length == 0){
