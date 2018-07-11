@@ -35,7 +35,8 @@ class Login extends BaseComponent {
     super(props);
     this.state = {
       index: 0,
-      capture: '获取短信验证码',
+      capture: '获取验证码',
+      captureState: false,
       routes: [{ key: '1', title: '登陆' }, { key: '2', title: '注册' }],
       phone: "",
       password: "",
@@ -195,7 +196,7 @@ class Login extends BaseComponent {
       EasyToast.show('请输入11位手机号');
       return;
     }
-    if (this.state.capture != "获取短信验证码") {
+    if (this.state.captureState) {
       return;
     }
     let img =Constants.rootaddr+ kapimg + this.state.phone + "?v=" + Math.ceil(Math.random() * 100000);
@@ -231,7 +232,7 @@ class Login extends BaseComponent {
       EasyToast.show('请输入验证码');
       return;
     }
-    if (this.state.capture != "获取短信验证码") {
+    if (this.state.captureState) {
       return;
     }
     
@@ -248,7 +249,7 @@ class Login extends BaseComponent {
               EasyLoading.dismis();
               if (data.code == 0) {
                 EasyToast.show("验证码已发送，请注意查收");
-                th.setState({ capture: "60s" })
+                th.setState({ capture: "60s", captureState: true });
                 th.doTick();
                 EasyDialog.dismis();
               } else {
@@ -274,10 +275,10 @@ class Login extends BaseComponent {
     setTimeout(function () {
       if (tick == 0) {
         tick = 60;
-        th.setState({ capture: "获取短信验证码" })
+        th.setState({ capture: "获取验证码", captureState: false });
       } else {
         tick--;
-        th.setState({ capture: tick + "s" })
+        th.setState({ capture: tick + "s", captureState: true })
         th.doTick();
       }
     }, 1000);
@@ -450,8 +451,8 @@ const styles = StyleSheet.create({
     paddingLeft: 2
   },
   inptitle: {
-    fontSize: 12, 
-    color: '#8696B0'
+    fontSize: 14, 
+    color: UColor.fontColor
   },
   separate: {
     height: 0.5,
@@ -492,10 +493,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 40,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 15
   },
   verificationtext: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#fff'
   },
 

@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 14,
     color: UColor.arrow,
-    width: 70,
+    width: 90,
   },
 
   blocktime: {
