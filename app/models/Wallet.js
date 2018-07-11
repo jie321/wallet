@@ -20,94 +20,6 @@ export default {
     },
     effects: {
         *info({ payload, callback }, { call, put }) {
-            var list = [];
-            var totalOpt;
-            var total;
-            try {
-                //获取数据
-                const resp = yield call(Request.request, address, 'get');
-
-                //解析数据
-                if (resp.code == "0") {
-                    let i = 0;
-                    resp.data.coins.forEach(element => {
-                        var other = new Object();
-                        other.name = "其他";
-                        other.value = resp.data.money - element.value;
-                        var current = new Object();
-                        current.name = element.name;
-                        current.value = element.value;
-                        element.opt = {
-                            series: [
-                                {
-                                    name: '资产',
-                                    type: 'pie',
-                                    radius: [
-                                        '65%', '80%'
-                                    ],
-                                    avoidLabelOverlap: false,
-                                    hoverAnimation: false,
-                                    label: {
-                                        normal: {
-                                            show: false
-                                        },
-                                        emphasis: {
-                                            show: false
-                                        }
-                                    },
-                                    labelLine: {
-                                        normal: {
-                                            show: false
-                                        }
-                                    },
-                                    data: [
-                                        current, other
-                                    ],
-                                    color: [resp.data.colors[i], '#708090']
-                                }
-                            ]
-                        }
-                        i++;
-                        list.push(element);
-                    });
-
-                    totalOpt = {
-                        series: [
-                            {
-                                name: '资产',
-                                type: 'pie',
-                                radius: [
-                                    '98%', '100%'
-                                ],
-                                avoidLabelOverlap: false,
-                                hoverAnimation: false,
-                                label: {
-                                    normal: {
-                                        show: false
-                                    },
-                                    emphasis: {
-                                        show: false
-                                    }
-                                },
-                                labelLine: {
-                                    normal: {
-                                        show: false
-                                    }
-                                },
-                                data: resp.data.coins,
-                                color: resp.data.colors
-                            }
-                        ]
-                    }
-                    total = resp.data;
-                } else {
-                    EasyToast.show(resp.msg);
-                }
-
-            } catch (error) {
-                EasyToast.show('网络繁忙,请稍后!');
-            }
-
             var walletList = yield call(store.get, 'walletArr');
             var defaultWallet = yield call(store.get, 'defaultWallet');
             // if (walletList == null || defaultWallet == null) {
@@ -115,7 +27,7 @@ export default {
             //     return;
             // }
 
-            yield put({ type: 'update', payload: { list, totalOpt, total, walletList: walletList, defaultWallet: defaultWallet } });
+            yield put({ type: 'update', payload: { walletList: walletList, defaultWallet: defaultWallet } });
             DeviceEventEmitter.emit('wallet_info');
             if (callback) callback();
         },

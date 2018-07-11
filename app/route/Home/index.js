@@ -52,11 +52,23 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    EasyLoading.show();
     this.getBalance();
     this.getIncrease();
     //加载地址数据
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+      this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {
+        if(myAssets && this.props.defaultWallet && this.props.defaultWallet.name){
+          this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name}, callback: () => {
+            this.calTotalBalance();
+            EasyLoading.dismis();
+          }});
+        }else{
+          EasyLoading.dismis();
+        }
+      }});
+    }});
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
       if(invalidWalletList != null){
@@ -69,9 +81,6 @@ class Home extends React.Component {
       // alert(JSON.stringify(invalidWalletList));
     }});
 
-    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (data) => { 
-      // this.setState({myAssets: data});
-    } });
     Animated.timing(
       this.state.fadeAnim,  //初始值
       {
@@ -80,13 +89,13 @@ class Home extends React.Component {
         easing: Easing.linear,
       },
     ).start();               //开始
-    DeviceEventEmitter.addListener('wallet_info', (data) => {
-      this.getBalance();
-    });
-    DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
-      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-      this.getBalance();
-    });
+    // DeviceEventEmitter.addListener('wallet_info', (data) => {
+    //   this.getBalance();
+    // });
+    // DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
+    //   this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    //   this.getBalance();
+    // });
 
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
@@ -118,13 +127,13 @@ class Home extends React.Component {
       this.setState({increase: data});
     });
 
-    DeviceEventEmitter.addListener('eos_balance', (data) => {
-      if(this.props.list == null || this.props.list.length == 0){
-        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-      }
-      this.setEosBalance(data);
-      this.calTotalBalance();
-    });
+    // DeviceEventEmitter.addListener('eos_balance', (data) => {
+    //   if(this.props.list == null || this.props.list.length == 0){
+    //     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+    //   }
+    //   this.setEosBalance(data);
+    //   this.calTotalBalance();
+    // });
 
     // DeviceEventEmitter.addListener('asset_balance', (data) => {
       // this.setAssetBalance(data);
@@ -132,12 +141,12 @@ class Home extends React.Component {
   }
 
   calTotalBalance(){
-    if(this.props.list == null){
+    if(this.props.myAssets == null){
       return;
     }
-    for(var i = 0; i < this.props.list.length; i++){
-      if(this.props.list[i].name == 'EOS' && this.props.list[i].value != null){
-        var total = (this.state.balance * this.props.list[i].value).toFixed(2);
+    for(var i = 0; i < this.props.myAssets.length; i++){
+      if(this.props.myAssets[i].asset.name == 'EOS' && this.props.myAssets[i].asset.value != null){
+        var total = (this.props.myAssets[i].balance * this.props.myAssets[i].asset.value).toFixed(2);
         this.setState({totalBalance: total});
       }
     }
@@ -190,37 +199,37 @@ class Home extends React.Component {
   }
 
   getBalance() { 
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
-      if(this.state.init){
-        this.setState({init: false});
-        EasyLoading.show();
-      }
+    // if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+    //   if(this.state.init){
+    //     this.setState({init: false});
+    //     EasyLoading.show();
+    //   }
 
-      this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
-          this.setEosBalance(data);
-          EasyLoading.dismis();
-        }
-      })
-    } else {
-      this.setState({ balance: '0.0000', account: 'xxxx' })
-      // this.props.defaultWallet.name = 'xxxx';
-      //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-      //   this.createWallet();
-      //   EasyDialog.dismis()
-      // }, () => { EasyDialog.dismis() });
-    }
+    //   this.props.dispatch({
+    //     type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
+    //       this.setEosBalance(data);
+    //       EasyLoading.dismis();
+    //     }
+    //   })
+    // } else {
+    //   this.setState({ balance: '0.0000', account: 'xxxx' })
+    //   // this.props.defaultWallet.name = 'xxxx';
+    //   //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+    //   //   this.createWallet();
+    //   //   EasyDialog.dismis()
+    //   // }, () => { EasyDialog.dismis() });
+    // }
 
-    // 其他资产
-    if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
-      return;
-    }
+    // // 其他资产
+    // if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
+    //   return;
+    // }
 
-    this.props.dispatch({
-      type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
-        // this.setAssetBalance(data);
-      }
-    });
+    // this.props.dispatch({
+    //   type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
+    //     // this.setAssetBalance(data);
+    //   }
+    // });
   }
 
 
@@ -526,31 +535,6 @@ class Home extends React.Component {
               </Button>
           </View>
         </View>   
-        <View style={styles.listout}>
-          <ListView  initialListSize={1} enableEmptySections={true}
-            dataSource={this.state.dataSource.cloneWithRows((this.props.list == null ? [] : this.props.list))}
-            renderRow={(rowData, sectionID, rowID ) => (
-              <View>
-                <Button onPress={this.coinInfo.bind(this, rowData)}>
-                  <View style={styles.row}>
-                    <View style={styles.lefts}>
-                      <Image source={{ uri: rowData.img }} style={styles.leftimg} />
-                      <Text style={styles.lefttext}>{rowData.name}</Text>
-                    </View>
-                    <View style={styles.rights}>
-                      <View style={styles.rightout}>
-                        <View>
-                          <Text style={styles.rightbalance}>{this.state.balance}</Text>
-                          <Text style={styles.rightmarket}>≈{(this.state.balance*rowData.value).toFixed(2)}（￥） </Text>
-                        </View>
-                      </View>
-                    </View>
-                  </View>
-                </Button>
-              </View>
-            )}
-          />   
-        </View>
         <ListView initialListSize={1} enableEmptySections={true} 
           dataSource={this.state.dataSource.cloneWithRows(this.props.myAssets == null ? [] : this.props.myAssets)} 
           renderRow={(rowData, sectionID, rowID) => (      
@@ -565,7 +549,7 @@ class Home extends React.Component {
                     <View style={styles.rightout}>
                       <View>
                         <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈0.00（￥）</Text>
+                        <Text style={styles.rightmarket}>≈{(rowData.balance==null || rowData.balance=="" || rowData.asset.value == null || rowData.asset.value == "")? "0.00" : (rowData.balance.replace(rowData.asset.name, "")*rowData.asset.value).toFixed(2)}（￥）</Text>
                       </View>
                     </View>
                   </View>

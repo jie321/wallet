@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {pocketAsset, getBalance, submitAssetInfo} from '../utils/Api';
+import {pocketAsset, getBalance, submitAssetInfo, listAssets, addAssetToServer} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import { DeviceEventEmitter } from 'react-native';
@@ -17,7 +17,8 @@ export default {
             if(payload.page==1){
                 yield put({type:'upstatus',payload:{newsRefresh:true}});
             }
-            const resp = yield call(Request.request,pocketAsset, 'post', payload);
+            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', payload);
+            // alert(JSON.stringify(resp));
             if(resp.code=='0'){
                 let dts = new Array();
                 resp.data.map((item)=>{
@@ -34,7 +35,6 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
       },
-    
       *addMyAsset({payload, callback},{call,put}){
         var myAssets = yield call(store.get, 'myAssets');
         // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));
@@ -75,11 +75,51 @@ export default {
         // DeviceEventEmitter.emit('updateMyAssets', payload);
      },
      *myAssetInfo({payload, callback},{call,put}){
-        const myAssets = yield call(store.get, 'myAssets');
-        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        var myAssets = yield call(store.get, 'myAssets');
+        if(myAssets == null || myAssets.length == 0){ // 未有资产信息时默认取eos的
+            var myAssets = [];
+            // 单独获取eos信息
+            var eosInfoDefault = {
+                asset: {name : "EOS", icon: "http://static.eostoken.im/images/20180319/1521432637907.png", contractAccount: "eosio.token", value: "0.00"},
+                value: true,
+                balance: '0.0000',
+            }
+            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: 'EOS'});
+            alert(JSON.stringify(resp));
+            if(resp.code == '0' && resp.data && resp.data.length == 1){
+                // yield call(store.save, 'eosInfo', resp.data);
+                // yield put({type: 'updateEosInfo', payload: {eosInfo: reps.data}});
+                var eosInfo = {
+                    asset: resp.data[0],
+                    value: true,
+                    balance: '0.0000',
+                }
+                myAssets[0] = eosInfo;
+            }else{
+                myAssets[0] = eosInfoDefault;
+            }
+            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        }else{
+            for(var i = 0; i < myAssets.length; i++){
+                const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: myAssets[i].asset.name});
+                if(resp.code == '0' && resp.data && resp.data.length == 1){
+                    var assetInfo = {
+                        asset: resp.data[0],
+                        value: true,
+                        balance: '0.0000',
+                    }
+                    myAssets[i] = assetInfo;
+                }
+            }
+            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        }
+
+        yield call(store.save, 'myAssets', myAssets);
+
         if(callback){
             callback(myAssets);
         }
+
     },
     *updateMyAsset({payload},{call,put}){
         var myAssets = yield call(store.get, 'myAssets');
@@ -107,18 +147,19 @@ export default {
      *getBalance({payload, callback}, {call, put}){
         try{
             // alert("------ " + JSON.stringify(payload));
-            for(let i in payload.assets){
-                let item = payload.assets[i];
+            var myAssets = yield call(store.get, 'myAssets');
+            for(let i in myAssets){
+                let item = myAssets[i];
                 const resp = yield call(Request.request, getBalance, 'post', {contract: item.asset.contractAccount, account: payload.accountName, symbol: item.asset.name});
                 // alert("------ " + JSON.stringify(resp));
                 if(resp && resp.code=='0'){
                     item.balance = resp.data;
                 }
             }
-            yield call(store.save, 'myAssets', payload.assets);
-            yield put({ type: 'updateMyAssets', payload: {myAssets: payload.assets} });
+            yield call(store.save, 'myAssets', myAssets);
+            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
             if(callback){
-                callback(payload.assets);
+                callback(myAssets);
             }
         }catch(e){
             EasyToast.show('网络繁忙,请稍后!');
@@ -191,6 +232,9 @@ export default {
         updateMyAssets(state, action) {
             return { ...state, ...action.payload };
         },
+        updateEosInfo(state, action) {
+            return {...state, ...action.payload};
+        }
     }
   }
   
