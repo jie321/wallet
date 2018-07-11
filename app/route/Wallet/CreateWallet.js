@@ -205,7 +205,10 @@ class createWallet extends BaseComponent {
      <Text style={styles.inptpasstext}>2.激活EOS钱包需达到{this.state.integral}点积分（每个用户仅限一个）</Text>
      <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
      <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>
-  </View>), "知道了", null,  () => { EasyDialog.dismis() });
+  </View>), "知道了", null, () => {
+    EasyDialog.dismis();
+    this.props.navigation.goBack();
+  }, () => { EasyDialog.dismis() });
   }
 
   clearFoucs = () => {
