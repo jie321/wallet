@@ -28,9 +28,10 @@ class Forget extends BaseComponent {
     phone:"",
     password:"",
     code:"",
-    capture:'发送验证码',
+    capture:'获取验证码',
     img:Constants.rootaddr+kapimg,
     kcode:"",
+    captureState: false,
   }
 
   constructor(props) {
@@ -90,7 +91,7 @@ class Forget extends BaseComponent {
       EasyToast.show('请输入11位手机号');
       return;
     }
-    if(this.state.capture!="获取验证码"){
+    if(this.state.captureState){
       return;
     }
     let img = Constants.rootaddr+kapimg+this.state.phone+"?v="+Math.ceil(Math.random()*100000);
@@ -131,10 +132,13 @@ class Forget extends BaseComponent {
       EasyToast.show('请输入验证码');
       return;
     }
-    if(this.state.capture!="获取验证码"){
+    // if(this.state.capture!="获取验证码"){
+    //   return;
+    // }
+    if(this.state.captureState){
       return;
     }
-  
+
     var th = this;
 
     EasyLoading.show('获取中...');
@@ -142,7 +146,7 @@ class Forget extends BaseComponent {
         EasyLoading.dismis();
         if(data.code==0){
           EasyToast.show("验证码已发送，请注意查收");
-          th.setState({capture:"60s"})
+          th.setState({capture:"60s", captureState: true});
           th.doTick();
           EasyDialog.dismis();
         }else{
@@ -160,10 +164,10 @@ class Forget extends BaseComponent {
     setTimeout(function(){
       if(tick==0){
         tick=60;
-        th.setState({capture:"获取验证码"})
+        th.setState({capture:"获取验证码", captureState: false});
       }else{
         tick--;
-        th.setState({capture:tick+"s"})
+        th.setState({capture:tick+"s", captureState: true});
         th.doTick();
       }
     },1000);
