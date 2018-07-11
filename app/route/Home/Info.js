@@ -16,6 +16,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
+import moment from 'moment';
 
 @connect(({ wallet }) => ({ ...wallet }))
 class Info extends BaseComponent {
@@ -121,10 +122,22 @@ class Info extends BaseComponent {
         this._setModalVisible();
     }
     _openDetails(trade) {  
+        if(trade.blockTime)
+        {
+            trade.blockTime = this.transferTimeZone(trade.blockTime);
+        }
         const { navigate } = this.props.navigation;
         navigate('TradeDetails', {trade});
     }
-
+    transferTimeZone(blockTime){
+        var timezone;
+        try {
+            timezone = moment(blockTime).add(8,'hours').format('YYYY-MM-DD HH:mm');
+        } catch (error) {
+            timezone = blockTime;
+        }
+        return timezone;
+    }
 
     render() {
         const c = this.props.navigation.state.params.coinType;
@@ -145,7 +158,7 @@ class Info extends BaseComponent {
                             <View style={styles.row}>
                                 <View style={styles.top}>
                                     <View style={styles.timequantity}>
-                                        <Text style={styles.timetext}>时间 : {rowData.blockTime}</Text>
+                                        <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
                                         <Text style={styles.quantity}>数量 : {rowData.quantity.replace("EOS", "")}</Text>
                                     </View>
                                     <View style={styles.typedescription}>
