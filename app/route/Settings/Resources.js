@@ -185,9 +185,6 @@ class Bvote extends BaseComponent {
     return Surplus;
   }
 
-
-
-
   getAccountInfo(){
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
         // alert(JSON.stringify(data));
@@ -373,8 +370,8 @@ class Bvote extends BaseComponent {
     }
     return obj;
   }
-
-  buyram = (rowData) => { // 购买内存
+  // 购买内存
+  buyram = (rowData) => { 
       if(!this.props.defaultWallet){
           EasyToast.show('请先创建钱包');
           return;
@@ -426,57 +423,57 @@ class Bvote extends BaseComponent {
           EasyDialog.dismis();
       }, () => { EasyDialog.dismis() });
   };
-
-  sellram = (rowData) => { // 出售内存
-    if(!this.props.defaultWallet){
-        EasyToast.show('请先创建钱包');
-        return;
-    }
-    if(this.state.sellRamBytes == ""){
-        EasyToast.show('请输入出售内存kb数量');
-        return;
-    }
-    this. dismissKeyboardClick();
-        const view =
-        <View style={styles.passoutsource}>
-            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
-                placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
-            <Text style={styles.inptpasstext}></Text>  
-        </View>
-        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
-        if (this.state.password == "" || this.state.password.length < 8) {
-            EasyToast.show('请输入密码');
+   // 出售内存
+    sellram = (rowData) => {
+        if(!this.props.defaultWallet){
+            EasyToast.show('请先创建钱包');
             return;
         }
-        var privateKey = this.props.defaultWallet.activePrivate;
-        try {
-            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
-            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
-            if (plaintext_privateKey.indexOf('eostoken') != -1) {
-                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                EasyLoading.show();
-                Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
+        if(this.state.sellRamBytes == ""){
+            EasyToast.show('请输入出售内存kb数量');
+            return;
+        }
+        this. dismissKeyboardClick();
+            const view =
+            <View style={styles.passoutsource}>
+                <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                    selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
+                    placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
+                <Text style={styles.inptpasstext}></Text>  
+            </View>
+            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            if (this.state.password == "" || this.state.password.length < 8) {
+                EasyToast.show('请输入密码');
+                return;
+            }
+            var privateKey = this.props.defaultWallet.activePrivate;
+            try {
+                var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+                var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+                if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    EasyLoading.show();
+                    Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
+                        EasyLoading.dismis();
+                        if(r.isOwn){
+                            this.getAccountInfo();
+                            EasyToast.show("出售成功");
+                        }else{
+                            this._setModalVisible();
+                        }
+                    });
+                    
+                } else {
                     EasyLoading.dismis();
-                    if(r.isOwn){
-                        this.getAccountInfo();
-                        EasyToast.show("出售成功");
-                    }else{
-                        this._setModalVisible();
-                    }
-                });
-                
-            } else {
+                    EasyToast.show('密码错误');
+                }
+            } catch (e) {
                 EasyLoading.dismis();
                 EasyToast.show('密码错误');
             }
-        } catch (e) {
-            EasyLoading.dismis();
-            EasyToast.show('密码错误');
-        }
-        EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() });
-  };
+            EasyDialog.dismis();
+        }, () => { EasyDialog.dismis() });
+    };
 
     // 计算抵押
     Cdelegateb = () => {
@@ -497,40 +494,40 @@ class Bvote extends BaseComponent {
                 <Text style={styles.inptpasstext}>提示：抵押 {this.state.Cdelegateb} EOS</Text>
         </View>
         EasyDialog.show("请输入密码", view, "确认", "取消", () => {
-        if (this.state.password == "" || this.state.password.length < 8) {
-            EasyToast.show('请输入密码');
-            return;
-        }
-        var privateKey = this.props.defaultWallet.activePrivate;
-        try {
-            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
-            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
-            if (plaintext_privateKey.indexOf('eostoken') != -1) {
-                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                if(this.state.isOwn){
-                    this.state.Creceiver = this.props.defaultWallet.account;
-                }
-                EasyLoading.show();
-                // 抵押
-                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.Creceiver, this.state.Cdelegateb + " EOS", "0 EOS", (r) =>{
-                    EasyLoading.dismis();
-                    if(r.isSuccess){
-                        this.getAccountInfo();
-                        EasyToast.show("抵押成功");
-                    }else{
-                        this._setModalVisible();
+            if (this.state.password == "" || this.state.password.length < 8) {
+                EasyToast.show('请输入密码');
+                return;
+            }
+            var privateKey = this.props.defaultWallet.activePrivate;
+            try {
+                var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+                var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+                if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                    if(this.state.isOwn){
+                        this.state.Creceiver = this.props.defaultWallet.account;
                     }
-                });
-            } else {
+                    EasyLoading.show();
+                    // 抵押
+                    Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.Creceiver, this.state.Cdelegateb + " EOS", "0 EOS", (r) =>{
+                        EasyLoading.dismis();
+                        if(r.isSuccess){
+                            this.getAccountInfo();
+                            EasyToast.show("抵押成功");
+                        }else{
+                            this._setModalVisible();
+                        }
+                    });
+                } else {
+                    EasyLoading.dismis();
+                    EasyToast.show('密码错误');
+                }
+            } catch (e) {
                 EasyLoading.dismis();
                 EasyToast.show('密码错误');
             }
-        } catch (e) {
-            EasyLoading.dismis();
-            EasyToast.show('密码错误');
-        }
-        EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() }); 
+            EasyDialog.dismis();
+        }, () => { EasyDialog.dismis() }); 
     }
     //计算赎回
     Cundelegateb = () => { 
@@ -712,12 +709,12 @@ class Bvote extends BaseComponent {
        <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
             <ScrollView keyboardShouldPersistTaps="always">
                 <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}> 
-                    <View style={{backgroundColor: '#4f617d', }}>
-                        <View style={{ flexDirection: 'row', paddingVertical: 10, }}>
-                        <View style={{ flexDirection: 'row', paddingHorizontal: 18, width: (ScreenWidth-20)/2, }}>  
-                            {this._getButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
-                            {this._getButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
-                        </View> 
+                    <View style={styles.nhaaout}>
+                        <View style={styles.wterout}>
+                            <View style={styles.OwnOthers}>  
+                                {this._getButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
+                                {this._getButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
+                            </View> 
                         </View> 
                     </View>
                     {this.state.isOwn ? null:
@@ -789,13 +786,13 @@ class Bvote extends BaseComponent {
             <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                 <ScrollView keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-                        <View style={{backgroundColor: '#4f617d', }}>
-                            <View style={{ flexDirection: 'row', paddingVertical: 10, }}>
-                                <View style={{ flexDirection: 'row', paddingHorizontal: 18, width: (ScreenWidth-20)/2, }}>  
+                        <View style={styles.nhaaout}>
+                            <View style={styles.wterout}>
+                                <View style={styles.OwnOthers}>  
                                     {this._getButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
                                     {this._getButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                                 </View> 
-                                <View style={{ flexDirection: 'row',  paddingHorizontal: 18, width: (ScreenWidth-20)/2, }}>  
+                                <View style={styles.LeaseTransfer}>  
                                     {this._getButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
                                     {this._getButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
                                 </View> 
@@ -863,18 +860,16 @@ class Bvote extends BaseComponent {
             <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                 <ScrollView keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-                        <View style={{backgroundColor: '#4f617d', }}>
-                            <View style={{ flexDirection: 'row', paddingVertical: 10, }}>
-                            <View style={{ flexDirection: 'row', paddingHorizontal: 18, width: (ScreenWidth-20)/2, }}>  
-                                {this._getButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
-                                {this._getButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
-                            </View> 
-                           
-                            <View style={{ flexDirection: 'row',  paddingHorizontal: 18, width: (ScreenWidth-20)/2, }}>  
-                                {this._getButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
-                                {this._getButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
-                            </View> 
-                          
+                        <View style={styles.nhaaout}>
+                            <View style={styles.wterout}>
+                                <View style={styles.OwnOthers}>  
+                                    {this._getButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
+                                    {this._getButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
+                                </View> 
+                                <View style={styles.LeaseTransfer}>  
+                                    {this._getButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
+                                    {this._getButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
+                                </View> 
                             </View> 
                         </View>
                         {this.state.isOwn ? null:
@@ -936,12 +931,13 @@ class Bvote extends BaseComponent {
     }
     if (route.key == '4') {
       return (<View style={styles.container}>
-           <Text style={{ margin: 10, height: 40,borderRadius: 6,backgroundColor: UColor.tintColor,justifyContent: 'center',alignItems: 'center', fontSize: 16, color: UColor.fontColor}}>该功能正在紧急开发中，敬请期待!</Text>
+            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row", alignItems: 'center', justifyContent: "center", paddingHorizontal: 20, borderRadius: 5, margin: 5,}}> 
+              <Text  style={{fontSize: 16, color: UColor.fontColor}}>该功能正在紧急开发中，敬请期待!</Text>
+            </View>
           </View>);
      }
   }
   
-
     render() {
         const c = this.props.navigation.state.params.coinType;
         return (
@@ -955,62 +951,62 @@ class Bvote extends BaseComponent {
             <TouchableHighlight onPress={this.goPage.bind(this, 'Memory')}> 
                 <Text style={styles.headtextSize}>内存资源</Text>
             </TouchableHighlight> */}
-            <View style={{paddingHorizontal: 15, paddingBottom: 10, backgroundColor: '#4f617d',}}>
-              <Text style={{fontSize: 15, color: '#7787A3', paddingVertical: 5}}>
+            <View style={styles.tetleout}>
+              <Text style={styles.tetletext}>
                   {this.state.index == 0&&"内存概况"}
                   {this.state.index == 1&&"计算概况"}
                   {this.state.index == 2&&"网络概况"}
-                  {this.state.index == 4&&"内存交易"}
+                  {this.state.index == 3&&"内存交易"}
               </Text>
-              <ImageBackground source={UImage.line_bg} resizeMode="cover" style={{height:(ScreenWidth-30)*0.307, justifyContent: 'space-around',alignItems: 'flex-end', flexDirection:'row', zIndex:1}}>
-                  <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={{width: ((ScreenWidth-30)*0.307-5)*0.236, height: (ScreenWidth-30)*0.307-5, zIndex:2}}>
-                      {this.state.index == 0&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.ram_used_Percentage)+'%'}/>}
-                      {this.state.index == 1&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.cpu_available_Percentage)+'%'}/>}
-                      {this.state.index == 2&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.net_available_Percentage)+'%'}/>}
+              <ImageBackground source={UImage.line_bg} resizeMode="cover" style={styles.linebgout}>
+                  <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                      {this.state.index == 0&&<View style={styles.stripbg} height={(100-this.state.ram_used_Percentage)+'%'}/>}
+                      {this.state.index == 1&&<View style={styles.stripbg} height={(100-this.state.cpu_available_Percentage)+'%'}/>}
+                      {this.state.index == 2&&<View style={styles.stripbg} height={(100-this.state.net_available_Percentage)+'%'}/>}
                   </ImageBackground>
-                  <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={{width: ((ScreenWidth-30)*0.307-5)*0.236, height: (ScreenWidth-30)*0.307-5, zIndex:2}}>
-                      {this.state.index == 0&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.ram_available_Percentage)+'%'}/>}
-                      {this.state.index == 1&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.cpu_unstaking_Percentage)+'%'}/>}
-                      {this.state.index == 2&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.net_unstaking_Percentage)+'%'}/>}
+                  <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                      {this.state.index == 0&&<View style={styles.stripbg} height={(100-this.state.ram_available_Percentage)+'%'}/>}
+                      {this.state.index == 1&&<View style={styles.stripbg} height={(100-this.state.cpu_unstaking_Percentage)+'%'}/>}
+                      {this.state.index == 2&&<View style={styles.stripbg} height={(100-this.state.net_unstaking_Percentage)+'%'}/>}
                   </ImageBackground>
-                  <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={{width: ((ScreenWidth-30)*0.307-5)*0.236, height: (ScreenWidth-30)*0.307-5, zIndex:2}}>
-                      {this.state.index == 0&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.used_Percentage)+'%'}/>}
-                      {this.state.index == 1&&<View style={{backgroundColor: '#43536d'}} height={(this.cpuPercentageTime(this.state.cpu_unstaking_time))}/>}
-                      {this.state.index == 2&&<View style={{backgroundColor: '#43536d'}} height={(this.cpuPercentageTime(this.state.net_unstaking_time))}/>}
+                  <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                      {this.state.index == 0&&<View style={styles.stripbg} height={(100-this.state.used_Percentage)+'%'}/>}
+                      {this.state.index == 1&&<View style={styles.stripbg} height={(this.cpuPercentageTime(this.state.cpu_unstaking_time))}/>}
+                      {this.state.index == 2&&<View style={styles.stripbg} height={(this.cpuPercentageTime(this.state.net_unstaking_time))}/>}
                   </ImageBackground>
               </ImageBackground>
-              <View style={{flexDirection:'row',}}>
-                  <View style={{flex: 1, flexDirection:'column', justifyContent: "center", alignItems: 'center',}}>
-                    <Text style={{fontSize: 12, color: UColor.fontColor}}>
+              <View style={styles.record}>
+                  <View style={styles.recordout}>
+                    <Text style={styles.ratiotext}>
                       {this.state.index == 0&&this.state.ram_used+'kb/'+this.state.ram_total+'kb'}
                       {this.state.index == 1&&this.state.cpu_available+'/'+this.state.cpu_total}
                       {this.state.index == 2&&this.state.net_available+'/'+this.state.net_total}
                     </Text>
-                    <Text style={{fontSize: 12, color: '#7787A3'}}>
+                    <Text style={styles.recordtext}>
                       {this.state.index == 0&&'占用('+this.state.ram_used_Percentage+'%)'}
                       {this.state.index == 1&&'可用(ms)'}
                       {this.state.index == 2&&'可用(ms)'}
                     </Text>
                   </View>
-                  <View style={{flex: 1, flexDirection:'column', justifyContent: "center", alignItems: 'center',}}>
-                    <Text style={{fontSize: 12, color: UColor.fontColor}}>
+                  <View style={styles.recordout}>
+                    <Text  style={styles.ratiotext}>
                       {this.state.index == 0&&this.state.ram_available+'kb/'+this.state.ram_total+'kb'}
                       {this.state.index == 1&&this.state.cpu_Own_staked+'/'+this.state.cpu_staked}
                       {this.state.index == 2&&this.state.net_Own_staked+'/'+this.state.net_staked}
                     </Text>
-                    <Text style={{fontSize: 12, color: '#7787A3'}}>
+                    <Text style={styles.recordtext}>
                       {this.state.index == 0&&'可用('+this.state.ram_available_Percentage+'%)'}
                       {this.state.index == 1&&'抵押(EOS)'}
                       {this.state.index == 2&&'抵押(EOS)'}
                     </Text>
                   </View>
-                  <View style={{flex: 1, flexDirection:'column', justifyContent: "center", alignItems: 'center', }}>
-                    <Text style={{fontSize: 12, color: UColor.fontColor}}>
+                  <View style={styles.recordout}>
+                    <Text  style={styles.ratiotext}>
                       {this.state.index == 0&&this.state.used+'GB/'+this.state.total+'GB'}
                       {this.state.index == 1&&this.transferTimeZone(this.state.cpu_unstaking_time)}
                       {this.state.index == 2&&this.transferTimeZone(this.state.net_unstaking_time)}
                     </Text>
-                    <Text style={{fontSize: 12, color: '#7787A3'}}>
+                    <Text style={styles.recordtext}>
                       {this.state.index == 0&&'全网('+this.state.used_Percentage+'%)'}
                       {this.state.index == 1&&'赎回中('+this.state.cpu_unstaking+')'}
                       {this.state.index == 2&&'赎回中('+this.state.net_unstaking+')'}
@@ -1018,19 +1014,10 @@ class Bvote extends BaseComponent {
                   </View>
               </View>
             </View>
-            <TabViewAnimated
-              lazy={true}
-              style={{width:ScreenWidth, backgroundColor: '#FFFFFF',}}
-              navigationState={this.state}
-              renderScene={this.renderScene.bind(this)}
-              renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} 
-              labelStyle={{ fontSize: 12,  color: UColor.fontColor, }} 
-              indicatorStyle={{ borderRadius: 10, backgroundColor: UColor.tintColor, width: (ScreenWidth-40)/4, height:30,marginVertical: 8,marginHorizontal:5,}} 
-              style={{height: 46, paddingVertical: 8, backgroundColor: UColor.secdColor }} 
-              tabStyle={{ width: ScreenWidth/4, padding: 0, margin: 0 }} 
-              scrollEnabled={true} {...props} />}
-              onIndexChange={this._handleIndexChange}
-              initialLayout={{ height: 0, width: Dimensions.get('window').width }}
+            <TabViewAnimated lazy={true} style={styles.animatedout} navigationState={this.state} renderScene={this.renderScene.bind(this)}
+               renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={styles.labelout} tabStyle={styles.tabout} 
+               indicatorStyle={styles.indicator} style={styles.tabbarout}  scrollEnabled={true} {...props} />}
+               onIndexChange={this._handleIndexChange} initialLayout={{ height: 0, width: Dimensions.get('window').width }}
             />
              <View style={styles.pupuo}>
                 <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
@@ -1079,348 +1066,341 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
 
+    inptoutsource1: {
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+        justifyContent: 'center',
+    },
+    outsource1: {
+        flexDirection: 'row',  
+        alignItems: 'center',
+    },
+    inpt1: {
+        flex: 1, 
+        color: UColor.arrow, 
+        fontSize: 15, 
+        height: 40, 
+        paddingLeft: 10, 
+        backgroundColor: UColor.fontColor, 
+        borderRadius: 5,
+    },
+    inptTitlered1: {
+        fontSize: 12, 
+        color: '#FF6565', 
+        lineHeight: 35,
+    },
+    inptTitle1: {
+        fontSize: 14, 
+        color: '#7787A3', 
+        lineHeight: 35,
+    },
+    botnimg1: {
+        marginLeft: 10, 
+        width: 86, 
+        height: 38, 
+        justifyContent: 'center', 
+        alignItems: 'flex-start'
+    },
+    botn1: {
+        marginLeft: 10, 
+        width: 86, 
+        height: 38,  
+        borderRadius: 3, 
+        backgroundColor: UColor.tintColor, 
+        justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+    botText1: {
+        fontSize: 17, 
+        color: UColor.fontColor,
+    },
+    basc1: {
+        padding: 20,
+    },
+    basctext1 :{
+        fontSize: 12, 
+        color: UColor.arrow, 
+        lineHeight: 25,
+    },
 
+    tabbutton: {  
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },  
+    tablayout: {   
+        flexDirection: 'row',  
+        paddingHorizontal: 10,
+        paddingTop: 10,
+        paddingBottom: 5,
+    },  
+    buttontab: {  
+        margin: 5,
+        width: 100,
+        height: 33,
+        borderRadius: 15,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },  
+    tabText: {  
+        fontSize: 15,
+    }, 
 
-container1: {
-    flex: 1,
-    flexDirection:'column',
-    backgroundColor: UColor.secdColor,
-  },
+    container: {
+        flex: 1,
+        flexDirection:'column',
+        backgroundColor: UColor.secdColor,
+    },
+    nov: {
+        alignItems: 'center', 
+        flexDirection:'row', 
+        marginHorizontal: 6,
+        height: 80,  
+        backgroundColor:  UColor.mainColor, 
+        borderRadius: 5, 
+        marginTop: 6,
+    },
+    imgsize: {
+        width: 40, 
+        height: 40, 
+        marginHorizontal: 20,
+    },
+    novoutsource: {
+        flex: 1, 
+        justifyContent: "center", 
+        alignItems: 'flex-start', 
+        flexDirection:'column',
+    },
+    headtextSize: {
+        fontSize:16, 
+        color: UColor.fontColor,  
+        paddingBottom: 8,
+    },
+    textoutsource: {
+        flexDirection:'row', 
+        alignItems: "center",
+    },
+    textSizeone: {
+        fontSize: 12, 
+        color: UColor.arrow,
+    },
+    textSizetwo: {
+        marginLeft: 10,
+        fontSize: 12, 
+        color: UColor.arrow,
+    },
+    arrow: {
+        width: 40, 
+        lineHeight: 80, 
+        color: UColor.fontColor, 
+        textAlign: 'center'
+    },
 
-  headbj1: {
-      justifyContent: "center", 
-      alignItems: 'center',
-      flexDirection:'column', 
-      height: 140,
-  },
+    nhaaout: {
+          backgroundColor: '#4f617d',
+      },
+      wterout: {
+          flexDirection: 'row',
+          paddingVertical: 10,
+      },
+      OwnOthers: {
+          flexDirection: 'row',
+          paddingHorizontal: 18,
+          width: (ScreenWidth - 20) / 2,
+      },
+      LeaseTransfer: {
+          flexDirection: 'row',
+          paddingHorizontal: 18,
+          width: (ScreenWidth - 20) / 2,
+      },
 
-  frameoutsource1: {
-      justifyContent: "center", 
-      alignItems: 'center', 
-      flexDirection:'row', 
-      flex: 1, 
-      paddingTop: 15,
-  },
+    inptoutsource: {
+        paddingHorizontal: 20,
+        paddingBottom: 10,
+        justifyContent: 'center',
+        backgroundColor: '#4F617D',
+    },
+    outsource: {
+        flexDirection: 'row',  
+        alignItems: 'center',
+        borderBottomColor: UColor.secdColor, 
+        borderBottomWidth: 0.5,
+    },
+    inpt: {
+        flex: 1, 
+        color: UColor.arrow, 
+        fontSize: 15, 
+        height: 45, 
+        paddingLeft: 10, 
+    },
 
-  frame1: {
-      flex: 1,
-      flexDirection: 'column', 
-      justifyContent: "center",
-  },
+    inptTitle: {
+        fontSize: 14, 
+        color: UColor.fontColor, 
+        lineHeight: 35,
+    },
+    botnimg: {
+        width: 86, 
+        height: 38, 
+        paddingHorizontal: 10,
+        justifyContent: 'center', 
+        alignItems: 'flex-end'
+    },
+    botn: {
+        marginLeft: 10, 
+        width: 86, 
+        height: 38,  
+        borderRadius: 3, 
+        backgroundColor: UColor.tintColor, 
+        justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+    botText: {
+        fontSize: 17, 
+        color: UColor.fontColor,
+    },
+    basc: {
+        padding: 20,
+    },
+    basctext :{
+        fontSize: 12, 
+        color: UColor.arrow, 
+        lineHeight: 25,
+    },
 
-  number1: {
-      flex: 2, 
-      fontSize: 24, 
-      color: UColor.fontColor, 
-      textAlign: 'center',  
-  },
+    tetleout: {
+        paddingHorizontal: 15,
+        paddingBottom: 10,
+        backgroundColor: '#4f617d',
+    },
+    tetletext: {
+        fontSize: 15,
+        color: '#7787A3',
+        paddingVertical: 5
+    },
 
-  state1: {
-      flex: 1, 
-      fontSize: 12, 
-      color: UColor.fontColor, 
-      textAlign: 'center',     
-  },
-  headoutsource1: {
-      justifyContent: "center", 
-      alignItems: 'center', 
-      flexDirection:'row', 
-      paddingTop: 5,
-  },
+    linebgout: {
+        height: (ScreenWidth - 30) * 0.307,
+        justifyContent: 'space-around',
+        alignItems: 'flex-end',
+        flexDirection: 'row',
+        zIndex: 1
+    },
+    stripbgout: {
+        width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,
+        height: (ScreenWidth - 30) * 0.307 - 5,
+        zIndex: 2
+    },
+    stripbg: {
+        backgroundColor: '#43536d'
+    },
+    ratiotext: {
+        fontSize: 12,
+        color: UColor.fontColor
+    },
+    recordtext: {
+        fontSize: 12,
+        color: '#7787A3'
+    },
+    record: {
+        flexDirection: 'row',
+    },
+    recordout: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: "center",
+        alignItems: 'center',
+    },
 
-  headText1: {
-      color: '#7787A3', 
-      fontSize: 12, 
-      lineHeight: 60,
-  },
+    animatedout: {
+        width: ScreenWidth,
+        backgroundColor: UColor.fontColor,
+    },
+    labelout: {
+        fontSize: 12,
+        color: UColor.fontColor,
+    },
+    tabout: {
+        width: ScreenWidth / 4,
+        padding: 0,
+        margin: 0
+    },
+    indicator: {
+        borderRadius: 10,
+        backgroundColor: UColor.tintColor,
+        width: (ScreenWidth - 40) / 4,
+        height: 30,
+        marginVertical: 8,
+        marginHorizontal: 5,
+    },
+    tabbarout: {
+        height: 46,
+        paddingVertical: 8,
+        backgroundColor: UColor.secdColor
+    },
 
-  tablayout1: {   
-      flexDirection: 'row',  
-      borderBottomColor: UColor.mainColor,
-      borderBottomWidth: 1,
-      paddingHorizontal: 10,
-      paddingTop: 10,
-      paddingBottom: 5,
-  },  
-
-  buttontab1: {  
-      margin: 5,
-      width: 100,
-      height: 33,
-      borderRadius: 15,
-      alignItems: 'center',   
-      justifyContent: 'center', 
-  },  
-
-  tabText1: {  
-     fontSize: 15,
-  }, 
-
-  showytext1: {
-    lineHeight: 40, 
-    paddingRight: 20, 
-    textAlign: 'right', 
-    color: UColor.showy,
-  },
-
-  inptoutsource1: {
-      paddingHorizontal: 20,
-      paddingBottom: 20,
-      justifyContent: 'center',
-  },
-  outsource1: {
-      flexDirection: 'row',  
-      alignItems: 'center',
-  },
-  inpt1: {
-      flex: 1, 
-      color: UColor.arrow, 
-      fontSize: 15, 
-      height: 40, 
-      paddingLeft: 10, 
-      backgroundColor: UColor.fontColor, 
-      borderRadius: 5,
-  },
-  inptTitlered1: {
-      fontSize: 12, 
-      color: '#FF6565', 
-      lineHeight: 35,
-  },
-  inptTitle1: {
-      fontSize: 14, 
-      color: '#7787A3', 
-      lineHeight: 35,
-  },
-  botnimg1: {
-      marginLeft: 10, 
-      width: 86, 
-      height: 38, 
-      justifyContent: 'center', 
-      alignItems: 'flex-start'
-  },
-  botn1: {
-      marginLeft: 10, 
-      width: 86, 
-      height: 38,  
-      borderRadius: 3, 
-      backgroundColor: UColor.tintColor, 
-      justifyContent: 'center', 
-      alignItems: 'center' 
-  },
-  botText1: {
-      fontSize: 17, 
-      color: UColor.fontColor,
-  },
-  basc1: {
-      padding: 20,
-  },
-  basctext1 :{
-      fontSize: 12, 
-      color: UColor.arrow, 
-      lineHeight: 25,
-  },
-
-  tabbutton: {  
-    alignItems: 'center',   
-    justifyContent: 'center', 
-  },  
-  tablayout: {   
-    flexDirection: 'row',  
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    paddingBottom: 5,
-},  
-buttontab: {  
-    margin: 5,
-    width: 100,
-    height: 33,
-    borderRadius: 15,
-    alignItems: 'center',   
-    justifyContent: 'center', 
-},  
-tabText: {  
-   fontSize: 15,
-}, 
-
-
-
-  container: {
-    flex: 1,
-    flexDirection:'column',
-    backgroundColor: UColor.secdColor,
-  },
-  nov: {
-    alignItems: 'center', 
-    flexDirection:'row', 
-    marginHorizontal: 6,
-    height: 80,  
-    backgroundColor:  UColor.mainColor, 
-    borderRadius: 5, 
-    marginTop: 6,
-  },
-  imgsize: {
-    width: 40, 
-    height: 40, 
-    marginHorizontal: 20,
-  },
-  novoutsource: {
-    flex: 1, 
-    justifyContent: "center", 
-    alignItems: 'flex-start', 
-    flexDirection:'column',
-  },
-  headtextSize: {
-    fontSize:16, 
-    color: UColor.fontColor,  
-    paddingBottom: 8,
-  },
-  textoutsource: {
-    flexDirection:'row', 
-    alignItems: "center",
-  },
-  textSizeone: {
-    fontSize: 12, 
-    color: UColor.arrow,
-  },
-  textSizetwo: {
-    marginLeft: 10,
-    fontSize: 12, 
-    color: UColor.arrow,
-  },
-  arrow: {
-    width: 40, 
-    lineHeight: 80, 
-    color: UColor.fontColor, 
-    textAlign: 'center'
-  },
-
-
-  inptoutsource: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-    justifyContent: 'center',
-    backgroundColor: '#4F617D',
-  },
-  outsource: {
-      flexDirection: 'row',  
-      alignItems: 'center',
-      borderBottomColor: UColor.secdColor, 
-      borderBottomWidth: 0.5,
-  },
-  inpt: {
-    flex: 1, 
-    color: UColor.arrow, 
-    fontSize: 15, 
-    height: 45, 
-    paddingLeft: 10, 
-    // backgroundColor: UColor.fontColor, 
-    // borderRadius: 5,
-  },
-  inptTitlered: {
-      fontSize: 12, 
-      color: '#FF6565', 
-      lineHeight: 35,
-  },
-  inptTitle: {
-      fontSize: 14, 
-      color: UColor.fontColor, 
-      lineHeight: 35,
-  },
-  botnimg: {
-      width: 86, 
-      height: 38, 
-      paddingHorizontal: 10,
-      justifyContent: 'center', 
-      alignItems: 'flex-end'
-  },
-  botn: {
-      marginLeft: 10, 
-      width: 86, 
-      height: 38,  
-      borderRadius: 3, 
-      backgroundColor: UColor.tintColor, 
-      justifyContent: 'center', 
-      alignItems: 'center' 
-  },
-  botText: {
-      fontSize: 17, 
-      color: UColor.fontColor,
-  },
-  basc: {
-      padding: 20,
-  },
-  basctext :{
-      fontSize: 12, 
-      color: UColor.arrow, 
-      lineHeight: 25,
-  },
-
-
-
-//弹框
-  pupuo: {
-    backgroundColor: '#ECECF0',
-  },
-  // modal的样式  
-  modalStyle: {
-    backgroundColor: UColor.mask,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  // modal上子View的样式  
-  subView: {
-    marginLeft: 10,
-    marginRight: 10,
-    backgroundColor:  UColor.fontColor,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: UColor.baseline,
-  },
-  closeText: {
-    width: 30,
-    height: 30,
-    marginBottom: 0,
-    color: '#CBCBCB',
-    fontSize: 28,
-  },
-   // 标题  
-  titleText: {
-    color: '#000000',
-    marginBottom: 5,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  // 内容  
-  contentText: {
-    margin: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: "row",
-  },
-  textContent: {
-    color: '#999999',
-    fontSize: 14,
-    textAlign: 'left',
-    lineHeight: 25,
-  },
-  // 按钮  
-  buttonView: {
-    margin: 10,
-    height: 46,
-    borderRadius: 6,
-    backgroundColor:  UColor.showy,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  buttonText: {
-    fontSize: 16,
-    color:  UColor.fontColor,
-  }
-
+    //弹框
+    pupuo: {
+        backgroundColor: '#ECECF0',
+    },
+    // modal的样式  
+    modalStyle: {
+        backgroundColor: UColor.mask,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+    },
+    // modal上子View的样式  
+    subView: {
+        marginLeft: 10,
+        marginRight: 10,
+        backgroundColor:  UColor.fontColor,
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        borderRadius: 10,
+        borderWidth: 0.5,
+        borderColor: UColor.baseline,
+    },
+    closeText: {
+        width: 30,
+        height: 30,
+        marginBottom: 0,
+        color: '#CBCBCB',
+        fontSize: 28,
+    },
+    // 标题  
+    titleText: {
+        color: '#000000',
+        marginBottom: 5,
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    // 内容  
+    contentText: {
+        margin: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: "row",
+    },
+    textContent: {
+        color: '#999999',
+        fontSize: 14,
+        textAlign: 'left',
+        lineHeight: 25,
+    },
+    // 按钮  
+    buttonView: {
+        margin: 10,
+        height: 46,
+        borderRadius: 6,
+        backgroundColor:  UColor.showy,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    buttonText: {
+        fontSize: 16,
+        color:  UColor.fontColor,
+    }
 })
 export default Bvote;
