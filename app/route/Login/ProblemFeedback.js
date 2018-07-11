@@ -44,7 +44,7 @@ class ProblemFeedback extends BaseComponent {
         EasyLoading.show('正在提交');
         setTimeout( ()  =>{
             EasyLoading.dismis();
-            EasyToast.show("提交成功，非常感谢您对E-Token的支持！");
+            EasyToast.show("提交成功，非常感谢您对EosToken的支持！");
             this.setState({
                 delegatebw: '',
             });

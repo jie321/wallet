@@ -109,7 +109,7 @@ class ShareInvite extends React.Component {
             <View  style={{flex:1,flexDirection: "column",}}>
               <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',}}>
                 <Image style={{ justifyContent: 'center', width:60, height:60, }} source={UImage.logo} />
-                <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>E-Token</Text>                 
+                <Text style={{ color: '#fff',textAlign: 'center', fontSize: 16, marginTop: 15, }}>EosToken</Text>                 
               </View>
               <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',}}>
                 <View style={{padding:5,backgroundColor:'#fff'}}>
