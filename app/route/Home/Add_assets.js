@@ -11,9 +11,6 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import JPush from 'jpush-react-native';
-export var jpushSwitch = false;
-import JPushModule from 'jpush-react-native';
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 

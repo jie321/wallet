@@ -6,7 +6,6 @@ import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
-import JPush from '../../utils/JPush'
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
@@ -69,9 +68,7 @@ class Coins extends BaseComponent {
     // DeviceEventEmitter.addListener('coinSlefChange', (tab) => {
     //   dispatch({ type: 'sticker/list', payload: { type: 0 } });
     // });
-    //推送初始化
-    const { navigate } = this.props.navigation;
-    JPush.init(navigate);
+   
   }
 
   componentWillUnmount() {

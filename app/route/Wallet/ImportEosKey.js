@@ -7,7 +7,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
-import JPush from '../../utils/JPush'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
@@ -62,9 +61,7 @@ class ImportEosKey extends BaseComponent {
   //组件加载完成
   componentDidMount() {
     const { dispatch } = this.props;
-    //推送初始化
-    const { navigate } = this.props.navigation;
-    JPush.init(navigate);
+
   }
 
 

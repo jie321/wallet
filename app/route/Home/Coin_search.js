@@ -12,9 +12,6 @@ import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
-import JPush from 'jpush-react-native';
-export var jpushSwitch = false;
-import JPushModule from 'jpush-react-native';
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({assets}) => ({...assets}))

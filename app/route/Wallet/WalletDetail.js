@@ -12,7 +12,6 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import JPushModule from 'jpush-react-native';
-import JPush from '../../utils/JPush'
 import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
@@ -62,9 +61,7 @@ class WalletDetail extends BaseComponent {
       this.props.dispatch({ type: 'wallet/getintegral', payload:{},callback: (data) => { 
         this.setState({integral: data.data});
       } });
-      //推送初始化
-      const { navigate } = this.props.navigation;
-      JPush.init(navigate);
+
     }
     componentWillUnmount(){
       //结束页面前，资源释放操作

@@ -12,16 +12,12 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
-import JPush from 'jpush-react-native';
 import BaseComponent from "../../components/BaseComponent";
 var DeviceInfo = require('react-native-device-info');
-export var jpushSwitch = false;
-import JPushModule from 'jpush-react-native';
 const Font = {
   Ionicons,
   FontAwesome
 }
-@connect(({ login,jPush }) => ({ ...login,...JPush }))
 class Helpcenter extends BaseComponent {
 
   static navigationOptions = {
@@ -58,32 +54,12 @@ class Helpcenter extends BaseComponent {
 
     //组件加载完成
     componentDidMount() {
-      const {dispatch}=this.props;
-      dispatch({type:'login/getJpush',callback:(jpush)=>{
-        this.setState({
-          value:jpush.jpush,
-        });
-      }});
+      // super.componentDidMount();
     }
     componentWillUnmount(){
       //结束页面前，资源释放操作
       super.componentWillUnmount();
       
-    }
-    changeJpush(state){
-      const {dispatch}=this.props;
-      dispatch({type:'login/changeJpush',callback:(jpush)=>{
-        this.setState({
-          value:jpush,
-        });
-      }});
-      if(state){
-        JPushModule.addTags(['newsmorningbook'], map => {
-        })
-      }else{
-        JPushModule.deleteTags(['newsmorningbook'], map => {
-        });
-      }
     }
 
   goPage(key, data = {}) {
