@@ -394,7 +394,7 @@ class WalletDetail extends BaseComponent {
             </View>
             <View style={styles.topout}>
               <Text style={styles.outname}>账户名称：{c.name}</Text>
-              {(!c.isactived && c.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(c.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+              {(!c.isactived || !c.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(c.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
             </View>
           </View>
           
@@ -407,7 +407,7 @@ class WalletDetail extends BaseComponent {
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>b
             </View>
           </Button> */}
-          {(!this.props.navigation.state.params.data.isactived && this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
+          {(!this.props.navigation.state.params.data.isactived || !this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
           <Button onPress={this.activeWallet.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.acttiveout}>
               <Text style={styles.delete}>激活账户</Text>

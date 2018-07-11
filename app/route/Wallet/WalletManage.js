@@ -92,7 +92,7 @@ class WalletManage extends BaseComponent {
                   <View style={styles.top}>
                       <View style={styles.topout}>
                           <Text style={styles.outname}>{rowData.name}</Text>
-                          {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+                          {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
                       </View>
                       <View style={styles.topout}>               
                           <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>

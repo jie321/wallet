@@ -570,7 +570,7 @@ class Route extends React.Component {
     }
 
     for(var i = 0; i < this.props.coinList.length; i++) {
-      if (this.props.coinList[i] != null && this.props.coinList[i].name != null && (this.props.coinList[i].isactived || !this.props.coinList[i].hasOwnProperty('isactived'))) {
+      if (this.props.coinList[i] != null && this.props.coinList[i].name != null && (this.props.coinList[i].isactived && this.props.coinList[i].hasOwnProperty('isactived'))) {
 
         this.props.dispatch({
           type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.coinList[i].name, symbol: 'EOS' }

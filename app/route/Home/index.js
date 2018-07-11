@@ -189,7 +189,7 @@ class Home extends React.Component {
   }
 
   getBalance() { 
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
       if(this.state.init){
         this.setState({init: false});
         EasyLoading.show();
@@ -256,7 +256,7 @@ class Home extends React.Component {
 
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
-    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
+    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
       EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(this.props.defaultWallet);
         EasyDialog.dismis()
@@ -268,7 +268,7 @@ class Home extends React.Component {
     if (key == 'qr') {
       AnalyticsUtil.onEvent('Receipt_code');
 
-      if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
+      if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
         // this._setModalVisible();
         navigate('TurnIn', {});
       } else {
@@ -278,7 +278,7 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });
       }
     }else if (key == 'Bvote') {
-      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
@@ -287,7 +287,7 @@ class Home extends React.Component {
       }
       navigate('Bvote', {data, balance: this.state.balance});
     }else if (key == 'transfer') {
-      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
@@ -296,7 +296,7 @@ class Home extends React.Component {
       }
       navigate('TurnOut', { coins:'EOS', balance: this.state.balance });
     }else if (key == 'Resources') {
-      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
@@ -305,7 +305,7 @@ class Home extends React.Component {
       }
       navigate('Resources', {});
     }else if(key == 'add'){
-      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+      if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
           EasyDialog.dismis()
@@ -319,7 +319,7 @@ class Home extends React.Component {
   }
 
   scan() {
-    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
+    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
       EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(this.props.defaultWallet);
         EasyDialog.dismis()
@@ -328,7 +328,7 @@ class Home extends React.Component {
       return;
     }
     AnalyticsUtil.onEvent('Scavenging_transfer');
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) {
       const { navigate } = this.props.navigation;
       navigate('BarCode', {});
     } else {
@@ -348,7 +348,7 @@ class Home extends React.Component {
 
   copy = () => {
     let address;
-    if (this.props.defaultWallet != null && this.props.defaultWallet.account != null && (this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
+    if (this.props.defaultWallet != null && this.props.defaultWallet.account != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
       address = this.props.defaultWallet.account;
     } else {
       address = this.state.account;
@@ -370,7 +370,7 @@ class Home extends React.Component {
     this.setState({
       modal: false
     });
-    if(!data.isactived && data.hasOwnProperty('isactived')){
+    if(!data.isactived || !data.hasOwnProperty('isactived')){
       EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(data);
         EasyDialog.dismis()
@@ -383,7 +383,7 @@ class Home extends React.Component {
   }
 
   coinInfo(coinType) {
-    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))){
+    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
       EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(this.props.defaultWallet);
         EasyDialog.dismis()
@@ -391,7 +391,7 @@ class Home extends React.Component {
 
       return;
     }
-    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
         this.createWallet();
@@ -438,7 +438,7 @@ class Home extends React.Component {
   getTodayIncrease()
   {
     var ret ;
-    if(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')){
+    if(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
       ret = '+0.00';  //未激活直接返回
     }else{
       ret = (this.state.totalBalance == null || this.state.increase == null) ? '0.00' : ((this.state.increase>=0? "+" : "") +(((this.state.totalBalance * this.state.increase) / 100).toFixed(2)))
@@ -510,10 +510,10 @@ class Home extends React.Component {
               <View style={styles.addout}>
                 <View style={styles.topout}>
                   <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
-                  {(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
+                  {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
                 </View>
                 <View style={styles.addtoout}>
-                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && !this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
+                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
                   <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
                 </View>
               </View>
@@ -542,9 +542,6 @@ class Home extends React.Component {
                           <Text style={styles.rightbalance}>{this.state.balance}</Text>
                           <Text style={styles.rightmarket}>≈{(this.state.balance*rowData.value).toFixed(2)}（￥） </Text>
                         </View>
-                        {/* <View style={{ marginLeft: 15, overflow: 'hidden' }}>
-                          <Echarts style={{ overflow: 'hidden' }} option={rowData.opt} height={40} width={40} />
-                        </View> */}
                       </View>
                     </View>
                   </View>
@@ -588,7 +585,7 @@ class Home extends React.Component {
                       <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
                         <View style={styles.topout}>
                           <Text style={styles.outname}>{rowData.name}</Text>
-                          {(!rowData.isactived && rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text>)}  
+                          {(!rowData.isactived || !rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text>)}  
                         </View>
                         <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000'} EOS</Text>
                       </View>
