@@ -122,10 +122,6 @@ class Info extends BaseComponent {
         this._setModalVisible();
     }
     _openDetails(trade) {  
-        if(trade.blockTime)
-        {
-            trade.blockTime = this.transferTimeZone(trade.blockTime);
-        }
         const { navigate } = this.props.navigation;
         navigate('TradeDetails', {trade});
     }

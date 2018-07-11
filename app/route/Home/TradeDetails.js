@@ -12,6 +12,7 @@ import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
+import moment from 'moment';
 let {width, height} = Dimensions.get('window');
 
 var dismissKeyboard = require('dismissKeyboard');
@@ -56,6 +57,16 @@ class TradeDetails extends BaseComponent {
     }
   }
   
+  transferTimeZone(blockTime){
+    var timezone;
+    try {
+        timezone = moment(blockTime).add(8,'hours').format('YYYY-MM-DD HH:mm');
+    } catch (error) {
+        timezone = blockTime;
+    }
+    return timezone;
+}
+
   render() {
     const c = this.props.navigation.state.params.trade;
     return <View style={styles.container}>
@@ -84,7 +95,7 @@ class TradeDetails extends BaseComponent {
             <Text style={{color: UColor.arrow, flex: 1,fontSize: 14,}} >{c.memo}</Text>
           </View>
         </View>
-        <Text style={styles.blocktime}>{c.blockTime}</Text>
+        <Text style={styles.blocktime}>{this.transferTimeZone(c.blockTime)}</Text>
         <View style={styles.codeout}>
             <View style={styles.qrcode}>
                <QRCode size={105} value={'https://eosmonitor.io/txn/' + c.transactionId } />
