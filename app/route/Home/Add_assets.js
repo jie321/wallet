@@ -48,7 +48,7 @@ class Add_assets extends BaseComponent {
 
   componentDidMount() {
     this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
-    this.props.dispatch({ type: 'assets/myAssetInfo'});
+    // this.props.dispatch({ type: 'assets/myAssetInfo'});
     DeviceEventEmitter.addListener('updateAssetList', (data) => {
       this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
     });
@@ -172,7 +172,7 @@ class Add_assets extends BaseComponent {
         return (
             <View style={styles.container}>
                 <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
-                  dataSource={this.state.dataSource.cloneWithRows(this.props.assetsData == null ? [] : this.props.assetsData)} 
+                  dataSource={this.state.dataSource.cloneWithRows(this.props.assetsList == null ? [] : this.props.assetsList)} 
                   renderRow={(rowData, sectionID, rowID) => (      
                   <View style={styles.listItem}>
                       <View style={styles.listInfo}>

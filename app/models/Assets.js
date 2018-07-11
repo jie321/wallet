@@ -25,7 +25,7 @@ export default {
                     item.row=3;
                     dts.push(item);
                 });
-                yield put({type:'update',payload:{data:dts,...payload}});
+                yield put({type:'updateAssetList',payload:{assetsList:dts,...payload}});
             }else{
                 EasyToast.show(resp.msg);
             }
@@ -35,45 +35,6 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
       },
-      *addMyAsset({payload, callback},{call,put}){
-        var myAssets = yield call(store.get, 'myAssets');
-        // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));
-        if (myAssets == null) {
-            var  myAssets = [];
-        }
-        for (var i = 0; i < myAssets.length; i++) {
-            if (myAssets[i].asset.name == payload.asset.name) {
-                if(payload.value){ // 添加资产,  但资产已存在
-                    return;
-                }else{ // 删除资产
-                    myAssets.splice(i, 1);
-                    yield call(store.save, 'myAssets', myAssets);
-                    yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
-                    if(callback) callback(myAssets);
-                    // DeviceEventEmitter.emit('updateMyAssets', payload);
-                    return;
-                }
-            }
-        }
-
-        // 如果目前我的资产没有传入的资产
-        if(!payload.value){ // 删除资产直接退出
-            return;
-        }
-
-        // 添加资产
-        var _asset = {
-            asset: payload.asset,
-            value: payload.value,
-            balance: '0.0000',
-        }
-        myAssets[myAssets.length] = _asset;
-        // alert("777777777 " + JSON.stringify(payload.asset));
-        yield call(store.save, 'myAssets', myAssets);
-        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
-        if(callback) callback(myAssets);
-        // DeviceEventEmitter.emit('updateMyAssets', payload);
-     },
      *myAssetInfo({payload, callback},{call,put}){
         var myAssets = yield call(store.get, 'myAssets');
         if(myAssets == null || myAssets.length == 0){ // 未有资产信息时默认取eos的
@@ -87,8 +48,6 @@ export default {
             const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: 'EOS'});
             alert(JSON.stringify(resp));
             if(resp.code == '0' && resp.data && resp.data.length == 1){
-                // yield call(store.save, 'eosInfo', resp.data);
-                // yield put({type: 'updateEosInfo', payload: {eosInfo: reps.data}});
                 var eosInfo = {
                     asset: resp.data[0],
                     value: true,
@@ -165,6 +124,44 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
     },
+    *addMyAsset({payload, callback},{call,put}){
+        var myAssets = yield call(store.get, 'myAssets');
+        // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));
+        if (myAssets == null) {
+            var  myAssets = [];
+        }
+        for (var i = 0; i < myAssets.length; i++) {
+            if (myAssets[i].asset.name == payload.asset.name) {
+                if(payload.value){ // 添加资产,  但资产已存在
+                    return;
+                }else{ // 删除资产
+                    myAssets.splice(i, 1);
+                    yield call(store.save, 'myAssets', myAssets);
+                    yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+                    if(callback) callback(myAssets);
+                    // DeviceEventEmitter.emit('updateMyAssets', payload);
+                    return;
+                }
+            }
+        }
+
+        // 如果目前我的资产没有传入的资产
+        if(!payload.value){ // 删除资产直接退出
+            return;
+        }
+
+        // 添加资产
+        var _asset = {
+            asset: payload.asset,
+            value: payload.value,
+            balance: '0.0000',
+        }
+        myAssets[myAssets.length] = _asset;
+        yield call(store.save, 'myAssets', myAssets);
+        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        if(callback) callback(myAssets);
+        // DeviceEventEmitter.emit('updateMyAssets', payload);
+     },
     *submitAssetInfoToServer({payload, callback},{call,put}){
         try{
             const resp = yield call(Request.request, submitAssetInfo, 'post', {contract_account: payload.contractAccount, name: payload.name});
@@ -182,52 +179,12 @@ export default {
     },
 
     reducers: {
-        update(state, action) {
-            // alert('update: '+JSON.stringify(action));
-            let assetsData = action.payload.data;
-            // if(action.payload.page==1){
-            //     assetsData[action.payload.type]=action.payload.data;
-            // }else{
-            //     assetsData[action.payload.type]= assetsData[action.payload.type].concat(action.payload.data)
-            // }
-            return {...state,assetsData,updateTime:Date.parse(new Date())};
-        },
-        open(state, action) {
-            
-            let assetsData = state.assetsData;
-
-            let dts = new Array();
-           
-            assetsData[action.key].map((item)=>{
-                if(item.id==action.nid){
-                    if(item.row==3){
-                        item.row=1000;
-                    }else{
-                        item.row=3;
-                    }
-                }
-                dts.push(item);
-            });
-            assetsData[action.key]=dts;
-
-            return {...state,assetsData,updateTime:Date.parse(new Date())};
+        updateAssetList(state, action) {
+            let assetsList = action.payload.assetsList;
+            return {...state,assetsList,updateTime:Date.parse(new Date())};
         },
         upstatus(state,action){
             return {...state,...action.payload};
-        },
-        updateAction(state,action){
-            let n = action.news;
-            let assetsData = state.assetsData;
-            let list = assetsData[n.tid];
-            list.map((item, i) => {
-                if(item.id==n.id){
-                    item=n;  
-                                    
-                }
-            })
-            state.something = Date.parse(new Date());
-            assetsData[n.tid] = list;
-            return {...state,assetsData};
         },
         updateMyAssets(state, action) {
             return { ...state, ...action.payload };

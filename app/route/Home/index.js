@@ -167,26 +167,6 @@ class Home extends React.Component {
     this.listener.remove();  
   }
 
-  setEosBalance(data){
-    if (data.code == '0') {
-      if (data.data == "") {
-        this.setState({
-          balance: '0.0000 ',
-          account: this.props.defaultWallet.name
-        })
-      } else {
-        account: this.props.defaultWallet.name,
-          this.setState({ balance: data.data.replace("EOS", "") })
-      }
-    } else {
-      // EasyToast.show('获取余额失败：' + data.msg);
-    }
-  }
-
-  // setAssetBalance(asset){
-  //   this.setState({myAssets: asset});
-  // }
-
   getIncrease(){
     this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
         if(data == null || data == undefined){
