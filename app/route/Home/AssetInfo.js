@@ -16,6 +16,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
+import moment from 'moment';
 
 @connect(({ wallet }) => ({ ...wallet }))
 class AssetInfo extends BaseComponent {
@@ -52,6 +53,7 @@ class AssetInfo extends BaseComponent {
     componentDidMount() {
         //加载地址数据
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
+        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
 
         // DeviceEventEmitter.addListener('transfer_result', (result) => {
         //     EasyToast.show('交易成功：刷新交易记录');
@@ -117,19 +119,28 @@ class AssetInfo extends BaseComponent {
         navigate('TradeDetails', {trade});
     }
 
+    transferTimeZone(blockTime){
+        var timezone;
+        try {
+            timezone = moment(blockTime).add(8,'hours').format('YYYY-MM-DD HH:mm');
+        } catch (error) {
+            timezone = blockTime;
+        }
+        return timezone;
+    }
 
     render() {
         const c = this.props.navigation.state.params.asset;
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headbalance}>{c.balance==""? "0.0000" :c.balance.replace(c.asset.name, "")}</Text>
-                    <Text style={styles.headmarket}>≈ 0.00 ￥</Text>
+                    <Text style={styles.headbalance}>{c.balance==""? "0.0000" :c.balance.replace(c.asset.name, "")} {c.asset.name}</Text>
+                    <Text style={styles.headmarket}>≈ {(c.balance == null || c.asset.value == null) ? "0.00" : (c.balance.replace(c.asset.name, "") * c.asset.value).toFixed(2)} ￥</Text>
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    {<View style={styles.nothave}><Text style={styles.copytext}>该功能正在紧急开发中，敬请期待</Text></View>}
-                    {/* <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
+                    {this.props.DetailsData == null && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>}
+                    <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
@@ -137,14 +148,14 @@ class AssetInfo extends BaseComponent {
                             <View style={styles.row}>
                                 <View style={styles.top}>
                                     <View style={styles.timequantity}>
-                                        <Text style={styles.timetext}>时间：{rowData.blockTime}</Text>
-                                        <Text style={styles.quantity}>数量：{rowData.quantity.replace(" EOS", "")}</Text>
+                                        <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
+                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace("EOS", "")}</Text>
                                     </View>
                                     <View style={styles.typedescription}>
                                        {rowData.type == '转出' ? 
-                                       <Text style={styles.typeto}>类型 ：{rowData.type}</Text>
+                                       <Text style={styles.typeto}>类型 : {rowData.type}</Text>
                                        :
-                                       <Text style={styles.typeout}>类型 ：{rowData.type}</Text>
+                                       <Text style={styles.typeout}>类型 : {rowData.type}</Text>
                                        }
                                         <Text style={styles.description}>（{rowData.description}）</Text>
                                     </View>
@@ -156,7 +167,7 @@ class AssetInfo extends BaseComponent {
                         </Button>  
                     </View>         
                      )}                
-                  />  */}
+                 /> 
                 </View>
 
                 <View style={styles.footer}>

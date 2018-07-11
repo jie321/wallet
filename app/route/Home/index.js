@@ -52,21 +52,13 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    EasyLoading.show();
     this.getBalance();
     this.getIncrease();
     //加载地址数据
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
       this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {
-        if(myAssets && this.props.defaultWallet && this.props.defaultWallet.name){
-          this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name}, callback: () => {
-            this.calTotalBalance();
-            EasyLoading.dismis();
-          }});
-        }else{
-          EasyLoading.dismis();
-        }
+        this.getBalance();
       }});
     }});
     this.props.dispatch({ type: 'wallet/walletList' });
@@ -89,36 +81,17 @@ class Home extends React.Component {
         easing: Easing.linear,
       },
     ).start();               //开始
-    // DeviceEventEmitter.addListener('wallet_info', (data) => {
-    //   this.getBalance();
-    // });
-    // DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
-    //   this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-    //   this.getBalance();
-    // });
+    DeviceEventEmitter.addListener('wallet_info', (data) => {
+      this.getBalance();
+    });
+    DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
+      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      this.getBalance();
+    });
 
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
       this.createWallet();  
     });  
-    // DeviceEventEmitter.addListener('updateMyAssets', (data) => {
-      // for (var i = 0; i < this.state.myAssets.length; i++) {
-      //   if (this.state.myAssets[i].asset.name == data.asset.name) {
-      //       if(data.value){ // 添加资产,  但资产已存在
-      //         // 添加资产
-      //         var _asset = {
-      //         asset: data.asset,
-      //         value: data.value,
-      //         balance: '0',
-      //         }
-      //         this.state.myAssets[this.state.myAssets.length] = _asset;
-      //       }else{ // 删除资产
-      //         this.state.myAssets.splice(i, 1);
-      //       }
-      //   }
-      // }
-      // this.setState({myAssets: assets});
-      // this.getBalance();
-    // });
 
     DeviceEventEmitter.addListener('eos_increase', (data) => {
       if(data == null || data == undefined){
@@ -138,6 +111,10 @@ class Home extends React.Component {
     // DeviceEventEmitter.addListener('asset_balance', (data) => {
       // this.setAssetBalance(data);
     // });
+  }
+
+  componentWillUnmount(){
+    this.listener.remove();  
   }
 
   calTotalBalance(){
@@ -162,10 +139,6 @@ class Home extends React.Component {
     }
     return dispassert;
   }
-  componentWillUnmount(){
-    // this.timer && clearTimeout(this.timer);
-    this.listener.remove();  
-  }
 
   getIncrease(){
     this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
@@ -179,37 +152,24 @@ class Home extends React.Component {
   }
 
   getBalance() { 
-    // if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
-    //   if(this.state.init){
-    //     this.setState({init: false});
-    //     EasyLoading.show();
-    //   }
+    if (this.props.defaultWallet == null && this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+      return;
+    }
 
-    //   this.props.dispatch({
-    //     type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
-    //       this.setEosBalance(data);
-    //       EasyLoading.dismis();
-    //     }
-    //   })
-    // } else {
-    //   this.setState({ balance: '0.0000', account: 'xxxx' })
-    //   // this.props.defaultWallet.name = 'xxxx';
-    //   //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-    //   //   this.createWallet();
-    //   //   EasyDialog.dismis()
-    //   // }, () => { EasyDialog.dismis() });
-    // }
+    if(this.state.init){
+      this.setState({init: false});
+      EasyLoading.show();
+    }
 
-    // // 其他资产
-    // if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
-    //   return;
-    // }
+    if(this.props.myAssets == null){
+      return;
+    }
 
-    // this.props.dispatch({
-    //   type: 'assets/getBalance', payload: {assets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: (data) => {
-    //     // this.setAssetBalance(data);
-    //   }
-    // });
+    this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name}, callback: () => {
+      this.calTotalBalance();
+      EasyLoading.dismis();
+    }});
+
   }
 
 
@@ -372,7 +332,7 @@ class Home extends React.Component {
     }
   }
 
-  coinInfo(coinType) {
+  assetInfo(asset) {
     if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
       EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(this.props.defaultWallet);
@@ -381,19 +341,6 @@ class Home extends React.Component {
 
       return;
     }
-    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-      //todo 创建钱包引导
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
-        this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
-      return;
-    }
-    const { navigate } = this.props.navigation;
-    navigate('Info', { coinType, balance: this.state.balance, account: this.props.defaultWallet.name });
-  }
-
-  assetInfo(asset) {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {

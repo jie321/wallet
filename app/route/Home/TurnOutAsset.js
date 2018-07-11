@@ -220,7 +220,7 @@ class TurnOutAsset extends BaseComponent {
                 <ScrollView  keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                         <View style={styles.header}>
-                            <Text style={styles.headertext}>{this.state.balance}</Text>
+                            <Text style={styles.headertext}>{c.balance==""? "0.0000" :c.balance.replace(c.asset.name, "")} {c.asset.name}</Text>
                             {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
                         </View>
 
