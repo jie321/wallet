@@ -24,6 +24,7 @@ class SignIn extends BaseComponent {
     headerStyle: {
       paddingTop:Platform.OS == 'ios' ? 30 : 20,
       backgroundColor: UColor.secdColor,
+      borderBottomWidth:0,
     },
   };
 

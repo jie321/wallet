@@ -19,6 +19,7 @@ class InputWords extends BaseComponent {
     headerStyle:{
         paddingTop:Platform.OS == 'ios' ? 30 : 20,
         backgroundColor: UColor.mainColor,
+        borderBottomWidth:0,
     }    
   };
 

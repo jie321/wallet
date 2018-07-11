@@ -7,7 +7,6 @@ import UColor from '../../utils/Colors'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import Button from  '../../components/Button'
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
-import JPush from '../../utils/JPush'
 
 const pages = [];
 

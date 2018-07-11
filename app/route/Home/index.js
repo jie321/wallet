@@ -27,6 +27,7 @@ class Home extends React.Component {
     headerStyle: {
       paddingTop:Platform.OS == 'ios' ? 30 : 20,
       backgroundColor: UColor.mainColor,
+      borderBottomWidth:0,
     },
   };
 

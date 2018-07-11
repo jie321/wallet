@@ -8,6 +8,7 @@ const maxHeight = Dimensions.get('window').height;
 const maxWidth = Dimensions.get('window').width;
 import Constants from '../utils/Constants';
 import { connect } from 'react-redux'
+import JPush from '../utils/JPush'
 
 @connect(({common}) => ({...common}))
 class Splash extends React.Component {
@@ -21,6 +22,10 @@ class Splash extends React.Component {
   }
 
   componentDidMount() {
+    //推送初始化
+    const { navigate } = this.props.navigation;
+    JPush.init(navigate);
+
     var th = this;
     this.props.dispatch({type: 'common/loadBoot',payload:{},callback:function(data){
       if(data==1){

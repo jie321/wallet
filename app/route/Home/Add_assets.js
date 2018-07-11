@@ -11,9 +11,6 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import JPush from 'jpush-react-native';
-export var jpushSwitch = false;
-import JPushModule from 'jpush-react-native';
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 
@@ -26,6 +23,7 @@ class Add_assets extends BaseComponent {
           headerStyle:{
                   paddingTop:Platform.OS == 'ios' ? 30 : 20,
                   backgroundColor: UColor.mainColor,
+                  borderBottomWidth:0,
                 },
           headerRight: (<Button name="search" onPress={navigation.state.params.onPress}>
             <View style={{ padding: 15 }}>

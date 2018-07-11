@@ -10,10 +10,7 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
-// import JPush from 'jpush-react-native';
 var DeviceInfo = require('react-native-device-info');
-// export var jpushSwitch = false;
-// import JPushModule from 'jpush-react-native';
 
 @connect(({ login}) => ({ ...login}))
 class Setting extends React.Component {
@@ -43,29 +40,10 @@ class Setting extends React.Component {
     //组件加载完成
     componentDidMount() {
       const {dispatch}=this.props;
-      // dispatch({type:'login/getJpush',callback:(jpush)=>{
-      //   this.setState({
-      //     value:jpush.jpush,
-      //   });
-      // }});
+      
     }
 
-    // changeJpush(state){
-    //   const {dispatch}=this.props;
-    //   dispatch({type:'login/changeJpush',callback:(jpush)=>{
-    //     this.setState({
-    //       value:jpush,
-    //     });
-    //   }});
-    //   if(state){
-    //     JPushModule.addTags(['newsmorningbook'], map => {
-    //     })
-    //   }else{
-    //     JPushModule.deleteTags(['newsmorningbook'], map => {
-    //     });
-    //   }
-    // }
-
+    
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
     if (key == "share") {

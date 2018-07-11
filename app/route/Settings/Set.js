@@ -13,7 +13,6 @@ import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
-export var jpushSwitch = false;
 import JPushModule from 'jpush-react-native';
 import BaseComponent from "../../components/BaseComponent";
 const Font = { Ionicons }

@@ -46,7 +46,8 @@ class TurnIn extends BaseComponent {
       headerTitle: "收款信息",
       headerStyle: {
         paddingTop: Platform.OS == "ios" ? 30 : 20,
-        backgroundColor: UColor.mainColor
+        backgroundColor: UColor.mainColor,
+        borderBottomWidth:0,
       },
       headerRight: (
         <Button name="share" onPress={navigation.state.params.onPress}>
