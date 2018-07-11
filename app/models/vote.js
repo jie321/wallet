@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent} from '../utils/Api';
+import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 let newarr = new Array();
@@ -73,7 +73,7 @@ export default {
      },
      *getGlobalInfo({payload,callback},{call,put}) {
         try{
-            const resp = yield call(Request.request, "http://192.168.1.66:8088/api/eosrpc/getGlobalInfo", 'post', payload);
+            const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getGlobalInfo, 'post', payload);
             // alert("getundelegatebwInfo : " +JSON.stringify(resp.data.rows));
             if(resp.code=='0'){               
                 // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
@@ -81,6 +81,20 @@ export default {
                 EasyToast.show(resp.msg);
             }
             if (callback) callback(resp.data);
+        } catch (error) {
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+     },
+     *getqueryRamPrice({payload,callback},{call,put}) {
+        try{
+            const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + queryRamPrice, 'post', payload);
+            // alert("getundelegatebwInfo : " +JSON.stringify(resp.data.rows));
+            if(resp.code=='0'){               
+                // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
+            }else{
+                EasyToast.show(resp.msg);
+            }
+            if (callback) callback(resp);
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
         }

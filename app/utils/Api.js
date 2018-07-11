@@ -47,3 +47,5 @@ export const pocketAsset = rootaddr + '/pocketAsset/list';
 export const submitAssetInfo = rootaddr + '/pocketAsset/add';
 export const getintegral = rootaddr + '/pocketAsset/getCreateEosAccountNeedPoint';
 export const isSigned = rootaddr + '/user/isSigned'
+export const getGlobalInfo = rootaddr + '/eosrpc/getGlobalInfo'
+export const queryRamPrice = rootaddr + '/eosrpc/queryRamPrice'

@@ -54,7 +54,9 @@ class Bvote extends BaseComponent {
       ram_available_Percentage: '0',
 
       cpu_staked: '0 EOS',
+      cpu_Own_staked: '0 EOS',
       cpu_unstaking: '0 EOS',
+      cpu_unstaking__Percentage: '0',
       cpu_unstaking_time: '00.00.00',
       cpu_total: '0',
       cpu_used: '0',
@@ -62,7 +64,10 @@ class Bvote extends BaseComponent {
       cpu_available_Percentage: '0',
 
       net_staked:'0 EOS',
+      net_Own_staked: '0 EOS',
       net_unstaking: '0 EOS',
+      net_unstaking_Percentage: '0',
+      net_unstaking_time: '00.00.00',
       net_total: '0',
       net_used: '0',
       net_available: '0',
@@ -81,7 +86,7 @@ class Bvote extends BaseComponent {
         { key: '4', title: '内存交易' },
       ],
       show: false,
-
+      Currentprice: '0',
       password: "",
       Mreceiver: "",
       buyRamAmount: "",
@@ -97,6 +102,20 @@ class Bvote extends BaseComponent {
 
   componentDidMount() {
     EasyLoading.show();
+    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
+        this.setState({
+            total:(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2),
+            used:(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2),
+            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
+        });
+        EasyLoading.dismis();
+    }}); 
+    this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
+        this.setState({
+            Currentprice:data.data,
+        });
+        EasyLoading.dismis();
+    }}); 
     this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {
         this.getAccountInfo();
     }}); 
@@ -121,69 +140,49 @@ class Bvote extends BaseComponent {
     
   }
 
-//   transferTimeZone(blockTime){
-//     const currentTimestamp = new Date().getTime(); 
-//     const otherTime = blockTime; 
-//     const newstr = otherTime(/-/g,'/'); 
-//     const date = new Date(newstr); 
-//     const otherTimestamp = date.getTime().toString(); 
-//     if (parseFloat(currentTimestamp) >= parseFloat(otherTimestamp)) { 
-//         date3 = otherTimestamp - currentTimestamp; 
-//         // console.log('在售获得差值:'+ date3); 
-//         } 
-//         //预售(当前时间到开售时间之间的状态) 
-//         else if (parseFloat(currentTimestamp) < parseFloat(otherTimestamp)) { 
-//         date3 = otherTimestamp - currentTimestamp; 
-//         // console.log('预售获得差值:'+ date3); 
-//         } 
-//         //在售(当前时间到抢购结束时间之间的状态) 
-// if (parseFloat(currentTimestamp) >= parseFloat(otherTimestamp)) { 
-//     date3 = otherTimestamp - currentTimestamp; 
-//     // console.log('在售获得差值:'+ date3); 
-//     } 
-//     //预售(当前时间到开售时间之间的状态) 
-//     else if (parseFloat(currentTimestamp) < parseFloat(otherTimestamp)) { 
-//     date3 = otherTimestamp - currentTimestamp; 
-//     // console.log('预售获得差值:'+ date3); 
-//     } 
-//     const days = Math.floor(date3 / (24 * 3600 * 1000)); 
-//     // 时 
-//     const leave1 = date3 % (24 * 3600 * 1000); 
-//     const hours = Math.floor(leave1 / (3600 * 1000)); 
-//     // 分 
-//     const leave2 = leave1 % (3600 * 1000); 
-//     const minutes = Math.floor(leave2 / (60 * 1000)); 
-//     // 秒 
-//     const leave3 = leave2 % (60 * 1000); 
-//     const seconds = Math.round(leave3 / 1000); 
-//     console.log("天:"+days+",时:"+hours+",分:"+minutes+",秒:"+seconds); 
-//     var timezone;
-//     try {
-//         // timezone = moment(blockTime).add(8,'hours').format('HH:mm:ss');
-//         timezone = moment(blockTime).fromNow();
-//     } catch (error) {
-//         timezone = blockTime;
-//     }
-//     return timezone;
-//    }
-
   transferTimeZone(date){
     //转换时间
     let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
     let regEx = new RegExp("\\-","gi");
     let validDateStr=timezone.replace(regEx,"/");
     let milliseconds=Date.parse(validDateStr);
-    let sendTime = new Date(milliseconds);
+    let sendTime = new Date(milliseconds).getTime();
     //当前时间
-    let nowTime = new Date();
-    let ThreeTime = nowTime + 72*24*3600*1000;
+    let nowTime = new Date().getTime();
+    //72小时
+    let ThreeTime = 259200000;
     //差值
-    let Dvalue = sendTime - nowTime ;
+    let Dvalue = nowTime - sendTime ;
     let SurplusTime = ThreeTime - Dvalue
-   
-    var Surplus=moment(Dvalue).format("HH:mm:ss");
+    // 时 
+    const hours = Math.floor(SurplusTime / (3600 * 1000)); 
+    // 分 
+    const leave2 = SurplusTime % (3600 * 1000); 
+    const minutes = Math.floor(leave2 / (60 * 1000)); 
+    // 秒 
+    const leave3 = leave2 % (60 * 1000); 
+    const seconds = Math.round(leave3 / 1000); 
+    let Surplus = hours + ':' + minutes + ':' + seconds
     return Surplus;
-}
+  }
+  cpuPercentageTime(date){
+      //转换时间
+    let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
+    let regEx = new RegExp("\\-","gi");
+    let validDateStr=timezone.replace(regEx,"/");
+    let milliseconds=Date.parse(validDateStr);
+    let sendTime = new Date(milliseconds).getTime();
+    //当前时间
+    let nowTime = new Date().getTime();
+    //72小时
+    let ThreeTime = 259200000;
+    //差值
+    let Dvalue = nowTime - sendTime ;
+    let SurplusTime = Dvalue/ThreeTime; 
+    
+    let Surplus = (SurplusTime*10000/100).toFixed() + '%'
+    return Surplus;
+  }
 
 
 
@@ -201,21 +200,22 @@ class Bvote extends BaseComponent {
             ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(3),//内存资源可用kb
             ram_available_Percentage:((data.total_resources.ram_bytes - data.ram_usage)/data.total_resources.ram_bytes*10000/100).toFixed(),//可用百分比
             //计算资源
-            cpu_staked:data.total_resources.cpu_weight.replace(" EOS", ""), //计算资源抵押(EOS)
-            //抵押百分比
+            cpu_staked:data.total_resources.cpu_weight.replace(" EOS", ""), //计算资源总抵押(EOS)
+            cpu_Own_staked:(data.self_delegated_bandwidth?data.self_delegated_bandwidth.cpu_weight.replace("EOS", "") : "0.0000"),//计算资源赎自己抵押
             cpu_unstaking:(data.refund_request?data.refund_request.cpu_amount.replace("EOS", "") : "0.0000"),//计算资源赎回中
-            cpu_unstaking_time:(data.refund_request.request_time.replace("T", " ")),
-            // cpu_unstaking_time:data.refund_request.request_time,//计算资源赎回
+            cpu_unstaking_Percentage:((data.self_delegated_bandwidth.cpu_weight.replace("EOS", "")/data.total_resources.cpu_weight.replace(" EOS", ""))*10000/100).toFixed(),//计算资源赎回时间百分比
+            cpu_unstaking_time:(data.refund_request.request_time.replace("T", " ")),//计算资源赎回时间
             //赎回百分比
             cpu_total:((data.cpu_limit.used+data.cpu_limit.available)/1000).toFixed(2),//合计计算资源ms
             cpu_used:(data.cpu_limit.used / 1000).toFixed(2), //计算资源已用ms
             cpu_available:(data.cpu_limit.available / 1000).toFixed(2), //计算资源可用ms
             cpu_available_Percentage:(data.cpu_limit.available/(data.cpu_limit.used+data.cpu_limit.available)*10000/100).toFixed(),//可用百分比
             //网络资源
-            net_staked:(data.total_resources.net_weight?data.total_resources.net_weight.replace("EOS", "") : "0.0000"), //网络资源抵押
-            //抵押百分比
-            net_unstaking:(data.refund_request?data.refund_request.cpu_amount.replace("EOS", "") : "0.0000"), //网络资源赎回中
-            // cpu_unstaking_time:
+            net_staked:(data.total_resources.net_weight?data.total_resources.net_weight.replace("EOS", "") : "0.0000"), //网络资源总抵押
+            net_Own_staked:(data.self_delegated_bandwidth?data.self_delegated_bandwidth.net_weight.replace("EOS", "") : "0.0000"), //网络资源自己抵押
+            net_unstaking:(data.refund_request?data.refund_request.net_amount.replace("EOS", "") : "0.0000"), //网络资源赎回中
+            net_unstaking_Percentage:((data.self_delegated_bandwidth.net_weight.replace("EOS", "")/data.total_resources.net_weight.replace(" EOS", ""))*10000/100).toFixed(),//网络资源赎回时间百分比
+            net_unstaking_time:(data.refund_request.request_time.replace("T", " ")),//网络资源赎回时间
             //赎回百分比
             net_total:((data.net_limit.used+data.net_limit.available)/1024).toFixed(2),//合计网络资源kb
             net_used:(data.net_limit.used/1024).toFixed(3), //网络资源已用kb
@@ -224,15 +224,6 @@ class Bvote extends BaseComponent {
           });
           EasyLoading.dismis();
     } });
-    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
-        this.setState({
-            total:(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2),
-            used:(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2),
-            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
-        });
-        EasyLoading.dismis();
-    }
-    }); 
   } 
 
   getBalance() { 
@@ -263,20 +254,20 @@ class Bvote extends BaseComponent {
   }
 
 
-//   goPage(key, data = {}) {
-//     const { navigate } = this.props.navigation;
-//     if (key == 'Calculation'){
-//       navigate('Calculation', {});
-//     }else if (key == 'Memory') {
-//       navigate('Memory', {});
-//     }else if (key == 'Network') {
-//       navigate('Network', {});
-//     }else if (key == 'Resources') {
-//       navigate('Resources', {});
-//     }else {
-//       EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
-//     }
-//   }
+  goPage(key, data = {}) {
+    const { navigate } = this.props.navigation;
+    if (key == 'Calculation'){
+      navigate('Calculation', {});
+    }else if (key == 'Memory') {
+      navigate('Memory', {});
+    }else if (key == 'Network') {
+      navigate('Network', {});
+    }else if (key == 'Resources') {
+      navigate('Resources', {});
+    }else {
+      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    }
+  }
 
     // 更新"全部/未处理/已处理"按钮的状态  
     _updateBtnSelectedState(currentPressed, array) {  
@@ -746,7 +737,10 @@ class Bvote extends BaseComponent {
                     </View>
                     }
                     <View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>购买内存（EOS）</Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                            <Text style={styles.inptTitle}>购买内存（EOS）</Text>
+                            <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.buyRamAmount*this.state.Currentprice).toFixed(3)}kb</Text>
+                        </View>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                             selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
@@ -761,7 +755,10 @@ class Bvote extends BaseComponent {
                         </View>
                     </View>
                     {this.state.isOthers ? null:<View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>出售内存（KB）</Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                            <Text style={styles.inptTitle}>出售内存（KB）</Text>
+                            <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.sellRamBytes/this.state.Currentprice).toFixed(3)}EOS</Text>
+                        </View>
                         <View style={styles.outsource}>
                             <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                             selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
@@ -777,7 +774,7 @@ class Bvote extends BaseComponent {
                     </View>}
                     <View style={styles.basc}>
                         <Text style={styles.basctext}>提示</Text>
-                        <Text style={styles.basctext}>当前内存价格：0.354569/KB</Text>
+                        <Text style={styles.basctext}>当前内存价格：{this.state.Currentprice}/KB</Text>
                         <Text style={styles.basctext}>内存资源，可以使用EOS买入，也可以出售得EOS</Text>
                     </View>
                 </TouchableOpacity>
@@ -938,8 +935,7 @@ class Bvote extends BaseComponent {
     }
     if (route.key == '4') {
       return (<View style={styles.container}>
-       <Text style={{height: 100}}>{this.state.index}</Text>
-        
+           <Text style={{ margin: 10, height: 40,borderRadius: 6,backgroundColor: UColor.tintColor,justifyContent: 'center',alignItems: 'center', fontSize: 16, color: UColor.fontColor}}>该功能正在紧急开发中，敬请期待!</Text>
           </View>);
      }
   }
@@ -949,6 +945,15 @@ class Bvote extends BaseComponent {
         const c = this.props.navigation.state.params.coinType;
         return (
         <View style={styles.container}>
+            {/* <TouchableHighlight onPress={this.goPage.bind(this, 'Calculation')}>                         
+                <Text style={styles.headtextSize}>计算资源</Text>   
+            </TouchableHighlight>  
+            <TouchableHighlight onPress={this.goPage.bind(this, 'Network')}> 
+                <Text style={styles.headtextSize}>网络资源</Text>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.goPage.bind(this, 'Memory')}> 
+                <Text style={styles.headtextSize}>内存资源</Text>
+            </TouchableHighlight> */}
             <View style={{paddingHorizontal: 15, paddingBottom: 10, backgroundColor: '#4f617d',}}>
               <Text style={{fontSize: 15, color: '#7787A3', paddingVertical: 5}}>
                   {this.state.index == 0&&"内存概况"}
@@ -964,13 +969,13 @@ class Bvote extends BaseComponent {
                   </ImageBackground>
                   <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={{width: ((ScreenWidth-30)*0.307-5)*0.236, height: (ScreenWidth-30)*0.307-5, zIndex:2}}>
                       {this.state.index == 0&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.ram_available_Percentage)+'%'}/>}
-                      {this.state.index == 1}
-                      {this.state.index == 2}
+                      {this.state.index == 1&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.cpu_unstaking_Percentage)+'%'}/>}
+                      {this.state.index == 2&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.net_unstaking_Percentage)+'%'}/>}
                   </ImageBackground>
                   <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={{width: ((ScreenWidth-30)*0.307-5)*0.236, height: (ScreenWidth-30)*0.307-5, zIndex:2}}>
-                      {this.state.index == 0&&<View style={{ backgroundColor: '#43536d'}} height={(100-this.state.used_Percentage)+'%'}/>}
-                      {this.state.index == 1}
-                      {this.state.index == 2}
+                      {this.state.index == 0&&<View style={{backgroundColor: '#43536d'}} height={(100-this.state.used_Percentage)+'%'}/>}
+                      {this.state.index == 1&&<View style={{backgroundColor: '#43536d'}} height={(this.cpuPercentageTime(this.state.cpu_unstaking_time))}/>}
+                      {this.state.index == 2&&<View style={{backgroundColor: '#43536d'}} height={(this.cpuPercentageTime(this.state.net_unstaking_time))}/>}
                   </ImageBackground>
               </ImageBackground>
               <View style={{flexDirection:'row',}}>
@@ -989,8 +994,8 @@ class Bvote extends BaseComponent {
                   <View style={{flex: 1, flexDirection:'column', justifyContent: "center", alignItems: 'center',}}>
                     <Text style={{fontSize: 12, color: UColor.fontColor}}>
                       {this.state.index == 0&&this.state.ram_available+'kb/'+this.state.ram_total+'kb'}
-                      {this.state.index == 1&&this.state.cpu_staked+'/'+this.state.cpu_unstaking}
-                      {this.state.index == 2&&this.state.net_staked+'/'+this.state.net_unstaking}
+                      {this.state.index == 1&&this.state.cpu_Own_staked+'/'+this.state.cpu_staked}
+                      {this.state.index == 2&&this.state.net_Own_staked+'/'+this.state.net_staked}
                     </Text>
                     <Text style={{fontSize: 12, color: '#7787A3'}}>
                       {this.state.index == 0&&'可用('+this.state.ram_available_Percentage+'%)'}
@@ -1002,7 +1007,7 @@ class Bvote extends BaseComponent {
                     <Text style={{fontSize: 12, color: UColor.fontColor}}>
                       {this.state.index == 0&&this.state.used+'GB/'+this.state.total+'GB'}
                       {this.state.index == 1&&this.transferTimeZone(this.state.cpu_unstaking_time)}
-                      {this.state.index == 2&&this.state.cpu_unstaking_time}
+                      {this.state.index == 2&&this.transferTimeZone(this.state.net_unstaking_time)}
                     </Text>
                     <Text style={{fontSize: 12, color: '#7787A3'}}>
                       {this.state.index == 0&&'全网('+this.state.used_Percentage+'%)'}
