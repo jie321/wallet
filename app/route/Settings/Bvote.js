@@ -26,6 +26,7 @@ class Bvote extends BaseComponent {
           headerStyle: {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: UColor.mainColor,
+            borderBottomWidth:0,
           },
           headerRight: (<Button onPress={navigation.state.params.onPress}>
             <Text style={{color: UColor.arrow, fontSize: 18,justifyContent: 'flex-end',paddingRight:15}}>邀请投票</Text>
