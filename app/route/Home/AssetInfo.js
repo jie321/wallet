@@ -53,7 +53,7 @@ class AssetInfo extends BaseComponent {
     componentDidMount() {
         //加载地址数据
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
+        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"-1",  offset :"-100"}}); 
 
         // DeviceEventEmitter.addListener('transfer_result', (result) => {
         //     EasyToast.show('交易成功：刷新交易记录');
