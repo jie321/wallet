@@ -275,6 +275,10 @@ class News extends React.Component {
         <View style={{ height: this.state.h }}>
           <Swiper
             height={this.state.h}
+            loop={true}  
+            autoplay={true}
+            horizontal={true}  
+            autoplayTimeout={5} 
             paginationStyle={{ bottom: 10 }}
             dotStyle={{ backgroundColor: 'rgba(255,255,255,.2)', width: 6, height: 6 }}
             activeDotStyle={{ backgroundColor: UColor.tintColor, width: 6, height: 6 }}>
