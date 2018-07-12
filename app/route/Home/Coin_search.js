@@ -136,7 +136,7 @@ class Coin_search extends BaseComponent {
         EasyToast.show('添加成功');
         // this._setModalVisible();
       }else{
-        EasyToast.show("添加失败：" + JSON.stringify(data.data));
+        EasyToast.show(data.msg);
       }
       // EasyDialog.dismis();
     } });
