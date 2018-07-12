@@ -119,13 +119,16 @@ class Home extends React.Component {
     if(this.props.myAssets == null){
       return;
     }
+    var total = "";
     for(var i = 0; i < this.props.myAssets.length; i++){
-      if(this.props.myAssets[i].asset.name == 'EOS' && this.props.myAssets[i].asset.value != null){
-        var total = (this.props.myAssets[i].balance * this.props.myAssets[i].asset.value).toFixed(2);
-        this.setState({totalBalance: total});
+      if(this.props.myAssets[i].asset.value != null && this.props.myAssets[i].asset.value != "" && this.props.myAssets[i].balance != null && this.props.myAssets[i].balance != ""){
+        total += (this.props.myAssets[i].balance * this.props.myAssets[i].asset.value).toFixed(2);
+        
       }
     }
+    this.setState({totalBalance: total});
   }
+
   adjustTotalBalance(obj){
     var dispassert;
     // obj = '12345678911.01';
