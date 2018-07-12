@@ -70,7 +70,6 @@ class Home extends React.Component {
           invalidWalletList : invalidWalletList
          })
       }
-      // alert(JSON.stringify(invalidWalletList));
     }});
 
     Animated.timing(
@@ -100,13 +99,12 @@ class Home extends React.Component {
       this.setState({increase: data});
     });
 
-    // DeviceEventEmitter.addListener('eos_balance', (data) => {
-    //   if(this.props.list == null || this.props.list.length == 0){
-    //     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-    //   }
-    //   this.setEosBalance(data);
-    //   this.calTotalBalance();
-    // });
+    DeviceEventEmitter.addListener('eos_balance', (data) => {
+      if(this.props.list == null || this.props.list.length == 0){
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      }
+      this.calTotalBalance();
+    });
 
     // DeviceEventEmitter.addListener('asset_balance', (data) => {
       // this.setAssetBalance(data);
@@ -152,7 +150,7 @@ class Home extends React.Component {
   }
 
   getBalance() { 
-    if (this.props.defaultWallet == null && this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
     }
 

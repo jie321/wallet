@@ -46,7 +46,7 @@ export default {
                 balance: '0.0000',
             }
             const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: 'EOS'});
-            alert(JSON.stringify(resp));
+            // alert(JSON.stringify(resp));
             if(resp.code == '0' && resp.data && resp.data.length == 1){
                 var eosInfo = {
                     asset: resp.data[0],
@@ -82,7 +82,7 @@ export default {
     },
     *updateMyAsset({payload},{call,put}){
         var myAssets = yield call(store.get, 'myAssets');
-        alert(JSON.stringify(payload) + "   " +JSON.stringify(myAssets));
+        // alert(JSON.stringify(payload) + "   " +JSON.stringify(myAssets));
         if (myAssets == null) {
             myAssets = [];
         }
