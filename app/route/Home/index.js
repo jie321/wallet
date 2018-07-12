@@ -126,7 +126,9 @@ class Home extends React.Component {
         
       }
     }
-    this.setState({totalBalance: total});
+    if(total != null && total != ""){
+      this.setState({totalBalance: total});
+    }
   }
 
   adjustTotalBalance(obj){
@@ -137,6 +139,9 @@ class Home extends React.Component {
       dispassert += '万';
     }else{
       dispassert = obj;
+    }
+    if(dispassert == null){
+      return this.state.totalBalance;
     }
     return dispassert;
   }
@@ -451,7 +456,7 @@ class Home extends React.Component {
                   {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
                 </View>
                 <View style={styles.addtoout}>
-                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
+                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
                   <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
                 </View>
               </View>
