@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {pocketAsset, getBalance, submitAssetInfo, listAssets, addAssetToServer} from '../utils/Api';
+import {getBalance, listAssets, addAssetToServer} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import { DeviceEventEmitter } from 'react-native';
@@ -46,7 +46,7 @@ export default {
                 balance: '0.0000',
             }
             const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: 'EOS'});
-            alert(JSON.stringify(resp));
+            // alert(JSON.stringify(resp));
             if(resp.code == '0' && resp.data && resp.data.length == 1){
                 var eosInfo = {
                     asset: resp.data[0],
@@ -82,7 +82,7 @@ export default {
     },
     *updateMyAsset({payload},{call,put}){
         var myAssets = yield call(store.get, 'myAssets');
-        alert(JSON.stringify(payload) + "   " +JSON.stringify(myAssets));
+        // alert(JSON.stringify(payload) + "   " +JSON.stringify(myAssets));
         if (myAssets == null) {
             myAssets = [];
         }
@@ -164,7 +164,7 @@ export default {
      },
     *submitAssetInfoToServer({payload, callback},{call,put}){
         try{
-            const resp = yield call(Request.request, submitAssetInfo, 'post', {contract_account: payload.contractAccount, name: payload.name});
+            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + addAssetToServer, 'post', {contract_account: payload.contractAccount, name: payload.name});
             if(resp && resp.code=='0'){
                 DeviceEventEmitter.emit('updateAssetList', payload);
             }

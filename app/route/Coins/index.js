@@ -107,7 +107,7 @@ class Coins extends React.Component {
   //切换tab
   _handleIndexChange = index => {
     this.startTick(index);
-    this.setState({index});
+    // this.setState({index});
   };
 
   _handleTabItemPress = ({ route }) => {

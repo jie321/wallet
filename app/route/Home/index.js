@@ -70,7 +70,6 @@ class Home extends React.Component {
           invalidWalletList : invalidWalletList
          })
       }
-      // alert(JSON.stringify(invalidWalletList));
     }});
 
     Animated.timing(
@@ -100,13 +99,12 @@ class Home extends React.Component {
       this.setState({increase: data});
     });
 
-    // DeviceEventEmitter.addListener('eos_balance', (data) => {
-    //   if(this.props.list == null || this.props.list.length == 0){
-    //     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-    //   }
-    //   this.setEosBalance(data);
-    //   this.calTotalBalance();
-    // });
+    DeviceEventEmitter.addListener('eos_balance', (data) => {
+      if(this.props.list == null || this.props.list.length == 0){
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      }
+      this.calTotalBalance();
+    });
 
     // DeviceEventEmitter.addListener('asset_balance', (data) => {
       // this.setAssetBalance(data);
@@ -121,13 +119,18 @@ class Home extends React.Component {
     if(this.props.myAssets == null){
       return;
     }
+    var total = "";
     for(var i = 0; i < this.props.myAssets.length; i++){
-      if(this.props.myAssets[i].asset.name == 'EOS' && this.props.myAssets[i].asset.value != null){
-        var total = (this.props.myAssets[i].balance * this.props.myAssets[i].asset.value).toFixed(2);
-        this.setState({totalBalance: total});
+      if(this.props.myAssets[i].asset.value != null && this.props.myAssets[i].asset.value != "" && this.props.myAssets[i].balance != null && this.props.myAssets[i].balance != ""){
+        total += (this.props.myAssets[i].balance * this.props.myAssets[i].asset.value).toFixed(2);
+        
       }
     }
+    if(total != null && total != ""){
+      this.setState({totalBalance: total});
+    }
   }
+
   adjustTotalBalance(obj){
     var dispassert;
     // obj = '12345678911.01';
@@ -136,6 +139,9 @@ class Home extends React.Component {
       dispassert += '万';
     }else{
       dispassert = obj;
+    }
+    if(dispassert == null){
+      return this.state.totalBalance;
     }
     return dispassert;
   }
@@ -152,7 +158,7 @@ class Home extends React.Component {
   }
 
   getBalance() { 
-    if (this.props.defaultWallet == null && this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
     }
 
@@ -450,7 +456,7 @@ class Home extends React.Component {
                   {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
                 </View>
                 <View style={styles.addtoout}>
-                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
+                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
                   <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
                 </View>
               </View>
