@@ -121,7 +121,10 @@ class Home extends React.Component {
     }
     var sum = 0;
     for(var i = 0; i < this.props.myAssets.length; i++){
-        var total = this.props.myAssets[i].balance * this.props.myAssets[i].asset.value;
+        if(this.props.myAssets[i].balance == null || this.props.myAssets[i].asset.value == null){
+          continue;
+        }
+        var total = this.props.myAssets[i].balance.replace(this.props.myAssets[i].asset.name, "") * this.props.myAssets[i].asset.value;
         sum = sum + total;
     }
     this.setState({totalBalance: sum.toFixed(2)});
@@ -465,7 +468,7 @@ class Home extends React.Component {
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
-                  <Text style={(this.state.increase>=0 || this.state.totalBalance == 0)?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
+                  <Text style={(this.state.increase>=0 || this.state.totalBalance == "0.00")?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
                 </View>
               </View>
               <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
