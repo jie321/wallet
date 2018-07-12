@@ -121,8 +121,8 @@ class AssetInfo extends BaseComponent {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headbalance}>{c.balance==""? "0.0000" :c.balance.replace(c.asset.name, "")} {c.asset.name}</Text>
-                    <Text style={styles.headmarket}>≈ {(c.balance == null || c.asset.value == null) ? "0.00" : (c.balance.replace(c.asset.name, "") * c.asset.value).toFixed(2)} ￥</Text>
+                    <Text style={styles.headbalance}>{this.state.balance==""? "0.0000" :this.state.balance.replace(c.asset.name, "")} {c.asset.name}</Text>
+                    <Text style={styles.headmarket}>≈ {(this.state.balance == null || c.asset.value == null) ? "0.00" : (this.state.balance.replace(c.asset.name, "") * c.asset.value).toFixed(2)} ￥</Text>
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
