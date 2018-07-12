@@ -124,64 +124,17 @@ class Bvote extends BaseComponent {
             used:data.rows[0].total_ram_bytes_reserved?(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2) : "00.00GB",
             used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
         });
-        EasyLoading.dismis();
     }}); 
     this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
         this.setState({
             Currentprice:data.data?data.data:'0.00000',
         });
-        EasyLoading.dismis();
     }}); 
   }
 
   componentWillUnmount(){
     //结束页面前，资源释放操作
     super.componentWillUnmount();
-    
-  }
-
-  transferTimeZone(date){
-    //转换时间
-    let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-    let regEx = new RegExp("\\-","gi");
-    let validDateStr=timezone.replace(regEx,"/");
-    let milliseconds=Date.parse(validDateStr);
-    let sendTime = new Date(milliseconds).getTime();
-    //当前时间
-    let nowTime = new Date().getTime();
-    //72小时
-    let ThreeTime = 259200000;
-    //差值
-    let Dvalue = nowTime - sendTime ;
-    let SurplusTime = ThreeTime - Dvalue
-    // 时 
-    const hours = Math.floor(SurplusTime / (3600 * 1000)); 
-    // 分 
-    const leave2 = SurplusTime % (3600 * 1000); 
-    const minutes = Math.floor(leave2 / (60 * 1000)); 
-    // 秒 
-    const leave3 = leave2 % (60 * 1000); 
-    const seconds = Math.round(leave3 / 1000); 
-    let Surplus = hours + ':' + minutes + ':' + seconds
-    return Surplus;
-  }
-  cpuPercentageTime(date){
-      //转换时间
-    let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-    let regEx = new RegExp("\\-","gi");
-    let validDateStr=timezone.replace(regEx,"/");
-    let milliseconds=Date.parse(validDateStr);
-    let sendTime = new Date(milliseconds).getTime();
-    //当前时间
-    let nowTime = new Date().getTime();
-    //72小时
-    let ThreeTime = 259200000;
-    //差值
-    let Dvalue = nowTime - sendTime ;
-    let SurplusTime = Dvalue/ThreeTime; 
-    
-    let Surplus = (SurplusTime*10000/100).toFixed() + '%'
-    return Surplus;
   }
 
   getAccountInfo(){
@@ -691,12 +644,55 @@ class Bvote extends BaseComponent {
             EasyDialog.dismis();
         }, () => { EasyDialog.dismis() });
     };
- 
- 
 
-  dismissKeyboardClick() {
-    dismissKeyboard();
-  }
+    transferTimeZone(date){
+        //转换时间
+        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
+        let regEx = new RegExp("\\-","gi");
+        let validDateStr=timezone.replace(regEx,"/");
+        let milliseconds=Date.parse(validDateStr);
+        let sendTime = new Date(milliseconds).getTime();
+        //当前时间
+        let nowTime = new Date().getTime();
+        //72小时
+        let ThreeTime = 259200000;
+        //差值
+        let Dvalue = nowTime - sendTime ;
+        let SurplusTime = ThreeTime - Dvalue
+        // 时 
+        const hours = Math.floor(SurplusTime / (3600 * 1000)); 
+        // 分 
+        const leave2 = SurplusTime % (3600 * 1000); 
+        const minutes = Math.floor(leave2 / (60 * 1000)); 
+        // 秒 
+        const leave3 = leave2 % (60 * 1000); 
+        const seconds = Math.round(leave3 / 1000); 
+        let Surplus = hours + ':' + minutes + ':' + seconds
+        return Surplus;
+    }
+
+    cpuPercentageTime(date){
+        //转换时间
+        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
+        let regEx = new RegExp("\\-","gi");
+        let validDateStr=timezone.replace(regEx,"/");
+        let milliseconds=Date.parse(validDateStr);
+        let sendTime = new Date(milliseconds).getTime();
+        //当前时间
+        let nowTime = new Date().getTime();
+        //72小时
+        let ThreeTime = 259200000;
+        //差值
+        let Dvalue = nowTime - sendTime ;
+        let SurplusTime = Dvalue/ThreeTime; 
+        
+        let Surplus = (SurplusTime*10000/100).toFixed() + '%'
+        return Surplus;
+    }
+ 
+    dismissKeyboardClick() {
+        dismissKeyboard();
+    }
 
  //渲染页面
  renderScene = ({ route }) => {
