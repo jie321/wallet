@@ -592,6 +592,17 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入抵押的EOS数量');
             return;
         }
+        var tmp;
+        try {
+             tmp = parseFloat(this.state.Ndelegateb);
+        } catch (error) {
+            tmp = 0;
+        }
+        if(tmp <= 0){
+            this.setState({ Ndelegateb: "" })
+            EasyToast.show('请输入抵押的EOS数量');
+            return ;
+        }
         this. dismissKeyboardClick();
         const view =
         <View style={styles.passoutsource}>
@@ -646,6 +657,17 @@ class Bvote extends BaseComponent {
         if ((this.state.Nundelegateb == "")) {
             EasyToast.show('请输入赎回的EOS数量');
             return;
+        }
+        var tmp;
+        try {
+             tmp = parseFloat(this.state.Nundelegateb);
+        } catch (error) {
+            tmp = 0;
+        }
+        if(tmp <= 0){
+            this.setState({ Nundelegateb: "" })
+            EasyToast.show('请输入赎回的EOS数量');
+            return ;
         }
         this. dismissKeyboardClick();
             const view =
