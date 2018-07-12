@@ -42,36 +42,35 @@ class Bvote extends BaseComponent {
   constructor(props) { 
     super(props);
     this.state = {
-      total: '0 GB',
-      used: '0 GB',
+      total: '0.00',
+      used: '0.00',
       used_Percentage: '0',
-      currency_total: '0 EOS',
-      currency_surplus: '0 EOS',
+      currency_surplus: '0.00',
 
-      ram_total: '0',
-      ram_used:'0',
+      ram_total: '0.00',
+      ram_used:'0.00',
       ram_used_Percentage: '0',
-      ram_available:'0',
+      ram_available:'0.00',
       ram_available_Percentage: '0',
 
-      cpu_staked: '0 EOS',
-      cpu_Own_staked: '0 EOS',
-      cpu_unstaking: '0 EOS',
+      cpu_staked: '0.00',
+      cpu_Own_staked: '0.00',
+      cpu_unstaking: '0.00',
       cpu_unstaking__Percentage: '0',
-      cpu_unstaking_time: '00.00.00',
-      cpu_total: '0',
-      cpu_used: '0',
-      cpu_available: '0',
+      cpu_unstaking_time: '00:00:00',
+      cpu_total: '0.00',
+      cpu_used: '0.00',
+      cpu_available: '0.00',
       cpu_available_Percentage: '0',
 
-      net_staked:'0 EOS',
-      net_Own_staked: '0 EOS',
-      net_unstaking: '0 EOS',
+      net_staked:'0.00',
+      net_Own_staked: '0.00',
+      net_unstaking: '0.00',
       net_unstaking_Percentage: '0',
-      net_unstaking_time: '00.00.00',
-      net_total: '0',
-      net_used: '0',
-      net_available: '0',
+      net_unstaking_time: '00:00:00',
+      net_total: '0.00',
+      net_used: '0.00',
+      net_available: '0.00',
       net_available_Percentage: '0',
 
       isOwn: true,
@@ -87,7 +86,7 @@ class Bvote extends BaseComponent {
         { key: '4', title: '内存交易' },
       ],
       show: false,
-      Currentprice: '0',
+      Currentprice: '0.00000',
       password: "",
       Mreceiver: "",
       buyRamAmount: "",
@@ -103,20 +102,6 @@ class Bvote extends BaseComponent {
 
   componentDidMount() {
     EasyLoading.show();
-    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
-        this.setState({
-            total:(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2),
-            used:(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2),
-            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
-        });
-        EasyLoading.dismis();
-    }}); 
-    this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
-        this.setState({
-            Currentprice:data.data,
-        });
-        EasyLoading.dismis();
-    }}); 
     this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {
         this.getAccountInfo();
     }}); 
@@ -133,6 +118,20 @@ class Bvote extends BaseComponent {
     DeviceEventEmitter.addListener('eos_balance', (data) => {
         this.setEosBalance(data);
     });
+    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
+        this.setState({
+            total:data.rows[0].max_ram_size?(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2) : "00.00GB",
+            used:data.rows[0].total_ram_bytes_reserved?(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2) : "00.00GB",
+            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
+        });
+        EasyLoading.dismis();
+    }}); 
+    this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
+        this.setState({
+            Currentprice:data.data?data.data:'0.00000',
+        });
+        EasyLoading.dismis();
+    }}); 
   }
 
   componentWillUnmount(){
@@ -187,37 +186,35 @@ class Bvote extends BaseComponent {
 
   getAccountInfo(){
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
-        // alert(JSON.stringify(data));
       this.setState({
-            currency_total:data, //合计
             currency_surplus:data.core_liquid_balance.replace(" EOS", ""), // 剩余EOS
             //内存资源
-            ram_total:(data.total_resources.ram_bytes / 1024).toFixed(3),//内存资源总计kb
-            ram_used:(data.ram_usage / 1024).toFixed(3), //内存资源已用(占用)kb
+            ram_total:data.total_resources.ram_bytes?(data.total_resources.ram_bytes / 1024).toFixed(2):'0.00',//内存资源总计kb
+            ram_used:data.ram_usage?(data.ram_usage / 1024).toFixed(2):'0.00', //内存资源已用(占用)kb
             ram_used_Percentage:(data.ram_usage/data.total_resources.ram_bytes*10000/100).toFixed(), //占用百分比
-            ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(3),//内存资源可用kb
+            ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2),//内存资源可用kb
             ram_available_Percentage:((data.total_resources.ram_bytes - data.ram_usage)/data.total_resources.ram_bytes*10000/100).toFixed(),//可用百分比
             //计算资源
-            cpu_staked:data.total_resources.cpu_weight.replace(" EOS", ""), //计算资源总抵押(EOS)
-            cpu_Own_staked:(data.self_delegated_bandwidth?data.self_delegated_bandwidth.cpu_weight.replace("EOS", "") : "0.0000"),//计算资源赎自己抵押
-            cpu_unstaking:(data.refund_request?data.refund_request.cpu_amount.replace("EOS", "") : "0.0000"),//计算资源赎回中
+            cpu_staked:data.total_resources.cpu_weight?data.total_resources.cpu_weight.replace(" EOS", ""):'0.00', //计算资源总抵押(EOS)
+            cpu_Own_staked:data.self_delegated_bandwidth?data.self_delegated_bandwidth.cpu_weight.replace("EOS", "") : "0.00",//计算资源赎自己抵押
+            cpu_unstaking:data.refund_request?data.refund_request.cpu_amount.replace("EOS", "") : "0.00",//计算资源赎回中
             cpu_unstaking_Percentage:((data.self_delegated_bandwidth.cpu_weight.replace("EOS", "")/data.total_resources.cpu_weight.replace(" EOS", ""))*10000/100).toFixed(),//计算资源赎回时间百分比
-            cpu_unstaking_time:(data.refund_request.request_time.replace("T", " ")),//计算资源赎回时间
-            //赎回百分比
+            cpu_unstaking_time:data.refund_request.request_time?data.refund_request.request_time.replace("T", " "):'00:00:00',//计算资源赎回时间
+            //计算赎回百分比
             cpu_total:((data.cpu_limit.used+data.cpu_limit.available)/1000).toFixed(2),//合计计算资源ms
-            cpu_used:(data.cpu_limit.used / 1000).toFixed(2), //计算资源已用ms
-            cpu_available:(data.cpu_limit.available / 1000).toFixed(2), //计算资源可用ms
+            cpu_used:data.cpu_limit.used?(data.cpu_limit.used / 1000).toFixed(2):'0.00', //计算资源已用ms
+            cpu_available:data.cpu_limit.available?(data.cpu_limit.available / 1000).toFixed(2):'0.00', //计算资源可用ms
             cpu_available_Percentage:(data.cpu_limit.available/(data.cpu_limit.used+data.cpu_limit.available)*10000/100).toFixed(),//可用百分比
             //网络资源
-            net_staked:(data.total_resources.net_weight?data.total_resources.net_weight.replace("EOS", "") : "0.0000"), //网络资源总抵押
-            net_Own_staked:(data.self_delegated_bandwidth?data.self_delegated_bandwidth.net_weight.replace("EOS", "") : "0.0000"), //网络资源自己抵押
-            net_unstaking:(data.refund_request?data.refund_request.net_amount.replace("EOS", "") : "0.0000"), //网络资源赎回中
+            net_staked:data.total_resources.net_weight?data.total_resources.net_weight.replace("EOS", "") : "0.00", //网络资源总抵押
+            net_Own_staked:data.self_delegated_bandwidth?data.self_delegated_bandwidth.net_weight.replace("EOS", "") : "0.00", //网络资源自己抵押
+            net_unstaking:data.refund_request?data.refund_request.net_amount.replace("EOS", "") : "0.00", //网络资源赎回中
             net_unstaking_Percentage:((data.self_delegated_bandwidth.net_weight.replace("EOS", "")/data.total_resources.net_weight.replace(" EOS", ""))*10000/100).toFixed(),//网络资源赎回时间百分比
-            net_unstaking_time:(data.refund_request.request_time.replace("T", " ")),//网络资源赎回时间
-            //赎回百分比
+            net_unstaking_time:data.refund_request.request_time?data.refund_request.request_time.replace("T", " "):'00:00:00',//网络资源赎回时间
+            //网络赎回百分比
             net_total:((data.net_limit.used+data.net_limit.available)/1024).toFixed(2),//合计网络资源kb
-            net_used:(data.net_limit.used/1024).toFixed(3), //网络资源已用kb
-            net_available:(data.net_limit.available / 1024).toFixed(3), //网络资源可用kb
+            net_used:data.net_limit.used?(data.net_limit.used/1024).toFixed(3):'0.00', //网络资源已用kb
+            net_available:data.net_limit.available?(data.net_limit.available / 1024).toFixed(3):'0.00', //网络资源可用kb
             net_available_Percentage:(data.net_limit.available/(data.net_limit.used+data.net_limit.available)*10000/100).toFixed(),//可用百分比
           });
           EasyLoading.dismis();
@@ -285,8 +282,7 @@ class Bvote extends BaseComponent {
     }  
 
     // 返回自己或他人租赁或过户
-    _getButton(style, selectedSate, stateType, buttonTitle) {  
-    //   this.setState({ Mreceiver: "", buyRamAmount: "", sellRamBytes: "", Creceiver: "", Cdelegateb: "", Cundelegateb: "", Nreceiver: "", Ndelegateb: "", Nundelegateb: "",});   
+    _getButton(style, selectedSate, stateType, buttonTitle) {    
       let BTN_SELECTED_STATE_ARRAY = ['isOwn', 'isOthers','isLease','isTransfer'];  
       return(  
         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'center',alignItems: 'center', flex: 1,}} onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
@@ -716,60 +712,60 @@ class Bvote extends BaseComponent {
                                 {this._getButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                             </View> 
                         </View> 
+                        {this.state.isOwn ? null:
+                        <View style={styles.inptoutsource}>
+                            <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Mreceiver}  returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
+                                placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" maxLength = {12}
+                                onChangeText={(Mreceiver) => this.setState({ Mreceiver: this.chkAccount(Mreceiver) })}
+                                />
+                                <Button >
+                                    <View style={styles.botnimg}>
+                                        <Image source={UImage.scan} style={{width: 26, height: 26, }} />
+                                    </View>
+                                </Button> 
+                            </View>
+                        </View>
+                        }
+                        <View style={styles.inptoutsource}>
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                                <Text style={styles.inptTitle}>购买内存（{this.state.currency_surplus}EOS）</Text>
+                                <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.currency_surplus*this.state.Currentprice).toFixed(3)}kb</Text>
+                            </View>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
+                                placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount)})}
+                                />
+                                <Button onPress={this.buyram.bind()}>
+                                    <View style={styles.botn}>
+                                        <Text style={styles.botText}>购买</Text>
+                                    </View>
+                                </Button> 
+                            </View>
+                        </View>
+                        {this.state.isOthers ? null:<View style={styles.inptoutsource}>
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                                <Text style={styles.inptTitle}>出售内存（{this.state.ram_available}KB）</Text>
+                                <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.ram_available/this.state.Currentprice).toFixed(3)}EOS</Text>
+                            </View>
+                            <View style={styles.outsource}>
+                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
+                                selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
+                                placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes)})}
+                                />
+                                <Button onPress={this.sellram.bind()}>
+                                    <View style={styles.botn}>
+                                        <Text style={styles.botText1}>出售</Text>
+                                    </View>
+                                </Button> 
+                            </View>
+                        </View>}
                     </View>
-                    {this.state.isOwn ? null:
-                    <View style={styles.inptoutsource}>
-                        <Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Mreceiver}  returnKeyType="go" 
-                            selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                            placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" maxLength = {12}
-                            onChangeText={(Mreceiver) => this.setState({ Mreceiver: this.chkAccount(Mreceiver) })}
-                            />
-                            <Button >
-                                <View style={styles.botnimg}>
-                                    <Image source={UImage.scan} style={{width: 26, height: 26, }} />
-                                </View>
-                            </Button> 
-                        </View>
-                    </View>
-                    }
-                    <View style={styles.inptoutsource}>
-                        <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                            <Text style={styles.inptTitle}>购买内存（EOS）</Text>
-                            <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.buyRamAmount*this.state.Currentprice).toFixed(3)}kb</Text>
-                        </View>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
-                            selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                            placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                            onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount)})}
-                            />
-                            <Button onPress={this.buyram.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText}>购买</Text>
-                                </View>
-                            </Button> 
-                        </View>
-                    </View>
-                    {this.state.isOthers ? null:<View style={styles.inptoutsource}>
-                        <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                            <Text style={styles.inptTitle}>出售内存（KB）</Text>
-                            <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.sellRamBytes/this.state.Currentprice).toFixed(3)}EOS</Text>
-                        </View>
-                        <View style={styles.outsource}>
-                            <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
-                            selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
-                            placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                            onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes)})}
-                            />
-                            <Button onPress={this.sellram.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText1}>出售</Text>
-                                </View>
-                            </Button> 
-                        </View>
-                    </View>}
                     <View style={styles.basc}>
                         <Text style={styles.basctext}>提示</Text>
                         <Text style={styles.basctext}>当前内存价格：{this.state.Currentprice}/KB</Text>
@@ -797,51 +793,51 @@ class Bvote extends BaseComponent {
                                     {this._getButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
                                 </View> 
                             </View> 
-                        </View>
-                        {this.state.isOwn ? null:
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>设置接收者</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._account = ref} value={this.state.Creceiver} returnKeyType="go" 
+                            {this.state.isOwn ? null:
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>设置接收者</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._account = ref} value={this.state.Creceiver} returnKeyType="go" 
+                                        selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                        placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" maxLength={12}
+                                        onChangeText={(Creceiver) => this.setState({ Creceiver : this.chkAccount(Creceiver) })}
+                                    />
+                                    <Button >
+                                        <View style={styles.botnimg}>
+                                            <Image source={UImage.scan} style={{width: 26, height: 26, }} />
+                                        </View>
+                                    </Button> 
+                                </View>
+                            </View>}  
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>抵押（EOS）</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Cdelegateb} returnKeyType="go" 
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                    placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(Cdelegateb) => this.setState({ Cdelegateb: this.chkPrice(Cdelegateb)})}
+                                    />
+                                    <Button onPress={this.Cdelegateb.bind()}>
+                                        <View style={styles.botn}>
+                                            <Text style={styles.botText}>抵押</Text>
+                                        </View>
+                                    </Button> 
+                                </View>
+                            </View>
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>赎回（EOS）</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Cundelegateb} returnKeyType="go" 
                                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                    placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" maxLength={12}
-                                    onChangeText={(Creceiver) => this.setState({ Creceiver : this.chkAccount(Creceiver) })}
-                                />
-                                <Button >
-                                    <View style={styles.botnimg}>
-                                        <Image source={UImage.scan} style={{width: 26, height: 26, }} />
-                                    </View>
-                                </Button> 
-                            </View>
-                        </View>}  
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>抵押（EOS）</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Cdelegateb} returnKeyType="go" 
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                                onChangeText={(Cdelegateb) => this.setState({ Cdelegateb: this.chkPrice(Cdelegateb)})}
-                                />
-                                <Button onPress={this.Cdelegateb.bind()}>
-                                    <View style={styles.botn}>
-                                        <Text style={styles.botText}>抵押</Text>
-                                    </View>
-                                </Button> 
-                            </View>
-                        </View>
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>赎回（EOS）</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Cundelegateb} returnKeyType="go" 
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                                onChangeText={(Cundelegateb) => this.setState({ Cundelegateb: this.chkPrice(Cundelegateb)})}   
-                                />
-                                <Button onPress={this.Cundelegateb.bind()}>
-                                    <View style={styles.botn}>
-                                        <Text style={styles.botText}>赎回</Text>
-                                    </View>
-                                </Button> 
+                                    placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(Cundelegateb) => this.setState({ Cundelegateb: this.chkPrice(Cundelegateb)})}   
+                                    />
+                                    <Button onPress={this.Cundelegateb.bind()}>
+                                        <View style={styles.botn}>
+                                            <Text style={styles.botText}>赎回</Text>
+                                        </View>
+                                    </Button> 
+                                </View>
                             </View>
                         </View>
                         <View style={styles.basc}>
@@ -871,51 +867,51 @@ class Bvote extends BaseComponent {
                                     {this._getButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
                                 </View> 
                             </View> 
-                        </View>
-                        {this.state.isOwn ? null:
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>设置接收者</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._account = ref} value={this.state.Nreceiver} returnKeyType="go"
-                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
-                                    placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" 
-                                    onChangeText={(Nreceiver) => this.setState({ Nreceiver: this.chkAccount(Nreceiver)})}
-                                />
-                                <Button >
-                                    <View style={styles.botnimg}>
-                                        <Image source={UImage.scan} style={{width: 26, height: 26, }} />
-                                    </View>
-                                </Button> 
+                            {this.state.isOwn ? null:
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>设置接收者</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._account = ref} value={this.state.Nreceiver} returnKeyType="go"
+                                        selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
+                                        placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" 
+                                        onChangeText={(Nreceiver) => this.setState({ Nreceiver: this.chkAccount(Nreceiver)})}
+                                    />
+                                    <Button >
+                                        <View style={styles.botnimg}>
+                                            <Image source={UImage.scan} style={{width: 26, height: 26, }} />
+                                        </View>
+                                    </Button> 
+                                </View>
+                            </View>}  
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>抵押（EOS）</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Ndelegateb} returnKeyType="go"
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                                    placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(Ndelegateb) => this.setState({ Ndelegateb: this.chkPrice(Ndelegateb)})}
+                                    />
+                                    <Button onPress={this.Ndelegateb.bind()}>
+                                        <View style={styles.botn}>
+                                            <Text style={styles.botText}>抵押</Text>
+                                        </View>
+                                    </Button> 
+                                </View>
                             </View>
-                        </View>}  
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>抵押（EOS）</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Ndelegateb} returnKeyType="go"
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                placeholder="输入抵押数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                                onChangeText={(Ndelegateb) => this.setState({ Ndelegateb: this.chkPrice(Ndelegateb)})}
-                                />
-                                <Button onPress={this.Ndelegateb.bind()}>
-                                    <View style={styles.botn}>
-                                        <Text style={styles.botText}>抵押</Text>
-                                    </View>
-                                </Button> 
-                            </View>
-                        </View>
-                        <View style={styles.inptoutsource}>
-                            <Text style={styles.inptTitle}>赎回（EOS）</Text>
-                            <View style={styles.outsource}>
-                                <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Nundelegateb} returnKeyType="go" 
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                                onChangeText={(Nundelegateb) => this.setState({ Nundelegateb: this.chkPrice(Nundelegateb)})}
-                                />
-                                <Button onPress={this.Nundelegateb.bind()}>
-                                    <View style={styles.botn}>
-                                        <Text style={styles.botText}>赎回</Text>
-                                    </View>
-                                </Button> 
+                            <View style={styles.inptoutsource}>
+                                <Text style={styles.inptTitle}>赎回（EOS）</Text>
+                                <View style={styles.outsource}>
+                                    <TextInput ref={(ref) => this._rrpass = ref} value={this.state.Nundelegateb} returnKeyType="go" 
+                                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                    placeholder="输入赎回数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                    onChangeText={(Nundelegateb) => this.setState({ Nundelegateb: this.chkPrice(Nundelegateb)})}
+                                    />
+                                    <Button onPress={this.Nundelegateb.bind()}>
+                                        <View style={styles.botn}>
+                                            <Text style={styles.botText}>赎回</Text>
+                                        </View>
+                                    </Button> 
+                                </View>
                             </View>
                         </View>
                         <View style={styles.basc}>
@@ -1217,7 +1213,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 10,
         justifyContent: 'center',
-        backgroundColor: '#4F617D',
     },
     outsource: {
         flexDirection: 'row',  
