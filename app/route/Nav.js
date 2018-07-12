@@ -20,12 +20,12 @@ import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Coin_search from './Home/Coin_search'
-import Info from './Home/Info'
 import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
 import TradeDetails from './Home/TradeDetails'
 import TurnIn from './Home/TurnIn'
 import TurnOut from './Home/TurnOut'
+import TurnInAsset from './Home/TurnInAsset'
 import TurnOutAsset from './Home/TurnOutAsset'
 import Share from './ShareInvite'
 import CreateWallet from './Wallet/CreateWallet'
@@ -248,9 +248,6 @@ const Nav = StackNavigator(
     Coin_search: {
       screen: Coin_search
     },
-    Info: {
-      screen: Info
-    },
     AssetInfo: {
       screen: AssetInfo
     },
@@ -265,6 +262,9 @@ const Nav = StackNavigator(
     },
     TurnOut: {
       screen: TurnOut
+    },
+    TurnInAsset: {
+      screen: TurnInAsset
     },
     TurnOutAsset: {
       screen: TurnOutAsset
@@ -854,7 +854,7 @@ class Route extends React.Component {
                         </View>
                         <View style={{ justifyContent: 'center', alignSelf: 'center',paddingTop:10, }}>
                           {/* <QRCode size={150}  value={'":\"' + this.state.turnintoaccount + '\",\"amount\":\"' + this.state.turninamount + '\",\"symbol\":\"' + this.state.turninsymbol + '\"}'} /> */}
-                          <QRCode size={150}  value={'eos:' + this.state.turnintoaccount + '?amount=' + ((this.state.turninamount == "")?'0':this.state.turninamount) + '&token=EOS'}/>
+                          <QRCode size={150}  value={this.state.turninsymbol.toLowerCase() +':' + this.state.turnintoaccount + '?amount=' + ((this.state.turninamount == "")?'0':this.state.turninamount) + '&token=' + this.state.turninsymbol.toUpperCase()}/>
                         </View>
                         <Text style={{ color: '#5D5D5D', fontSize: 15, textAlign: 'center', marginTop: 10 }}>扫码向他支付</Text>
                         <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'left', marginTop: 5, padding: 20,}}>账户:{this.state.turnintoaccount}</Text>

@@ -119,16 +119,12 @@ class Home extends React.Component {
     if(this.props.myAssets == null){
       return;
     }
-    var total = "";
+    var sum = 0;
     for(var i = 0; i < this.props.myAssets.length; i++){
-      if(this.props.myAssets[i].asset.value != null && this.props.myAssets[i].asset.value != "" && this.props.myAssets[i].balance != null && this.props.myAssets[i].balance != ""){
-        total += (this.props.myAssets[i].balance * this.props.myAssets[i].asset.value).toFixed(2);
-        
-      }
+        var total = this.props.myAssets[i].balance * this.props.myAssets[i].asset.value;
+        sum = sum + total;
     }
-    if(total != null && total != ""){
-      this.setState({totalBalance: total});
-    }
+    this.setState({totalBalance: sum.toFixed(2)});
   }
 
   adjustTotalBalance(obj){
@@ -147,8 +143,21 @@ class Home extends React.Component {
   }
 
   getIncrease(){
+    // if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+    //   return;
+    // }
+
+    // if(this.state.init){
+    //   this.setState({init: false});
+    //   EasyLoading.show();
+    // }
+
+    // if(this.props.myAssets == null){
+    //   return;
+    // }
+
     this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
-        if(data == null || data == undefined){
+        if(data == undefined || data == null){
           reurn;
         }
         if(data[0].increase){
@@ -156,7 +165,6 @@ class Home extends React.Component {
         }
     } });
   }
-
   getBalance() { 
     if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
@@ -339,14 +347,7 @@ class Home extends React.Component {
   }
 
   assetInfo(asset) {
-    if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
-      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
-        this.WalletDetail(this.props.defaultWallet);
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
 
-      return;
-    }
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
       EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
@@ -354,8 +355,15 @@ class Home extends React.Component {
         EasyDialog.dismis()
       }, () => { EasyDialog.dismis() });
       return;
+    }else {
+      if(!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')){
+        EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+          this.WalletDetail(this.props.defaultWallet);
+          EasyDialog.dismis()
+        }, () => { EasyDialog.dismis() });
+        return;
+      }
     }
-
     const { navigate } = this.props.navigation;
     navigate('AssetInfo', { asset, account: this.props.defaultWallet.name });
   }

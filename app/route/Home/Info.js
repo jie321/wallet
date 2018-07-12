@@ -36,7 +36,6 @@ class Info extends BaseComponent {
      constructor(props) {
         super(props);
         this.state = {
-            show: false,
             balance: this.props.navigation.state.params.balance,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             type: '',
@@ -53,17 +52,7 @@ class Info extends BaseComponent {
     componentDidMount() {
         //加载地址数据
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-
-        // DeviceEventEmitter.addListener('transfer_result', (result) => {
-        //     EasyToast.show('交易成功：刷新交易记录');
         this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
-        //     if (result.success) {
-        //         // this.props.navigation.goBack();
-        //     } else {
-        //         EasyToast.show('交易失败：' + result.result);
-        //     }
-        // });
-        // alert('updateDefaultWallet: '+(this.props.defaultWallet.name));
         DeviceEventEmitter.addListener('eos_balance', (data) => {
             this.setEosBalance(data);
         });
@@ -85,19 +74,6 @@ class Info extends BaseComponent {
         }
     }
 
-    // _rightButtonClick() {
-    //     AnalyticsUtil.onEvent('To_change_into');
-    //     this._setModalVisible();
-    // }
-
-    // 显示/隐藏 modal  
-    _setModalVisible() {
-        let isShow = this.state.show;
-        this.setState({
-            show: !isShow,
-        });
-    }
-
     turnIn(coins) {
         const { navigate } = this.props.navigation;
         navigate('TurnIn', {});
@@ -114,13 +90,6 @@ class Info extends BaseComponent {
                 this.setEosBalance(data);
             }
         })
-    }
-
-    copy = () => {
-        let address = this.props.defaultWallet.account;
-        Clipboard.setString(address);
-        EasyToast.show("复制成功");
-        this._setModalVisible();
     }
     _openDetails(trade) {  
         const { navigate } = this.props.navigation;
@@ -191,30 +160,6 @@ class Info extends BaseComponent {
                         </View>
                     </Button>
                 </View>
-                {/* <View style={styles.pupuo}>
-                    <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                        <View style={styles.modalStyle}>
-                            <View style={styles.subView} >
-                                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                                    <Text style={styles.buttoncols}>×</Text>
-                                </Button>
-                                <Text style={styles.titleText}>您的{c.name}地址</Text>
-                                <Text style={styles.contentText}>{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
-                                <Text style={styles.prompttext}>提示：扫码同样可获取账户</Text>
-                                <View style={styles.codeout}>
-                                    <View style={styles.tab} />
-                                    <QRCode size={170}  value={'{\"contract\":\"eos\",\"toaccount\":\"' + this.props.defaultWallet.account + '\",\"symbol\":\"EOS\"}'} />
-                                    <View style={styles.tab} />
-                                </View>
-                                <Button onPress={() => { this.copy() }}>
-                                    <View style={styles.copyout}>
-                                        <Text style={styles.copytext}>复制账户</Text>
-                                    </View>
-                                </Button>
-                            </View>
-                        </View>
-                    </Modal>
-                </View> */}
             </View>
         )
     }
@@ -355,74 +300,6 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         fontSize: 18,
         color: UColor.fontColor
-    },
-
-    pupuo: {
-        // flex:1,  
-        backgroundColor: '#ECECF0',
-    },
-    // modal的样式  
-    modalStyle: { 
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        backgroundColor:  UColor.mask,
-    },
-    // modal上子View的样式  
-    subView: {
-        marginLeft: 10,
-        marginRight: 10,
-        backgroundColor: UColor.fontColor,
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        borderRadius: 10,
-        borderWidth: 0.5,
-        borderColor: UColor.baseline,
-    },
-     // 关闭按钮  
-    buttonView: {
-        alignItems: 'flex-end',
-    },
-    buttoncols: {
-        width: 30,
-        height: 30,
-        marginBottom: 0,
-        color: '#CBCBCB',
-        fontSize: 28,
-    },
-    // 标题  
-    titleText: {
-        marginBottom: 5,
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    // 内容  
-    contentText: {
-        marginLeft: 15,
-        fontSize: 12,
-        textAlign: 'center',
-    },
-    prompttext: {
-        color: '#F45353',
-        fontSize: 12,
-        marginLeft: 15,
-        textAlign: 'center',
-    },
-    codeout: {
-        margin: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: "row",
-    },
-    copyout: {
-        margin: 10,
-        height: 40,
-        borderRadius: 6,
-        backgroundColor: UColor.tintColor,
-        justifyContent: 'center',
-        alignItems: 'center'
     },
     copytext: {
         fontSize: 16, 

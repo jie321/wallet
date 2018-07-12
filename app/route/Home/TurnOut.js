@@ -103,6 +103,24 @@ class TurnOut extends BaseComponent {
             EasyToast.show('请输入转账金额');
             return;
         }
+        var value;
+        var floatbalance;
+        try {
+            value = parseFloat(this.state.amount);
+            floatbalance = parseFloat(this.state.balance);
+          } catch (error) {
+            value = 0;
+          }
+        if(value <= 0){
+            this.setState({ amount: "" })
+            EasyToast.show('请输入转账金额');
+            return ;
+        }
+        if(value > floatbalance){
+            this.setState({ amount: "" })
+            EasyToast.show('账户余额不足,请重输');
+            return ;
+        }
         this._setModalVisible();
     }
 

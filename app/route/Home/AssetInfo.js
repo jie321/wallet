@@ -36,55 +36,34 @@ class AssetInfo extends BaseComponent {
      constructor(props) {
         super(props);
         this.state = {
-            show: false,
             balance: this.props.navigation.state.params.asset.balance,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             type: '',
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
-            try{
+            try {
                 this.getBalance();
                 DeviceEventEmitter.emit('wallet_info');
-            }catch(e)
-            {}
+            } catch (error) {
+            }
         });
     }
 
     componentDidMount() {
         //加载地址数据
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"-1",  offset :"-100"}}); 
-
-        // DeviceEventEmitter.addListener('transfer_result', (result) => {
-        //     EasyToast.show('交易成功：刷新交易记录');
-        // this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
-        //     if (result.success) {
-        //         // this.props.navigation.goBack();
-        //     } else {
-        //         EasyToast.show('交易失败：' + result.result);
-        //     }
-        // });
-        // alert('updateDefaultWallet: '+(this.props.defaultWallet.name));
+        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
     }
     componentWillUnmount(){
         //结束页面前，资源释放操作
         super.componentWillUnmount();
         
       }
-    _rightButtonClick() {
-        AnalyticsUtil.onEvent('To_change_into');
-        this._setModalVisible();
+    turnInAsset(coins) {
+        const { navigate } = this.props.navigation;
+        navigate('TurnInAsset', {coins, balance: this.state.balance });
     }
-
-    // 显示/隐藏 modal  
-    _setModalVisible() {
-        let isShow = this.state.show;
-        this.setState({
-            show: !isShow,
-        });
-    }
-
-    turnOut(coins) {
+    turnOutAsset(coins) {
         const { navigate } = this.props.navigation;
         navigate('TurnOutAsset', { coins, balance: this.state.balance });
     }
@@ -108,17 +87,10 @@ class AssetInfo extends BaseComponent {
           })
     }
 
-    copy = () => {
-        let address = this.props.defaultWallet.account;
-        Clipboard.setString(address);
-        EasyToast.show("复制成功");
-        this._setModalVisible();
-    }
     _openDetails(trade) {  
         const { navigate } = this.props.navigation;
         navigate('TradeDetails', {trade});
     }
-
     transferTimeZone(blockTime){
         var timezone;
         try {
@@ -128,7 +100,22 @@ class AssetInfo extends BaseComponent {
         }
         return timezone;
     }
+    filterTradeRecord(DetailsData){
+        var record = [];
+        try {
+            var j = 0;
+            var name = this.props.navigation.state.params.asset.asset.name;
+            for(var i = 0; i < DetailsData.length;i++){
+                if(DetailsData[i].quantity.indexOf(name) > 0){
+                    record[j++] =  DetailsData[i];   
+                }
+            }
+        } catch (error) {
+            record = [];
+        }
+        return record;
 
+    }
     render() {
         const c = this.props.navigation.state.params.asset;
         return (
@@ -141,7 +128,7 @@ class AssetInfo extends BaseComponent {
                     <Text style={styles.latelytext}>最近交易记录</Text>
                     {this.props.DetailsData == null && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>}
                     <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.filterTradeRecord(this.props.DetailsData))} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
                         <Button onPress={this._openDetails.bind(this,rowData)}> 
@@ -149,7 +136,7 @@ class AssetInfo extends BaseComponent {
                                 <View style={styles.top}>
                                     <View style={styles.timequantity}>
                                         <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
-                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace("EOS", "")}</Text>
+                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
                                     </View>
                                     <View style={styles.typedescription}>
                                        {rowData.type == '转出' ? 
@@ -171,42 +158,18 @@ class AssetInfo extends BaseComponent {
                 </View>
 
                 <View style={styles.footer}>
-                    <Button onPress={this._rightButtonClick.bind(this)} style={{ flex: 1 }}>
+                    <Button onPress={this.turnInAsset.bind(this, c)} style={{ flex: 1 }}>
                         <View style={styles.shiftshiftturnout}>
                             <Image source={UImage.shift_to} style={styles.shiftturn} />
                             <Text style={styles.shifttoturnout}>转入</Text>
                         </View>
                     </Button>
-                    <Button onPress={this.turnOut.bind(this, c)} style={{ flex: 1 }}>
+                    <Button onPress={this.turnOutAsset.bind(this, c)} style={{ flex: 1 }}>
                         <View style={styles.shiftshiftturnout}>
                             <Image source={UImage.turn_out} style={styles.shiftturn} />
                             <Text style={styles.shifttoturnout}>转出</Text>
                         </View>
                     </Button>
-                </View>
-                <View style={styles.pupuo}>
-                    <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                        <View style={styles.modalStyle}>
-                            <View style={styles.subView} >
-                                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                                    <Text style={styles.buttoncols}>×</Text>
-                                </Button>
-                                <Text style={styles.titleText}>您的{c.name}地址</Text>
-                                <Text style={styles.contentText}>{this.props.defaultWallet == null ? '' : this.props.defaultWallet.account}</Text>
-                                <Text style={styles.prompttext}>提示：扫码同样可获取地址</Text>
-                                <View style={styles.codeout}>
-                                    <View style={styles.tab} />
-                                    <QRCode size={170}  value={'{\"contract\":\"eos\",\"toaccount\":\"' + this.props.defaultWallet.account + '\",\"symbol\":\"EOS\"}'} />
-                                    <View style={styles.tab} />
-                                </View>
-                                <Button onPress={() => { this.copy() }}>
-                                    <View style={styles.copyout}>
-                                        <Text style={styles.copytext}>复制地址</Text>
-                                    </View>
-                                </Button>
-                            </View>
-                        </View>
-                    </Modal>
                 </View>
             </View>
         )
@@ -251,20 +214,20 @@ const styles = StyleSheet.create({
         margin: 5
     },
     nothave: {
-        height: 90,
+        height: Platform.OS == 'ios' ? 84.5 : 65,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: "center",
-        padding: 10,
+        paddingHorizontal: 20,
         borderRadius: 5,
         margin: 5,
     },
     row: {
-        height: 90,
+        height: Platform.OS == 'ios' ? 84.5 : 65,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
-        padding: 10,
+        paddingHorizontal: 20,
         justifyContent: "space-between",
         borderRadius: 5,
         margin: 5,
@@ -315,7 +278,7 @@ const styles = StyleSheet.create({
     Ionicout: {
         width: 30,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-end'
     },
     Ionico: {
         color: UColor.arrow,   
@@ -348,74 +311,6 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         fontSize: 18,
         color: UColor.fontColor
-    },
-
-    pupuo: {
-        // flex:1,  
-        backgroundColor: '#ECECF0',
-    },
-    // modal的样式  
-    modalStyle: { 
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        backgroundColor:  UColor.mask,
-    },
-    // modal上子View的样式  
-    subView: {
-        marginLeft: 10,
-        marginRight: 10,
-        backgroundColor: UColor.fontColor,
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        borderRadius: 10,
-        borderWidth: 0.5,
-        borderColor: UColor.baseline,
-    },
-     // 关闭按钮  
-    buttonView: {
-        alignItems: 'flex-end',
-    },
-    buttoncols: {
-        width: 30,
-        height: 30,
-        marginBottom: 0,
-        color: '#CBCBCB',
-        fontSize: 28,
-    },
-    // 标题  
-    titleText: {
-        marginBottom: 5,
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    // 内容  
-    contentText: {
-        marginLeft: 15,
-        fontSize: 12,
-        textAlign: 'center',
-    },
-    prompttext: {
-        color: '#F45353',
-        fontSize: 12,
-        marginLeft: 15,
-        textAlign: 'center',
-    },
-    codeout: {
-        margin: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: "row",
-    },
-    copyout: {
-        margin: 10,
-        height: 40,
-        borderRadius: 6,
-        backgroundColor: UColor.tintColor,
-        justifyContent: 'center',
-        alignItems: 'center'
     },
     copytext: {
         fontSize: 16, 

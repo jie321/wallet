@@ -32,14 +32,13 @@ const maxHeight = Dimensions.get("window").height;
 import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from "../../components/Toast";
 import { EasyLoading } from "../../components/Loading";
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require("dismissKeyboard");
 @connect(({ wallet }) => ({ ...wallet }))
-class TurnIn extends BaseComponent {
+class TurnInAsset extends BaseComponent {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
     return {
@@ -69,8 +68,9 @@ class TurnIn extends BaseComponent {
       type: "wallet/getDefaultWallet",
       callback: data => {}
     });
-    // var params = this.props.navigation.state.params.coins;
+    var params = this.props.navigation.state.params.coins;
     this.setState({
+      symbol:  params.asset.name,
       toAccount: this.props.defaultWallet.account,
     });
   }
@@ -91,6 +91,7 @@ class TurnIn extends BaseComponent {
     super(props);
     this.props.navigation.setParams({ onPress: this._rightTopClick });
     this.state = {
+      symbol: "",
       toAccount: "",
       amount: "",
       memo: "",
@@ -105,7 +106,7 @@ class TurnIn extends BaseComponent {
         this.props.defaultWallet.account +
         '","amount":"' +
         this.state.amount +
-        '","symbol":"EOS"}'
+        '","symbol":"' + this.state.symbol +'"}'
     );
   };
 
@@ -132,7 +133,26 @@ class TurnIn extends BaseComponent {
     }
     return obj;
   }
+  getQRCode()
+  { 
+    // var  qrcode={'eos:' + this.props.defaultWallet.account + '?amount=' + ((this.state.amount == "")?'0':this.state.amount) +'&token=EOS'}
+    var lowerstr;
+    var upperstr;
 
+    if(this.state.symbol == null || this.state.symbol == ""){
+        lowerstr = "";
+        upperstr = "";
+    }else{
+        lowerstr = this.state.symbol.toLowerCase();
+        upperstr = this.state.symbol.toUpperCase();
+    }
+
+    var qrcode = lowerstr +':' + this.props.defaultWallet.account + 
+                     '?amount=' + ((this.state.amount == "")?'0':this.state.amount) + 
+                     '&token=' + upperstr;
+  
+    return qrcode;
+  }
   clearFoucs = () => {
     this._raccount.blur();
     this._lpass.blur();
@@ -162,13 +182,7 @@ class TurnIn extends BaseComponent {
                     <QRCode
                       size={170}
                       style={{ width: 170 }}
-                      value={
-                        'eos:' +
-                        this.props.defaultWallet.account +
-                        '?amount=' +
-                        ((this.state.amount == "")?'0':this.state.amount) +
-                        '&token=EOS'
-                      }
+                      value = {this.getQRCode()}
                     />
                   </View>
                 </View>
@@ -191,7 +205,7 @@ class TurnIn extends BaseComponent {
                     secureTextEntry={false}
                     keyboardType="numeric"
                   />
-                  <Text style={styles.tokenText}>EOS</Text>
+                  <Text style={styles.tokenText}>{this.state.symbol}</Text>
                 </View>
                 <Button onPress={this.copy.bind()} style={styles.btnnextstep}>
                   <View style={styles.nextstep}>
@@ -371,4 +385,4 @@ const styles = StyleSheet.create({
     color: UColor.fontColor
   }
 });
-export default TurnIn;
+export default TurnInAsset;

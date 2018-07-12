@@ -329,6 +329,18 @@ class Bvote extends BaseComponent {
           EasyToast.show('请输入购买金额');
           return;
       }
+      var tmp;
+      try {
+           tmp = parseFloat(this.state.buyRamAmount);
+        } catch (error) {
+            tmp = 0;
+        }
+      if(tmp <= 0){
+          this.setState({ buyRamAmount: "" })
+          EasyToast.show('请输入购买金额');
+          return ;
+      }
+
       this. dismissKeyboardClick();
           const view =
           <View style={styles.passoutsource}>
@@ -382,6 +394,18 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入出售内存kb数量');
             return;
         }
+        var tmp;
+      try {
+           tmp = parseFloat(this.state.sellRamBytes);
+        } catch (error) {
+            tmp = 0;
+        }
+      if(tmp <= 0){
+          this.setState({ sellRamBytes: "" })
+          EasyToast.show('请输入出售内存kb数量');
+          return ;
+      }
+
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
@@ -434,6 +458,18 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入抵押的EOS数量');
             return;
         }
+        var tmp;
+        try {
+            tmp = parseFloat(this.state.Cdelegateb);
+            } catch (error) {
+                tmp = 0;
+            }
+        if(tmp <= 0){
+            this.setState({ Cdelegateb: "" })
+            EasyToast.show('请输入抵押的EOS数量');
+            return ;
+        }
+
         this. dismissKeyboardClick();
         const view =
         <View style={styles.passoutsource}>
@@ -488,6 +524,18 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入赎回的EOS数量');
             return;
         }
+        var tmp;
+        try {
+             tmp = parseFloat(this.state.Cundelegateb);
+          } catch (error) {
+              tmp = 0;
+          }
+        if(tmp <= 0){
+            this.setState({ Cundelegateb: "" })
+            EasyToast.show('请输入赎回的EOS数量');
+            return ;
+        }
+
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>

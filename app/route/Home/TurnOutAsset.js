@@ -24,7 +24,6 @@ class TurnOutAsset extends BaseComponent {
         const params = navigation.state.params || {};
         return {
             headerTitle: '转出' + params.coins.asset.name,
-            // headerTitle: '转出EOS',
             headerStyle: {
                 paddingTop:Platform.OS == 'ios' ? 30 : 20,
                 backgroundColor: UColor.mainColor,
@@ -53,7 +52,10 @@ class TurnOutAsset extends BaseComponent {
         })
         DeviceEventEmitter.addListener('scan_result', (data) => {
             this.setState({toAccount:data.toaccount})
-          });
+            if(data.amount){
+                this.setState({amount:data.amount})
+            }
+        });
     }
 
     componentWillUnmount(){
@@ -84,6 +86,33 @@ class TurnOutAsset extends BaseComponent {
 
     _rightButtonClick() {
         //   console.log('右侧按钮点击了');  
+        if (this.state.toAccount == null || this.state.toAccount == "") {
+            EasyToast.show('请输入收款账号');
+            return;  
+        }
+        
+        if (this.state.amount == null || this.state.amount == "") {
+            EasyToast.show('请输入转账金额');
+            return;
+        }
+        var value;
+        var floatbalance;
+        try {
+            value = parseFloat(this.state.amount);
+            floatbalance = parseFloat(this.state.balance);
+          } catch (error) {
+            value = 0;
+          }
+        if(value <= 0){
+            this.setState({ amount: "" })
+            EasyToast.show('请输入转账金额');
+            return ;
+        }
+        if(value > floatbalance){
+            this.setState({ amount: "" })
+            EasyToast.show('账户余额不足,请重输');
+            return ;
+        }
         this._setModalVisible();
     }
 
@@ -104,7 +133,7 @@ class TurnOutAsset extends BaseComponent {
             amount: '',
             memo: '',
             defaultWallet: null,
-            balance: 0,
+            balance: '0',
             name: '',
         };
     }
@@ -114,24 +143,6 @@ class TurnOutAsset extends BaseComponent {
         navigate('Thin', { coinType });
     }
     inputPwd = () => {
-
-        if (this.state.toAccount == "") {
-            EasyToast.show('请输入收款账号');
-            return;
-        }
-        if (this.state.toAccount.length > 12) {
-            EasyToast.show('请输入正确的收款账号');
-            return;
-        }
-        if (this.state.amount == "") {
-            EasyToast.show('请输入转账数量');
-            return;
-        }
-
-        // if (this.state.amount > this.state.balance) {
-        //     EasyToast.show('转账金额超出账户余额');
-        //     return;
-        // }
 
         this._setModalVisible();
 
@@ -191,13 +202,59 @@ class TurnOutAsset extends BaseComponent {
         }
     }
 
-    chkPrice(obj) {
-        obj = obj.replace(/[^\d.]/g, "");
-        obj = obj.replace(/^\./g, "");
-        obj = obj.replace(/\.{2,}/g, ".");
-        obj = obj.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+    chkAccount(obj) {
+        var charmap = '.12345abcdefghijklmnopqrstuvwxyz';
+        for(var i = 0 ; i < obj.length;i++){
+            var tmp = obj.charAt(i);
+            for(var j = 0;j < charmap.length; j++){
+                if(tmp == charmap.charAt(j)){
+                    break;
+                }
+            }
+            if(j >= charmap.length){
+                //非法字符
+                obj = obj.replace(tmp, ""); 
+                EasyToast.show('请输入正确的账号');
+            }
+        }
+        if (obj == this.props.defaultWallet.account) {
+            EasyToast.show('收款账户和转出账户不能相同，请重输');
+            obj = "";
+        }
         return obj;
     }
+  
+    chkPrice(obj) {
+        obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
+        obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
+        obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
+        obj = obj
+          .replace(".", "$#$")
+          .replace(/\./g, "")
+          .replace("$#$", ".");
+        obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
+        var max = 9999999999.9999;  // 100亿 -1
+        var min = 0.0000;
+        var value = 0.0000;
+        var floatbalance;
+        try {
+          value = parseFloat(obj);
+          floatbalance = parseFloat(this.state.balance);
+        } catch (error) {
+          value = 0.0000;
+          floatbalance = 0.0000;
+        }
+        if(value < min|| value > max){
+          EasyToast.show("输入错误");
+          obj = "";
+        }
+        if (value > floatbalance) {
+            EasyToast.show('账户余额不足,请重输');
+            obj = "";
+        }
+
+        return obj;
+      }
 
     clearFoucs = () => {
         this._raccount.blur();
@@ -230,8 +287,8 @@ class TurnOutAsset extends BaseComponent {
                                     <View style={styles.accountoue} >
                                         <TextInput ref={(ref) => this._raccount = ref}  value={this.state.toAccount} returnKeyType="next"   
                                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}      
-                                            placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  
-                                            onChangeText={(toAccount) => this.setState({ toAccount })} 
+                                            placeholder="收款人账号" underlineColorAndroid="transparent" keyboardType="default"  maxLength = {12}
+                                            onChangeText={(toAccount) => this.setState({ toAccount: this.chkAccount(toAccount)})} 
                                         />
                                     <View style={styles.scanning}>
                                             <Button onPress={() => this.scan()}>                                  
@@ -244,7 +301,7 @@ class TurnOutAsset extends BaseComponent {
                                 <View style={styles.textinptoue} >
                                     <TextInput  ref={(ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
                                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                                        placeholder="转账金额"  underlineColorAndroid="transparent"   keyboardType="numeric"
+                                        placeholder="转账金额"  underlineColorAndroid="transparent"   keyboardType="numeric"   maxLength = {15}
                                         onChangeText={(amount) => this.setState({ amount: this.chkPrice(amount) })}
                                         />
                                 </View>
@@ -268,23 +325,56 @@ class TurnOutAsset extends BaseComponent {
                 </ScrollView>
             </KeyboardAvoidingView>
                 <View style={styles.pupuo}>
-                    <Modal animationType='none' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                        <View style={styles.modalStyle}>
-                            <View style={styles.subView} >
-                                <Button style={styles.buttonView} onPress={this._setModalVisible.bind(this)}>
-                                    <Text style={styles.buttontext}>×</Text>
-                                </Button>
-                                {/* <Text style={styles.titleText}>转出 {c.name}</Text> */}
-                                <Text style={styles.contentText}>MEMO信息：{this.state.memo}</Text>
-                                <Text style={styles.contentText}>转出地址：{this.state.toAccount}</Text>
-                                <Text style={styles.contentText}> 数量：{this.state.amount}</Text>
-                                <Button onPress={() => { this.inputPwd() }}>
-                                    <View style={styles.btnoutsource}>
-                                        <Text style={styles.btntext}>确认转出</Text>
+                    <Modal animationType={'slide'} transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+                        <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
+                        <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
+                        
+                                <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
+                                    <Text style={{flex: 1,paddingVertical: 5,marginLeft: 135,fontSize: 18,fontWeight: 'bold',color:'#4d4d4d'}}>订单详情</Text>
+                                    <Button  onPress={this._setModalVisible.bind(this)}>
+                                        <Text style={styles.buttontext}>×</Text>
+                                    </Button>
+                                </View>
+
+                                <View style={styles.separationline} >
+                                    <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
+                                    {/* <View style={styles.rowInfo}> */}
+                                        <Text style={{fontSize: 26,paddingVertical: 15, lineHeight: 10,color:'#000000',textAlign: 'center',}}>{this.state.amount} </Text>
+                                        <Text style={{fontSize: 13,paddingVertical: 10, lineHeight: 10,color:'#000000',textAlign: 'center',}}> {c.asset.name}</Text>
                                     </View>
-                                </Button>
-                            </View>
+                                </View>
+
+                                <View style={{flex: 1, paddingLeft: 10, paddingRight:10,paddingHorizontal: 20}}>
+
+                                    <View style={styles.separationline} >
+                                        <View style={styles.rowInfo}>
+                                            <Text style={styles.contentText}>收款账户：</Text>
+                                            <Text style={styles.contentText}>{this.state.toAccount}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.separationline} >
+                                        <View style={styles.rowInfo}>
+                                            <Text style={styles.contentText}>转出账户：</Text>
+                                            <Text style={styles.contentText}>{this.props.defaultWallet.account}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.separationline} >
+                                        <View style={styles.rowInfo}>
+                                            <Text style={styles.contentText}>备注：</Text> 
+                                            <Text style={styles.contentText}>{this.state.memo}</Text> 
+                                        </View>
+                                    </View>
+
+                                    <Button onPress={() => { this.inputPwd() }}>
+                                        <View style={styles.btnoutsource}>
+                                            <Text style={styles.btntext}>确认</Text>
+                                        </View>
+                                    </Button>
+                                </View>
                         </View>
+                        </TouchableOpacity>
                     </Modal>
                 </View>
         </View>
@@ -376,8 +466,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     buttontext: {
-        width: 30,
-        height: 30,
+        // width: 30,
+        // height: 30,
+        // marginTop:1,
+        // marginRight: 1,
+        // paddingVertical: 12, 
+        lineHeight: 25,
         color: '#CBCBCB',
         marginBottom: 0,
         fontSize: 28,
@@ -391,16 +485,34 @@ const styles = StyleSheet.create({
     },
     // 内容  
     contentText: {
-        marginLeft: 15,
-        marginRight: 15,
-        lineHeight: 30,
-        fontSize: 14,
+        marginLeft: 10,
+        marginRight: 10,
+        lineHeight: 10,
+        paddingVertical: 15,
+        fontSize: 18,
         textAlign: 'left',
-
+        color: '#4D4D4D',
     },
+
+    rowInfo: {
+        flexDirection: "row",
+        padding: 15,
+        justifyContent: "space-between",
+      },
+
+    //转帐信息提示分隔线
+    separationline: {
+        paddingLeft: 10,
+        height: 50,
+        marginBottom: 10,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#e5e5e5',
+        justifyContent: 'center',
+    },
+
     // 按钮  
     btnoutsource: {
-        margin: 10,
+        margin: 15,
         height: 40,
         borderRadius: 6,
         backgroundColor: UColor.tintColor,

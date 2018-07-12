@@ -179,6 +179,18 @@ class Network extends BaseComponent {
             EasyToast.show('请输入抵押的EOS数量');
             return;
         }
+        var tmp;
+      try {
+           tmp = parseFloat(this.state.delegatebw);
+        } catch (error) {
+            tmp = 0;
+        }
+      if(tmp <= 0){
+          this.setState({ delegatebw: "" })
+          EasyToast.show('请输入抵押的EOS数量');
+          return;
+      }
+
         this. dismissKeyboardClick();
         const view =
         <View style={styles.passoutsource}>
@@ -248,6 +260,18 @@ class Network extends BaseComponent {
             EasyToast.show('请输入赎回的EOS数量');
             return;
         }
+        var tmp;
+        try {
+             tmp = parseFloat(this.state.undelegatebw);
+          } catch (error) {
+              tmp = 0;
+          }
+        if(tmp <= 0){
+            this.setState({ undelegatebw: "" })
+            EasyToast.show('请输入赎回的EOS数量');
+            return ;
+        }
+
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
