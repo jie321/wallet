@@ -165,8 +165,8 @@ class ImportEosKey extends BaseComponent {
       EasyToast.show('请输入确认密码');
       return;
     }
-    if (this.state.walletpwd.length < Constants.PWD_MIN_LENGTH && this.state.reWalletpwd.length < Constants.PWD_MIN_LENGTH) {
-      EasyToast.show('密码长度至少4位,请重输');
+    if (this.state.walletpwd.length < 8 && this.state.reWalletpwd.length < 8) {
+      EasyToast.show('密码长度至少8位,请重输');
       return;
     }
     if (this.state.walletpwd != this.state.reWalletpwd) {
