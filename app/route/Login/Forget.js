@@ -52,8 +52,8 @@ class Forget extends BaseComponent {
       EasyToast.show('请输入验证码');
       return;
     }
-    if(this.state.password=="" || this.state.password.length < 8){
-      EasyToast.show('请输入密码');
+    if(this.state.password=="" || this.state.password.length < Constants.PWD_MIN_LENGTH){
+      EasyToast.show('密码长度至少4位,请重输');
       return;
     }
     if(this.state.phone.length!=11){
@@ -220,7 +220,7 @@ class Forget extends BaseComponent {
                       <Text style={styles.texttitle}> 新密码</Text>
                       <TextInput ref={(ref) => this._rpass = ref}  value={this.state.password} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                        placeholder="设置新的登录密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
+                        placeholder="设置新的登录密码"  underlineColorAndroid="transparent" secureTextEntry={true} maxLength={Constants.PWD_MAX_LENGTH}
                         onChangeText={(password) => this.setState({password})}
                       />
                   </View>

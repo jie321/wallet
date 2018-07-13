@@ -81,8 +81,8 @@ class Login extends BaseComponent {
       EasyToast.show('请输入手机号');
       return;
     }
-    if (this.state.loginPwd == "" || this.state.loginPwd.length < 8) {
-      EasyToast.show('请输入密码');
+    if (this.state.loginPwd == "" || this.state.loginPwd.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('密码长度至少4位,请重输');
       return;
     }
     let img = Constants.rootaddr+kapimg + this.state.loginPhone + "?v=" + Math.ceil(Math.random() * 100000);
@@ -125,8 +125,8 @@ class Login extends BaseComponent {
       EasyToast.show('请输入手机号');
       return;
     }
-    if (this.state.loginPwd == "" || this.state.loginPwd.length < 8) {
-      EasyToast.show('请输入密码');
+    if (this.state.loginPwd == "" || this.state.loginPwd.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('密码长度至少4位,请重输');
       return;
     }
 
@@ -154,8 +154,8 @@ class Login extends BaseComponent {
       EasyToast.show('请输入验证码');
       return;
     }
-    if (this.state.password == "" || this.state.password.length < 8) {
-      EasyToast.show('请输入密码');
+    if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('密码长度至少4位,请重输');
       return;
     }
     if (this.state.phone.length != 11) {
@@ -366,7 +366,7 @@ class Login extends BaseComponent {
               <Text style={styles.inptitle}> 密码</Text>
               <TextInput ref={(ref) => this._rpass = ref} value={this.state.password} returnKeyType="next" 
                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                placeholder="输入密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
+                placeholder="输入密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={Constants.PWD_MAX_LENGTH}
                 onChangeText={(password) => this.setState({ password })}/>
             </View>
             <View style={styles.separate}></View>

@@ -10,6 +10,7 @@ import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
 import BaseComponent from "../../components/BaseComponent";
+import Constants from '../../utils/Constants'
 
 const pages = [];
 
@@ -146,12 +147,12 @@ class Coins extends BaseComponent {
       EasyToast.show('请输入钱包名称');
       return;
     }
-    if (this.state.walletpwd == "" || this.state.walletpwd.length < 8) {
-      EasyToast.show('请输入钱包密码');
+    if (this.state.walletpwd == "" || this.state.walletpwd.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('钱包密码至少4位,请重输');
       return;
     }
-    if (this.state.reWalletpwd == "" || this.state.reWalletpwd.length < 8) {
-      EasyToast.show('请输入钱包确认密码');
+    if (this.state.reWalletpwd == "" || this.state.reWalletpwd.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('钱包密码至少4位,请重输');
       return;
     }
     if (this.state.walletpwd != this.state.reWalletpwd) {
@@ -215,12 +216,12 @@ class Coins extends BaseComponent {
       EasyToast.show('请输入active私钥');
       return;
     }
-    if (this.state.password == '' || this.state.password.length < 8) {
-      EasyToast.show('请输入密码');
+    if (this.state.password == '' || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('密码长度至少4位,请重输');
       return;
     }
-    if (this.state.reWalletpwd == ''|| this.state.password.length < 8) {
-      EasyToast.show('请输入确认密码');
+    if (this.state.reWalletpwd == ''|| this.state.password.length < Constants.PWD_MIN_LENGTH) {
+      EasyToast.show('密码长度至少4位,请重输');
       return;
     }
 
@@ -296,7 +297,7 @@ class Coins extends BaseComponent {
                   value={this.state.walletpwd}
                   onChangeText={(walletpwd) => this.setState({ walletpwd })}
                   returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10 }} placeholderTextColor="#8696B0"
-                  placeholder="密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
+                  placeholder="密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={Constants.PWD_MAX_LENGTH}
                 />
               </View>
               <View style={{ paddingTop: 20, height: 60, backgroundColor: '#586888', borderBottomWidth:0.5,borderBottomColor: '#43536D',}} >
@@ -304,7 +305,7 @@ class Coins extends BaseComponent {
                   value={this.state.reWalletpwd}
                   onChangeText={(reWalletpwd) => this.setState({ reWalletpwd })}
                   returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#8696B0', fontSize: 15, height: 40, paddingLeft: 10 }} placeholderTextColor="#8696B0"
-                  placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={18}
+                  placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} maxLength={Constants.PWD_MAX_LENGTH}
                 />
               </View>
             </View>

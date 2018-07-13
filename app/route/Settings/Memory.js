@@ -12,6 +12,7 @@ import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
+import Constants from '../../utils/Constants'
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 var AES = require("crypto-js/aes");
@@ -221,15 +222,15 @@ class Memory extends BaseComponent {
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
+                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}></Text>  
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
     
-            if (this.state.password == "" || this.state.password.length < 8) {
-                EasyToast.show('请输入密码');
+            if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+                EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
 
@@ -302,18 +303,17 @@ class Memory extends BaseComponent {
             const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                    selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
+                    selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable" style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}></Text>  
             </View>
     
             EasyDialog.show("请输入密码", view, "确认", "取消", () => {
     
-            if (this.state.password == "" || this.state.password.length < 8) {
-                EasyToast.show('请输入密码');
+            if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+                EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
-
 
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
