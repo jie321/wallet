@@ -106,19 +106,19 @@ export default {
      *getBalance({payload, callback}, {call, put}){
         try{
             // alert("------ " + JSON.stringify(payload));
-            var myAssets = yield call(store.get, 'myAssets');
-            for(let i in myAssets){
-                let item = myAssets[i];
+            // var myAssets = yield call(store.get, 'myAssets');
+            for(let i in payload.myAssets){
+                let item = payload.myAssets[i];
                 const resp = yield call(Request.request, getBalance, 'post', {contract: item.asset.contractAccount, account: payload.accountName, symbol: item.asset.name});
                 // alert("------ " + JSON.stringify(resp));
                 if(resp && resp.code=='0'){
                     item.balance = resp.data;
                 }
             }
-            yield call(store.save, 'myAssets', myAssets);
-            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+            yield call(store.save, 'myAssets', payload.myAssets);
+            yield put({ type: 'updateMyAssets', payload: {myAssets: payload.myAssets} });
             if(callback){
-                callback(myAssets);
+                callback(payload.myAssets);
             }
         }catch(e){
             EasyToast.show('网络繁忙,请稍后!');
@@ -139,7 +139,7 @@ export default {
                     yield call(store.save, 'myAssets', myAssets);
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
                     if(callback) callback(myAssets);
-                    // DeviceEventEmitter.emit('updateMyAssets', payload);
+                    DeviceEventEmitter.emit('updateMyAssets', payload);
                     return;
                 }
             }
@@ -160,7 +160,7 @@ export default {
         yield call(store.save, 'myAssets', myAssets);
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         if(callback) callback(myAssets);
-        // DeviceEventEmitter.emit('updateMyAssets', payload);
+        DeviceEventEmitter.emit('updateMyAssets', payload);
      },
     *submitAssetInfoToServer({payload, callback},{call,put}){
         try{

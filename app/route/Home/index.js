@@ -52,15 +52,15 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.getBalance();
-    this.getIncrease();
     //加载地址数据
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-      this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {
-        this.getBalance();
-      }});
+      this.getDefaultWalletEosBalance();
+      this.getAllWalletEosBalance();
+      this.getAssetBalance();    
+      this.getIncrease();
     }});
+    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {}});
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
       if(invalidWalletList != null){
@@ -81,11 +81,16 @@ class Home extends React.Component {
       },
     ).start();               //开始
     DeviceEventEmitter.addListener('wallet_info', (data) => {
-      this.getBalance();
+      this.getDefaultWalletEosBalance();
+      this.getAllWalletEosBalance();
+      this.getAssetBalance();    
     });
     DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
-      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-      this.getBalance();
+      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+        this.getDefaultWalletEosBalance();
+        this.getAllWalletEosBalance();
+        this.getAssetBalance();  
+      } });
     });
 
     this.listener = RCTDeviceEventEmitter.addListener('createWallet',(value)=>{  
@@ -100,15 +105,16 @@ class Home extends React.Component {
     });
 
     DeviceEventEmitter.addListener('eos_balance', (data) => {
-      if(this.props.list == null || this.props.list.length == 0){
+      if(this.props.walletList == null || this.props.walletList.length == 0){
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
       }
       this.calTotalBalance();
     });
 
-    // DeviceEventEmitter.addListener('asset_balance', (data) => {
-      // this.setAssetBalance(data);
-    // });
+    DeviceEventEmitter.addListener('updateMyAssets', (data) => {
+      this.getAssetBalance();
+    });
+
   }
 
   componentWillUnmount(){
@@ -156,7 +162,7 @@ class Home extends React.Component {
     } });
   }
   
-  getBalance() { 
+  getDefaultWalletEosBalance() { 
     if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
     }
@@ -166,6 +172,14 @@ class Home extends React.Component {
       EasyLoading.show();
     }
 
+    this.props.dispatch({
+      type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: () => {
+        EasyLoading.dismis();
+      }
+    });
+  }
+
+  getAllWalletEosBalance(){
     if(this.props.walletList == null){
       return;
     }
@@ -178,18 +192,18 @@ class Home extends React.Component {
   
       }
     }
+  }
 
+  getAssetBalance(){
     if(this.props.myAssets == null){
       return;
     }
 
-    this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name}, callback: () => {
+    this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
       this.calTotalBalance();
       EasyLoading.dismis();
     }});
-
   }
-
 
   onRequestClose() {
     this.setState({
@@ -400,6 +414,7 @@ class Home extends React.Component {
     }
     return ret;
   }
+
   render() {
   if(this.props.guide){
     return (

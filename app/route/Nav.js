@@ -316,7 +316,7 @@ const Nav = StackNavigator(
 
 let routeLength = 0;
 
-@connect(({ banner, newsType, common, login, wallet, asset }) => ({ ...banner, ...newsType, ...common, ...login,  ...wallet, ...asset }))
+@connect(({ banner, newsType, common, login, wallet, assets }) => ({ ...banner, ...newsType, ...common, ...login,  ...wallet, ...assets }))
 class Route extends React.Component {
 
   state = {
@@ -357,6 +357,9 @@ class Route extends React.Component {
       }
       });
     } });
+
+    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {}});
+
   }
  
   componentDidMount() {
