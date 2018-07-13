@@ -158,46 +158,207 @@ class Bvote extends BaseComponent {
         // EasyToast.show('获取余额失败：' + data.msg);
       }
   }
+    getMemory(pos){
+        var tmp = '';
+        if(pos == 'column_One'){
+            try {
+                tmp = (this.props.Resources.ram_usage/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed();
+            } catch (error) {
+                tmp = 100;
+            }
+        }else if(pos == 'column_Two'){
+            try {
+                tmp = ((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage)/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed();
+            } catch (error) {
+                tmp = 100;                
+            }    
+        }else if(pos == 'column_Three'){
+            try {
+                tmp = (100-this.state.used_Percentage)+'%';
+            } catch (error) {
+                tmp = '0' + '%';     
+            }
+        }else if(pos == 'ContrastOne'){
+            try {
+                tmp = (this.props.Resources.ram_usage / 1024).toFixed(2)+'kb/'+(this.props.Resources.total_resources.ram_bytes / 1024).toFixed(2)+'kb';
+            } catch (error) {
+                tmp = '0.00'+'kb/'+ '0.00'+'kb';              
+            }
+        }else if(pos == 'ContrastTwo'){
+            try {
+                tmp = ((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage) / 1024).toFixed(2)+'kb/'+(this.props.Resources.total_resources.ram_bytes / 1024).toFixed(2)+'kb';
+            } catch (error) {
+                tmp = '0.00'+'kb/'+ '0.00'+'kb';
+            }
+        }else if(pos == 'ContrastThree'){
+            try {
+                tmp = this.state.used+'GB/'+this.state.total+'GB';
+            } catch (error) {
+                tmp = '0.00'+'GB/'+ '0.00' +'GB';                
+            }
+        }else if(pos == 'percentageOne'){
+            try {
+                tmp = '占用('+(this.props.Resources.ram_usage/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed()+'%)';
+            } catch (error) {
+                tmp = '占用('+'0.00'+'%)';                
+            }
+        }else if(pos == 'percentageTwo'){
+            try {
+                tmp = '可用('+((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage)/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed()+'%)';
+            } catch (error) {
+                tmp = '可用('+'0.00'+'%)';
+            }
+        }else if(pos == 'percentageThree'){
 
+        }
+        return tmp;
+    }
+    getCalculation(pos){
+        var tmp = '';
+        if(pos == 'column_One'){
+            try {
+                tmp = (this.props.Resources.cpu_limit.available/(this.props.Resources.cpu_limit.used+this.props.Resources.cpu_limit.available)*10000/100).toFixed();
+            } catch (error) {
+                tmp = 100;                
+            }
+        }else if(pos == 'column_Two'){
+            try {
+                tmp = ((this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")/this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""))*10000/100).toFixed();
+            } catch (error) {
+                tmp = 100;                
+            }
+        }else if(pos == 'column_Three'){
+            try {
+                var time = this.props.Resources.refund_request.request_time.replace("T", " ");
+                tmp = this.cpuPercentageTime(time);
+            } catch (error) {
+                tmp = '0%';                
+            }
+        }else if(pos == 'ContrastOne'){
+            try {
+                tmp = (this.props.Resources.cpu_limit.available / 1000).toFixed(2)+'/'+((this.props.Resources.cpu_limit.used+this.props.Resources.cpu_limit.available)/1000).toFixed(2);
+            } catch (error) {
+                tmp = '0.00'+'/'+'0.00';            
+            }
+        }else if(pos == 'ContrastTwo'){
+            try {
+                tmp = this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")+'/'+this.props.Resources.total_resources.cpu_weight.replace(" EOS", "");
+            } catch (error) {
+                tmp = '0.00'+'/'+ '0.00';              
+            }
+        }else if(pos == 'ContrastThree'){
+            try {
+                var time = this.props.Resources.refund_request.request_time.replace("T", " ");
+                tmp = this.transferTimeZone(time);
+            } catch (error) {
+                tmp = '';
+            }
+        }else if(pos == 'percentageOne'){
+        
+        }else if(pos == 'percentageTwo'){
+
+        }else if(pos == 'percentageThree'){
+            try {
+                tmp = this.props.Resources.refund_request.cpu_amount.replace("EOS", "");
+            } catch (error) {
+                tmp = '0.00';
+            }
+        }
+        return tmp;
+    }
+    getNetwork(pos){
+        var tmp = '';
+        if(pos == 'column_One'){
+            try {
+                tmp = (this.props.Resources.net_limit.available/(this.props.Resources.net_limit.used+this.props.Resources.net_limit.available)*10000/100).toFixed();
+            } catch (error) {
+                tmp = 100;
+            }
+        }else if(pos == 'column_Two'){
+           try {
+               tmp = ((this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")/this.props.Resources.total_resources.net_weight.replace(" EOS", ""))*10000/100).toFixed();
+           } catch (error) {
+               tmp = 100;               
+           }
+
+        }else if(pos == 'column_Three'){
+            try {
+                var time = this.props.Resources.refund_request.request_time.replace("T", " ");    
+                tmp = this.cpuPercentageTime(time);
+            } catch (error) {
+                tmp = '0%';                
+            }
+        }else if(pos == 'ContrastOne'){
+            try {
+                tmp = (this.props.Resources.net_limit.available / 1024).toFixed(2)+'/'+((this.props.Resources.net_limit.used+this.props.Resources.net_limit.available)/1024).toFixed(2);
+            } catch (error) {
+                tmp = '0.00'+'/'+'0.00';                
+            }
+        }else if(pos == 'ContrastTwo'){
+            try {
+                tmp = this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")+'/'+this.props.Resources.total_resources.net_weight.replace("EOS", "");
+            } catch (error) {
+                tmp = '0.00'+'/'+ '0.00';
+            }
+        }else if(pos == 'ContrastThree'){
+            try {
+                var time = this.props.Resources.refund_request.request_time.replace("T", " ");
+                tmp = this.transferTimeZone(time);
+            } catch (error) {
+                time = '';
+            }
+        }else if(pos == 'percentageOne'){
+        
+        }else if(pos == 'percentageTwo'){
+
+        }else if(pos == 'percentageThree'){
+            try {
+                tmp = this.props.Resources.refund_request.net_amount.replace("EOS", "");
+            } catch (error) {
+                tmp = "0.00";                
+            }
+        }
+        return tmp;
+    }
     goPage(current) {
         if (current == 'isMemory'){
             this.setState({ 
                 tetletext: '内存概况',
-                column_One: (100-(this.props.Resources.ram_usage/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed())+'%',
-                column_Two: (100-((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage)/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed())+'%',
-                column_Three: (100-this.state.used_Percentage)+'%',
-                ContrastOne: (this.props.Resources.ram_usage / 1024).toFixed(2)+'kb/'+(this.props.Resources.total_resources.ram_bytes / 1024).toFixed(2)+'kb',
-                ContrastTwo: ((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage) / 1024).toFixed(2)+'kb/'+(this.props.Resources.total_resources.ram_bytes / 1024).toFixed(2)+'kb',
-                ContrastThree: this.state.used+'GB/'+this.state.total+'GB',
-                percentageOne: '占用('+(this.props.Resources.ram_usage/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed()+'%)',
-                percentageTwo: '可用('+((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage)/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed()+'%)',
+                column_One: (100-this.getMemory('column_One'))+'%',
+                column_Two: (100-this.getMemory('column_Two'))+'%',
+                column_Three: this.getMemory('column_Three'),
+                ContrastOne: this.getMemory('ContrastOne'),
+                ContrastTwo: this.getMemory('ContrastTwo'),
+                ContrastThree: this.getMemory('ContrastThree'),
+                percentageOne: this.getMemory('percentageOne'),
+                percentageTwo: this.getMemory('percentageTwo'),
                 percentageThree: '全网('+this.state.used_Percentage+'%)',
             })
         }else if (current == 'isCalculation'){
             this.setState({ 
                 tetletext: '计算概况',
-                column_One: (100-(this.props.Resources.cpu_limit.available/(this.props.Resources.cpu_limit.used+this.props.Resources.cpu_limit.available)*10000/100).toFixed())+'%',
-                column_Two: (100-((this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")/this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""))*10000/100).toFixed())+'%',
-                column_Three: this.cpuPercentageTime(this.props.Resources.refund_request.request_time.replace("T", " ")),
-                ContrastOne: (this.props.Resources.cpu_limit.available / 1000).toFixed(2)+'/'+((this.props.Resources.cpu_limit.used+this.props.Resources.cpu_limit.available)/1000).toFixed(2),
-                ContrastTwo: this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")+'/'+this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""),
-                ContrastThree: this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")),
+                column_One: (100-this.getCalculation('column_One'))+'%',
+                column_Two: (100-this.getCalculation('column_Two'))+'%',
+                column_Three: this.getCalculation('column_Three'),
+                ContrastOne: this.getCalculation('ContrastOne'),
+                ContrastTwo: this.getCalculation('ContrastTwo'),
+                ContrastThree: this.getCalculation('ContrastThree'),
                 percentageOne: '可用(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+this.props.Resources.refund_request.cpu_amount.replace("EOS", "")+'EOS)',
+                percentageThree: '赎回中('+ this.getCalculation('percentageThree') +'EOS)',
             })
         }else if (current == 'isNetwork'){
             this.setState({ 
                 tetletext: '网络概况',
-                column_One: (100-(this.props.Resources.net_limit.available/(this.props.Resources.net_limit.used+this.props.Resources.net_limit.available)*10000/100).toFixed())+'%',
-                column_Two: (100-((this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")/this.props.Resources.total_resources.net_weight.replace(" EOS", ""))*10000/100).toFixed())+'%',
-                column_Three: this.cpuPercentageTime(this.props.Resources.refund_request.request_time.replace("T", " ")),
-                ContrastOne: (this.props.Resources.net_limit.available / 1024).toFixed(3)+'/'+((this.props.Resources.net_limit.used+this.props.Resources.net_limit.available)/1024).toFixed(2),
-                ContrastTwo: this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")+'/'+this.props.Resources.total_resources.net_weight.replace("EOS", ""),
-                ContrastThree: this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")),
+                column_One: (100-this.getNetwork('column_One'))+'%',
+                column_Two: (100-this.getNetwork('column_Two'))+'%',
+                column_Three: this.getNetwork('column_Three'),
+                ContrastOne: this.getNetwork('ContrastOne'),
+                ContrastTwo: this.getNetwork('ContrastTwo'),
+                ContrastThree: this.getNetwork('ContrastThree'),
                 percentageOne: '可用(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+this.props.Resources.refund_request.net_amount.replace("EOS", "")+'EOS)',
+                percentageThree: '赎回中('+this.getNetwork('percentageThree')+'EOS)',
             })
         }else if (current == 'isBuyForOther'){
             this.setState({ 
