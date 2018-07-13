@@ -154,8 +154,8 @@ class Login extends BaseComponent {
       EasyToast.show('请输入验证码');
       return;
     }
-    if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
-      EasyToast.show('密码长度至少4位,请重输');
+    if (this.state.password == "" || this.state.password.length < 8) {
+      EasyToast.show('密码长度至少8位,请重输');
       return;
     }
     if (this.state.phone.length != 11) {
