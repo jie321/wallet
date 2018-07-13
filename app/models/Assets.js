@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {getBalance, listAssets, addAssetToServer} from '../utils/Api';
+import {getBalance, listAssets, addAssetToServer, getActions} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import { DeviceEventEmitter } from 'react-native';
@@ -111,7 +111,7 @@ export default {
                 let item = payload.myAssets[i];
                 const resp = yield call(Request.request, getBalance, 'post', {contract: item.asset.contractAccount, account: payload.accountName, symbol: item.asset.name});
                 // alert("------ " + JSON.stringify(resp));
-                if(resp && resp.code=='0'){
+                if(resp && resp.code=='0' && resp.data != null && resp.data != ""){
                     item.balance = resp.data;
                 }
             }
@@ -175,7 +175,22 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
      },
-
+     *getTradeDetails({payload, callback},{call,put}) {
+        try{
+            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + getActions, "post", payload);
+            if(resp.code=='0'){               
+                // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
+                yield put({ type: 'updateDetails', payload: { DetailsData:resp.data } });
+                // if (callback) callback(resp.data.account_names[0]);
+                // alert('updateDetails: '+JSON.stringify(resp.data));
+            }else{
+                EasyToast.show(resp.msg);
+            }
+            if (callback) callback(resp);
+        } catch (error) {
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+     },
     },
 
     reducers: {
@@ -189,9 +204,9 @@ export default {
         updateMyAssets(state, action) {
             return { ...state, ...action.payload };
         },
-        updateEosInfo(state, action) {
-            return {...state, ...action.payload};
-        }
+        updateDetails(state, action) {
+            return {...state,DetailsData:action.payload.DetailsData.actions};
+        },
     }
   }
   

@@ -18,7 +18,7 @@ import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import moment from 'moment';
 
-@connect(({ wallet }) => ({ ...wallet }))
+@connect(({ wallet, assets}) => ({ ...wallet, ...assets }))
 class AssetInfo extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -39,6 +39,8 @@ class AssetInfo extends BaseComponent {
             balance: this.props.navigation.state.params.asset.balance,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             type: '',
+            asset: this.props.navigation.state.params.asset,
+            detailInfo: "请稍候...",
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
             try {
@@ -51,9 +53,18 @@ class AssetInfo extends BaseComponent {
 
     componentDidMount() {
         //加载地址数据
+        EasyLoading.show();
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, start_account_action_seq: "-1"}, callback: (resp) => {
+            if(resp.code != '0'){
+                this.setState({detailInfo: "暂未找到交易哟~"});
+            }else if((resp.code == '0') && (this.props.DetailsData.length == 0)){
+                this.setState({detailInfo: "您还没有交易哟~"});
+            }
+            EasyLoading.dismis();
+        }});     
     }
+
     componentWillUnmount(){
         //结束页面前，资源释放操作
         super.componentWillUnmount();
@@ -126,7 +137,7 @@ class AssetInfo extends BaseComponent {
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    {this.props.DetailsData == null && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>}
+                    {(this.props.DetailsData == null || this.props.DetailsData.length == 0) && <View style={styles.nothave}><Text style={styles.copytext}>{this.state.detailInfo}</Text></View>}
                     <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.filterTradeRecord(this.props.DetailsData))} 
                     renderRow={(rowData, sectionID, rowID) => (                 
