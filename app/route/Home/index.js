@@ -146,19 +146,6 @@ class Home extends React.Component {
   }
 
   getIncrease(){
-    // if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
-    //   return;
-    // }
-
-    // if(this.state.init){
-    //   this.setState({init: false});
-    //   EasyLoading.show();
-    // }
-
-    // if(this.props.myAssets == null){
-    //   return;
-    // }
-
     this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
         if(data == undefined || data == null){
           reurn;
@@ -168,6 +155,7 @@ class Home extends React.Component {
         }
     } });
   }
+  
   getBalance() { 
     if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
@@ -176,6 +164,19 @@ class Home extends React.Component {
     if(this.state.init){
       this.setState({init: false});
       EasyLoading.show();
+    }
+
+    if(this.props.walletList == null){
+      return;
+    }
+
+    for(var i = 0; i < this.props.walletList.length; i++) {
+      if (this.props.walletList[i] != null && this.props.walletList[i].name != null && (this.props.walletList[i].isactived && this.props.walletList[i].hasOwnProperty('isactived'))) {
+        this.props.dispatch({
+          type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.walletList[i].name, symbol: 'EOS' }
+        })
+  
+      }
     }
 
     if(this.props.myAssets == null){
