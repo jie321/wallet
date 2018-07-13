@@ -48,7 +48,7 @@ class Add_assets extends BaseComponent {
 
   componentDidMount() {
     this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
-    // this.props.dispatch({ type: 'assets/myAssetInfo'});
+    this.props.dispatch({ type: 'assets/myAssetInfo'});
     DeviceEventEmitter.addListener('updateAssetList', (data) => {
       this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
     });
