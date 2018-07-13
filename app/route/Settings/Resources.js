@@ -487,7 +487,20 @@ class Bvote extends BaseComponent {
         }
         return obj;
     }
-
+    chkAmountIsZero(amount,errInfo)
+    {
+        var tmp;
+        try {
+             tmp = parseFloat(amount);
+          } catch (error) {
+              tmp = 0;
+          }
+        if(tmp <= 0){
+            EasyToast.show(errInfo);
+            return true;
+        }
+        return false;
+    }
     // 购买内存
     buyram = (rowData) => { 
         if(!this.props.defaultWallet){
@@ -497,6 +510,10 @@ class Bvote extends BaseComponent {
         if(this.state.buyRamAmount == ""){
             EasyToast.show('请输入购买金额');
             return;
+        }
+        if(this.chkAmountIsZero(this.state.buyRamAmount,'请输入购买金额')){
+            this.setState({ buyRamAmount: "" })
+            return ;
         }
         this. dismissKeyboardClick();
             const view =
@@ -551,6 +568,10 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入出售内存kb数量');
             return;
         }
+        if(this.chkAmountIsZero(this.state.sellRamBytes,'请输入出售内存kb数量')){
+            this.setState({ sellRamBytes: "" })
+            return ;
+        }
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
@@ -602,6 +623,10 @@ class Bvote extends BaseComponent {
         if ((this.state.delegateb == "")) {
             EasyToast.show('请输入抵押的EOS数量');
             return;
+        }
+        if(this.chkAmountIsZero(this.state.delegateb,'请输入抵押的EOS数量')){
+            this.setState({ delegateb: "" })
+            return ;
         }
         this. dismissKeyboardClick();
         const view =
@@ -668,6 +693,10 @@ class Bvote extends BaseComponent {
         if ((this.state.undelegateb == "")) {
             EasyToast.show('请输入赎回的EOS数量');
             return;
+        }
+        if(this.chkAmountIsZero(this.state.undelegateb,'请输入赎回的EOS数量')){
+            this.setState({ undelegateb: "" })
+            return ;
         }
         this. dismissKeyboardClick();
             const view =
