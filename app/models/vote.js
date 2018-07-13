@@ -46,6 +46,7 @@ export default {
             if(resp.code=='0'){  
                 // alert("getaccountinfo1 : " + JSON.stringify(resp.data.voter_info));
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
+                yield put({ type: 'updateResources', payload: { Resources:resp.data}  });
                 if (callback) callback(resp.data);
             }else{
                 EasyToast.show(resp.msg);
@@ -133,6 +134,9 @@ export default {
             // alert("producers : " + JSON.stringify(arr1));
             return {...state, producers: arr1};      
         }, 
+        updateResources(state, action) {      
+            return {...state,Resources:action.payload.Resources};  
+        },
     }
   }
   
