@@ -42,8 +42,7 @@ export default {
      *getaccountinfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getAccountInfo, 'post', payload);
-            if(resp.code=='0'){  
-                // alert("getaccountinfo1 : " + JSON.stringify(resp.data.voter_info));
+            if(resp.code=='0'){ 
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
                 yield put({ type: 'updateResources', payload: { Resources:resp.data}  });
                 if (callback) callback(resp.data);
@@ -74,7 +73,6 @@ export default {
      *getGlobalInfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getGlobalInfo, 'post', payload);
-            // alert("getundelegatebwInfo : " +JSON.stringify(resp.data.rows));
             if(resp.code=='0'){               
                 // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
             }else{
@@ -88,7 +86,6 @@ export default {
      *getqueryRamPrice({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, queryRamPrice, 'post', payload);
-            // alert("getundelegatebwInfo : " +JSON.stringify(resp.data.rows));
             if(resp.code=='0'){               
                 // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
             }else{

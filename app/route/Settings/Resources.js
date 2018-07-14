@@ -51,7 +51,7 @@ class Resources extends BaseComponent {
         isOthers: false,
         isLease: true,
         isTransfer: false,
-        LeaseTransfer: false,
+        LeaseTransfer: 0,
         tetletext: '内存概况',
         column_One: '100%',
         column_Two: '100%',
@@ -107,6 +107,16 @@ class Resources extends BaseComponent {
 
     DeviceEventEmitter.addListener('eos_balance', (data) => {
         this.setEosBalance(data);
+    });
+
+    DeviceEventEmitter.addListener('scan_result', (data) => {
+        try {
+            if(data.toaccount){
+                this.setState({receiver:data.toaccount});
+            }
+        } catch (error) {
+            
+        }
     });
   }
 
@@ -217,6 +227,17 @@ class Resources extends BaseComponent {
         } 
     }
 
+    Initialization() {
+        this.setState({
+            buyRamAmount: "",
+            sellRamBytes: "",
+            receiver: "",
+            delegateb: "",
+            undelegateb: "",
+            LeaseTransfer: 0,
+        })
+    }
+
      // 更新"内存，计算，网络，内存交易"按钮的状态  
      _updateBtnState(currentPressed, array) { 
         if (currentPressed === null || currentPressed === 'undefined' || array === null || array === 'undefined') {  
@@ -232,7 +253,8 @@ class Resources extends BaseComponent {
                 this.setState(newState);  
             }  
         } 
-        this.goPage(currentPressed)
+        this.goPage(currentPressed);
+        this.Initialization();
     }  
 
     // 返回内存，计算，网络，内存交易  
@@ -260,6 +282,7 @@ class Resources extends BaseComponent {
                 this.setState(newState);  
             }  
         }  
+        this.Initialization();
     }  
 
     // 返回自己,他人
@@ -532,11 +555,11 @@ class Resources extends BaseComponent {
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-                    if(this.state.isTransfer){
-                        this.state.LeaseTransfer = true;
+                    if(this.state.isOthers && this.state.isTransfer){
+                        this.state.LeaseTransfer = 1;
                     }
                     EasyLoading.show();
-                    // 抵押
+                    // 计算
                     if(this.state.isCalculation){
                         Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegateb + " EOS", "0 EOS", this.state.LeaseTransfer, (r) =>{
                             EasyLoading.dismis();
@@ -547,6 +570,7 @@ class Resources extends BaseComponent {
                                 this._setModalVisible();
                             }
                         });
+                        // 网络
                     }else if(this.state.isNetwork){
                         Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegateb + " EOS", this.state.LeaseTransfer,(r) =>{
                             EasyLoading.dismis();
@@ -606,13 +630,10 @@ class Resources extends BaseComponent {
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-                    if(this.state.isTransfer){
-                        this.state.LeaseTransfer = true;
-                    }
                     EasyLoading.show();
                     // 解除抵押
                     if(this.state.isCalculation){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegateb + " EOS", "0 EOS", this.state.LeaseTransfer,(r) => {
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegateb + " EOS", "0 EOS", (r) => {
                             EasyLoading.dismis();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -622,7 +643,7 @@ class Resources extends BaseComponent {
                             }
                         })
                     }else if(this.state.isNetwork){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegateb + " EOS", this.state.LeaseTransfer, (r) => {
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegateb + " EOS", (r) => {
                             EasyLoading.dismis();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -646,6 +667,11 @@ class Resources extends BaseComponent {
 
     dismissKeyboardClick() {
         dismissKeyboard();
+    }
+
+    scan() {
+        const { navigate } = this.props.navigation;
+        navigate('BarCode', {isTurnOut:true,coinType:"EOS"});
     }
 
     render() {
@@ -701,10 +727,11 @@ class Resources extends BaseComponent {
                                     {this.ownOthersButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
                                     {this.ownOthersButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                                 </View>
+                                {this.state.isOthers&&
                                 <View style={styles.LeaseTransfer}>  
                                     {this.leaseTransferButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
                                     {this.leaseTransferButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
-                                </View>
+                                </View>}
                             </View> }
                             {this.state.isOwn ? null:
                             <View style={styles.inptoutsource}>
@@ -715,7 +742,7 @@ class Resources extends BaseComponent {
                                         placeholder="输入接收账号" underlineColorAndroid="transparent" keyboardType="default" 
                                         onChangeText={(receiver) => this.setState({ receiver: this.chkAccount(receiver)})}
                                     />
-                                    <Button >
+                                    <Button onPress={() => this.scan()}>
                                         <View style={styles.botnimg}>
                                             <Image source={UImage.scan} style={{width: 26, height: 26, }} />
                                         </View>
