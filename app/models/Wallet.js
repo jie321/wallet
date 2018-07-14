@@ -411,14 +411,6 @@ export default {
             yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr} });
             yield call(store.save, 'invalidWalletArr', invalidWalletArr);
          },
-        
-        *up({payload},{call,put}) {
-            try{
-                yield put({ type: 'updateSelect', payload: { ...payload } });
-            } catch (error) {
-                EasyToast.show('网络繁忙,请稍后!');
-            }
-         },
     },
     reducers: {
         update(state, action) {
@@ -449,21 +441,6 @@ export default {
                 newarr.push(item);
             })
             return {...state,invalidWalletList:newarr}; 
-        },
-        updateSelect(state, action) {
-            let dts = state.invalidWalletList;
-            let newarr = new Array();
-            dts.map((item)=>{
-                if(item==action.payload.item){
-                    if(item.isChecked){
-                        item.isChecked=false;
-                    }else{
-                        item.isChecked=true;
-                    }
-                }
-                newarr.push(item);
-            })
-            return {...state,allInvalidWalletList:newarr}; 
         },
     }
 }

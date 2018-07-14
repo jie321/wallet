@@ -222,18 +222,14 @@ class Home extends React.Component {
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
   }
 
-  selectItem = (item,section) => { 
-    this.props.dispatch({ type: 'wallet/up', payload: { item:item} });
-  }
-
- delInvalidWallet = (rowData) => {
+ delInvalidWallet() {
     if(this.props.allInvalidWalletList == null || this.props.allInvalidWalletList.length == 0){
       return;
     }
     var arr = [];
-    for(var i = 0; i < this.props.invalidWalletList.length; i++){ 
-        if(this.props.invalidWalletList[i].isChecked == true){
-          arr.push(this.props.invalidWalletList[i]);
+    for(var i = 0; i < this.props.allInvalidWalletList.length; i++){ 
+        if(this.props.allInvalidWalletList[i].isChecked == true){
+          arr.push(this.props.allInvalidWalletList[i]);
         }     
     }
     this.props.dispatch({ type: 'wallet/delWalletList', payload: { walletList: arr } });
@@ -574,7 +570,7 @@ class Home extends React.Component {
                 </View>
                 <Text style={styles.prompt}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
                 <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.invalidWalletList == null ? [] : this.props.invalidWalletList)} 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.allInvalidWalletList == null ? [] : this.props.allInvalidWalletList)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                       <View>
                           <Button > 
@@ -582,7 +578,7 @@ class Home extends React.Component {
                                   <View style={styles.copyout}>
                                       <Text style={styles.copytext}>{rowData.name}</Text>
                                   </View>
-                                  <TouchableOpacity style={styles.taboue} onPress={ () => this.selectItem(rowData)}>
+                                  <TouchableOpacity style={styles.taboue} >
                                       <View style={styles.tabview} >
                                           <Image source={rowData.isChecked ? UImage.Tick:null} style={styles.tabimg} />
                                       </View>  
@@ -592,7 +588,7 @@ class Home extends React.Component {
                       </View>      
                     )}                   
                   /> 
-                  <Button onPress={this.delInvalidWallet.bind()}>
+                  <Button onPress={this.delInvalidWallet.bind(this)}>
                       <View style={styles.deleteout}>
                           <Text style={styles.deletetext}>一键删除</Text>
                       </View>
