@@ -131,9 +131,9 @@ class Add_assets extends BaseComponent {
       return;
     }
 
-    EasyLoading.show();
+    // EasyLoading.show();
     this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
-      EasyLoading.dismis();
+      // EasyLoading.dismis();
     } });
   }
 

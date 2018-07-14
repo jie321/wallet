@@ -96,13 +96,18 @@ export default {
 
             }
 
-            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         }
 
         // alert("myAssetInfo" +JSON.stringify(myAssets));
-        yield call(store.save, 'myAssets', myAssets);
+        // 
 
         if(isPriceChange){
+            var myAssetsNew = yield call(store.get, 'myAssets');
+            if(myAssetsNew != null && myAssetsNew.length == myAssets.length){
+                yield call(store.save, 'myAssets', myAssets);
+                yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+            }
+
             DeviceEventEmitter.emit('updateMyAssetsPrice', myAssets);
         }
 
