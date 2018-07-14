@@ -188,76 +188,86 @@ class ImportEosKey extends BaseComponent {
 
   createWalletByPrivateKey(owner_privateKey, active_privatekey){
     EasyLoading.show('正在请求');
-    Eos.privateToPublic(active_privatekey,(r) => {
-      var active_publicKey = r.data.publicKey;
-        try {
-          var owner_publicKey = r.data.publicKey;
-          this.props.dispatch({
-            type: 'wallet/getAccountsByPuk',
-            payload: {public_key: owner_publicKey}, callback: (data) => {
-              EasyLoading.dismis();
-              if (data == undefined || data.code != '0') {
-                this.setState({
-                  show: true,
-                  Invalid: false,
-                  publicKey:'找不到' + owner_publicKey,
-                  ReturnData:"对应的账户名" + " "+JSON.stringify(data),
-                });
-                EasyToast.show('' + data.msg);
-                return;
-              }
-              var walletList = [];
-              var salt;
-              Eos.randomPrivateKey((r)=>{
-                  salt = r.data.ownerPrivate.substr(0, 18);
-                  for(var i = 0; i < data.data.account_names.length; i++){
-                    var result = {
-                      data:{
-                        ownerPublic:'',
-                        activePublic:'',
-                        ownerPrivate:'',
-                        activePrivate:'',
-                        words_active:'',
-                        words:'',
-                      }
-                    };
-                    result.data.ownerPublic = owner_publicKey;
-                    result.data.activePublic = active_publicKey;
-                    result.data.words = '';
-                    result.data.words_active = '';
-                    result.data.ownerPrivate = owner_privateKey;
-                    result.data.activePrivate = active_privatekey;
-                    result.password = this.state.walletpwd;
-                    result.name = data.data.account_names[i];
-                    result.account = data.data.account_names[i];
-                    result.isactived = true;
-                    result.salt=salt;
-                    walletList[i] = result;
-                  }
-                  // 保存钱包信息
-                  this.props.dispatch({
-                    type: 'wallet/saveWalletList', walletList: walletList, callback: (data) => {  
-                      EasyLoading.dismis();          
-                      if (data.error != null) {
-                        EasyToast.show('导入私钥失败：' + data.error);
-                      } else {
-                        EasyToast.show('导入私钥成功！');
-                        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
-                        DeviceEventEmitter.emit('updateDefaultWallet');
-                        DeviceEventEmitter.emit('modify_password');
-                        this.props.navigation.goBack();
-                                      
-                      }
-                    }
-                  });
+    try {
+      Eos.privateToPublic(active_privatekey, (r) => {
+        var active_publicKey = r.data.publicKey;
+        var owner_publicKey = r.data.publicKey;
+        this.props.dispatch({
+          type: 'wallet/getAccountsByPuk',
+          payload: {
+            public_key: owner_publicKey
+          },
+          callback: (data) => {
+            EasyLoading.dismis();
+            if (data == undefined || data.code != '0') {
+              this.setState({
+                show: true,
+                Invalid: false,
+                publicKey: '找不到' + owner_publicKey,
+                ReturnData: "对应的账户名" + " " + JSON.stringify(data),
               });
+              EasyToast.show('' + data.msg);
+              return;
             }
-          });
-        } catch (e) {
-          EasyLoading.dismis();
-          EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
-        }
-    });
+            var walletList = [];
+            var salt;
+            Eos.randomPrivateKey((r) => {
+              salt = r.data.ownerPrivate.substr(0, 18);
+              for (var i = 0; i < data.data.account_names.length; i++) {
+                var result = {
+                  data: {
+                    ownerPublic: '',
+                    activePublic: '',
+                    ownerPrivate: '',
+                    activePrivate: '',
+                    words_active: '',
+                    words: '',
+                  }
+                };
+                result.data.ownerPublic = owner_publicKey;
+                result.data.activePublic = active_publicKey;
+                result.data.words = '';
+                result.data.words_active = '';
+                result.data.ownerPrivate = owner_privateKey;
+                result.data.activePrivate = active_privatekey;
+                result.password = this.state.walletpwd;
+                result.name = data.data.account_names[i];
+                result.account = data.data.account_names[i];
+                result.isactived = true;
+                result.salt = salt;
+                walletList[i] = result;
+              }
+              // 保存钱包信息
+              this.props.dispatch({
+                type: 'wallet/saveWalletList',
+                walletList: walletList,
+                callback: (data) => {
+                  EasyLoading.dismis();
+                  if (data.error != null) {
+                    EasyToast.show('导入私钥失败：' + data.error);
+                  } else {
+                    EasyToast.show('导入私钥成功！');
+                    this.props.dispatch({
+                      type: 'wallet/updateGuideState',
+                      payload: {
+                        guide: false
+                      }
+                    });
+                    DeviceEventEmitter.emit('updateDefaultWallet');
+                    DeviceEventEmitter.emit('modify_password');
+                    this.props.navigation.goBack();
+
+                  }
+                }
+              });
+            });
+          }
+        });
+      });
+    } catch (e) {
+      EasyLoading.dismis();
+      EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
+    }
   }
 
   _onRequestClose() {
