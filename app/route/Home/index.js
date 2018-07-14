@@ -87,7 +87,7 @@ class Home extends React.Component {
     });
     DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
       this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-        this.getDefaultWalletEosBalance();
+        this.getDefaultWalletEosBalance(); // 默认钱包余额
         this.getAllWalletEosBalance();
         this.getAssetBalance();  
       } });
@@ -115,6 +115,13 @@ class Home extends React.Component {
       this.getAssetBalance();
     });
 
+    DeviceEventEmitter.addListener('updateMyAssetsBalance', (data) => {
+      this.calTotalBalance();
+    });
+
+    DeviceEventEmitter.addListener('updateMyAssetsPrice', (data) => {
+      this.calTotalBalance();
+    });
   }
 
   componentWillUnmount(){
@@ -200,7 +207,6 @@ class Home extends React.Component {
     }
 
     this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
-      this.calTotalBalance();
       EasyLoading.dismis();
     }});
   }
