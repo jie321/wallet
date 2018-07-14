@@ -80,11 +80,11 @@ class TradeDetails extends BaseComponent {
         </View>
         <View style={styles.conout}>
           <View style={styles.conouttext}>
-            <Text style={styles.context}>发 送 方：</Text> 
+            <Text style={styles.context}>发  送  方：</Text> 
             <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'from')}>{c.from}</Text>
           </View>
           <View style={styles.conouttext}>
-            <Text style={styles.context}>接 受 方：</Text>
+            <Text style={styles.context}>接  受  方：</Text>
             <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'to')}>{c.to}</Text>
           </View>
           <View style={styles.conouttext}> 
@@ -92,7 +92,7 @@ class TradeDetails extends BaseComponent {
             <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text>
           </View>
           <View style={styles.conouttext}>
-            <Text style={styles.context}>备 注：</Text>
+            <Text style={styles.context}> 备    注 ：</Text>
             <Text style={{color: UColor.arrow, flex: 1,fontSize: 14,}} >{c.memo}</Text>
           </View>
         </View>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   context: {
-    textAlign: 'right',
+    textAlign: 'left',
     fontSize: 14,
     color: UColor.arrow,
     width: 90,

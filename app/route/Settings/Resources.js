@@ -26,7 +26,7 @@ const _index = 0;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 @connect(({wallet, vote}) => ({...wallet, ...vote}))
-class Bvote extends BaseComponent {
+class Resources extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {    
@@ -52,9 +52,9 @@ class Bvote extends BaseComponent {
         isLease: true,
         isTransfer: false,
         tetletext: '内存概况',
-        column_One: '0%',
-        column_Two: '0%',
-        column_Three: '0%',
+        column_One: '100%',
+        column_Two: '100%',
+        column_Three: '100%',
         ContrastOne: '0.00/0.00',
         ContrastTwo: '0.00/0.00',
         ContrastThree: '0.00/0.00',
@@ -1190,4 +1190,4 @@ const styles = StyleSheet.create({
         color:  UColor.fontColor,
     }
 })
-export default Bvote;
+export default Resources;
