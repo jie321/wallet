@@ -58,16 +58,16 @@ class Bvote extends BaseComponent {
         ContrastOne: '0.00/0.00',
         ContrastTwo: '0.00/0.00',
         ContrastThree: '0.00/0.00',
-        percentageOne: '',
-        percentageTwo: '',
-        percentageThree: '',
+        percentageOne: '占用（0%）',
+        percentageTwo: '可用（0%）',
+        percentageThree: '全网（0%）',
         total: '0.00',
         used: '0.00',
         used_Percentage: '0',
         currency_surplus: '0.00',
-        ram_available:'0.00',
+        ram_available:'0',
         show: false,
-        Currentprice: '0.00000',
+        Currentprice: '0',
         password: "",
         buyRamAmount: "",
         sellRamBytes: "",
@@ -82,6 +82,18 @@ class Bvote extends BaseComponent {
     this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {
         this.getAccountInfo();
     }}); 
+    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
+        this.setState({
+            total:data.rows[0].max_ram_size?(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2) : "00.00GB",
+            used:data.rows[0].total_ram_bytes_reserved?(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2) : "00.00GB",
+            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
+        });
+    }}); 
+    this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
+        this.setState({
+            Currentprice:data.data?data.data:'0.00000',
+        });
+    }}); 
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     DeviceEventEmitter.addListener('wallet_info', (data) => {
         this.getBalance();
@@ -95,18 +107,6 @@ class Bvote extends BaseComponent {
     DeviceEventEmitter.addListener('eos_balance', (data) => {
         this.setEosBalance(data);
     });
-    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
-        this.setState({
-            total:data.rows[0].max_ram_size?(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2) : "00.00GB",
-            used:data.rows[0].total_ram_bytes_reserved?(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2) : "00.00GB",
-            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
-        });
-    }}); 
-    this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
-        this.setState({
-            Currentprice:data.data?data.data:'0.00000',
-        });
-    }}); 
   }
 
   componentWillUnmount(){
