@@ -514,8 +514,8 @@ class Home extends React.Component {
                   <View style={styles.rights}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="")? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈{(rowData.balance==null || rowData.balance=="" || rowData.asset.value == null || rowData.asset.value == "")? "0.00" : (rowData.balance.replace(rowData.asset.name, "")*rowData.asset.value).toFixed(2)}（￥）</Text>
+                        <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="" || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')))? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
+                        <Text style={styles.rightmarket}>≈{(rowData.balance==null || rowData.balance=="" || rowData.asset.value == null || rowData.asset.value == "" || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')))? "0.00" : (rowData.balance.replace(rowData.asset.name, "")*rowData.asset.value).toFixed(2)}（￥）</Text>
                       </View>
                     </View>
                   </View>
