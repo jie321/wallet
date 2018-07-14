@@ -585,7 +585,9 @@ class Route extends React.Component {
     }
           
     this.props.dispatch({
-      type: 'assets/getBalance', payload: {myAssets: this.props.myAssets, accountName: this.props.defaultWallet.name}
+      type: 'assets/getBalance', payload: {myAssets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: () => {
+        this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {}});
+      }
     });
   }
 

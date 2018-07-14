@@ -35,7 +35,21 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
       },
+      *submitAssetInfoToServer({payload, callback},{call,put}){
+        try{
+            const resp = yield call(Request.request, addAssetToServer, 'post', {contract_account: payload.contractAccount, name: payload.name});
+            if(resp && resp.code=='0'){
+                DeviceEventEmitter.emit('updateAssetList', payload);
+            }
+            if(callback){
+                callback(resp);
+            }
+        }catch(e){
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+     },
      *myAssetInfo({payload, callback},{call,put}){
+        var isPriceChange = false; // 价格是否改变
         var myAssets = yield call(store.get, 'myAssets');
         if(myAssets == null || myAssets.length == 0){ // 未有资产信息时默认取eos的
             var myAssets = [];
@@ -58,7 +72,7 @@ export default {
                     myAssets[0] = eosInfo;
                 }
             } catch (error) {
-                
+
             }
 
             yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
@@ -72,6 +86,9 @@ export default {
                             value: true,
                             balance: myAssets[i].balance,
                         }
+                        if(resp.data[0].value != myAssets[i].asset.value){
+                            isPriceChange = true;
+                        }
                         myAssets[i] = assetInfo;
                     }
                 }
@@ -84,48 +101,38 @@ export default {
 
         yield call(store.save, 'myAssets', myAssets);
 
+        if(isPriceChange){
+            DeviceEventEmitter.emit('updateMyAssetsPrice', myAssets);
+        }
+
         if(callback){
             callback(myAssets);
         }
 
     },
-    *updateMyAsset({payload},{call,put}){
-        var myAssets = yield call(store.get, 'myAssets');
-        // alert(JSON.stringify(payload) + "   " +JSON.stringify(myAssets));
-        if (myAssets == null) {
-            myAssets = [];
-        }
-        for (var i = 0; i < myAssets.length; i++) {
-            if (myAssets[i].asset.name == payload.asset.name) {
-                // 删除资产
-                myAssets.splice(i, 1);
-            }
-        }
-
-        // 添加资产
-        var _asset = {
-            asset: payload.asset,
-            value: true,
-            balance: payload.balance,
-        }
-        myAssets[myAssets.length] = _asset;
-        yield call(store.save, 'myAssets', myAssets);
-        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
-     },
      *getBalance({payload, callback}, {call, put}){
         try{
             // alert("------ " + JSON.stringify(payload));
             // var myAssets = yield call(store.get, 'myAssets');
+            var isBalanceChange = false;
             for(let i in payload.myAssets){
                 let item = payload.myAssets[i];
                 const resp = yield call(Request.request, getBalance, 'post', {contract: item.asset.contractAccount, account: payload.accountName, symbol: item.asset.name});
                 // alert("------ " + JSON.stringify(resp));
                 if(resp && resp.code=='0' && resp.data != null && resp.data != ""){
-                    item.balance = resp.data;
+                    if(resp.data != item.balance){
+                        isBalanceChange = true;
+                        item.balance = resp.data;
+                    }
                 }
             }
-            yield call(store.save, 'myAssets', payload.myAssets);
-            yield put({ type: 'updateMyAssets', payload: {myAssets: payload.myAssets} });
+
+            if(isBalanceChange){
+                // yield call(store.save, 'myAssets', payload.myAssets);
+                // yield put({ type: 'updateMyAssets', payload: {myAssets: payload.myAssets} });
+                DeviceEventEmitter.emit('updateMyAssetsBalance', payload);
+            }
+
             if(callback){
                 callback(payload.myAssets);
             }
@@ -170,19 +177,6 @@ export default {
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         if(callback) callback(myAssets);
         DeviceEventEmitter.emit('updateMyAssets', payload);
-     },
-    *submitAssetInfoToServer({payload, callback},{call,put}){
-        try{
-            const resp = yield call(Request.request, addAssetToServer, 'post', {contract_account: payload.contractAccount, name: payload.name});
-            if(resp && resp.code=='0'){
-                DeviceEventEmitter.emit('updateAssetList', payload);
-            }
-            if(callback){
-                callback(resp);
-            }
-        }catch(e){
-            EasyToast.show('网络繁忙,请稍后!');
-        }
      },
      *getTradeDetails({payload, callback},{call,put}) {
         try{
