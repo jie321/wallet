@@ -223,13 +223,13 @@ class Home extends React.Component {
   }
 
  delInvalidWallet() {
-    if(this.props.allInvalidWalletList == null || this.props.allInvalidWalletList.length == 0){
+    if(this.props.invalidWalletList == null || this.props.invalidWalletList.length == 0){
       return;
     }
     var arr = [];
-    for(var i = 0; i < this.props.allInvalidWalletList.length; i++){ 
-        if(this.props.allInvalidWalletList[i].isChecked == true){
-          arr.push(this.props.allInvalidWalletList[i]);
+    for(var i = 0; i < this.props.invalidWalletList.length; i++){ 
+        if(this.props.invalidWalletList[i].isChecked == true){
+          arr.push(this.props.invalidWalletList[i]);
         }     
     }
     this.props.dispatch({ type: 'wallet/delWalletList', payload: { walletList: arr } });
@@ -570,7 +570,7 @@ class Home extends React.Component {
                 </View>
                 <Text style={styles.prompt}>警告：系统检测到您有无效账号残留，为了避免误转账至无效账户带来不必要的损失，请即时清理无效账户！</Text>
                 <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.allInvalidWalletList == null ? [] : this.props.allInvalidWalletList)} 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.invalidWalletList == null ? [] : this.props.invalidWalletList)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                       <View>
                           <Button > 
