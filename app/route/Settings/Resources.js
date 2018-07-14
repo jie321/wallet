@@ -82,6 +82,7 @@ class Resources extends BaseComponent {
     this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {
         this.getAccountInfo();
     }}); 
+
     this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
         this.setState({
             total:data.rows[0].max_ram_size?(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2) : "00.00GB",
@@ -89,15 +90,15 @@ class Resources extends BaseComponent {
             used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
         });
     }}); 
+
     this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
-        this.setState({
-            Currentprice:data.data?data.data:'0.00000',
-        });
+        this.setState({ Currentprice:data.data?data.data:'0.00000' });
     }}); 
+
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     DeviceEventEmitter.addListener('wallet_info', (data) => {
         this.getBalance();
-        });
+    });
 
     DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
@@ -126,22 +127,26 @@ class Resources extends BaseComponent {
 
   getAccountInfo(){
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
-      this.setState({ 
-          currency_surplus:data.core_liquid_balance.replace(" EOS", ""),
-          ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2),
-         });
-          EasyLoading.dismis();
-          if(this.state.isMemory){
-            this.goPage('isMemory');
-          }else if(this.state.isCalculation){
-            this.goPage('isCalculation');
-          }else if(this.state.isNetwork){
-            this.goPage('isNetwork');
-          }else{
-            this.goPage('isBuyForOther');
-          }   
+      this.setState({ ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
+          this.getInitialization(); 
     } });
+    this.props.dispatch({
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: (data) => {
+            this.setState({ currency_surplus:data?data.data:'0 EOS',});
+    }});
   } 
+
+  getInitialization() {
+    if(this.state.isMemory){
+        this.goPage('isMemory');
+      }else if(this.state.isCalculation){
+        this.goPage('isCalculation');
+      }else if(this.state.isNetwork){
+        this.goPage('isNetwork');
+      }else{
+        this.goPage('isBuyForOther');
+      }   
+  }
 
   getBalance() { 
     if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
@@ -180,8 +185,8 @@ class Resources extends BaseComponent {
                 ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
                 ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
                 ContrastThree: this.state.used + 'GB/' + this.state.total + 'GB',
-                percentageOne: '占用(' + this.props.Resources.display_data.ram_usage_percent + ')',
-                percentageTwo: '可用(' + this.props.Resources.display_data.ram_left_percent + ')',
+                percentageOne: '已用(' + this.props.Resources.display_data.ram_usage_percent + ')',
+                percentageTwo: '剩余(' + this.props.Resources.display_data.ram_left_percent + ')',
                 percentageThree: '全网(' + this.state.used_Percentage + '%)',
             })
         }else if (current == 'isCalculation'){
@@ -193,7 +198,7 @@ class Resources extends BaseComponent {
                 ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", ""):'0.0000') + '/' + this.props.Resources.total_resources.cpu_weight.replace("EOS", ""),
                 ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
-                percentageOne: '可用(ms)',
+                percentageOne: '剩余(ms)',
                 percentageTwo: '抵押(EOS)',
                 percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.cpu_amount : '0 EOS') + ')',
             })
@@ -206,7 +211,7 @@ class Resources extends BaseComponent {
                 ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", ""):'0.0000') + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
                 ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
-                percentageOne: '可用(ms)',
+                percentageOne: '剩余(ms)',
                 percentageTwo: '抵押(EOS)',
                 percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.net_amount : '0 EOS') + ')',
             })
@@ -224,17 +229,7 @@ class Resources extends BaseComponent {
                 percentageThree: '',
             })
         } 
-    }
-
-    Initialization() {
-        this.setState({
-            buyRamAmount: "",
-            sellRamBytes: "",
-            receiver: "",
-            delegateb: "",
-            undelegateb: "",
-            LeaseTransfer: 0,
-        })
+        EasyLoading.dismis();
     }
 
      // 更新"内存，计算，网络，内存交易"按钮的状态  
@@ -255,6 +250,17 @@ class Resources extends BaseComponent {
         this.goPage(currentPressed);
         this.Initialization();
     }  
+
+    Initialization() {
+        this.setState({
+            buyRamAmount: "",
+            sellRamBytes: "",
+            receiver: "",
+            delegateb: "",
+            undelegateb: "",
+            LeaseTransfer: 0,
+        })
+    }
 
     // 返回内存，计算，网络，内存交易  
     resourceButton(style, selectedSate, stateType, buttonTitle) {  
@@ -453,11 +459,11 @@ class Resources extends BaseComponent {
                     });
                 } else {
                     EasyLoading.dismis();
-                    EasyToast.show('1密码错误');
+                    EasyToast.show('密码错误');
                 }
             } catch (e) {
                 EasyLoading.dismis();
-                EasyToast.show('2密码错误');
+                EasyToast.show('密码错误');
             }
             EasyDialog.dismis();
         }, () => { EasyDialog.dismis() });
@@ -754,7 +760,7 @@ class Resources extends BaseComponent {
                             {this.resourceButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
                             {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}  
                         </View> 
-                        {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>:
+                        {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>程序猿正在加班加点开发中...</Text></View>:
                         <View style={styles.nhaaout}>
                             {this.state.isMemory?<View style={styles.wterout}>
                             <View style={styles.OwnOthers}>  
@@ -791,7 +797,7 @@ class Resources extends BaseComponent {
                             {this.state.isMemory?<View>
                                 <View style={styles.inptoutsource}>
                                     <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                        <Text style={styles.inptTitle}>购买内存（{this.state.currency_surplus}EOS）</Text>
+                                        <Text style={styles.inptTitle}>购买内存（{this.state.currency_surplus}）</Text>
                                         <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.currency_surplus*this.state.Currentprice).toFixed(3)}kb</Text>
                                     </View>
                                     <View style={styles.outsource}>
