@@ -67,7 +67,6 @@ class Resources extends BaseComponent {
         used_Percentage: '0',
         currency_surplus: '0.00',
         ram_available:'0',
-        show: false,
         Currentprice: '0',
         password: "",
         buyRamAmount: "",
@@ -310,14 +309,6 @@ class Resources extends BaseComponent {
         );  
     }  
 
-   // 显示/隐藏 modal  
-   _setModalVisible() {
-    let isShow = this.state.show;
-    this.setState({
-    show: !isShow,
-    });
-  }
-
     chkAccount(obj) {
         var charmap = '.12345abcdefghijklmnopqrstuvwxyz';
         for(var i = 0 ; i < obj.length;i++){
@@ -449,7 +440,15 @@ class Resources extends BaseComponent {
                             this.getAccountInfo();
                             EasyToast.show("购买成功");
                         }else{
-                            this._setModalVisible();
+                            if(r.data){
+                                if(r.data.msg){
+                                    EasyToast.show(r.data.msg);
+                                }else{
+                                    EasyToast.show("购买失败");
+                                }
+                            }else{
+                                EasyToast.show("购买失败");
+                            }
                         }
                     });
                 } else {
@@ -503,7 +502,15 @@ class Resources extends BaseComponent {
                             this.getAccountInfo();
                             EasyToast.show("出售成功");
                         }else{
-                            this._setModalVisible();
+                            if(r.data){
+                                if(r.data.msg){
+                                    EasyToast.show(r.data.msg);
+                                }else{
+                                    EasyToast.show("出售失败");
+                                }
+                            }else{
+                                EasyToast.show("出售失败");
+                            }
                         }
                     });
                     
@@ -567,7 +574,15 @@ class Resources extends BaseComponent {
                                 this.getAccountInfo();
                                 EasyToast.show("抵押成功");
                             }else{
-                                this._setModalVisible();
+                                if(r.data){
+                                    if(r.data.msg){
+                                        EasyToast.show(r.data.msg);
+                                    }else{
+                                        EasyToast.show("抵押失败");
+                                    }
+                                }else{
+                                    EasyToast.show("抵押失败");
+                                }
                             }
                         });
                         // 网络
@@ -578,7 +593,15 @@ class Resources extends BaseComponent {
                                 this.getAccountInfo();
                                 EasyToast.show("抵押成功");
                             }else{
-                                this._setModalVisible();
+                                if(r.data){
+                                    if(r.data.msg){
+                                        EasyToast.show(r.data.msg);
+                                    }else{
+                                        EasyToast.show("抵押失败");
+                                    }
+                                }else{
+                                    EasyToast.show("抵押失败");
+                                }
                             }
                         });
                     }
@@ -639,7 +662,15 @@ class Resources extends BaseComponent {
                                 this.getAccountInfo();
                                 EasyToast.show("赎回成功");
                             }else{    
-                                this._setModalVisible();
+                                if(r.data){
+                                    if(r.data.msg){
+                                        EasyToast.show(r.data.msg);
+                                    }else{
+                                        EasyToast.show("赎回失败");
+                                    }
+                                }else{
+                                    EasyToast.show("赎回失败");
+                                }
                             }
                         })
                     }else if(this.state.isNetwork){
@@ -649,7 +680,15 @@ class Resources extends BaseComponent {
                                 this.getAccountInfo();
                                 EasyToast.show("赎回成功");
                             }else{
-                                this._setModalVisible();
+                                if(r.data){
+                                    if(r.data.msg){
+                                        EasyToast.show(r.data.msg);
+                                    }else{
+                                        EasyToast.show("赎回失败");
+                                    }
+                                }else{
+                                    EasyToast.show("赎回失败");
+                                }
                             }
                         })
                     }
