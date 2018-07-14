@@ -368,16 +368,9 @@ export default {
         *getAccountsByPuk({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request,getAccountsByPuk,"post", payload);
-                if(resp.code=='0'){               
-                    // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
-                    // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
-                    // if (callback) callback(resp.data.account_names[0]);
-                }else{
-                    EasyToast.show(resp.msg);
-                }
                 if (callback) callback(resp);
             } catch (error) {
-                EasyToast.show('网络繁忙,请稍后!');
+                if (callback) callback({ code: 500, msg: "网络异常" });
             }
          },   
          *getintegral({payload, callback},{call,put}) {

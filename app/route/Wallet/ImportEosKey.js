@@ -196,13 +196,14 @@ class ImportEosKey extends BaseComponent {
             type: 'wallet/getAccountsByPuk',
             payload: {public_key: owner_publicKey}, callback: (data) => {
               EasyLoading.dismis();
-              if (data.code != '0') {
+              if (data == undefined || data.code != '0') {
                 this.setState({
                   show: true,
                   Invalid: false,
                   publicKey:'找不到' + owner_publicKey,
                   ReturnData:"对应的账户名" + " "+JSON.stringify(data),
                 });
+                EasyToast.show('' + data.msg);
                 return;
               }
               var walletList = [];
