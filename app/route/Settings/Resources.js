@@ -780,7 +780,7 @@ class Resources extends BaseComponent {
                             </View> }
                             {this.state.isOwn ? null:
                             <View style={styles.inptoutsource}>
-                                {this.state.isMemory?<Text style={styles.inptTitle}>注：只限EOS账号，一旦送出可能无法收回！</Text>:<Text style={styles.inptTitle}>设置接收者</Text>}
+                                {this.state.isMemory?<Text style={styles.inptTitlered}>注：帮他人购买，一旦送出将无法收回！</Text>:<Text style={styles.inptTitle}>设置接收者</Text>}
                                 <View style={styles.outsource}>
                                     <TextInput ref={(ref) => this._account = ref} value={this.state.receiver} returnKeyType="go"
                                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
@@ -1088,6 +1088,11 @@ const styles = StyleSheet.create({
     inptTitle: {
         fontSize: 14, 
         color: UColor.fontColor, 
+        lineHeight: 35,
+    },
+    inptTitlered: {
+        fontSize: 14, 
+        color: UColor.showy, 
         lineHeight: 35,
     },
     botnimg: {
