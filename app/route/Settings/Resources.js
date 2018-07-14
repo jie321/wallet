@@ -51,6 +51,7 @@ class Resources extends BaseComponent {
         isOthers: false,
         isLease: true,
         isTransfer: false,
+        LeaseTransfer: false,
         tetletext: '内存概况',
         column_One: '100%',
         column_Two: '100%',
@@ -215,61 +216,6 @@ class Resources extends BaseComponent {
             })
         } 
     }
-    // goPage(current) {
-    //     if (current == 'isMemory'){
-    //         this.setState({ 
-    //             tetletext: '内存概况',
-    //             column_One: this.props.Resources.display_data.ram_left_percent,
-    //             column_Two: this.props.Resources.display_data.ram_usage_percent,
-    //             column_Three: (100 - this.state.used_Percentage) + '%',
-    //             ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
-    //             ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
-    //             ContrastThree: this.state.used + 'GB/' + this.state.total + 'GB',
-    //             percentageOne: '占用(' + this.props.Resources.display_data.ram_usage_percent + ')',
-    //             percentageTwo: '可用(' + this.props.Resources.display_data.ram_left_percent + ')',
-    //             percentageThree: '全网(' + this.state.used_Percentage + '%)',
-    //         })
-    //     }else if (current == 'isCalculation'){
-    //         this.setState({ 
-    //             tetletext: '计算概况',
-    //             column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
-    //             column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
-    //             column_Three: this.props.Resources.display_data.refund_request_cpu_left_second_percent,
-    //             ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
-    //             ContrastTwo:  this.props.Resources.cpu_weight + '/' + this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""),
-    //             ContrastThree: this.transferTimeZone(this.props.Resources.refund_request ? this.props.Resources.refund_request.request_time.replace("T", " ") : '0000-00-00 00:00:00'),
-    //             percentageOne: '可用(ms)',
-    //             percentageTwo: '抵押(EOS)',
-    //             percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.cpu_amount : '0.00') + ')',
-    //         })
-    //     }else if (current == 'isNetwork'){
-    //         this.setState({ 
-    //             tetletext: '网络概况',
-    //             column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
-    //             column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
-    //             column_Three: this.props.Resources.display_data.refund_request_net_left_second_percent,
-    //             ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
-    //             ContrastTwo: this.props.Resources.net_weight + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
-    //             ContrastThree: this.transferTimeZone(this.props.Resources.refund_request?this.props.Resources.refund_request.request_time.replace("T", " "):'0000-00-00 00:00:00'),
-    //             percentageOne: '可用(ms)',
-    //             percentageTwo: '抵押(EOS)',
-    //             percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.net_amount : '0.00') + ')',
-    //         })
-    //     }else if (current == 'isBuyForOther'){
-    //         this.setState({ 
-    //             tetletext: '内存交易',
-    //             column_One: '0%',
-    //             column_Two: '0%',
-    //             column_Three: '0%',
-    //             ContrastOne: '0.00/0.00',
-    //             ContrastTwo: '0.00/0.00',
-    //             ContrastThree: '0.00/0.00',
-    //             percentageOne: ' ',
-    //             percentageTwo: ' ',
-    //             percentageThree: ' ',
-    //         })
-    //     } 
-    // }
 
      // 更新"内存，计算，网络，内存交易"按钮的状态  
      _updateBtnState(currentPressed, array) { 
@@ -316,14 +262,26 @@ class Resources extends BaseComponent {
         }  
     }  
 
-    // 返回自己,他人,租赁,过户
-    tradeButton(style, selectedSate, stateType, buttonTitle) {    
-        let BTN_SELECTED_STATE_ARRAY = ['isOwn', 'isOthers','isLease','isTransfer'];  
+    // 返回自己,他人
+    ownOthersButton(style, selectedSate, stateType, buttonTitle) {    
+        let BTN_SELECTED_STATE_ARRAY = ['isOwn', 'isOthers'];  
         return(  
           <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'center',alignItems: 'center', flex: 1,}} onPress={ () => {this._updateSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
               <Text style={{fontSize: 16,color: UColor.fontColor}}>{buttonTitle}</Text>  
-              <View style={{width: 12, height: 12, marginHorizontal: 8, borderRadius: 3, backgroundColor: UColor.fontColor, alignItems: 'center', justifyContent: 'center',}}>
-                  {selectedSate ?<View style={{width: 10, height: 10, borderRadius: 10, backgroundColor: UColor.tintColor }}/>:null}
+              <View style={{width: 10, height: 10, marginHorizontal: 8, borderRadius: 3, backgroundColor: UColor.fontColor, alignItems: 'center', justifyContent: 'center',}}>
+                  {selectedSate ?<View style={{width: 8, height: 8, borderRadius: 10, backgroundColor: UColor.tintColor }}/>:null}
+              </View>
+          </TouchableOpacity>  
+        );  
+    }  
+    // 返回租赁,过户
+    leaseTransferButton(style, selectedSate, stateType, buttonTitle) {    
+        let BTN_SELECTED_STATE_ARRAY = ['isLease','isTransfer'];  
+        return(  
+          <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'center',alignItems: 'center', flex: 1,}} onPress={ () => {this._updateSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+              <Text style={{fontSize: 16,color: UColor.fontColor}}>{buttonTitle}</Text>  
+              <View style={{width: 10, height: 10, marginHorizontal: 8, borderRadius: 3, backgroundColor: UColor.fontColor, alignItems: 'center', justifyContent: 'center',}}>
+                  {selectedSate ?<View style={{width: 8, height: 8, borderRadius: 10, backgroundColor: UColor.tintColor }}/>:null}
               </View>
           </TouchableOpacity>  
         );  
@@ -548,10 +506,13 @@ class Resources extends BaseComponent {
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
+                    if(this.state.isTransfer){
+                        this.state.LeaseTransfer = true;
+                    }
                     EasyLoading.show();
                     // 抵押
                     if(this.state.isCalculation){
-                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegateb + " EOS", "0 EOS", (r) =>{
+                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegateb + " EOS", "0 EOS", this.state.LeaseTransfer, (r) =>{
                             EasyLoading.dismis();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -561,7 +522,7 @@ class Resources extends BaseComponent {
                             }
                         });
                     }else if(this.state.isNetwork){
-                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegateb + " EOS", (r) =>{
+                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegateb + " EOS", this.state.LeaseTransfer,(r) =>{
                             EasyLoading.dismis();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -615,10 +576,13 @@ class Resources extends BaseComponent {
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
+                    if(this.state.isTransfer){
+                        this.state.LeaseTransfer = true;
+                    }
                     EasyLoading.show();
                     // 解除抵押
                     if(this.state.isCalculation){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegateb + " EOS", "0 EOS", (r) => {
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegateb + " EOS", "0 EOS", this.state.LeaseTransfer,(r) => {
                             EasyLoading.dismis();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -628,7 +592,7 @@ class Resources extends BaseComponent {
                             }
                         })
                     }else if(this.state.isNetwork){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegateb + " EOS", (r) => {
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegateb + " EOS", this.state.LeaseTransfer, (r) => {
                             EasyLoading.dismis();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -699,17 +663,17 @@ class Resources extends BaseComponent {
                         <View style={styles.nhaaout}>
                             {this.state.isMemory?<View style={styles.wterout}>
                             <View style={styles.OwnOthers}>  
-                                    {this.tradeButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
-                                    {this.tradeButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
+                                    {this.ownOthersButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
+                                    {this.ownOthersButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                                 </View></View>:
                                 <View style={styles.wterout}>
                                 <View style={styles.OwnOthers}>  
-                                    {this.tradeButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
-                                    {this.tradeButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
+                                    {this.ownOthersButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
+                                    {this.ownOthersButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                                 </View>
                                 <View style={styles.LeaseTransfer}>  
-                                    {this.tradeButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
-                                    {this.tradeButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
+                                    {this.leaseTransferButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
+                                    {this.leaseTransferButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
                                 </View>
                             </View> }
                             {this.state.isOwn ? null:
@@ -1075,7 +1039,8 @@ const styles = StyleSheet.create({
     stripbgout: {
         width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,
         height: (ScreenWidth - 30) * 0.307 - 5,
-        zIndex: 2
+        zIndex: 2,
+        marginBottom: Platform.OS == 'ios' ? 0.3 : 0.2,
     },
     stripbg: {
         backgroundColor: '#43536d'

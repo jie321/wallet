@@ -223,7 +223,7 @@ class Calculation extends BaseComponent {
                 }
                 EasyLoading.show();
                 // 抵押
-                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegatebw + " EOS", "0 EOS", (r) =>{
+                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegatebw + " EOS", "0 EOS", false, (r) =>{
                     EasyLoading.dismis();
                     if(r.isSuccess){
                         this.getAccountInfo();

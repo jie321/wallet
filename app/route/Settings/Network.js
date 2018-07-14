@@ -223,7 +223,7 @@ class Network extends BaseComponent {
                 }
                 EasyLoading.show();
                 // 抵押
-                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegatebw + " EOS", (r) =>{
+                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegatebw + " EOS", false, (r) =>{
                     EasyLoading.dismis();
                     if(r.isSuccess){
                         this.getAccountInfo();
