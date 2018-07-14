@@ -125,11 +125,12 @@ class createWallet extends BaseComponent {
     const { navigate } = this.props.navigation;
     this.clearFoucs();
     EasyLoading.show('正在请求');
-    Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
-      if (result.isSuccess) {
-        // EasyLoading.dismis();
-        var salt;
-        Eos.randomPrivateKey((r)=>{
+    try {
+      Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
+
+        if (result.isSuccess) {
+          var salt;
+          Eos.randomPrivateKey((r) => {
             salt = r.data.ownerPrivate.substr(0, 18);
             result.data.words = wordsStr_owner;
             result.data.words_active = wordsStr_active;
@@ -138,20 +139,37 @@ class createWallet extends BaseComponent {
             result.account = this.state.walletName;
             result.salt = salt;
             this.props.dispatch({
-              type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
+              type: 'wallet/createAccountService',
+              payload: {
+                username: result.account,
+                owner: result.data.ownerPublic,
+                active: result.data.activePublic,
+                isact: false
+              },
+              callback: (data) => {
                 EasyLoading.dismis();
-                this.setState({errorcode: data.code,errormsg: data.msg});
+                this.setState({
+                  errorcode: data.code,
+                  errormsg: data.msg
+                });
                 if (data.code == '0') {
                   result.isactived = true
                   this.props.dispatch({
-                    type: 'wallet/saveWallet', wallet: result, callback: (data,error) => {
+                    type: 'wallet/saveWallet',
+                    wallet: result,
+                    callback: (data, error) => {
                       DeviceEventEmitter.emit('updateDefaultWallet');
                       if (error != null) {
                         // EasyToast.show('生成账号失败：' + error);
                         this.ExplainPopup();
                       } else {
                         EasyToast.show('生成账号成功');
-                        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false} });
+                        this.props.dispatch({
+                          type: 'wallet/updateGuideState',
+                          payload: {
+                            guide: false
+                          }
+                        });
                         DeviceEventEmitter.emit('updateDefaultWallet');
                         this.props.navigation.goBack();
                         // const { navigate } = this.props.navigation;
@@ -159,35 +177,43 @@ class createWallet extends BaseComponent {
                       }
                     }
                   });
-                }else if(data.code == '511' || data.code == '515') {  // 511: 已经创建过账户， 515：账户已经被占用
+                } else if (data.code == '511' || data.code == '515') { // 511: 已经创建过账户， 515：账户已经被占用
                   // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
-                }else { 
+                } else {
                   result.isactived = false
                   this.props.dispatch({
-                    type: 'wallet/saveWallet', wallet: result, callback: (data) => {
+                    type: 'wallet/saveWallet',
+                    wallet: result,
+                    callback: (data) => {
                       DeviceEventEmitter.emit('updateDefaultWallet');
-                      if(this.props.navigation.state.params.entry == "wallet_home"){
-                        this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
-                          this.props.navigation.goBack();
-                        }});
+                      if (this.props.navigation.state.params.entry == "wallet_home") {
+                        this.props.dispatch({
+                          type: 'wallet/updateGuideState',
+                          payload: {
+                            guide: false
+                          },
+                          callback: (data) => {
+                            this.props.navigation.goBack();
+                          }
+                        });
                       }
                       // const { navigate } = this.props.navigation;
                       this.ExplainPopup();
                     }
-                  }); 
+                  });
                   // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
                   this.ExplainPopup();
                 }
               }
             })
-        });
-        EasyLoading.dismis();
-      } else {
-        EasyLoading.dismis();
-      }
-    });
-
+          });
+        }
+      });
+    } catch (error) {
+      EasyToast.show(error);
+    }
+    EasyLoading.dismis();
     DeviceEventEmitter.addListener('wallet_10', () => {
       EasyToast.show('您不能创建更多钱包账号了');
     });
