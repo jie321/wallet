@@ -486,7 +486,7 @@ class Home extends React.Component {
               <View style={styles.addout}>
                 <View style={styles.topout}>
                   <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
-                  {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text>) }   
+                  {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text></View>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text></View>) }   
                 </View>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
@@ -536,7 +536,7 @@ class Home extends React.Component {
                       <View style={styles.walletlist} backgroundColor={(this.props.defaultWallet == null || this.props.defaultWallet.name == rowData.account) ? '#586888' : '#4D607E'}>
                         <View style={styles.topout}>
                           <Text style={styles.outname}>{rowData.name}</Text>
-                          {(!rowData.isactived || !rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text>)}  
+                          {(!rowData.isactived || !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this, rowData)}>未激活</Text></View>:(rowData.isBackups ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this, rowData)}>未备份</Text></View>)}  
                         </View>
                         <Text style={styles.walletaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000'} EOS</Text>
                       </View>
@@ -768,33 +768,35 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginRight: 10,
   },
-  stopoutBackups: {
-    height: 18,
-    lineHeight: 15,
-    fontSize: 10,
-    color: '#2ACFFF',
-    textAlign: 'left',
+  stopoutBackupsout: {
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#2ACFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 8,
-    paddingRight: 8,
   },
-  notactived: {
-    height: 18,
-    lineHeight: 15,
+  stopoutBackups: {
     fontSize: 10,
-    color: UColor.showy,
-    textAlign: 'left',
+    color: '#2ACFFF',
+    textAlign: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+
+  notactivedout: {
     borderRadius: 10,
     borderWidth: 1,
     borderColor: UColor.showy,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 8,
-    paddingRight: 8,
+  },
+
+  notactived: {
+    fontSize: 10,
+    color: UColor.showy,
+    textAlign: 'center', 
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
 
   walletaccount: {

@@ -93,7 +93,7 @@ class WalletManage extends BaseComponent {
                   <View style={styles.top}>
                       <View style={styles.topout}>
                           <Text style={styles.outname}>{rowData.name}</Text>
-                          {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <Text style={styles.notactived}>未激活</Text>:(rowData.isBackups ? null : <Text style={styles.stopoutBackups}>未备份</Text>) }   
+                          {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(rowData.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
                       </View>
                       <View style={styles.topout}>               
                           <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   },
   topout: {
       flexDirection: "row",
-      flex: 1,
+      marginBottom: 20,
   },
   outname: {
     fontSize: 14,
@@ -161,34 +161,37 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginRight: 10,
   },
-  stopoutBackups: {
-    height: 18,
-    lineHeight: 15,
-    fontSize: 10,
-    color: '#2ACFFF',
-    textAlign: 'left',
+  stopoutBackupsout: {
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#2ACFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 8,
-    paddingRight: 8,
   },
-  notactived: {
-    height: 18,
-    lineHeight: 15,
+  stopoutBackups: {
     fontSize: 10,
-    color: UColor.showy,
-    textAlign: 'left',
+    color: '#2ACFFF',
+    textAlign: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 1,
+  },
+
+  notactivedout: {
     borderRadius: 10,
     borderWidth: 1,
     borderColor: UColor.showy,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 8,
-    paddingRight: 8,
   },
+
+  notactived: {
+    fontSize: 10,
+    color: UColor.showy,
+    textAlign: 'center', 
+    paddingHorizontal: 8,
+    paddingVertical: 1,
+  },
+ 
   outaccount: {
     flex: 1,
     fontSize: 14,
