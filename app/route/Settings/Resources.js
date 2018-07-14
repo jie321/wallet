@@ -179,26 +179,26 @@ class Bvote extends BaseComponent {
                 tetletext: '计算概况',
                 column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
                 column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
-                column_Three: this.props.Resources.display_data.refund_request_cpu_left_second_percent,
+                column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
-                ContrastTwo: this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "") + '/' + this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""),
-                ContrastThree: this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")),
+                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", ""):'0.0000') + '/' + this.props.Resources.total_resources.cpu_weight.replace("EOS", ""),
+                ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '可用(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+this.props.Resources.refund_request.cpu_amount + ')',
+                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.cpu_amount : '0 EOS') + ')',
             })
         }else if (current == 'isNetwork'){
             this.setState({ 
                 tetletext: '网络概况',
                 column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
                 column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
-                column_Three: this.props.Resources.display_data.refund_request_net_left_second_percent,
+                column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
-                ContrastTwo: this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "") + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
-                ContrastThree: this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")),
+                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", ""):'0.0000') + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
+                ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '可用(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中(' + this.props.Resources.refund_request.net_amount + ')',
+                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.net_amount : '0 EOS') + ')',
             })
         }else if (current == 'isBuyForOther'){
             this.setState({ 
@@ -215,6 +215,61 @@ class Bvote extends BaseComponent {
             })
         } 
     }
+    // goPage(current) {
+    //     if (current == 'isMemory'){
+    //         this.setState({ 
+    //             tetletext: '内存概况',
+    //             column_One: this.props.Resources.display_data.ram_left_percent,
+    //             column_Two: this.props.Resources.display_data.ram_usage_percent,
+    //             column_Three: (100 - this.state.used_Percentage) + '%',
+    //             ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
+    //             ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
+    //             ContrastThree: this.state.used + 'GB/' + this.state.total + 'GB',
+    //             percentageOne: '占用(' + this.props.Resources.display_data.ram_usage_percent + ')',
+    //             percentageTwo: '可用(' + this.props.Resources.display_data.ram_left_percent + ')',
+    //             percentageThree: '全网(' + this.state.used_Percentage + '%)',
+    //         })
+    //     }else if (current == 'isCalculation'){
+    //         this.setState({ 
+    //             tetletext: '计算概况',
+    //             column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
+    //             column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
+    //             column_Three: this.props.Resources.display_data.refund_request_cpu_left_second_percent,
+    //             ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
+    //             ContrastTwo:  this.props.Resources.cpu_weight + '/' + this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""),
+    //             ContrastThree: this.transferTimeZone(this.props.Resources.refund_request ? this.props.Resources.refund_request.request_time.replace("T", " ") : '0000-00-00 00:00:00'),
+    //             percentageOne: '可用(ms)',
+    //             percentageTwo: '抵押(EOS)',
+    //             percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.cpu_amount : '0.00') + ')',
+    //         })
+    //     }else if (current == 'isNetwork'){
+    //         this.setState({ 
+    //             tetletext: '网络概况',
+    //             column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
+    //             column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
+    //             column_Three: this.props.Resources.display_data.refund_request_net_left_second_percent,
+    //             ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
+    //             ContrastTwo: this.props.Resources.net_weight + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
+    //             ContrastThree: this.transferTimeZone(this.props.Resources.refund_request?this.props.Resources.refund_request.request_time.replace("T", " "):'0000-00-00 00:00:00'),
+    //             percentageOne: '可用(ms)',
+    //             percentageTwo: '抵押(EOS)',
+    //             percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.net_amount : '0.00') + ')',
+    //         })
+    //     }else if (current == 'isBuyForOther'){
+    //         this.setState({ 
+    //             tetletext: '内存交易',
+    //             column_One: '0%',
+    //             column_Two: '0%',
+    //             column_Three: '0%',
+    //             ContrastOne: '0.00/0.00',
+    //             ContrastTwo: '0.00/0.00',
+    //             ContrastThree: '0.00/0.00',
+    //             percentageOne: ' ',
+    //             percentageTwo: ' ',
+    //             percentageThree: ' ',
+    //         })
+    //     } 
+    // }
 
      // 更新"内存，计算，网络，内存交易"按钮的状态  
      _updateBtnState(currentPressed, array) { 
