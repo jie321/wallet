@@ -276,7 +276,7 @@ class WalletDetail extends BaseComponent {
                     if (data.code == '0') {
                       _wallet.isactived = true
                       this.props.dispatch({
-                        type: 'wallet/saveWallet', wallet: _wallet, callback: (data, error) => {
+                        type: 'wallet/activeWallet', wallet: _wallet, callback: (data, error) => {
                           DeviceEventEmitter.emit('updateDefaultWallet');
                           if (error != null) {
                             EasyToast.show('激活账号失败：' + error);

@@ -31,6 +31,37 @@ export default {
             DeviceEventEmitter.emit('wallet_info');
             if (callback) callback();
         },
+        *activeWallet({ wallet, callback}, {call, put}) {
+            var AES = require("crypto-js/aes");
+            var CryptoJS = require("crypto-js");
+            var walletArr = yield call(store.get, 'walletArr');
+            var defaultWallet = yield call(store.get, 'defaultWallet');
+            if (walletArr == null) {
+                walletArr = [];
+                if (callback) callback({error: wallet.account + "不存在"});
+                return;
+            } 
+            for (var i = 0; i < walletArr.length; i++) {
+                if (walletArr[i].account == wallet.account) {
+                    if(walletArr[i].isactived) {
+                        if (callback) callback({}, error);
+                        return;
+                    }else if(wallet.isactived){
+                        //激活账号，修改激活状态
+                        walletArr[i].isactived = true;
+                        yield call(store.save, 'walletArr', walletArr);
+                        yield call(store.save, 'defaultWallet', walletArr[i]);
+                        yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: defaultWallet} });
+                        DeviceEventEmitter.emit('updateDefaultWallet', {});
+                        if (callback) callback(wallet,null);
+                        return;
+                    }                   
+                }
+            }
+
+            if (callback) callback({error: wallet.account + "不存在"});
+
+        },
         *saveWallet({ wallet, callback }, { call, put }) {
 
             var AES = require("crypto-js/aes");

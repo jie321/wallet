@@ -61,6 +61,15 @@ class WalletManage extends BaseComponent {
   }
 
   createWallet() {
+    if(this.props.walletList != null){
+      for(var i = 0; i < this.props.walletList.length; i++){
+        if(!this.props.walletList[i].isactived){
+          EasyToast.show("您已经有未激活账户!");
+          return;
+        }
+      }
+    }
+
     // 创建钱包
     const { navigate } = this.props.navigation;
     navigate('CreateWallet', {});
