@@ -41,8 +41,7 @@ export default {
       */
      *getaccountinfo({payload,callback},{call,put}) {
         try{
-            const resp = yield call(Request.request, getAccountInfo, 'post', payload);
-            // alert("resp : " + JSON.stringify(resp));
+            const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getAccountInfo, 'post', payload);
             if(resp.code=='0'){  
                 // alert("getaccountinfo1 : " + JSON.stringify(resp.data.voter_info));
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });

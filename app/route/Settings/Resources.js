@@ -158,207 +158,46 @@ class Bvote extends BaseComponent {
         // EasyToast.show('获取余额失败：' + data.msg);
       }
   }
-    getMemory(pos){
-        var tmp = '';
-        if(pos == 'column_One'){
-            try {
-                tmp = (this.props.Resources.ram_usage/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed();
-            } catch (error) {
-                tmp = 100;
-            }
-        }else if(pos == 'column_Two'){
-            try {
-                tmp = ((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage)/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed();
-            } catch (error) {
-                tmp = 100;                
-            }    
-        }else if(pos == 'column_Three'){
-            try {
-                tmp = (100-this.state.used_Percentage)+'%';
-            } catch (error) {
-                tmp = '0' + '%';     
-            }
-        }else if(pos == 'ContrastOne'){
-            try {
-                tmp = (this.props.Resources.ram_usage / 1024).toFixed(2)+'kb/'+(this.props.Resources.total_resources.ram_bytes / 1024).toFixed(2)+'kb';
-            } catch (error) {
-                tmp = '0.00'+'kb/'+ '0.00'+'kb';              
-            }
-        }else if(pos == 'ContrastTwo'){
-            try {
-                tmp = ((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage) / 1024).toFixed(2)+'kb/'+(this.props.Resources.total_resources.ram_bytes / 1024).toFixed(2)+'kb';
-            } catch (error) {
-                tmp = '0.00'+'kb/'+ '0.00'+'kb';
-            }
-        }else if(pos == 'ContrastThree'){
-            try {
-                tmp = this.state.used+'GB/'+this.state.total+'GB';
-            } catch (error) {
-                tmp = '0.00'+'GB/'+ '0.00' +'GB';                
-            }
-        }else if(pos == 'percentageOne'){
-            try {
-                tmp = '占用('+(this.props.Resources.ram_usage/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed()+'%)';
-            } catch (error) {
-                tmp = '占用('+'0.00'+'%)';                
-            }
-        }else if(pos == 'percentageTwo'){
-            try {
-                tmp = '可用('+((this.props.Resources.total_resources.ram_bytes - this.props.Resources.ram_usage)/this.props.Resources.total_resources.ram_bytes*10000/100).toFixed()+'%)';
-            } catch (error) {
-                tmp = '可用('+'0.00'+'%)';
-            }
-        }else if(pos == 'percentageThree'){
 
-        }
-        return tmp;
-    }
-    getCalculation(pos){
-        var tmp = '';
-        if(pos == 'column_One'){
-            try {
-                tmp = (this.props.Resources.cpu_limit.available/(this.props.Resources.cpu_limit.used+this.props.Resources.cpu_limit.available)*10000/100).toFixed();
-            } catch (error) {
-                tmp = 100;                
-            }
-        }else if(pos == 'column_Two'){
-            try {
-                tmp = ((this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")/this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""))*10000/100).toFixed();
-            } catch (error) {
-                tmp = 100;                
-            }
-        }else if(pos == 'column_Three'){
-            try {
-                var time = this.props.Resources.refund_request.request_time.replace("T", " ");
-                tmp = this.cpuPercentageTime(time);
-            } catch (error) {
-                tmp = '0%';                
-            }
-        }else if(pos == 'ContrastOne'){
-            try {
-                tmp = (this.props.Resources.cpu_limit.available / 1000).toFixed(2)+'/'+((this.props.Resources.cpu_limit.used+this.props.Resources.cpu_limit.available)/1000).toFixed(2);
-            } catch (error) {
-                tmp = '0.00'+'/'+'0.00';            
-            }
-        }else if(pos == 'ContrastTwo'){
-            try {
-                tmp = this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")+'/'+this.props.Resources.total_resources.cpu_weight.replace(" EOS", "");
-            } catch (error) {
-                tmp = '0.00'+'/'+ '0.00';              
-            }
-        }else if(pos == 'ContrastThree'){
-            try {
-                var time = this.props.Resources.refund_request.request_time.replace("T", " ");
-                tmp = this.transferTimeZone(time);
-            } catch (error) {
-                tmp = '';
-            }
-        }else if(pos == 'percentageOne'){
-        
-        }else if(pos == 'percentageTwo'){
-
-        }else if(pos == 'percentageThree'){
-            try {
-                tmp = this.props.Resources.refund_request.cpu_amount.replace("EOS", "");
-            } catch (error) {
-                tmp = '0.00';
-            }
-        }
-        return tmp;
-    }
-    getNetwork(pos){
-        var tmp = '';
-        if(pos == 'column_One'){
-            try {
-                tmp = (this.props.Resources.net_limit.available/(this.props.Resources.net_limit.used+this.props.Resources.net_limit.available)*10000/100).toFixed();
-            } catch (error) {
-                tmp = 100;
-            }
-        }else if(pos == 'column_Two'){
-           try {
-               tmp = ((this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")/this.props.Resources.total_resources.net_weight.replace(" EOS", ""))*10000/100).toFixed();
-           } catch (error) {
-               tmp = 100;               
-           }
-
-        }else if(pos == 'column_Three'){
-            try {
-                var time = this.props.Resources.refund_request.request_time.replace("T", " ");    
-                tmp = this.cpuPercentageTime(time);
-            } catch (error) {
-                tmp = '0%';                
-            }
-        }else if(pos == 'ContrastOne'){
-            try {
-                tmp = (this.props.Resources.net_limit.available / 1024).toFixed(2)+'/'+((this.props.Resources.net_limit.used+this.props.Resources.net_limit.available)/1024).toFixed(2);
-            } catch (error) {
-                tmp = '0.00'+'/'+'0.00';                
-            }
-        }else if(pos == 'ContrastTwo'){
-            try {
-                tmp = this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")+'/'+this.props.Resources.total_resources.net_weight.replace("EOS", "");
-            } catch (error) {
-                tmp = '0.00'+'/'+ '0.00';
-            }
-        }else if(pos == 'ContrastThree'){
-            try {
-                var time = this.props.Resources.refund_request.request_time.replace("T", " ");
-                tmp = this.transferTimeZone(time);
-            } catch (error) {
-                time = '';
-            }
-        }else if(pos == 'percentageOne'){
-        
-        }else if(pos == 'percentageTwo'){
-
-        }else if(pos == 'percentageThree'){
-            try {
-                tmp = this.props.Resources.refund_request.net_amount.replace("EOS", "");
-            } catch (error) {
-                tmp = "0.00";                
-            }
-        }
-        return tmp;
-    }
     goPage(current) {
         if (current == 'isMemory'){
             this.setState({ 
                 tetletext: '内存概况',
-                column_One: (100-this.getMemory('column_One'))+'%',
-                column_Two: (100-this.getMemory('column_Two'))+'%',
-                column_Three: this.getMemory('column_Three'),
-                ContrastOne: this.getMemory('ContrastOne'),
-                ContrastTwo: this.getMemory('ContrastTwo'),
-                ContrastThree: this.getMemory('ContrastThree'),
-                percentageOne: this.getMemory('percentageOne'),
-                percentageTwo: this.getMemory('percentageTwo'),
-                percentageThree: '全网('+this.state.used_Percentage+'%)',
+                column_One: (100 - this.props.Resources.display_data.ram_usage_percent.replace("%", "")) + '%',
+                column_Two: (100 - this.props.Resources.display_data.ram_left_percent.replace("%", "")) + '%',
+                column_Three: (100 - this.state.used_Percentage) + '%',
+                ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
+                ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
+                ContrastThree: this.state.used + 'GB/' + this.state.total + 'GB',
+                percentageOne: '占用(' + this.props.Resources.display_data.ram_usage_percent + ')',
+                percentageTwo: '可用(' + this.props.Resources.display_data.ram_left_percent + ')',
+                percentageThree: '全网(' + this.state.used_Percentage + '%)',
             })
         }else if (current == 'isCalculation'){
             this.setState({ 
                 tetletext: '计算概况',
-                column_One: (100-this.getCalculation('column_One'))+'%',
-                column_Two: (100-this.getCalculation('column_Two'))+'%',
-                column_Three: this.getCalculation('column_Three'),
-                ContrastOne: this.getCalculation('ContrastOne'),
-                ContrastTwo: this.getCalculation('ContrastTwo'),
-                ContrastThree: this.getCalculation('ContrastThree'),
+                column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
+                column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
+                column_Three: this.props.Resources.display_data.refund_request_cpu_left_second_percent,
+                ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
+                ContrastTwo: this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "") + '/' + this.props.Resources.total_resources.cpu_weight.replace(" EOS", ""),
+                ContrastThree: this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")),
                 percentageOne: '可用(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ this.getCalculation('percentageThree') +'EOS)',
+                percentageThree: '赎回中('+this.props.Resources.refund_request.cpu_amount + ')',
             })
         }else if (current == 'isNetwork'){
             this.setState({ 
                 tetletext: '网络概况',
-                column_One: (100-this.getNetwork('column_One'))+'%',
-                column_Two: (100-this.getNetwork('column_Two'))+'%',
-                column_Three: this.getNetwork('column_Three'),
-                ContrastOne: this.getNetwork('ContrastOne'),
-                ContrastTwo: this.getNetwork('ContrastTwo'),
-                ContrastThree: this.getNetwork('ContrastThree'),
+                column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
+                column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
+                column_Three: this.props.Resources.display_data.refund_request_net_left_second_percent,
+                ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
+                ContrastTwo: this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "") + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
+                ContrastThree: this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")),
                 percentageOne: '可用(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+this.getNetwork('percentageThree')+'EOS)',
+                percentageThree: '赎回中(' + this.props.Resources.refund_request.net_amount + ')',
             })
         }else if (current == 'isBuyForOther'){
             this.setState({ 
@@ -376,8 +215,8 @@ class Bvote extends BaseComponent {
         } 
     }
 
-     // 更新"内存，计算，网络，内存交易,自己,他人,租赁,过户"按钮的状态  
-     _updateState(currentPressed, array) { 
+     // 更新"内存，计算，网络，内存交易"按钮的状态  
+     _updateBtnState(currentPressed, array) { 
         if (currentPressed === null || currentPressed === 'undefined' || array === null || array === 'undefined') {  
             return;  
         }  
@@ -395,17 +234,17 @@ class Bvote extends BaseComponent {
     }  
 
     // 返回内存，计算，网络，内存交易  
-    _getButton(style, selectedSate, stateType, buttonTitle) {  
+    resourceButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isMemory', 'isCalculation','isNetwork', 'isBuyForOther',];  
         return(  
-            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
                 <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
             </TouchableOpacity>  
         );  
     }  
 
      // 更新"自己,他人,租赁,过户"按钮的状态  
-     _updateBtnSelectedState(currentPressed, array) {  
+     _updateSelectedState(currentPressed, array) {  
         if (currentPressed === null || currentPressed === 'undefined' || array === null || array === 'undefined') {  
             return;  
         }  
@@ -422,10 +261,10 @@ class Bvote extends BaseComponent {
     }  
 
     // 返回自己,他人,租赁,过户
-    _getButton2(style, selectedSate, stateType, buttonTitle) {    
+    tradeButton(style, selectedSate, stateType, buttonTitle) {    
         let BTN_SELECTED_STATE_ARRAY = ['isOwn', 'isOthers','isLease','isTransfer'];  
         return(  
-          <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'center',alignItems: 'center', flex: 1,}} onPress={ () => {this._updateBtnSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+          <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'center',alignItems: 'center', flex: 1,}} onPress={ () => {this._updateSelectedState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
               <Text style={{fontSize: 16,color: UColor.fontColor}}>{buttonTitle}</Text>  
               <View style={{width: 12, height: 12, marginHorizontal: 8, borderRadius: 3, backgroundColor: UColor.fontColor, alignItems: 'center', justifyContent: 'center',}}>
                   {selectedSate ?<View style={{width: 10, height: 10, borderRadius: 10, backgroundColor: UColor.tintColor }}/>:null}
@@ -487,20 +326,35 @@ class Bvote extends BaseComponent {
         }
         return obj;
     }
-    chkAmountIsZero(amount,errInfo)
-    {
-        var tmp;
-        try {
-             tmp = parseFloat(amount);
-          } catch (error) {
-              tmp = 0;
-          }
-        if(tmp <= 0){
-            EasyToast.show(errInfo);
-            return true;
-        }
-        return false;
+
+    //转换时间
+    transferTimeZone(date){
+        //转换时间
+        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
+        let regEx = new RegExp("\\-","gi");
+        let validDateStr=timezone.replace(regEx,"/");
+        let milliseconds=Date.parse(validDateStr);
+        let sendTime = new Date(milliseconds).getTime();
+        //当前时间
+        let nowTime = new Date().getTime();
+        //72小时
+        let ThreeTime = 259200000;
+        //差值
+        let Dvalue = nowTime - sendTime ;
+        let SurplusTime = ThreeTime - Dvalue
+        // 时 
+        const hours = Math.floor(SurplusTime / (3600 * 1000)); 
+        // 分 
+        const leave2 = SurplusTime % (3600 * 1000); 
+        const minutes = Math.floor(leave2 / (60 * 1000)); 
+        // 秒 
+        const leave3 = leave2 % (60 * 1000); 
+        const seconds = Math.round(leave3 / 1000); 
+        let Surplus = hours + ':' + minutes + ':' + seconds
+        return Surplus;
     }
+
+
     // 购买内存
     buyram = (rowData) => { 
         if(!this.props.defaultWallet){
@@ -510,10 +364,6 @@ class Bvote extends BaseComponent {
         if(this.state.buyRamAmount == ""){
             EasyToast.show('请输入购买金额');
             return;
-        }
-        if(this.chkAmountIsZero(this.state.buyRamAmount,'请输入购买金额')){
-            this.setState({ buyRamAmount: "" })
-            return ;
         }
         this. dismissKeyboardClick();
             const view =
@@ -568,10 +418,6 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入出售内存kb数量');
             return;
         }
-        if(this.chkAmountIsZero(this.state.sellRamBytes,'请输入出售内存kb数量')){
-            this.setState({ sellRamBytes: "" })
-            return ;
-        }
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
@@ -623,10 +469,6 @@ class Bvote extends BaseComponent {
         if ((this.state.delegateb == "")) {
             EasyToast.show('请输入抵押的EOS数量');
             return;
-        }
-        if(this.chkAmountIsZero(this.state.delegateb,'请输入抵押的EOS数量')){
-            this.setState({ delegateb: "" })
-            return ;
         }
         this. dismissKeyboardClick();
         const view =
@@ -694,10 +536,6 @@ class Bvote extends BaseComponent {
             EasyToast.show('请输入赎回的EOS数量');
             return;
         }
-        if(this.chkAmountIsZero(this.state.undelegateb,'请输入赎回的EOS数量')){
-            this.setState({ undelegateb: "" })
-            return ;
-        }
         this. dismissKeyboardClick();
             const view =
             <View style={styles.passoutsource}>
@@ -756,55 +594,9 @@ class Bvote extends BaseComponent {
         }, () => { EasyDialog.dismis() });
     };
 
-    transferTimeZone(date){
-        //转换时间
-        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-        let regEx = new RegExp("\\-","gi");
-        let validDateStr=timezone.replace(regEx,"/");
-        let milliseconds=Date.parse(validDateStr);
-        let sendTime = new Date(milliseconds).getTime();
-        //当前时间
-        let nowTime = new Date().getTime();
-        //72小时
-        let ThreeTime = 259200000;
-        //差值
-        let Dvalue = nowTime - sendTime ;
-        let SurplusTime = ThreeTime - Dvalue
-        // 时 
-        const hours = Math.floor(SurplusTime / (3600 * 1000)); 
-        // 分 
-        const leave2 = SurplusTime % (3600 * 1000); 
-        const minutes = Math.floor(leave2 / (60 * 1000)); 
-        // 秒 
-        const leave3 = leave2 % (60 * 1000); 
-        const seconds = Math.round(leave3 / 1000); 
-        let Surplus = hours + ':' + minutes + ':' + seconds
-        return Surplus;
-    }
-
-    cpuPercentageTime(date){
-        //转换时间
-        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-        let regEx = new RegExp("\\-","gi");
-        let validDateStr=timezone.replace(regEx,"/");
-        let milliseconds=Date.parse(validDateStr);
-        let sendTime = new Date(milliseconds).getTime();
-        //当前时间
-        let nowTime = new Date().getTime();
-        //72小时
-        let ThreeTime = 259200000;
-        //差值
-        let Dvalue = nowTime - sendTime ;
-        let SurplusTime = Dvalue/ThreeTime; 
-        
-        let Surplus = (SurplusTime*10000/100).toFixed() + '%'
-        return Surplus;
-    }
- 
     dismissKeyboardClick() {
         dismissKeyboard();
     }
-
 
     render() {
         const c = this.props.navigation.state.params.coinType;
@@ -842,26 +634,26 @@ class Bvote extends BaseComponent {
                         </View>
                         </View>
                         <View style={styles.tablayout}>  
-                            {this._getButton(styles.buttontab, this.state.isMemory, 'isMemory', '内存资源')}  
-                            {this._getButton(styles.buttontab, this.state.isCalculation, 'isCalculation', '计算资源')}  
-                            {this._getButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
-                            {this._getButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}  
+                            {this.resourceButton(styles.buttontab, this.state.isMemory, 'isMemory', '内存资源')}  
+                            {this.resourceButton(styles.buttontab, this.state.isCalculation, 'isCalculation', '计算资源')}  
+                            {this.resourceButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
+                            {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}  
                         </View> 
                         {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>还没有交易哟~</Text></View>:
                         <View style={styles.nhaaout}>
                             {this.state.isMemory?<View style={styles.wterout}>
                             <View style={styles.OwnOthers}>  
-                                    {this._getButton2(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
-                                    {this._getButton2(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
+                                    {this.tradeButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
+                                    {this.tradeButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                                 </View></View>:
                                 <View style={styles.wterout}>
                                 <View style={styles.OwnOthers}>  
-                                    {this._getButton2(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
-                                    {this._getButton2(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
+                                    {this.tradeButton(styles.tabbutton, this.state.isOwn, 'isOwn', '自己')}  
+                                    {this.tradeButton(styles.tabbutton, this.state.isOthers, 'isOthers', '他人')}  
                                 </View>
                                 <View style={styles.LeaseTransfer}>  
-                                    {this._getButton2(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
-                                    {this._getButton2(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
+                                    {this.tradeButton(styles.tabbutton, this.state.isLease, 'isLease', '租赁')}  
+                                    {this.tradeButton(styles.tabbutton, this.state.isTransfer, 'isTransfer', '过户')}  
                                 </View>
                             </View> }
                             {this.state.isOwn ? null:
