@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { BackHandler, NavigationActions, Dimensions, Image, ScrollView, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, WebView } from 'react-native';
+import { BackHandler, NavigationActions, Dimensions, Image, ScrollView, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, WebView, FlatList, Platform } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import Swiper from 'react-native-swiper';
 import store from 'react-native-simple-store';
@@ -20,7 +20,7 @@ let currentLoadMoreTypeId;
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
 var cangoback = false;
-
+var ITEM_HEIGHT = 100;
 @connect(({ banner, newsType, news, wallet}) => ({ ...banner, ...newsType, ...news, ...wallet }))
 class News extends React.Component {
 
@@ -204,13 +204,23 @@ class News extends React.Component {
       return w;
     }
     const v = (
-      <ListView
-        initialListSize={5}
+      <ListView initialListSize={5}  style={{ backgroundColor: UColor.secdColor }} enableEmptySections={true} onEndReachedThreshold={20}
         renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
-        style={{ backgroundColor: UColor.secdColor }}
-        enableEmptySections={true}
         onEndReached={() => this.onEndReached(route.key)}
-        onEndReachedThreshold={20}
+        renderHeader = {()=><View style={{ height: this.state.h }}>
+          <Swiper
+            height={this.state.h}
+            loop={true}  
+            autoplay={true}
+            horizontal={true}  
+            autoplayTimeout={5} 
+            paginationStyle={{ bottom: 10 }}
+            dotStyle={{ backgroundColor: 'rgba(255,255,255,.2)', width: 6, height: 6 }}
+            activeDotStyle={{ backgroundColor: UColor.tintColor, width: 6, height: 6 }}>
+            {this.renderSwipeView()}
+          </Swiper>
+        </View>
+        }
         refreshControl={
           <RefreshControl
             refreshing={this.props.newsRefresh}
@@ -272,25 +282,11 @@ class News extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{ height: this.state.h }}>
-          <Swiper
-            height={this.state.h}
-            loop={true}  
-            autoplay={true}
-            horizontal={true}  
-            autoplayTimeout={5} 
-            paginationStyle={{ bottom: 10 }}
-            dotStyle={{ backgroundColor: 'rgba(255,255,255,.2)', width: 6, height: 6 }}
-            activeDotStyle={{ backgroundColor: UColor.tintColor, width: 6, height: 6 }}>
-            {this.renderSwipeView()}
-          </Swiper>
-        </View>
-        {
-          this.state.routes && <TabViewAnimated
-            lazy={true}
+        {this.state.routes && <TabViewAnimated
+            lazy={true} 
             navigationState={this.state}
             renderScene={this.renderScene.bind(this)}
-            renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 10, paddingTop: 10, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth / 3 - 50, marginLeft: 25 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: ScreenWidth / 3, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
+            renderHeader={(props) => <TabBar onTabPress={this._handleTabItemPress} labelStyle={{ fontSize: 15, margin: 0, marginBottom: 12, paddingTop: 18, color: '#8696B0' }} indicatorStyle={{ backgroundColor: UColor.tintColor, width: ScreenWidth / 3 - 40, marginLeft: 20 }} style={{ backgroundColor: UColor.secdColor }} tabStyle={{ width: ScreenWidth / 3, padding: 0, margin: 0 }} scrollEnabled={true} {...props} />}
             onIndexChange={this._handleIndexChange}
             initialLayout={{ height: 0, width: Dimensions.get('window').width }}
           />
@@ -301,10 +297,18 @@ class News extends React.Component {
 }
 
 const styles = StyleSheet.create({
+
+  txt: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: 'white',
+    fontSize: 30,
+},
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: UColor.secdColor
+    backgroundColor: UColor.secdColor,
+    paddingTop:Platform.OS == 'ios' ? 30 : 20,
   },
   switem: {
     paddingBottom: 10,
