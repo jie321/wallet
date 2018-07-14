@@ -186,29 +186,38 @@ class ImportEosKey extends BaseComponent {
     });
   }
 
+
+
+  opendelay(owner_publicKey ,data) {
+    var pthis = this;
+    this.tm=setTimeout(function(){
+      pthis.setState({
+        show: true,
+        Invalid: false,
+        publicKey: '找不到:' + owner_publicKey,
+        ReturnData: "对应的账户名" + " " + JSON.stringify(data),
+      });
+        clearTimeout(pthis.tm);
+    },500);
+}
   createWalletByPrivateKey(owner_privateKey, active_privatekey){
     EasyLoading.show('正在请求');
     try {
       Eos.privateToPublic(active_privatekey, (r) => {
         var active_publicKey = r.data.publicKey;
         var owner_publicKey = r.data.publicKey;
+        var pthis=this;
         this.props.dispatch({
           type: 'wallet/getAccountsByPuk',
           payload: {
             public_key: owner_publicKey
           },
           callback: (data) => {
-            EasyLoading.dismis();
-            if (data == undefined || data.code != '0') {
-              this.setState({
-                show: true,
-                Invalid: false,
-                publicKey: '找不到' + owner_publicKey,
-                ReturnData: "对应的账户名" + " " + JSON.stringify(data),
-              });
-              EasyToast.show('' + data.msg);
-              return;
-            }
+              EasyLoading.dismis();
+              if (data == undefined || data.code != '0') {
+                pthis.opendelay(owner_publicKey, data);
+                return;
+              }
             var walletList = [];
             var salt;
             Eos.randomPrivateKey((r) => {
@@ -430,7 +439,7 @@ class ImportEosKey extends BaseComponent {
                     </TouchableOpacity>
                     {this.state.Invalid ? <Text style={styles.copytext}>{this.state.publicKey}{this.state.ReturnData}</Text> : null}
                 </View>
-                  <Button onPress={this._onRequestClose.bind()}>
+                  <Button onPress={this._onRequestClose.bind(this)}>
                       <View style={styles.buttonView}>
                           <Text style={styles.buttoncols}>知道了</Text>
                       </View>

@@ -367,8 +367,11 @@ export default {
         },
         *getAccountsByPuk({payload, callback},{call,put}) {
             try{
-                const resp = yield call(Request.request,getAccountsByPuk,"post", payload);
-                if (callback) callback(resp);
+                let resp = yield call(Request.request,getAccountsByPuk,"post", payload);
+                try {
+                    if (callback) callback(resp);
+                } catch (error) {
+                }
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
