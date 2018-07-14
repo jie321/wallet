@@ -127,7 +127,7 @@ class createWallet extends BaseComponent {
     EasyLoading.show('正在请求');
     Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
       if (result.isSuccess) {
-        EasyLoading.dismis();
+        // EasyLoading.dismis();
         var salt;
         Eos.randomPrivateKey((r)=>{
             salt = r.data.ownerPrivate.substr(0, 18);
@@ -139,6 +139,7 @@ class createWallet extends BaseComponent {
             result.salt = salt;
             this.props.dispatch({
               type: 'wallet/createAccountService', payload: { username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic,isact:false }, callback: (data) => {
+                EasyLoading.dismis();
                 this.setState({errorcode: data.code,errormsg: data.msg});
                 if (data.code == '0') {
                   result.isactived = true
@@ -181,7 +182,7 @@ class createWallet extends BaseComponent {
               }
             })
         });
-
+        EasyLoading.dismis();
       } else {
         EasyLoading.dismis();
       }
