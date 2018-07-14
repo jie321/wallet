@@ -13,6 +13,7 @@ const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
+import { Toast } from '../../components/Toast';
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
 class Add_assets extends BaseComponent {
@@ -47,6 +48,7 @@ class Add_assets extends BaseComponent {
 
 
   componentDidMount() {
+    DeviceEventEmitter.emit('stopBalanceTimer', "");
     this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
     this.props.dispatch({ type: 'assets/myAssetInfo'});
     DeviceEventEmitter.addListener('updateAssetList', (data) => {
@@ -60,21 +62,10 @@ class Add_assets extends BaseComponent {
   }
 
   componentWillUnmount(){
+    DeviceEventEmitter.emit('startBalanceTimer', "");
     //结束页面前，资源释放操作
     super.componentWillUnmount();
-    
   }
-  
-  // onBackAndroid = () => {
-  //   if (cangoback) {
-  //     let type = this.state.routes[this.state.index]
-  //     let w = this.web[type.key];
-  //     if (w) {
-  //       w.goBack();
-  //       return true;
-  //     }
-  //   }
-  // }
 
   //获得typeid坐标
   getRouteIndex(typeId) {
@@ -140,9 +131,9 @@ class Add_assets extends BaseComponent {
       return;
     }
 
-    // EasyLoading.show();
+    EasyLoading.show();
     this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
-      // EasyLoading.dismis();
+      EasyLoading.dismis();
     } });
   }
 
