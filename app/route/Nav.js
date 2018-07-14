@@ -493,6 +493,15 @@ class Route extends React.Component {
         ]).start();
       }, 300);
     });
+
+    DeviceEventEmitter.addListener('startBalanceTimer', () => {
+      this.startTimer();
+    });
+
+    DeviceEventEmitter.addListener('stopBalanceTimer', () => {
+      this.stopTimer();
+    });
+
   }
 
   shareAction = (e) => {
@@ -586,9 +595,20 @@ class Route extends React.Component {
           
     this.props.dispatch({
       type: 'assets/getBalance', payload: {myAssets: this.props.myAssets, accountName: this.props.defaultWallet.name}, callback: () => {
-        this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {}});
+        // this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {}});
       }
     });
+  }
+
+  startTimer(){
+    this.timer = setInterval( ()  =>{
+      this.getBalance();
+      this.getIncrease();
+    },30000);
+  }
+
+  stopTimer(){
+    this.timer && clearTimeout(this.timer);
   }
 
   switchRoute = (prevNav, nav, action) => {
@@ -611,14 +631,16 @@ class Route extends React.Component {
                 routeLength = nav.routes.length;
               }
               });
-              this.timer && clearTimeout(this.timer);
+              // this.timer && clearTimeout(this.timer);
+              this.stopTimer();
               return;
             }else{
               this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
-                this.timer = setInterval( ()  =>{
-                  this.getBalance();
-                  this.getIncrease();
-                },30000);
+                this.startTimer();
+                // this.timer = setInterval( ()  =>{
+                //   this.getBalance();
+                //   this.getIncrease();
+                // },30000);
       
                 if (action && action.routeName) {
                   DeviceEventEmitter.emit('changeTab', action.routeName);
@@ -631,10 +653,11 @@ class Route extends React.Component {
         } });
       }else{
         this.props.dispatch({ type: 'wallet/updateGuideState', payload: {guide: false}, callback: (data) => {
-          this.timer = setInterval( ()  =>{
-            this.getBalance();
-            this.getIncrease();
-          },30000);
+          this.startTimer();
+          // this.timer = setInterval( ()  =>{
+          //   this.getBalance();
+          //   this.getIncrease();
+          // },30000);
 
           if (action && action.routeName) {
             DeviceEventEmitter.emit('changeTab', action.routeName);
@@ -650,7 +673,8 @@ class Route extends React.Component {
         }
       }});
     }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
-      this.timer && clearTimeout(this.timer);
+      // this.timer && clearTimeout(this.timer);
+      this.stopTimer();
       if (action && action.routeName) {
         DeviceEventEmitter.emit('changeTab', action.routeName);
       }
