@@ -52,7 +52,7 @@ class Info extends BaseComponent {
     componentDidMount() {
         //加载地址数据
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-        this.props.dispatch({ type: 'wallet/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, pos :"1",  offset :"99999"}}); 
         DeviceEventEmitter.addListener('eos_balance', (data) => {
             this.setEosBalance(data);
         });

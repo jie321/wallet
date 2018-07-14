@@ -83,12 +83,12 @@ class createWallet extends BaseComponent {
       EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
       return;
     }
-    if (this.state.walletPassword == "" || this.state.walletPassword < 8) {
-      EasyToast.show('请输入钱包密码');
+    if (this.state.walletPassword == "" || this.state.walletPassword.length < 8) {
+      EasyToast.show('钱包密码长度至少8位,请重输');
       return;
     }
-    if (this.state.reWalletPassword == "" || this.state.reWalletPassword < 8) {
-      EasyToast.show('请输入钱包确认密码');
+    if (this.state.reWalletPassword == "" || this.state.reWalletPassword.length < 8) {
+      EasyToast.show('钱包密码长度至少8位,请重输');
       return;
     }
     if (this.state.walletPassword != this.state.reWalletPassword) {

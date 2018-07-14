@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { address, getAccountsByPuk, getActions, getintegral } from '../utils/Api';
+import { address, getAccountsByPuk, getintegral } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
 import { EasyLoading } from '../components/Loading';
 import store from 'react-native-simple-store';
@@ -379,29 +379,7 @@ export default {
             } catch (error) {
                 EasyToast.show('网络繁忙,请稍后!');
             }
-         },
-         *getTradeDetails({payload, callback},{call,put}) {
-            EasyLoading.show();
-            try{
-                const resp = yield call(Request.request,getActions,"post", payload);
-                // alert('getTradeDetails: '+JSON.stringify(resp));
-                if(resp.code=='0'){               
-                    // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
-                    yield put({ type: 'updateDetails', payload: { DetailsData:resp.data } });
-                    // if (callback) callback(resp.data.account_names[0]);
-                    // alert('updateDetails: '+JSON.stringify(resp.data));
-                    EasyLoading.dismis();
-                }else{
-                    EasyToast.show(resp.msg);
-                    EasyLoading.dismis();
-                }
-                if (callback) callback(resp);
-            } catch (error) {
-                EasyToast.show('网络繁忙,请稍后!');
-                EasyLoading.dismis();
-            }
-         },
-    
+         },   
          *getintegral({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request, getintegral, "post", payload);
@@ -459,9 +437,6 @@ export default {
         }, 
         updateDefaultWallet(state, action) {
             return { ...state, ...action.payload };
-        },
-        updateDetails(state, action) {
-            return {...state,DetailsData:action.payload.DetailsData.actions};
         },
         updateGuide(state, action){
             return { ...state, ...action.payload };

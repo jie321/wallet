@@ -9,6 +9,7 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
+import Constants from '../../utils/Constants'
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -45,11 +46,11 @@ class ModifyPassword extends BaseComponent {
             return;
         }
         if (this.state.newPassword == "" || this.state.newPassword < 8) {
-            EasyToast.show('请输入新密码');
+            EasyToast.show('密码长度至少8位，请重输');
             return;
         }
         if (this.state.newRePassword == "" || this.state.newRePassword < 8) {
-            EasyToast.show('请输入确认密码');
+            EasyToast.show('密码长度至少8位，请重输');
             return;
         }
         if (this.state.newRePassword != this.state.newPassword) {
@@ -156,7 +157,7 @@ class ModifyPassword extends BaseComponent {
                         <View  style={styles.inptoutsource} >
                             <TextInput ref={(ref) => this._lpass = ref} value={this.state.newPassword} returnKeyType="next"
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                                secureTextEntry={true}  placeholder="新密码" underlineColorAndroid="transparent"  autoFocus={false}  maxLength= {18}
+                                secureTextEntry={true}  placeholder="新密码" underlineColorAndroid="transparent"  autoFocus={false}  maxLength= {Constants.PWD_MAX_LENGTH}
                                 editable={true} onChangeText={(newPassword) => this.setState({ newPassword })} 
                             />
                         </View>
@@ -164,7 +165,7 @@ class ModifyPassword extends BaseComponent {
                             <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next"
                                 value={this.state.newRePassword} onChangeText={(newRePassword) => this.setState({ newRePassword })}
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                                placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true}  maxLength = {18}
+                                placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true}  maxLength = {Constants.PWD_MAX_LENGTH}
                             />
                         </View>
                         <View style={styles.inptoutsource} >

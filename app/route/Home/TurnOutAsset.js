@@ -14,6 +14,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
+import Constants from '../../utils/Constants';
 
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -46,18 +47,35 @@ class TurnOutAsset extends BaseComponent {
         });
         var params = this.props.navigation.state.params.coins;
         this.setState({
-            toAccount: params.toaccount,
+            toAccount: params.toaccount == null ? '' : params.toaccount,
             amount: params.amount == null ? '' : params.amount,
-            name: params.name,
+            name: params.asset.name,
         })
         DeviceEventEmitter.addListener('scan_result', (data) => {
-            this.setState({toAccount:data.toaccount})
-            if(data.amount){
-                this.setState({amount:data.amount})
+            try {
+                //TODO: 开启扫码已做检测判断资产类型是否匹配，在此不必判断,this.state.name取值不准。
+                // if(data.symbol){
+                //     var tmpname = this.state.name;
+                //     if(data.symbol != tmpname){
+                //         EasyToast.show('扫码转账资产不匹配，请确认再转');
+                //         return ;
+                //     }
+                // }
+                if(data.toaccount){
+                    this.setState({toAccount:data.toaccount});
+                }
+                if(data.amount){
+                    this.setState({amount:data.amount})
+                }
+            } catch (error) {
+                
             }
         });
     }
-
+    scan() {
+        const { navigate } = this.props.navigation;
+        navigate('BarCode', {isTurnOut:true,coinType:this.state.name});
+    }
     componentWillUnmount(){
         //结束页面前，资源释放操作
         super.componentWillUnmount();
@@ -149,13 +167,13 @@ class TurnOutAsset extends BaseComponent {
         const view =
             <View style={styles.passoutsource}>
                 <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={18}
+                    selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             </View>
             EasyDialog.show("密码", view, "确认", "取消", () => {
 
-            if (this.state.password == "" || this.state.password.length < 8) {
-                EasyToast.show('请输入密码');
+            if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+                EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
             EasyLoading.show();
@@ -260,10 +278,7 @@ class TurnOutAsset extends BaseComponent {
         this._raccount.blur();
         this._lpass.blur();
     }
-    scan() {
-        const { navigate } = this.props.navigation;
-        navigate('BarCode', {isTurnOut:true});
-    }
+
 
     dismissKeyboardClick() {
         dismissKeyboard();

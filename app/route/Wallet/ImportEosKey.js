@@ -13,6 +13,7 @@ import { EasyDialog } from '../../components/Dialog';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
 import BaseComponent from "../../components/BaseComponent";
+import Constants from '../../utils/Constants'
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 var dismissKeyboard = require('dismissKeyboard');
@@ -165,7 +166,7 @@ class ImportEosKey extends BaseComponent {
       return;
     }
     if (this.state.walletpwd.length < 8 && this.state.reWalletpwd.length < 8) {
-      EasyToast.show('密码不能少于8位');
+      EasyToast.show('密码长度至少8位,请重输');
       return;
     }
     if (this.state.walletpwd != this.state.reWalletpwd) {
@@ -360,14 +361,14 @@ class ImportEosKey extends BaseComponent {
                     </View>
                   </View>
                   <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletpwd}  returnKeyType="next" editable={true}
-                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false} maxLength={18}
+                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false} maxLength={Constants.PWD_MAX_LENGTH}
                     onChangeText={(password) => this.setState({walletpwd: password })} underlineColorAndroid="transparent"
                     placeholder="输入密码至少8位,建议大小字母与数字混合" secureTextEntry={true} onChange={this.intensity()} />
               </View>
               <View style={styles.inptout} >
                   <Text style={styles.inptitle}>确认密码</Text>
                   <TextInput ref={(ref) => this._lpass = ref} value={this.state.reWalletpwd} returnKeyType="next" editable={true} 
-                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} secureTextEntry={true} maxLength={18}
+                      selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} secureTextEntry={true} maxLength={Constants.PWD_MAX_LENGTH}
                       placeholder="重复密码" underlineColorAndroid="transparent"  autoFocus={false} onChange={this.intensity()}
                       onChangeText={(reWalletpwd) => this.setState({ reWalletpwd })} />  
                 </View>
