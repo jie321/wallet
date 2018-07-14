@@ -17,7 +17,7 @@ export default {
             if(payload.page==1){
                 yield put({type:'upstatus',payload:{newsRefresh:true}});
             }
-            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', payload);
+            const resp = yield call(Request.request, listAssets, 'post', payload);
             // alert(JSON.stringify(resp));
             if(resp.code=='0'){
                 let dts = new Array();
@@ -45,31 +45,40 @@ export default {
                 value: true,
                 balance: '0.0000',
             }
-            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: 'EOS'});
-            // alert(JSON.stringify(resp));
-            if(resp.code == '0' && resp.data && resp.data.length == 1){
-                var eosInfo = {
-                    asset: resp.data[0],
-                    value: true,
-                    balance: '0.0000',
-                }
-                myAssets[0] = eosInfo;
-            }else{
-                myAssets[0] = eosInfoDefault;
-            }
-            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
-        }else{
-            for(var i = 0; i < myAssets.length; i++){
-                const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + listAssets, 'post', {code: myAssets[i].asset.name});
-                if(resp.code == '0' && resp.data && resp.data.length == 1){
-                    var assetInfo = {
+            myAssets[0] = eosInfoDefault;
+            var resp;
+            try {
+                resp = yield call(Request.request, listAssets, 'post', {code: 'EOS'});
+                if(respresp.code == '0' && resp.data && resp.data.length == 1){
+                    var eosInfo = {
                         asset: resp.data[0],
                         value: true,
                         balance: '0.0000',
                     }
-                    myAssets[i] = assetInfo;
+                    myAssets[0] = eosInfo;
                 }
+            } catch (error) {
+                
             }
+
+            yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        }else{
+            try{
+                for(var i = 0; i < myAssets.length; i++){
+                    const resp = yield call(Request.request, listAssets, 'post', {code: myAssets[i].asset.name});
+                    if(resp.code == '0' && resp.data && resp.data.length == 1){
+                        var assetInfo = {
+                            asset: resp.data[0],
+                            value: true,
+                            balance: myAssets[i].balance,
+                        }
+                        myAssets[i] = assetInfo;
+                    }
+                }
+            }catch(e){
+
+            }
+
             yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         }
 
@@ -164,7 +173,7 @@ export default {
      },
     *submitAssetInfoToServer({payload, callback},{call,put}){
         try{
-            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + addAssetToServer, 'post', {contract_account: payload.contractAccount, name: payload.name});
+            const resp = yield call(Request.request, addAssetToServer, 'post', {contract_account: payload.contractAccount, name: payload.name});
             if(resp && resp.code=='0'){
                 DeviceEventEmitter.emit('updateAssetList', payload);
             }
@@ -177,7 +186,7 @@ export default {
      },
      *getTradeDetails({payload, callback},{call,put}) {
         try{
-            const resp = yield call(Request.requestO, "http://192.168.1.66:8088/api" + getActions, "post", payload);
+            const resp = yield call(Request.request, getActions, "post", payload);
             if(resp.code=='0'){               
                 // yield put({ type: 'updateVote', payload: { voteData:resp.data.rows } });
                 yield put({ type: 'updateDetails', payload: { DetailsData:resp.data } });
