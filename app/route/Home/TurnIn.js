@@ -52,10 +52,7 @@ class TurnIn extends BaseComponent {
       headerRight: (
         <Button name="share" onPress={navigation.state.params.onPress}>
           <View style={{ padding: 15 }}>
-            <Image
-              source={UImage.turnin_share}
-              style={{ width: 30, height: 30 }}
-            />
+          <Image source={UImage.share_i} style={{ width: 22, height: 22 }}></Image>
           </View>
         </Button>
       )
