@@ -13,6 +13,7 @@ import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
 import BaseComponent from "../../components/BaseComponent";
+import Constants from '../../utils/Constants'
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({ wallet }) => ({ ...wallet }))
 class createWallet extends BaseComponent {
@@ -346,7 +347,7 @@ class createWallet extends BaseComponent {
                   </View>
                 </View>
                 <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletPassword}  returnKeyType="next" editable={true}
-                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false}
+                    selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false} maxLength={Constants.PWD_MAX_LENGTH}
                     onChangeText={(walletPassword) => this.setState({walletPassword})} onChange={this.intensity()} 
                     placeholder="输入密码至少8位,建议大小字母与数字混合" underlineColorAndroid="transparent" secureTextEntry={true} 
                   />
@@ -355,13 +356,13 @@ class createWallet extends BaseComponent {
               <Text style={styles.inptitle}>确认密码</Text>
               <TextInput ref={(ref) => this._lrpass = ref} value={this.state.reWalletPassword} returnKeyType="next"
                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
-                placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} onChange={this.intensity()}
+                placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true} onChange={this.intensity()} maxLength={Constants.PWD_MAX_LENGTH}
                 onChangeText={(reWalletPassword) => this.setState({ reWalletPassword })}  autoFocus={false} editable={true}
               />
             </View>
             <View style={styles.inptout} >
               <TextInput ref={(ref) => this._lnote = ref} value={this.state.passwordNote} selectionColor={UColor.tintColor} 
-                returnKeyType="go" placeholderTextColor={UColor.arrow} placeholder="密码提示(可不填)"  style={styles.inpt}
+                returnKeyType="go" placeholderTextColor={UColor.arrow} placeholder="密码提示(可不填)"  style={styles.inpt} maxLength={40}
                 underlineColorAndroid="transparent" onChangeText={(passwordNote) => this.setState({ passwordNote })}  />
             </View>
           </View>
