@@ -279,7 +279,6 @@ class TurnOut extends BaseComponent {
     }
 
     render() {
-        const c = this.props.navigation.state.params.coins;
         return (
         <View style={styles.container}>
             <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
@@ -287,7 +286,6 @@ class TurnOut extends BaseComponent {
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                         <View style={styles.header}>
                             <Text style={styles.headertext}>{this.state.balance.replace("EOS", "")} EOS</Text>
-                            {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
                         </View>
                         <View style={styles.taboutsource}>
                             <View style={styles.outsource}>
