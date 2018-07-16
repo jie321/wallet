@@ -78,46 +78,78 @@ class Resources extends BaseComponent {
   }
 
   componentDidMount() {
-    EasyLoading.show();
-    this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {
-        this.getAccountInfo();
-    }}); 
 
-    this.props.dispatch({type: 'vote/getGlobalInfo', payload: {}, callback: (data) => {
-        this.setState({
-            total:data.rows[0].max_ram_size?(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2) : "00.00GB",
-            used:data.rows[0].total_ram_bytes_reserved?(data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2) : "00.00GB",
-            used_Percentage:(((data.rows[0].total_ram_bytes_reserved/1024/1024/1024).toFixed(2)/(data.rows[0].max_ram_size/1024/1024/1024).toFixed(2))*10000/100).toFixed()
-        });
-    }}); 
+    try {
 
-    this.props.dispatch({type: 'vote/getqueryRamPrice', payload: {}, callback: (data) => {
-        this.setState({ Currentprice:data.data?data.data:'0.00000' });
-    }}); 
-
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-    DeviceEventEmitter.addListener('wallet_info', (data) => {
-        this.getBalance();
-    });
-
-    DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
-        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
-        this.getBalance();
-    });
-
-    DeviceEventEmitter.addListener('eos_balance', (data) => {
-        this.setEosBalance(data);
-    });
-
-    DeviceEventEmitter.addListener('scan_result', (data) => {
-        try {
-            if(data.toaccount){
-                this.setState({receiver:data.toaccount});
+        EasyLoading.show();
+        this.props.dispatch({
+            type: 'wallet/getDefaultWallet',
+            callback: (data) => {
+                this.getAccountInfo();
             }
-        } catch (error) {
-            
-        }
-    });
+        });
+
+        this.props.dispatch({
+            type: 'vote/getGlobalInfo',
+            payload: {},
+            callback: (data) => {
+                this.setState({
+                    total: data.rows[0].max_ram_size ? (data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2) : "00.00GB",
+                    used: data.rows[0].total_ram_bytes_reserved ? (data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) : "00.00GB",
+                    used_Percentage: (((data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) / (data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2)) * 10000 / 100).toFixed()
+                });
+                EasyLoading.dismis();
+            }
+        });
+
+        this.props.dispatch({
+            type: 'vote/getqueryRamPrice',
+            payload: {},
+            callback: (data) => {
+                this.setState({
+                    Currentprice: data.data ? data.data : '0.00000'
+                });
+            }
+        });
+
+        this.props.dispatch({
+            type: 'wallet/info',
+            payload: {
+                address: "1111"
+            }
+        });
+        DeviceEventEmitter.addListener('wallet_info', (data) => {
+            this.getBalance();
+        });
+
+        DeviceEventEmitter.addListener('updateDefaultWallet', (data) => {
+            this.props.dispatch({
+                type: 'wallet/info',
+                payload: {
+                    address: "1111"
+                }
+            });
+            this.getBalance();
+        });
+
+        DeviceEventEmitter.addListener('eos_balance', (data) => {
+            this.setEosBalance(data);
+        });
+
+        DeviceEventEmitter.addListener('scan_result', (data) => {
+            try {
+                if (data.toaccount) {
+                    this.setState({
+                        receiver: data.toaccount
+                    });
+                }
+            } catch (error) {
+                EasyLoading.dismis();
+            }
+        });
+    } catch (error) {
+        EasyLoading.dismis();
+    }
   }
 
   componentWillUnmount(){
