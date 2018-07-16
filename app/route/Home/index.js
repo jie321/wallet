@@ -202,7 +202,7 @@ class Home extends React.Component {
   }
 
   getAssetBalance(){
-    if(this.props.myAssets == null){
+    if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
       return;
     }
 
