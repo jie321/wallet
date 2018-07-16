@@ -36,7 +36,6 @@ class TurnOut extends BaseComponent {
 
     //组件加载完成
     componentDidMount() {
-        const c = this.props.navigation;
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {
                 if (data != null && data.defaultWallet.account != null) {

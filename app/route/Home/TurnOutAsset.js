@@ -35,21 +35,12 @@ class TurnOutAsset extends BaseComponent {
 
     //组件加载完成
     componentDidMount() {
-        const c = this.props.navigation;
-        this.props.dispatch({
-            type: 'wallet/getDefaultWallet', callback: (data) => {
-                if (data != null && data.defaultWallet.account != null) {
-                    this.getBalance(data);
-                } else {
-                    EasyToast.show('获取账号信息失败');
-                }
-            }
-        });
         var params = this.props.navigation.state.params.coins;
         this.setState({
             toAccount: params.toaccount == null ? '' : params.toaccount,
             amount: params.amount == null ? '' : params.amount,
             name: params.asset.name,
+            balance:params.balance == null ? '0.0000' : params.balance,
         })
         DeviceEventEmitter.addListener('scan_result', (data) => {
             try {
@@ -81,22 +72,6 @@ class TurnOutAsset extends BaseComponent {
         super.componentWillUnmount();
         DeviceEventEmitter.removeListener('scan_result');
       }
-
-    getBalance(data) {
-        this.props.dispatch({
-            type: 'wallet/getBalance', payload: { contract: this.props.navigation.state.params.coins.asset.contractAccount, account: data.defaultWallet.account, symbol: this.props.navigation.state.params.coins.asset.name }, callback: (data) => {
-                if (data.code == '0') {
-                    if (data.data == "") {
-                        this.setState({ balance: '0.0000' })
-                    } else {
-                        this.setState({ balance: data.data })
-                    }
-                } else {
-                    // EasyToast.show('获取余额失败：' + data.msg);
-                }
-            }
-        })
-    }
 
     onPress(action) {
         EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
