@@ -495,7 +495,7 @@ class Resources extends BaseComponent {
                 }
             } catch (e) {
                 EasyLoading.dismis();
-                EasyToast.show('密码错误');
+                EasyToast.show('未知异常');
             }
             EasyDialog.dismis();
         }, () => { EasyDialog.dismis() });
@@ -558,7 +558,7 @@ class Resources extends BaseComponent {
                 }
             } catch (e) {
                 EasyLoading.dismis();
-                EasyToast.show('密码错误');
+                EasyToast.show('未知异常');
             }
             EasyDialog.dismis();
         }, () => { EasyDialog.dismis() });
@@ -649,7 +649,7 @@ class Resources extends BaseComponent {
                 }
             } catch (e) {
                 EasyLoading.dismis();
-                EasyToast.show('密码错误');
+                EasyToast.show('未知异常');
             }
             EasyDialog.dismis();
         }, () => { EasyDialog.dismis() }); 
@@ -736,7 +736,7 @@ class Resources extends BaseComponent {
                 }
             } catch (e) {
                 EasyLoading.dismis();
-                EasyToast.show('密码错误');
+                EasyToast.show('未知异常');
             }
             EasyDialog.dismis();
         }, () => { EasyDialog.dismis() });
