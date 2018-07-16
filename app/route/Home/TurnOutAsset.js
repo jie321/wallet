@@ -152,13 +152,14 @@ class TurnOutAsset extends BaseComponent {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
-            EasyLoading.show();
+            
             var privateKey = this.props.defaultWallet.activePrivate;
             try {
                 var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                    EasyLoading.show();
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     Eos.transfer(this.props.navigation.state.params.coins.asset.contractAccount, this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " " + this.props.navigation.state.params.coins.asset.name, this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
