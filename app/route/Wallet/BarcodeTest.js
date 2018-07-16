@@ -26,7 +26,7 @@ export default class App extends BaseComponent {
     }
 
     static navigationOptions = {
-        title: '扫码转账',
+        title: '扫码',
       };
 
 

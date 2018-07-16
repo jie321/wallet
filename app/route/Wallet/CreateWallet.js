@@ -324,7 +324,7 @@ class createWallet extends BaseComponent {
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
           <View style={styles.significantout}>
             <Text style={styles.significanttext} >重要声明:</Text>
-            <Text style={styles.significanttext} >密码用于保护私钥和交易授权，强度非常重要</Text>
+            <Text style={styles.significanttext} >密码用于保护私钥和交易授权，建议设置高强度密码</Text>
             <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
           </View>
           <View style={styles.outsource}>

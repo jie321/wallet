@@ -792,7 +792,7 @@ class Resources extends BaseComponent {
                             {this.resourceButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
                             {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}  
                         </View> 
-                        {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>程序猿正在加班加点开发中...</Text></View>:
+                        {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>请稍候 ，程序猿玩命加班中...</Text></View>:
                         <View style={styles.nhaaout}>
                             {this.state.isMemory?<View style={styles.wterout}>
                             <View style={styles.OwnOthers}>  
