@@ -361,7 +361,9 @@ class Home extends React.Component {
       }, () => { EasyDialog.dismis() });
     }else {
       const { dispatch } = this.props;
-      this.props.dispatch({ type: 'wallet/changeWallet', payload: { data } });
+      this.props.dispatch({ type: 'wallet/changeWallet', payload: { data }, callback: () => {
+        this.getAssetBalance(); 
+      }});
       this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
     }
   }

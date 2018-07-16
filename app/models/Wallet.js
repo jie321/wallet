@@ -324,9 +324,10 @@ export default {
             if (callback) callback({ defaultWallet });
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: defaultWallet } });
         }, 
-        *changeWallet({ payload }, { call, put }) {
+        *changeWallet({ payload, callback }, { call, put }) {
             yield call(store.save, 'defaultWallet', payload.data);
             yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload.data } });
+            if(callback) callback(payload.data);
         }, 
         *backupWords({ payload }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
