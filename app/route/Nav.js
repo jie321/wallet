@@ -713,16 +713,16 @@ class Route extends React.Component {
                     
                    <View style={{ backgroundColor: UColor.fontColor,flexDirection: "row",marginTop: 10,paddingHorizontal: 20,paddingVertical: 5, justifyContent: "flex-start",}}>
                       <Image source={UImage.share_time} style={{width: 25,height: 25}} />
-                      <Text style={{marginLeft: 5,fontSize: 15,color: '#000'}}> {this.getTime(this.state.news.createdate)}</Text>
+                      <Text style={{marginLeft: 5,fontSize: 15,color: '#808080'}}> {this.getTime(this.state.news.createdate)}</Text>
                   </View>
 
-                  <View style={{ marginTop:10,paddingHorizontal: 20, paddingBottom: 5, }}>
+                  <View style={{ marginTop:10,paddingHorizontal: 20, paddingBottom: 5,marginBottom:20 }}>
                     <Text style={{ color: '#000', fontSize: 24,}}>{this.state.news.title}</Text>
-                    <Text style={{ color: '#000', fontSize: 15, marginTop: 15 }}>{this.state.news.content}......</Text>
-                    <View style={{ marginTop: 15,flexDirection: "row", width: '100%', justifyContent: "space-between" }}>
+                    <Text style={{ color: '#000', fontSize: 15, marginTop: 15 ,lineHeight:25}}>{this.state.news.content}......</Text>
+                    {/* <View style={{ marginTop: 15,flexDirection: "row", width: '100%', justifyContent: "space-between" }}>
                       <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>来源:{this.state.news.source}</Text>
                       <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>{moment(this.state.news.createdate).fromNow()}</Text>
-                    </View>
+                    </View> */}
 
                   </View>
                   <View style={{borderBottomWidth: 1,borderBottomColor: '#e5e5e5' ,justifyContent: 'center',}} >
