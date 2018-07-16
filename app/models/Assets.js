@@ -22,8 +22,10 @@ export default {
             if(resp.code=='0'){
                 let dts = new Array();
                 resp.data.map((item)=>{
-                    item.row=3;
-                    dts.push(item);
+                    if(item.name != 'EOS'){  // EOS不显示在列表中
+                        item.row=3;
+                        dts.push(item);
+                    }
                 });
                 yield put({type:'updateAssetList',payload:{assetsList:dts,...payload}});
             }else{
