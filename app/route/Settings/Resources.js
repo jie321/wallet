@@ -211,7 +211,7 @@ class Resources extends BaseComponent {
                 ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
                 ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
-                percentageOne: '剩余(ms)',
+                percentageOne: '剩余(kb)',
                 percentageTwo: '抵押(EOS)',
                 percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.net_amount : '0 EOS') + ')',
             })
@@ -504,7 +504,7 @@ class Resources extends BaseComponent {
                     EasyLoading.show();
                     Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
                         EasyLoading.dismis();
-                        if(r.isOwn){
+                        if(r.isSuccess){
                             this.getAccountInfo();
                             EasyToast.show("出售成功");
                         }else{
@@ -821,7 +821,7 @@ class Resources extends BaseComponent {
                                     <View style={styles.outsource}>
                                         <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                                         selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow}
-                                        placeholder="输入出售的数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                        placeholder="输入出售的数量(KB)" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
                                         onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes)})}
                                         />
                                         <Button onPress={this.sellram.bind(this)}>

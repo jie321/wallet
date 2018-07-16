@@ -383,7 +383,7 @@ class ImportEosKey extends BaseComponent {
                   <TextInput ref={(ref) => this._lpass = ref} value={this.state.walletpwd}  returnKeyType="next" editable={true}
                     selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} autoFocus={false} maxLength={Constants.PWD_MAX_LENGTH}
                     onChangeText={(password) => this.setState({walletpwd: password })} underlineColorAndroid="transparent"
-                    placeholder="输入密码至少8位,建议大小字母与数字混合" secureTextEntry={true} onChange={this.intensity()} />
+                    placeholder="输入密码至少8位,建议大小写字母与数字混合" secureTextEntry={true} onChange={this.intensity()} />
               </View>
               <View style={styles.inptout} >
                   <Text style={styles.inptitle}>确认密码</Text>
