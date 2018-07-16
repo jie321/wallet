@@ -28,7 +28,7 @@ export class EasyLoading {
         this.tm=setTimeout(function(){
             th.map[key] && th.map[key].setState({ "isShow": false });
             clearTimeout(this.tm);
-        },300);
+        },500);
     }
 }
 
