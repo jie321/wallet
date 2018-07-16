@@ -12,7 +12,7 @@ export default {
         updateTime:"",
     },
     effects: {
-      *list({payload},{call,put}) {
+      *list({payload, callback},{call,put}) {
         try{
             if(payload.page==1){
                 yield put({type:'upstatus',payload:{newsRefresh:true}});
@@ -34,6 +34,7 @@ export default {
             yield put({type:'upstatus',payload:{newsRefresh:false}});
             EasyToast.show('网络繁忙,请稍后!');
         }
+        if(callback) callback("");
       },
       *submitAssetInfoToServer({payload, callback},{call,put}){
         try{

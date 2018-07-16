@@ -48,12 +48,20 @@ class Add_assets extends BaseComponent {
 
 
   componentDidMount() {
-    DeviceEventEmitter.emit('stopBalanceTimer', "");
-    this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
-    this.props.dispatch({ type: 'assets/myAssetInfo'});
-    DeviceEventEmitter.addListener('updateAssetList', (data) => {
-      this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
-    });
+    try {
+      EasyLoading.show();
+      DeviceEventEmitter.emit('stopBalanceTimer', "");
+      this.props.dispatch({ type: 'assets/list', payload: { page: 1}, callback: () => {
+        EasyLoading.dismis();
+      } });
+      this.props.dispatch({ type: 'assets/myAssetInfo'});
+      DeviceEventEmitter.addListener('updateAssetList', (data) => {
+        this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
+      });
+    } catch (error) {
+      EasyLoading.dismis();
+    }
+
   }
 
   _rightTopClick = () =>{
