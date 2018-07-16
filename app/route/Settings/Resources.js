@@ -164,7 +164,7 @@ class Resources extends BaseComponent {
     } });
     this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: (data) => {
-            this.setState({ currency_surplus:data?data.data:'0',});
+            this.setState({ currency_surplus:data?data.data.replace('EOS', "") :'0',});
     }});
   } 
 
