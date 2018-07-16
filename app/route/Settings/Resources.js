@@ -132,7 +132,7 @@ class Resources extends BaseComponent {
     } });
     this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: (data) => {
-            this.setState({ currency_surplus:data?data.data:'0 EOS',});
+            this.setState({ currency_surplus:data?data.data:'0',});
     }});
   } 
 
@@ -196,7 +196,7 @@ class Resources extends BaseComponent {
                 column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
                 column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
-                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", ""):'0.0000') + '/' + this.props.Resources.total_resources.cpu_weight.replace("EOS", ""),
+                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.cpu_weight.replace("EOS", "")*100)/100,
                 ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '剩余(ms)',
                 percentageTwo: '抵押(EOS)',
@@ -209,7 +209,7 @@ class Resources extends BaseComponent {
                 column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
                 column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
-                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", ""):'0.0000') + '/' + this.props.Resources.total_resources.net_weight.replace("EOS", ""),
+                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
                 ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '剩余(ms)',
                 percentageTwo: '抵押(EOS)',
@@ -797,8 +797,8 @@ class Resources extends BaseComponent {
                             {this.state.isMemory?<View>
                                 <View style={styles.inptoutsource}>
                                     <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                        <Text style={styles.inptTitle}>购买内存（{this.state.currency_surplus}）</Text>
-                                        <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.currency_surplus*this.state.Currentprice).toFixed(3)}kb</Text>
+                                        <Text style={styles.inptTitle}>购买内存（{this.state.currency_surplus}EOS）</Text>
+                                        <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.currency_surplus/this.state.Currentprice).toFixed(3)}kb</Text>
                                     </View>
                                     <View style={styles.outsource}>
                                         <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
@@ -816,7 +816,7 @@ class Resources extends BaseComponent {
                                 {this.state.isOthers ? null:<View style={styles.inptoutsource}>
                                     <View style={{flexDirection: 'row', alignItems: 'center',}}>
                                         <Text style={styles.inptTitle}>出售内存（{this.state.ram_available}KB）</Text>
-                                        <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.ram_available/this.state.Currentprice).toFixed(3)}EOS</Text>
+                                        <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.ram_available*this.state.Currentprice).toFixed(3)}EOS</Text>
                                     </View>
                                     <View style={styles.outsource}>
                                         <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
