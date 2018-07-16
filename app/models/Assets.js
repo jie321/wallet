@@ -53,7 +53,7 @@ export default {
      },
      *myAssetInfo({payload, callback},{call,put}){
         var isPriceChange = false; // 价格是否改变
-        var myAssets = yield call(store.get, 'myAssets');
+        var myAssets = yield call(store.get, 'myAssets217');
         if(myAssets == null || myAssets.length == 0){ // 未有资产信息时默认取eos的
             var myAssets = [];
             // 单独获取eos信息
@@ -104,9 +104,9 @@ export default {
         // alert("myAssetInfo" +JSON.stringify(myAssets));
         // 
 
-        var myAssetsNew = yield call(store.get, 'myAssets');
+        var myAssetsNew = yield call(store.get, 'myAssets217');
         if((myAssetsNew == null || myAssetsNew.length == 0 || (myAssetsNew != null && myAssetsNew.length == myAssets.length))){
-            yield call(store.save, 'myAssets', myAssets);
+            yield call(store.save, 'myAssets217', myAssets);
             yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         }
         if(isPriceChange){
@@ -121,7 +121,7 @@ export default {
     *getBalance({payload, callback}, {call, put}){
         try{
             // alert("------ " + JSON.stringify(payload));
-            var myAssets = yield call(store.get, 'myAssets');
+            var myAssets = yield call(store.get, 'myAssets217');
             var isBalanceChange = false;
             for(let i in myAssets){
                 let item = myAssets[i];
@@ -146,7 +146,7 @@ export default {
                     // alert("getBalance" +JSON.stringify(myAssets));
 
                     yield call(store.save, 'accountName', payload.accountName);
-                    yield call(store.save, 'myAssets', myAssets);
+                    yield call(store.save, 'myAssets217', myAssets);
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
                 // }
 
@@ -161,7 +161,7 @@ export default {
         }
     },
     *addMyAsset({payload, callback},{call,put}){
-        var myAssets = yield call(store.get, 'myAssets');
+        var myAssets = yield call(store.get, 'myAssets217');
         // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));
         if (myAssets == null) {
             var  myAssets = [];
@@ -172,7 +172,7 @@ export default {
                     return;
                 }else{ // 删除资产
                     myAssets.splice(i, 1);
-                    yield call(store.save, 'myAssets', myAssets);
+                    yield call(store.save, 'myAssets217', myAssets);
                     // alert("delMyAsset" +JSON.stringify(myAssets));
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
                     if(callback) callback(myAssets);
@@ -194,7 +194,7 @@ export default {
             balance: '0.0000',
         }
         myAssets[myAssets.length] = _asset;
-        yield call(store.save, 'myAssets', myAssets);
+        yield call(store.save, 'myAssets217', myAssets);
         // alert("addMyAsset" +JSON.stringify(myAssets));
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         if(callback) callback(myAssets);
