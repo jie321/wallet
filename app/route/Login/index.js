@@ -242,7 +242,7 @@ class Login extends BaseComponent {
     this.props.dispatch({
       type: 'login/existRegisteredUser', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
         EasyLoading.dismis();
-        if (data == false) {
+        if (data.code == '0' && data.data == false) {
           EasyLoading.show('获取中...');
           this.props.dispatch({
             type: 'login/getCapture', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
