@@ -37,8 +37,9 @@ class WalletDetail extends BaseComponent {
     super(props);
     this.config = [
       { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
-      { first: true, name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
-      { name: "导出私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { first: true, name: "备份钱包", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
+     
     ];
     this.state = {
       password: '',
@@ -88,8 +89,8 @@ class WalletDetail extends BaseComponent {
     });
   }
 
-  goPage(key, data = {}) {
-    const { navigate, goBack } = this.props.navigation;
+  goPage(key, data) {
+    const { navigate } = this.props.navigation;
     if (key == 'ExportPrivateKey') {
       const view =
         <View style={styles.passoutsource}>
@@ -116,9 +117,10 @@ class WalletDetail extends BaseComponent {
               txt_active: plaintext_words_active,
               txt_owner: plaintext_words_owner
             });
-            this._setModalVisible();
-            // alert('解锁成功' + plaintext_words);
-            // this.toBackup(wordsArr);
+            // this._setModalVisible();
+            // // alert('解锁成功' + plaintext_words);
+            // // this.toBackup(wordsArr);
+            navigate('BackupsPkey', { data, active: this.state.txt_active, owner:this.state.txt_owner });
           } else {
             EasyToast.show('您输入的密码不正确');
           }

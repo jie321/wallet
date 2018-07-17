@@ -67,6 +67,16 @@ class createWallet extends BaseComponent {
     navigate('ImportEosKey');
     // EasyToast.show('测试网络暂不开放');
   }
+  importPkey() {
+     // 备份私钥
+     const { navigate } = this.props.navigation;
+     navigate('BackupsPkey');
+  }
+  importAPkey() {
+     // 账号支付激活
+     const { navigate } = this.props.navigation;
+     navigate('APactivation', {});
+  }
 
 
   createWallet() {
@@ -139,15 +149,8 @@ class createWallet extends BaseComponent {
             result.name = this.state.walletName;
             result.account = this.state.walletName;
             result.salt = salt;
-            this.props.dispatch({
-              type: 'wallet/createAccountService',
-              payload: {
-                username: result.account,
-                owner: result.data.ownerPublic,
-                active: result.data.activePublic,
-                isact: false
-              },
-              callback: (data) => {
+            this.props.dispatch({type: 'wallet/createAccountService', payload: {username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic, isact: false},
+            callback: (data) => {
                 EasyLoading.dismis();
                 this.setState({
                   errorcode: data.code,
@@ -155,10 +158,7 @@ class createWallet extends BaseComponent {
                 });
                 if (data.code == '0') {
                   result.isactived = true
-                  this.props.dispatch({
-                    type: 'wallet/saveWallet',
-                    wallet: result,
-                    callback: (data, error) => {
+                  this.props.dispatch({type: 'wallet/saveWallet', wallet: result, callback: (data, error) => {
                       DeviceEventEmitter.emit('updateDefaultWallet');
                       if (error != null) {
                         // EasyToast.show('生成账号失败：' + error);
@@ -381,6 +381,16 @@ class createWallet extends BaseComponent {
         <Button onPress={() => this.importWallet()}> 
           <View style={styles.createWalletout}>    
             <Text style={styles.importWallettext}>导入钱包</Text>
+          </View>
+        </Button>
+        <Button onPress={() => this.importPkey()}> 
+          <View style={styles.createWalletout}>    
+            <Text style={styles.importWallettext}>备份私钥</Text>
+          </View>
+        </Button>
+        <Button onPress={() => this.importAPkey()}> 
+          <View style={styles.createWalletout}>    
+            <Text style={styles.importWallettext}>账号支付激活</Text>
           </View>
         </Button>
       </TouchableOpacity>

@@ -28,9 +28,13 @@ import TurnOut from './Home/TurnOut'
 import TurnInAsset from './Home/TurnInAsset'
 import TurnOutAsset from './Home/TurnOutAsset'
 import Share from './ShareInvite'
+import ActivationAt from './Wallet/ActivationAt'
+import APactivation from './Wallet/APactivation'
 import CreateWallet from './Wallet/CreateWallet'
 import BackupWords from './Wallet/BackupWords'
 import BackupNote from './Wallet/BackupNote'
+import BackupsAOkey from './Wallet/BackupsAOkey'
+import BackupsPkey from './Wallet/BackupsPkey'
 import InputWords from './Wallet/InputWords'
 import ImportKey from './Wallet/ImportPrivateKey'
 import ImportEosKey from './Wallet/ImportEosKey'
@@ -152,6 +156,12 @@ const Nav = StackNavigator(
     Community: {
       screen: Community
     },
+    ActivationAt: {
+      screen: ActivationAt
+    },
+    APactivation: {
+      screen: APactivation
+    },
     CreateWallet: {
       screen: CreateWallet
     },
@@ -163,6 +173,12 @@ const Nav = StackNavigator(
     },
     BackupNote: {
       screen: BackupNote
+    },
+    BackupsAOkey: {
+      screen: BackupsAOkey
+    },
+    BackupsPkey: {
+      screen: BackupsPkey   
     },
     ImportKey: {
       screen: ImportKey
