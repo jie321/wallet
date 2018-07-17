@@ -249,7 +249,7 @@ class WalletDetail extends BaseComponent {
           this.setState({
               accumulative:this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout
           });
-          if(this.state.accumulative >= this.state.integral){
+          // if(this.state.accumulative >= this.state.integral){
             const view =
             <View style={styles.passoutsource}>
               <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
@@ -289,6 +289,17 @@ class WalletDetail extends BaseComponent {
                           }
                         }
                       });
+                    }else if(data.code == '512') {
+                      EasyDialog.show("EOS账号创建说明", (<View>
+                        <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
+                        <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
+                        <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
+                        <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
+                        <View style={styles.linkout}>
+                          <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
+                          <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
+                        </View>
+                        </View>), "知道了", null,  () => { EasyDialog.dismis() });
                     }else{
                       EasyToast.show('激活账号失败：' + data.msg);
                       this.props.navigation.goBack();
@@ -303,18 +314,18 @@ class WalletDetail extends BaseComponent {
             }
             EasyDialog.dismis();
           }, () => { EasyDialog.dismis() });
-          }else {
-            EasyDialog.show("EOS账号创建说明", (<View>
-              <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
-              <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
-              <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
-              <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-              <View style={styles.linkout}>
-                <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-                <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
-              </View>
-              </View>), "知道了", null,  () => { EasyDialog.dismis() });
-          } 
+          // }else {
+            // EasyDialog.show("EOS账号创建说明", (<View>
+            //   <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
+            //   <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
+            //   <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
+            //   <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
+            //   <View style={styles.linkout}>
+            //     <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
+            //     <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
+            //   </View>
+            //   </View>), "知道了", null,  () => { EasyDialog.dismis() });
+          // } 
         }
       }, 
     });

@@ -182,7 +182,7 @@ class ImportEosKey extends BaseComponent {
         EasyToast.show('私钥格式不正确');
         return;
       }
-      this.createWalletByPrivateKey(this.state.activePk, this.state.activePk);
+      this.createWalletByPrivateKey("", this.state.activePk);
     });
   }
 
@@ -205,17 +205,17 @@ class ImportEosKey extends BaseComponent {
     try {
       Eos.privateToPublic(active_privatekey, (r) => {
         var active_publicKey = r.data.publicKey;
-        var owner_publicKey = r.data.publicKey;
+        var owner_publicKey = "";//r.data.publicKey;
         var pthis=this;
         this.props.dispatch({
           type: 'wallet/getAccountsByPuk',
           payload: {
-            public_key: owner_publicKey
+            public_key: active_publicKey
           },
           callback: (data) => {
               EasyLoading.dismis();
               if (data == undefined || data.code != '0') {
-                pthis.opendelay(owner_publicKey, data);
+                pthis.opendelay(active_publicKey, data);
                 return;
               }
             var walletList = [];
