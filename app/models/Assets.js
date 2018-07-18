@@ -132,7 +132,7 @@ export default {
                 }
                 const resp = yield call(Request.request, getBalance, 'post', {contract: item.asset.contractAccount, account: payload.accountName, symbol: item.asset.name});
                 // alert("------ " + JSON.stringify(resp));
-                if(resp && resp.code=='0' && resp.data != null && resp.data != ""){
+                if(resp && resp.code=='0' && resp.data != null){
                     if(resp.data != item.balance){
                         isBalanceChange = true;
                         item.balance = resp.data;

@@ -85,7 +85,7 @@ class AssetInfo extends BaseComponent {
               if (data.code == '0') {
                 if (data.data == "") {
                   this.setState({
-                    balance: '0.0000 EOS',
+                    balance: '0.0000 ' + this.props.navigation.state.params.asset.asset.name,
                   })
                 } else {
                     this.setState({ balance: data.data });
