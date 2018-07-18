@@ -67,10 +67,10 @@ class createWallet extends BaseComponent {
     navigate('ImportEosKey');
     // EasyToast.show('测试网络暂不开放');
   }
-  importPkey() {
+  backupWallet(wallet) {
      // 备份私钥
      const { navigate } = this.props.navigation;
-     navigate('BackupsPkey');
+     navigate('BackupsPkey', {wallet: wallet});
   }
   importAPkey() {
      // 账号支付激活
@@ -78,6 +78,106 @@ class createWallet extends BaseComponent {
      navigate('APactivation', {});
   }
 
+
+  checkAccountAndCreateWallet(){
+    AnalyticsUtil.onEvent('Create_wallet');
+    const { dispatch } = this.props;
+    if (this.state.walletName == "") {
+      EasyToast.show('请输入钱包名称');
+      return;
+    }
+    if(this.state.walletName.length != 12 ){
+      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
+      return;
+    }
+    if(this.state.walletName.length == 12 && !/^[1-5a-z.]+$/.test(this.state.walletName)){
+      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
+      return;
+    }
+    if (this.state.walletPassword == "" || this.state.walletPassword.length < 8) {
+      EasyToast.show('钱包密码长度至少8位,请重输');
+      return;
+    }
+    if (this.state.reWalletPassword == "" || this.state.reWalletPassword.length < 8) {
+      EasyToast.show('钱包密码长度至少8位,请重输');
+      return;
+    }
+    if (this.state.walletPassword != this.state.reWalletPassword) {
+      EasyToast.show('两次密码不一致');
+      return;
+    }
+    if (this.state.isChecked == false) {
+      EasyToast.show('请确认已阅读并同意条款');
+      return;
+    }
+
+    try {
+      // 检测账号是否已经在EOS主网上存在
+      EasyLoading.show();
+      this.props.dispatch({type: 'wallet/isExistAccountName', payload: {account_name: this.state.walletName}, callback: (resp) => {
+        if(resp.code == '0'){ 
+          // 账户已被注册, 异常处理
+          EasyLoading.dismis();
+          EasyToast.show("账号已被别人占用，请换个账号吧！");
+        }else{
+          // 创建未激活钱包，并进入备份钱包流程
+          var arr_owner = [];
+          var arr_active = [];
+          var words_owner = [];
+          var words_active = [];
+          var wordsStr_owner = '';
+          var wordsStr_active = '';
+          for (var i = 0; i < 15; i++) {
+            var randomNum = this.getx(arr_owner);
+            words_owner.push(english[randomNum]);
+          }
+          for (var i = 0; i < arr_owner.length; i++) {
+            words_owner[i] = english[arr_owner[i]];
+            wordsStr_owner = wordsStr_owner + "," + words_owner[i];
+          }
+          for (var i = 0; i < 15; i++) {
+            var randomNum = this.getx(arr_active);
+            words_active.push(english[randomNum]);
+          }
+          for (var i = 0; i < arr_active.length; i++) {
+            words_active[i] = english[arr_active[i]];
+            wordsStr_active = wordsStr_active + "," + words_active[i];
+          }
+
+          Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
+    
+            if (result.isSuccess) {
+              var salt;
+              Eos.randomPrivateKey((r) => {
+                salt = r.data.ownerPrivate.substr(0, 18);
+                result.data.words = wordsStr_owner;
+                result.data.words_active = wordsStr_active;
+                result.password = this.state.walletPassword;
+                result.name = this.state.walletName;
+                result.account = this.state.walletName;
+                result.salt = salt;
+                result.isactived = false
+                this.props.dispatch({
+                  type: 'wallet/saveWallet',
+                  wallet: result,
+                  callback: (data) => {
+                    EasyLoading.dismis();
+                    this.backupWallet(result);
+                  }
+                });
+              });
+            }
+          });
+
+        }
+      }});
+
+  } catch (error) {
+    EasyToast.show(error);
+    EasyLoading.dismis();
+  }
+
+  }
 
   createWallet() {
     AnalyticsUtil.onEvent('Create_wallet');
@@ -373,7 +473,7 @@ class createWallet extends BaseComponent {
             <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text></Text>
           </View>
         </KeyboardAvoidingView>
-        <Button onPress={() => this.createWallet()}>
+        <Button onPress={() => this.checkAccountAndCreateWallet()}>
           <View style={styles.createWalletout} backgroundColor = {this.state.CreateButton}>
             <Text style={styles.createWallet}>创建钱包</Text>
           </View>
@@ -383,7 +483,7 @@ class createWallet extends BaseComponent {
             <Text style={styles.importWallettext}>导入钱包</Text>
           </View>
         </Button>
-        <Button onPress={() => this.importPkey()}> 
+        <Button onPress={() => this.backupWallet()}> 
           <View style={styles.createWalletout}>    
             <Text style={styles.importWallettext}>备份私钥</Text>
           </View>

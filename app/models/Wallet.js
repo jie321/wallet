@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { address, getAccountsByPuk, getintegral } from '../utils/Api';
+import { address, getAccountsByPuk, isExistAccountName, getintegral } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
 import { EasyLoading } from '../components/Loading';
 import store from 'react-native-simple-store';
@@ -408,6 +408,17 @@ export default {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
          },   
+         *isExistAccountName({payload, callback}, {call, put}) {
+            try{
+                let resp = yield call(Request.request,isExistAccountName,"post", payload);
+                try {
+                    if (callback) callback(resp);
+                } catch (error) {
+                }
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
+         },
          *getintegral({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request, getintegral, "post", payload);
