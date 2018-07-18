@@ -70,7 +70,7 @@ class createWallet extends BaseComponent {
   backupWallet(wallet) {
      // 备份私钥
      const { navigate } = this.props.navigation;
-     navigate('BackupsPkey', {wallet: wallet});
+     navigate('BackupsPkey', {wallet: wallet, password: this.state.walletPassword});
   }
   importAPkey() {
      // 账号支付激活
@@ -160,9 +160,9 @@ class createWallet extends BaseComponent {
                 this.props.dispatch({
                   type: 'wallet/saveWallet',
                   wallet: result,
-                  callback: (data) => {
+                  callback: (wallet) => {
                     EasyLoading.dismis();
-                    this.backupWallet(result);
+                    this.backupWallet(wallet);
                   }
                 });
               });

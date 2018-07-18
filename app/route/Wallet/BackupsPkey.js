@@ -18,11 +18,12 @@ var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 
 // @connect(({ login }) => ({ ...login }))
+@connect(({ wallet }) => ({ ...wallet }))
 class BackupsPkey extends BaseComponent {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            headerTitle: '备份私钥',
+            headerTitle: '备份钱包',
             headerStyle: {
                 paddingTop:Platform.OS == 'ios' ? 30 : 20,
                 backgroundColor: UColor.mainColor,
@@ -43,12 +44,18 @@ class BackupsPkey extends BaseComponent {
 
      //组件加载完成
      componentDidMount() {
-        // var txt_active = this.props.navigation.state.Privatekey.active;
-        // var txt_owner = this.props.navigation.state.Privatekey.owner;
-        // this.setState({
-        //     ownerPk: txt_active == null ? '1' : txt_owner,
-        //     activePk: txt_active == null ? '2' : txt_active,
-        // })
+         var ownerPrivateKey = this.props.navigation.state.params.wallet.ownerPrivate;
+         var bytes_words_owner = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.props.navigation.state.params.password + this.props.navigation.state.params.wallet.salt);
+         var plaintext_words_owner = bytes_words_owner.toString(CryptoJS.enc.Utf8);
+         var activePrivateKey = this.props.navigation.state.params.wallet.activePrivate;
+         var bytes_words_active = CryptoJS.AES.decrypt(activePrivateKey.toString(), this.props.navigation.state.params.password + this.props.navigation.state.params.wallet.salt);
+         var plaintext_words_active = bytes_words_active.toString(CryptoJS.enc.Utf8);
+        if (plaintext_words_owner.indexOf('eostoken') != - 1) {
+            this.setState({
+                ownerPk: plaintext_words_owner.substr(8, plaintext_words_owner.length),
+                activePk: plaintext_words_active.substr(8, plaintext_words_active.length),
+            })
+        }
     }
     componentWillUnmount(){
         //结束页面前，资源释放操作
@@ -128,7 +135,7 @@ class BackupsPkey extends BaseComponent {
 
     importPriKey() {
         const { navigate } = this.props.navigation;
-        navigate('BackupsAOkey', {});
+        navigate('BackupsAOkey', {wallet:this.props.navigation.state.params.wallet, password: this.props.navigation.state.params.password});
       
     }
 
@@ -141,19 +148,21 @@ class BackupsPkey extends BaseComponent {
                     <View style={styles.headout}>
                         <Text style={styles.inptitle}>立即备份你的私钥</Text>
                         <Text style={styles.headtitle}>备份私钥：抄写私钥，保存在安全的地方，千万不要存储在网络上（网盘、通讯软件），创建完成后，先小额转入尝试成功后开始使用。</Text>
-                    </View>   
+                    </View> 
+                    {this.state.activePk != ''&& 
                     <View style={styles.inptoutgo} >
                         <Text style={styles.inptitle}>ActivePrivateKey</Text>
                         <TouchableHighlight style={styles.inptgo} onPress={this.prot.bind(this, 'activePk')} underlayColor={UColor.secdColor}>
                             <Text style={styles.inptext}>{this.state.activePk}</Text>
                         </TouchableHighlight>
-                    </View>
+                    </View>}  
+                    {this.state.ownerPk != ''&&
                     <View style={styles.inptoutgo} >
                         <Text style={styles.inptitle}>OwnerPrivateKey</Text>
                         <TouchableHighlight style={styles.inptgo} onPress={this.prot.bind(this, 'ownerPk')} underlayColor={UColor.secdColor}>
                             <Text style={styles.inptext}>{this.state.ownerPk}</Text>
                         </TouchableHighlight>
-                    </View>
+                    </View>}
                 </View>
                 <Button onPress={this.prot.bind(this, 'problem')}>
                     <Text style={styles.readtext} >什么是私钥？</Text> 
@@ -224,8 +233,8 @@ const styles = StyleSheet.create({
         backgroundColor: UColor.secdColor,
     },
     headout: {
-        paddingTop: 40,
-        paddingBottom: 30,
+        paddingTop: 20,
+        paddingBottom: 15,
     },
     headtitle: {
         color: UColor.arrow,

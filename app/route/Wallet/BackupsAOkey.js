@@ -11,17 +11,19 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyToast } from '../../components/Toast';
+import { EasyDialog } from '../../components/Dialog';
 import ViewShot from "react-native-view-shot";
 import BaseComponent from "../../components/BaseComponent";
 var dismissKeyboard = require('dismissKeyboard');
-
+var AES = require("crypto-js/aes");
+var CryptoJS = require("crypto-js");
 @connect(({wallet}) => ({...wallet}))
 class BackupsAOkey extends BaseComponent {
       static navigationOptions = ({ navigation }) => {
        
         return {                       
-          headerTitle:'备份私钥',
+          headerTitle:'备份钱包',
           headerStyle:{
                   paddingTop:Platform.OS == 'ios' ? 30 : 20,
                   backgroundColor: UColor.mainColor,
@@ -46,13 +48,66 @@ class BackupsAOkey extends BaseComponent {
         password: "",
         ownerPk: '',
         activePk: '',
+        txt_owner: '',
+        txt_active: '',
+        PromptOwner: '',
+        PromptActtve: '',
         show: false,
     };
   }
 
+  //组件加载完成
+  componentDidMount() {
+    var ownerPrivateKey = this.props.navigation.state.params.wallet.ownerPrivate;
+    var bytes_words_owner = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.props.navigation.state.params.password + this.props.navigation.state.params.wallet.salt);
+    var plaintext_words_owner = bytes_words_owner.toString(CryptoJS.enc.Utf8);
+    var activePrivateKey = this.props.navigation.state.params.wallet.activePrivate;
+    var bytes_words_active = CryptoJS.AES.decrypt(activePrivateKey.toString(), this.props.navigation.state.params.password + this.props.navigation.state.params.wallet.salt);
+    var plaintext_words_active = bytes_words_active.toString(CryptoJS.enc.Utf8);
+    if (plaintext_words_owner.indexOf('eostoken') != - 1) {
+        this.setState({
+            txt_owner: plaintext_words_owner.substr(8, plaintext_words_owner.length),
+            txt_active: plaintext_words_active.substr(8, plaintext_words_active.length),
+        })
+    }
+  }
+
   importActivation() {
-    const { navigate } = this.props.navigation;
-    navigate('ActivationAt', {});
+    if(this.state.txt_owner == ""){
+        if(this.state.activePk == ""){
+            EasyToast.show('请输入私钥');
+            return;
+        }
+        if(this.state.activePk != this.state.txt_active){
+            this.setState({PromptActtve: '该私钥内容有误'})
+            return;
+        }
+    }else{
+        if (this.state.activePk == "" && this.state.ownerPk == "") {
+            EasyToast.show('请输入私钥');
+            return;
+        }
+        if(this.state.activePk != this.state.txt_active){
+            this.setState({PromptActtve: '该私钥内容有误'})
+            return;
+        }
+        if(this.state.ownerPk != this.state.txt_owner){
+            this.setState({PromptOwner: '该私钥内容有误'})
+            return;
+        }
+    }
+    alert(3);
+    // const { navigate } = this.props.navigation;
+    // navigate('ActivationAt', {});
+  }
+
+  intensity() {
+    if (this.state.activePk == ""){
+        this.state.PromptActtve = ''
+    }
+    if(this.state.ownerPk == ""){
+        this.state.PromptOwner = ''
+    }
   }
 
   dismissKeyboardClick() {
@@ -69,21 +124,30 @@ class BackupsAOkey extends BaseComponent {
                         <View style={styles.headout}>
                             <Text style={styles.inptitle}>确认你的钱包私钥</Text>
                             <Text style={styles.headtitle}>请填入你所抄写的私钥，确保你填入无误后，按下一步</Text>
-                        </View>   
+                        </View>  
+                        {this.state.txt_active != ''&& 
                         <View style={styles.inptoutgo} >
-                            <Text style={styles.inptitle}>ActivePrivateKey</Text>
+                            <View style={styles.ionicout}>
+                                <Text style={styles.inptitle}>ActivePrivateKey</Text>
+                                <Text style={styles.prompttext}>{this.state.PromptActtve}</Text>
+                            </View>
                             <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next" editable={true}
                                 selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} autoFocus={false} 
-                                onChangeText={(activePk) => this.setState({ activePk })}   keyboardType="default"
+                                onChangeText={(activePk) => this.setState({ activePk })}   keyboardType="default" onChange={this.intensity()} 
                                 placeholder="粘贴或输入私钥" underlineColorAndroid="transparent"  multiline={true}  />
                         </View>
+                        }
+                         {this.state.txt_owner  != ''&&
                         <View style={styles.inptoutgo} >
-                            <Text style={styles.inptitle}>OwnerPrivateKey</Text>
+                            <View style={styles.ionicout}>
+                                <Text style={styles.inptitle}>OwnerPrivateKey</Text>
+                                <Text style={styles.prompttext}>{this.state.PromptOwner}</Text>
+                            </View>
                             <TextInput ref={(ref) => this._lphone = ref} value={this.state.ownerPk} returnKeyType="next" editable={true}
                                 selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} autoFocus={false} 
-                                onChangeText={(ownerPk) => this.setState({ ownerPk })}   keyboardType="default" 
+                                onChangeText={(ownerPk) => this.setState({ ownerPk })}   keyboardType="default" onChange={this.intensity()} 
                                 placeholder="粘贴或输入私钥" underlineColorAndroid="transparent"  multiline={true}  />
-                        </View>
+                        </View>}
                     </View>
                     <Button onPress={() => this.importActivation()}>
                         <View style={styles.importPriout}>
@@ -150,8 +214,8 @@ const styles = StyleSheet.create({
         backgroundColor: UColor.secdColor,
     },
     headout: {
-        paddingTop: 40,
-        paddingBottom: 30,
+        paddingTop: 20,
+        paddingBottom: 15,
     },
     headtitle: {
         color: UColor.arrow,
@@ -216,6 +280,13 @@ const styles = StyleSheet.create({
         lineHeight: 30,
         color: UColor.fontColor,
     },
+    prompttext: {
+        flex: 1,
+        fontSize: 14,
+        lineHeight: 30,
+        textAlign: 'right',
+        color: UColor.showy,
+    },
     inpt: {
         height: 50,
         fontSize: 16,
@@ -224,6 +295,11 @@ const styles = StyleSheet.create({
     inptoutgo: {
         paddingBottom: 15,
         backgroundColor: UColor.mainColor,
+    },
+    ionicout: {
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'flex-start',
     },
     inptgo: {
         flex: 1,
@@ -320,11 +396,11 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginVertical: 20,
     },
-    prompttext: {
-        fontSize: 14,
-        color: UColor.tintColor,
-        marginHorizontal: 5,
-    },
+    // prompttext: {
+    //     fontSize: 14,
+    //     color: UColor.tintColor,
+    //     marginHorizontal: 5,
+    // },
     codeout: {
         flexDirection: "row",
         alignItems: 'center',

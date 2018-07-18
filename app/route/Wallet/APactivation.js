@@ -30,18 +30,19 @@ class APactivation extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      walletName: "",
-      walletPassword: "",
-      reWalletPassword: "",
-      passwordNote: "",
-      isChecked: this.props.isChecked || true,
-      integral: 0,
-      weak: UColor.arrow,
-      medium: UColor.arrow,
-      strong: UColor.arrow,
-      CreateButton:  UColor.mainColor,
-      errorcode: '',
-      errormsg: '',
+        calculation: "",
+        memory: "",
+        network: "",
+        complete: true,
+        passwordNote: "",
+        isChecked: this.props.isChecked || true,
+        integral: 0,
+        weak: UColor.arrow,
+        medium: UColor.arrow,
+        strong: UColor.arrow,
+        CreateButton:  UColor.mainColor,
+        errorcode: '',
+        errormsg: '',
     }
   }
 
@@ -272,41 +273,41 @@ class APactivation extends BaseComponent {
   }
 
   intensity() {
-    let string = this.state.walletPassword;
-    if(string.length >=8) {
-      if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
-        this.state.strong = UColor.tintColor;
-        this.state.medium = UColor.arrow;
-        this.state.weak = UColor.arrow;
-      }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
-        if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
-          this.state.strong = UColor.arrow;
-          this.state.medium = UColor.tintColor;
-          this.state.weak = UColor.arrow;
-        }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
-          this.state.strong = UColor.arrow;
-          this.state.medium = UColor.tintColor;
-          this.state.weak = UColor.arrow;
-        }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
-          this.state.strong = UColor.arrow;
-          this.state.medium = UColor.tintColor;
-          this.state.weak = UColor.arrow;
-        }else{
-          this.state.strong = UColor.arrow;
-          this.state.medium = UColor.arrow;
-          this.state.weak = UColor.tintColor;
-        }
-      }
-     }else{
-      this.state.strong = UColor.arrow;
-      this.state.medium = UColor.arrow;
-      this.state.weak = UColor.arrow;
-     }
-    if(this.state.walletName != "" && this.state.walletPassword != "" && this.state.reWalletPassword != ""){
-      this.state.CreateButton = UColor.tintColor;
-    }else{
-      this.state.CreateButton =  UColor.mainColor;
-    }
+//     let string = this.state.walletPassword;
+//     if(string.length >=8) {
+//       if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+//         this.state.strong = UColor.tintColor;
+//         this.state.medium = UColor.arrow;
+//         this.state.weak = UColor.arrow;
+//       }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
+//         if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
+//           this.state.strong = UColor.arrow;
+//           this.state.medium = UColor.tintColor;
+//           this.state.weak = UColor.arrow;
+//         }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
+//           this.state.strong = UColor.arrow;
+//           this.state.medium = UColor.tintColor;
+//           this.state.weak = UColor.arrow;
+//         }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+//           this.state.strong = UColor.arrow;
+//           this.state.medium = UColor.tintColor;
+//           this.state.weak = UColor.arrow;
+//         }else{
+//           this.state.strong = UColor.arrow;
+//           this.state.medium = UColor.arrow;
+//           this.state.weak = UColor.tintColor;
+//         }
+//       }
+//      }else{
+//       this.state.strong = UColor.arrow;
+//       this.state.medium = UColor.arrow;
+//       this.state.weak = UColor.arrow;
+//      }
+//     if(this.state.walletName != "" && this.state.walletPassword != "" && this.state.reWalletPassword != ""){
+//       this.state.CreateButton = UColor.tintColor;
+//     }else{
+//       this.state.CreateButton =  UColor.mainColor;
+//     }
   }
 
   dismissKeyboardClick() {
@@ -322,18 +323,18 @@ class APactivation extends BaseComponent {
             <Text style={styles.significanttext} >EOSgfds123415</Text>
             <Text style={styles.nametext} >EOS 账号</Text>
           </View>
-          <View style={styles.outsource}>
-            <Text style={{fontSize: 14, color: UColor.arrow, textAlign: 'right', marginHorizontal: 10, marginVertical: 5,}}>账号资源配置</Text>
+          {this.state.complete?<View style={styles.outsource}>
+            <Text style={{fontSize: 14, color: UColor.arrow, textAlign: 'right', marginHorizontal: 20, marginTop: 5,}}>账号资源配置</Text>
             <View style={styles.inptout} >
                 <View style={styles.rankout}>
                     <Text style={styles.inptitle}>CPU抵押(EOS)</Text>
                     <Text style={styles.falsehints}>*该内容输入有误！</Text>
                 </View>
                 <View style={styles.rankout}>
-                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
+                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.calculation} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                         placeholder="最低可输入0.1" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                        keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
+                        keyboardType="default" maxLength={12} onChangeText={(calculation) => this.setState({ calculation })} 
                     />
                     <Text style={styles.company}>EOS</Text>
                 </View>    
@@ -344,12 +345,12 @@ class APactivation extends BaseComponent {
                     <Text style={styles.falsehints}>*该内容输入有误！</Text>
                 </View>
                 <View style={styles.rankout}>
-                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
+                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.memory} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                         placeholder="最低可输入0.397" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                        keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
+                        keyboardType="default" maxLength={12} onChangeText={(memory) => this.setState({ memory })} 
                     />
-                    <Text style={styles.company}>EOS</Text>
+                    <Text style={styles.company}>Bytes</Text>
                 </View>    
             </View>
             <View style={styles.inptout} >
@@ -358,47 +359,56 @@ class APactivation extends BaseComponent {
                     <Text style={styles.falsehints}>*该内容输入有误！</Text>
                 </View>
                 <View style={styles.rankout}>
-                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
+                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.network} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                         placeholder="最低可输入0" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                        keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
+                        keyboardType="default" maxLength={12} onChangeText={(network) => this.setState({ network })} 
                     />
                     <Text style={styles.company}>EOS</Text>
                 </View>    
             </View>
           </View>
+          :
+          <View style={styles.outsource}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5,}}>
+                    <View style={{flex: 1, height: 2, backgroundColor: UColor.mainColor,}}/>
+                    <Text style={{ color: UColor.arrow, fontSize: 16,}} > (账号资源概况) </Text>
+                    <View style={{flex: 1, height: 2, backgroundColor: UColor.mainColor,}}/>
+                </View>
+                <View style={{ flexDirection: 'row',}}>
+                    <View  style={{ flex: 1,  alignItems: 'center',}}>
+                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30, }}>4096</Text>
+                        <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>分配内存( Bytes )</Text>
+                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30,}}>0.1</Text>
+                        <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>网络抵押( EOS )</Text>
+                    </View>
+                    <View style={{ flex: 1,  alignItems: 'center',}}>
+                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30,}}>0.1</Text>
+                        <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>CPU抵押( EOS )</Text>
+                    </View>
+                    
+                </View>
+          </View>}
+
+
           <View style={styles.inptoutbg}>
             <View style={styles.inptoutgo} >
-                <Text style={styles.inptitle}>ActivePrivateKey</Text>
+                <Text style={styles.inptitle}>所有者公钥</Text>
                 <Text style={styles.inptext}>dfsJHJKDkahjdsfnmbsfjkahiowekwdmsamsnabdHJKHDSJKdm,sanbfmds1233</Text>
             </View>
+            <View style={{height: 1, backgroundColor: UColor.secdColor,}}/>
             <View style={styles.inptoutgo} >
-                <Text style={styles.inptitle}>OwnerPrivateKey</Text>
+                <Text style={styles.inptitle}>管理者公钥</Text>
                 <Text style={styles.inptext}>dfsJHJKDkahjdsfnmbsfjkahiowekwdmsamsnabdHJKHDSJKdm,sanbfmADS</Text>
             </View>
-          </View>
-          <View style={styles.clauseout}>
-            <TouchableHighlight  onPress={() => this.checkClick()}>
-              <Image source={this.state.isChecked ? UImage.aab1 : UImage.aab2} style={styles.clauseimg} />
-            </TouchableHighlight>
-            <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text></Text>
+            {this.state.complete?<Text style={styles.readtext} >说明：账号资源可输入设置</Text> : <Text style={styles.readtext}></Text>}
+            <Button onPress={() => this.createWallet()}>
+                <View style={styles.createWalletout}>
+                    <Text style={styles.createWallet}>确认支付</Text>
+                </View>
+            </Button>
           </View>
         </KeyboardAvoidingView>
-        <Button onPress={() => this.createWallet()}>
-          <View style={styles.createWalletout} backgroundColor = {this.state.CreateButton}>
-            <Text style={styles.createWallet}>创建钱包</Text>
-          </View>
-        </Button>
-        <Button onPress={() => this.importWallet()}> 
-          <View style={styles.createWalletout}>    
-            <Text style={styles.importWallettext}>导入钱包</Text>
-          </View>
-        </Button>
-        <Button onPress={() => this.importPkey()}> 
-          <View style={styles.createWalletout}>    
-            <Text style={styles.importWallettext}>备份私钥</Text>
-          </View>
-        </Button>
       </TouchableOpacity>
     </ScrollView>
   </View>
@@ -408,13 +418,11 @@ class APactivation extends BaseComponent {
 const styles = StyleSheet.create({
     inptoutbg: {
         backgroundColor: UColor.mainColor,
-        marginBottom: 10,
     },
     inptoutgo: {
-        paddingBottom: 15,
+        paddingVertical: 10,
+        paddingHorizontal: 18,
         backgroundColor: UColor.mainColor,
-        borderBottomWidth: 1,
-        borderBottomColor: UColor.secdColor,
     },
     inptgo: {
         flex: 1,
@@ -424,6 +432,14 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 25,
         color: UColor.arrow,
+    },
+
+    readtext: {
+        textAlign: 'right',
+        fontSize: 13,
+        color: UColor.tintColor,
+        marginHorizontal: 20,
+        marginBottom: 10,
     },
 
 
@@ -444,15 +460,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: UColor.secdColor,
+    backgroundColor: UColor.mainColor,
   },
   significantout: {
-      marginTop:10,
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: UColor.mainColor
+    backgroundColor: UColor.mainColor,
+    borderTopWidth: 10,
+    borderTopColor: UColor.secdColor,
   },
   significanttext: {
     color: UColor.fontColor,
@@ -479,7 +496,6 @@ const styles = StyleSheet.create({
   inptitle: {
     flex: 1,
     fontSize: 15,
-    lineHeight: 30,
     paddingLeft: 5,
     color: UColor.fontColor,
   },
@@ -527,8 +543,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 20,
-    marginTop: 20,
-    borderRadius: 5
+    marginBottom: 50,
+    borderRadius: 5,
+    backgroundColor: UColor.tintColor
   },
   createWallet: {
     fontSize: 15,

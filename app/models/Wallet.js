@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { address, getAccountsByPuk, isExistAccountName, getintegral } from '../utils/Api';
+import { address, getAccountsByPuk, isExistAccountName, getintegral, isExistAccountNameAndPublicKey } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
 import { EasyLoading } from '../components/Loading';
 import store from 'react-native-simple-store';
@@ -410,7 +410,7 @@ export default {
          },   
          *isExistAccountName({payload, callback}, {call, put}) {
             try{
-                let resp = yield call(Request.request,isExistAccountName,"post", payload);
+                let resp = yield call(Request.request,"http://192.168.1.11:8088/api" + isExistAccountName,"post", payload);
                 try {
                     if (callback) callback(resp);
                 } catch (error) {
@@ -453,6 +453,19 @@ export default {
             if(callback) callback(invalidWalletArr);
             yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr} });
             yield call(store.save, 'invalidWalletArr', invalidWalletArr);
+         },
+         *isExistAccountNameAndPublicKey({payload, callback},{call,put}) {
+            // alert('22' + JSON.stringify(payload) )
+            try{
+                let resp = yield call(Request.request,"http://192.168.1.66:8088/api" + isExistAccountNameAndPublicKey,"post", payload);
+                // alert('22' + resp)
+                try {
+                    if (callback) callback(resp);
+                } catch (error) {
+                }
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
          },
     },
     reducers: {
