@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Clipboard, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity,TouchableHighlight,KeyboardAvoidingView } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, Clipboard, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, TouchableOpacity,TouchableHighlight,KeyboardAvoidingView,Modal } from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import Item from '../../components/Item'
@@ -14,7 +14,12 @@ import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
+var AES = require("crypto-js/aes");
+var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
+const maxWidth = Dimensions.get('window').width;
+const maxHeight = Dimensions.get('window').height;
+
 @connect(({ wallet }) => ({ ...wallet }))
 class APactivation extends BaseComponent {
 
@@ -30,284 +35,103 @@ class APactivation extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-        calculation: "",
-        memory: "",
-        network: "",
-        complete: true,
-        passwordNote: "",
-        isChecked: this.props.isChecked || true,
-        integral: 0,
-        weak: UColor.arrow,
-        medium: UColor.arrow,
-        strong: UColor.arrow,
-        CreateButton:  UColor.mainColor,
-        errorcode: '',
-        errormsg: '',
+      accountName: "",
+      ownerPuk: "",
+      activePuk: "",
+      cpu:"0.5",
+      net:"0.5",
+      ram:"0.5",
+      isComplete: false,
+      hasErrorInput: false,
+      show: false,
     }
   }
 
   componentDidMount() {
-    this.props.dispatch({ type: 'wallet/getintegral', payload:{},callback: (data) => { 
-      this.setState({integral: data.data});
-    } });
+    var accountInfo = this.props.navigation.state.params.accountInfo;
+    this.setState({
+      accountName: accountInfo.account,
+      ownerPuk: accountInfo.owner,
+      activePuk: accountInfo.active,
+    });
   }
   componentWillUnmount(){
     //结束页面前，资源释放操作
     super.componentWillUnmount();
     
   }
-  importKey() {
-     // 钱包
-     const { navigate } = this.props.navigation;
-    navigate('ImportKey', {});
+
+  check(){
+
   }
   
-  importWallet() {
-    // 导入钱包
-    const { navigate } = this.props.navigation;
-    navigate('ImportEosKey');
-    // EasyToast.show('测试网络暂不开放');
-  }
-  importPkey() {
-     // 备份私钥
-     const { navigate } = this.props.navigation;
-     navigate('BackupsPkey');
+  confirm(){
+    // this.setState({isComplete: true});
+    this._setModalVisible();
+    //
   }
 
+  createAccount() {
+    this._setModalVisible();
 
-  createWallet() {
-    AnalyticsUtil.onEvent('Create_wallet');
-    const { dispatch } = this.props;
-    if (this.state.walletName == "") {
-      EasyToast.show('请输入钱包名称');
-      return;
-    }
-    if(this.state.walletName.length != 12 ){
-      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
-      return;
-    }
-    if(this.state.walletName.length == 12 && !/^[1-5a-z.]+$/.test(this.state.walletName)){
-      EasyToast.show("钱包名称只能输入12位小写字母a-z和数字1-5");
-      return;
-    }
-    if (this.state.walletPassword == "" || this.state.walletPassword.length < 8) {
-      EasyToast.show('钱包密码长度至少8位,请重输');
-      return;
-    }
-    if (this.state.reWalletPassword == "" || this.state.reWalletPassword.length < 8) {
-      EasyToast.show('钱包密码长度至少8位,请重输');
-      return;
-    }
-    if (this.state.walletPassword != this.state.reWalletPassword) {
-      EasyToast.show('两次密码不一致');
-      return;
-    }
-    if (this.state.isChecked == false) {
-      EasyToast.show('请确认已阅读并同意条款');
-      return;
-    }
+    const view =
+        <View style={styles.passoutsource}>
+            <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
+                selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
+                placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
+        </View>
+        EasyDialog.show("密码", view, "确认", "取消", () => {
 
-    var arr_owner = [];
-    var arr_active = [];
-    var words_owner = [];
-    var words_active = [];
-    var wordsStr_owner = '';
-    var wordsStr_active = '';
-    for (var i = 0; i < 15; i++) {
-      var randomNum = this.getx(arr_owner);
-      words_owner.push(english[randomNum]);
-    }
-    for (var i = 0; i < arr_owner.length; i++) {
-      words_owner[i] = english[arr_owner[i]];
-      wordsStr_owner = wordsStr_owner + "," + words_owner[i];
-    }
-    for (var i = 0; i < 15; i++) {
-      var randomNum = this.getx(arr_active);
-      words_active.push(english[randomNum]);
-    }
-    for (var i = 0; i < arr_active.length; i++) {
-      words_active[i] = english[arr_active[i]];
-      wordsStr_active = wordsStr_active + "," + words_active[i];
-    }
-    const { navigate } = this.props.navigation;
-    this.clearFoucs();
-    EasyLoading.show('正在请求');
-    try {
-      Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
+        if (!this.state.password || this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+            EasyToast.show('密码长度至少4位,请重输');
+            return;
+        }
+        
+        var privateKey = this.props.defaultWallet.activePrivate;
+        try {
+            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
-        if (result.isSuccess) {
-          var salt;
-          Eos.randomPrivateKey((r) => {
-            salt = r.data.ownerPrivate.substr(0, 18);
-            result.data.words = wordsStr_owner;
-            result.data.words_active = wordsStr_active;
-            result.password = this.state.walletPassword;
-            result.name = this.state.walletName;
-            result.account = this.state.walletName;
-            result.salt = salt;
-            this.props.dispatch({type: 'wallet/createAccountService', payload: {username: result.account, owner: result.data.ownerPublic, active: result.data.activePublic, isact: false},
-            callback: (data) => {
-                EasyLoading.dismis();
-                this.setState({
-                  errorcode: data.code,
-                  errormsg: data.msg
+            if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                EasyLoading.show();
+                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                Eos.createAndDelegateAccount(this.props.defaultWallet.account, plaintext_privateKey, this.state.accountName, this.state.ownerPuk, this.state.activePuk,
+                this.state.cpu + " EOS", this.state.net + " EOS", this.state.ram + " EOS", 1, (r)=>{
+                  EasyLoading.dismis();
+                  if(r.isSuccess){
+                      EasyToast.show("创建账号成功");
+                  }else{
+                      if(r.data){
+                          if(r.data.msg){
+                              EasyToast.show(r.data.msg);
+                          }else{
+                              EasyToast.show("创建账号失败");
+                          }
+                      }else{
+                          EasyToast.show("创建账号失败");
+                      }
+                  }
                 });
-                if (data.code == '0') {
-                  result.isactived = true
-                  this.props.dispatch({type: 'wallet/saveWallet', wallet: result, callback: (data, error) => {
-                      DeviceEventEmitter.emit('updateDefaultWallet');
-                      if (error != null) {
-                        // EasyToast.show('生成账号失败：' + error);
-                        this.ExplainPopup();
-                      } else {
-                        EasyToast.show('生成账号成功');
-                        this.props.dispatch({
-                          type: 'wallet/updateGuideState',
-                          payload: {
-                            guide: false
-                          }
-                        });
-                        DeviceEventEmitter.emit('updateDefaultWallet');
-                        this.props.navigation.goBack();
-                        // const { navigate } = this.props.navigation;
-                        // navigate('BackupNote', data); 
-                      }
-                    }
-                  });
-                } else if (data.code == '515') { // 511: 已经创建过账户， 515：账户已经被占用
-                  // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
-                  this.ExplainPopup();
-                } else {
-                  result.isactived = false
-                  this.props.dispatch({
-                    type: 'wallet/saveWallet',
-                    wallet: result,
-                    callback: (data) => {
-                      DeviceEventEmitter.emit('updateDefaultWallet');
-                      if (this.props.navigation.state.params.entry == "wallet_home") {
-                        this.props.dispatch({
-                          type: 'wallet/updateGuideState',
-                          payload: {
-                            guide: false
-                          },
-                          callback: (data) => {
-                            this.props.navigation.goBack();
-                          }
-                        });
-                      }
-                      // const { navigate } = this.props.navigation;
-                      this.ExplainPopup();
-                    }
-                  });
-                  // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
-                  this.ExplainPopup();
-                }
-              }
-            })
-          });
+            } else {
+                EasyLoading.dismis();
+                EasyToast.show('密码错误');
+            }
+        } catch (e) {
+            EasyLoading.dismis();
+            EasyToast.show('密码错误');
         }
-      });
-    } catch (error) {
-      EasyToast.show(error);
-    }
-    EasyLoading.dismis();
-    DeviceEventEmitter.addListener('wallet_10', () => {
-      EasyToast.show('您不能创建更多钱包账号了');
-    });
-
-    DeviceEventEmitter.addListener('active_wallet', (tab) => {
-      this.props.navigation.goBack();
-    });
+        EasyDialog.dismis();
+    }, () => { EasyDialog.dismis() });
   }
-
-  ExplainPopup(){
-  EasyDialog.show("EOS账号创建说明", (<View>
-     <View style={{flexDirection: 'column', marginBottom: 10,}}>
-       <Text style={{textAlign: 'left', color: UColor.showy,}}>生成账号失败：{this.state.errormsg}</Text>
-       <Text style={{textAlign: 'left', color: UColor.showy,}}>错误码：{this.state.errorcode}</Text>
-     </View>
-     <Text style={styles.inptpasstext}>1.如果您没有注册EosToken账号，创建的EOS钱包将无法激活</Text>
-     <Text style={styles.inptpasstext}>2.激活EOS钱包需达到{this.state.integral}点积分（每个用户仅限一个）</Text>
-     <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
-     <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>
-  </View>), "知道了", null, () => {
-    EasyDialog.dismis();
-    this.props.navigation.goBack();
-  }, () => { EasyDialog.dismis() });
-  }
-
-  clearFoucs = () => {
-    this._raccount.blur();
-    this._lpass.blur();
-    this._lrpass.blur();
-    this._lnote.blur();
-  }
-
-  getx(arr) {
-    for (var i = 0; i > -1; i++) {
-      var flag = true;
-      var num = Math.floor(Math.random() * english.length);
-      for (var i in arr) {
-        if (arr[i] == num) {
-          flag = false;
-          break;
-        }
-      }
-      if (flag == true) {
-        arr.push(num);
-        return arr;
-      }
-    }
-  }
-
-  prot = () => {
-    const { navigate } = this.props.navigation;
-    navigate('Web', { title: "服务及隐私条款", url: "http://static.eostoken.im/html/reg.html" });
-  }
-
-
-  checkClick() {
+   // 显示/隐藏 modal  
+   _setModalVisible() {
+    let isShow = this.state.show;
+    // if(!isShow){
+    //   this.setState({isComplete: false});
+    // }
     this.setState({
-      isChecked: !this.state.isChecked
+        show: !isShow,
     });
-  }
-
-  intensity() {
-//     let string = this.state.walletPassword;
-//     if(string.length >=8) {
-//       if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
-//         this.state.strong = UColor.tintColor;
-//         this.state.medium = UColor.arrow;
-//         this.state.weak = UColor.arrow;
-//       }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
-//         if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
-//           this.state.strong = UColor.arrow;
-//           this.state.medium = UColor.tintColor;
-//           this.state.weak = UColor.arrow;
-//         }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
-//           this.state.strong = UColor.arrow;
-//           this.state.medium = UColor.tintColor;
-//           this.state.weak = UColor.arrow;
-//         }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
-//           this.state.strong = UColor.arrow;
-//           this.state.medium = UColor.tintColor;
-//           this.state.weak = UColor.arrow;
-//         }else{
-//           this.state.strong = UColor.arrow;
-//           this.state.medium = UColor.arrow;
-//           this.state.weak = UColor.tintColor;
-//         }
-//       }
-//      }else{
-//       this.state.strong = UColor.arrow;
-//       this.state.medium = UColor.arrow;
-//       this.state.weak = UColor.arrow;
-//      }
-//     if(this.state.walletName != "" && this.state.walletPassword != "" && this.state.reWalletPassword != ""){
-//       this.state.CreateButton = UColor.tintColor;
-//     }else{
-//       this.state.CreateButton =  UColor.mainColor;
-//     }
   }
 
   dismissKeyboardClick() {
@@ -320,49 +144,49 @@ class APactivation extends BaseComponent {
       <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
           <View style={styles.significantout}>
-            <Text style={styles.significanttext} >EOSgfds123415</Text>
+            <Text style={styles.significanttext} >{this.state.accountName}</Text>
             <Text style={styles.nametext} >EOS 账号</Text>
           </View>
-          {this.state.complete?<View style={styles.outsource}>
+          {!this.state.show?<View style={styles.outsource}>
             <Text style={{fontSize: 14, color: UColor.arrow, textAlign: 'right', marginHorizontal: 20, marginTop: 5,}}>账号资源配置</Text>
             <View style={styles.inptout} >
                 <View style={styles.rankout}>
                     <Text style={styles.inptitle}>CPU抵押(EOS)</Text>
-                    <Text style={styles.falsehints}>*该内容输入有误！</Text>
+                    {this.state.hasErrorInput && <Text style={styles.falsehints}>*该内容输入有误！</Text>}
                 </View>
                 <View style={styles.rankout}>
-                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.calculation} returnKeyType="next" 
+                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.cpu} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                        placeholder="最低可输入0.1" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                        keyboardType="default" maxLength={12} onChangeText={(calculation) => this.setState({ calculation })} 
+                        placeholder="最低可输入0.1" underlineColorAndroid="transparent" onChange={this.check()} 
+                        keyboardType="default" maxLength={12} onChangeText={(cpu) => this.setState({ cpu })} 
                     />
                     <Text style={styles.company}>EOS</Text>
                 </View>    
             </View>
             <View style={styles.inptout} >
                 <View style={styles.rankout}>
-                    <Text style={styles.inptitle}>分配内存(Bytes)</Text>
-                    <Text style={styles.falsehints}>*该内容输入有误！</Text>
+                    <Text style={styles.inptitle}>网络抵押(EOS)</Text>
+                    {this.state.hasErrorInput && <Text style={styles.falsehints}>*该内容输入有误！</Text>}
                 </View>
                 <View style={styles.rankout}>
-                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.memory} returnKeyType="next" 
+                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.net} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                        placeholder="最低可输入0.397" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                        keyboardType="default" maxLength={12} onChangeText={(memory) => this.setState({ memory })} 
+                        placeholder="最低可输入0" underlineColorAndroid="transparent" onChange={this.check()} 
+                        keyboardType="default" maxLength={12} onChangeText={(net) => this.setState({ net })} 
                     />
-                    <Text style={styles.company}>Bytes</Text>
+                    <Text style={styles.company}>EOS</Text>
                 </View>    
             </View>
             <View style={styles.inptout} >
                 <View style={styles.rankout}>
-                    <Text style={styles.inptitle}>网络抵押(EOS)</Text>
-                    <Text style={styles.falsehints}>*该内容输入有误！</Text>
+                    <Text style={styles.inptitle}>分配内存(EOS))</Text>
+                    {this.state.hasErrorInput && <Text style={styles.falsehints}>*该内容输入有误！</Text>}
                 </View>
                 <View style={styles.rankout}>
-                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.network} returnKeyType="next" 
+                    <TextInput ref={(ref) => this._raccount = ref} value={this.state.ram} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                        placeholder="最低可输入0" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                        keyboardType="default" maxLength={12} onChangeText={(network) => this.setState({ network })} 
+                        placeholder="最低可输入0.397" underlineColorAndroid="transparent" onChange={this.check()} 
+                        keyboardType="default" maxLength={12} onChangeText={(ram) => this.setState({ ram })} 
                     />
                     <Text style={styles.company}>EOS</Text>
                 </View>    
@@ -377,13 +201,13 @@ class APactivation extends BaseComponent {
                 </View>
                 <View style={{ flexDirection: 'row',}}>
                     <View  style={{ flex: 1,  alignItems: 'center',}}>
-                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30, }}>4096</Text>
-                        <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>分配内存( Bytes )</Text>
-                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30,}}>0.1</Text>
+                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30, }}>{this.state.ram}</Text>
+                        <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>分配内存( EOS )</Text>
+                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30,}}>{this.state.net}</Text>
                         <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>网络抵押( EOS )</Text>
                     </View>
                     <View style={{ flex: 1,  alignItems: 'center',}}>
-                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30,}}>0.1</Text>
+                        <Text style={{fontSize: 14, color: UColor.tintColor, lineHeight: 30,}}>{this.state.cpu}</Text>
                         <Text style={{fontSize: 15, color: UColor.fontColor, paddingBottom: 10,}}>CPU抵押( EOS )</Text>
                     </View>
                     
@@ -393,20 +217,61 @@ class APactivation extends BaseComponent {
 
           <View style={styles.inptoutbg}>
             <View style={styles.inptoutgo} >
-                <Text style={styles.inptitle}>所有者公钥</Text>
-                <Text style={styles.inptext}>dfsJHJKDkahjdsfnmbsfjkahiowekwdmsamsnabdHJKHDSJKdm,sanbfmds1233</Text>
+                <Text style={styles.inptitle}>owner公钥</Text>
+                <Text style={styles.inptext}>{this.state.ownerPuk}</Text>
             </View>
             <View style={{height: 1, backgroundColor: UColor.secdColor,}}/>
             <View style={styles.inptoutgo} >
-                <Text style={styles.inptitle}>管理者公钥</Text>
-                <Text style={styles.inptext}>dfsJHJKDkahjdsfnmbsfjkahiowekwdmsamsnabdHJKHDSJKdm,sanbfmADS</Text>
+                <Text style={styles.inptitle}>active公钥</Text>
+                <Text style={styles.inptext}>{this.state.activePuk}</Text>
             </View>
-            {this.state.complete?<Text style={styles.readtext} >说明：账号资源可输入设置</Text> : <Text style={styles.readtext}></Text>}
-            <Button onPress={() => this.createWallet()}>
+            {!this.state.show?<Text style={styles.readtext} >说明：账号资源可输入设置</Text> : <Text style={styles.readtext}></Text>}
+            <Button onPress={() => this.confirm()}>
                 <View style={styles.createWalletout}>
                     <Text style={styles.createWallet}>确认支付</Text>
                 </View>
             </Button>
+          </View>
+
+          <View style={styles.pupuo}>
+            <Modal animationType={'slide'} transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
+                <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
+                <View style={{ width: maxWidth,  height: maxHeight*1/2,  backgroundColor: UColor.fontColor,}}>
+                        <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
+                            <Text style={{flex: 1,paddingVertical: 5,marginLeft: 135,fontSize: 18,fontWeight: 'bold',color:'#4d4d4d'}}>订单详情</Text>
+                            <Button  onPress={this._setModalVisible.bind(this)}>
+                                <Text style={styles.buttontext}>×</Text>
+                            </Button>
+                        </View>
+                        <View style={styles.separationline} >
+                            <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
+                                <Text style={{fontSize: 26,paddingVertical: 15, lineHeight: 10,color:'#000000',textAlign: 'center',}}>{parseFloat(this.state.cpu)+parseFloat(this.state.ram)+parseFloat(this.state.net)} </Text>
+                                <Text style={{fontSize: 13,paddingVertical: 10, lineHeight: 10,color:'#000000',textAlign: 'center',}}> EOS</Text>
+                            </View>
+                        </View>
+                        <View style={{flex: 1, paddingLeft: 10, paddingRight:10,paddingHorizontal: 20}}>
+                            <View style={styles.separationline} >
+                                <View style={styles.rowInfo}>
+                                    <Text style={styles.contentText}>购买账号：</Text>
+                                    <Text style={styles.contentText}>{this.state.accountName}</Text>
+                                </View>
+                            </View>
+                            <View style={styles.separationline} >
+                                <View style={styles.rowInfo}>
+                                    <Text style={styles.contentText}>支付账号：</Text>
+                                    <Text style={styles.contentText}>{this.props.defaultWallet.account}</Text>
+                                </View>
+                            </View>
+                          
+                            <Button onPress={() => { this.createAccount() }}>
+                                <View style={styles.btnoutsource}>
+                                    <Text style={styles.btntext}>确认</Text>
+                                </View>
+                            </Button>
+                        </View>
+                </View>
+                </TouchableOpacity>
+            </Modal>
           </View>
         </KeyboardAvoidingView>
       </TouchableOpacity>
@@ -556,6 +421,89 @@ const styles = StyleSheet.create({
     color: UColor.tintColor,
     textAlign: 'center'
   },
+
+  pupuo: {
+    backgroundColor: '#ECECF0',
+},
+// modal的样式  
+modalStyle: {
+    backgroundColor: UColor.mask,  
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+},
+// modal上子View的样式  
+subView: {
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor: UColor.fontColor,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: UColor.baseline,
+},
+buttonView: {
+    alignItems: 'flex-end',
+},
+buttontext: {
+    // width: 30,
+    // height: 30,
+    // marginTop:1,
+    // marginRight: 1,
+    // paddingVertical: 12, 
+    lineHeight: 25,
+    color: '#CBCBCB',
+    marginBottom: 0,
+    fontSize: 28,
+},
+// 标题  
+titleText: {
+    marginBottom: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+},
+// 内容  
+contentText: {
+    marginLeft: 10,
+    marginRight: 10,
+    lineHeight: 10,
+    paddingVertical: 15,
+    fontSize: 18,
+    textAlign: 'left',
+    color: '#4D4D4D',
+},
+
+rowInfo: {
+    flexDirection: "row",
+    padding: 15,
+    justifyContent: "space-between",
+  },
+
+//转帐信息提示分隔线
+separationline: {
+    paddingLeft: 10,
+    height: 50,
+    marginBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#e5e5e5',
+    justifyContent: 'center',
+},
+
+// 按钮  
+btnoutsource: {
+    margin: 15,
+    height: 45,
+    borderRadius: 6,
+    backgroundColor: UColor.tintColor,
+    justifyContent: 'center',
+    alignItems: 'center'
+},
+btntext: {
+    fontSize: 16,
+    color: UColor.fontColor
+},
 
 });
 

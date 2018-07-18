@@ -141,6 +141,7 @@ class ActivationAt extends BaseComponent {
     super(props);
     this.props.navigation.setParams({ onPress: this._rightTopClick });
     this.state = {
+        name:"",
         password: "",
         ownerPk: '',
         activePk: '',

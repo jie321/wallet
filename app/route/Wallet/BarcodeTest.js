@@ -106,7 +106,7 @@ export default class App extends BaseComponent {
         this.props.navigation.goBack();  //正常返回上一个页面
 
         const { navigate } = this.props.navigation;
-        navigate('APactivation', { accountInfo: jsoncode });
+        navigate('APactivation', { accountInfo: jdata });
     }
 
     _onBarCodeRead = (e) => {
