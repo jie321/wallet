@@ -60,6 +60,55 @@ export default class App extends BaseComponent {
         this.props.navigation.goBack();
         return;
     }
+
+    activeWallet(data){
+        if(data == null){
+            return this._errExit();
+        }
+        var length = data.length;
+        var index = "activeWallet:".length; //"eos:"
+        var point = data.lastIndexOf("?");
+        if(point <= index || point >= length)
+        {
+            return this._errExit();
+        }
+        var account = data.substring(index,point);
+        if(account == undefined || account == null || account == ""){
+            return this._errExit();
+        }
+        index = point + 1; //"?"
+        var ownerIndex = data.lastIndexOf("owner=");    
+        if(index != ownerIndex || ownerIndex >= length){
+            return this._errExit();
+        }
+        index += 6; //"owner="
+        var andIndex = data.lastIndexOf("&");    
+        if(andIndex <= index || andIndex >= length){
+            return this._errExit();
+        }
+        var owner = data.substring(index,andIndex);
+        if(owner == undefined || owner == null || owner == ""){
+            return this._errExit();
+        }
+        index = andIndex + 1; //"&"
+        var activeIndex = data.lastIndexOf("active=");   
+        if(index != activeIndex || activeIndex >= length){
+            return this._errExit();
+        } 
+        index += 7; //"active="
+        var active = data.substring(index,length);
+        if(active == null || active == undefined || active == "") 
+        {
+            return this._errExit();
+        }
+        var jsoncode = '{"account":"' + account + '","owner":"' + owner + '","active":"' + active + '"}';
+        var jdata = JSON.parse(jsoncode);
+        this.props.navigation.goBack();  //正常返回上一个页面
+
+        const { navigate } = this.props.navigation;
+        navigate('APactivation', { accountInfo: jsoncode });
+    }
+
     _onBarCodeRead = (e) => {
         // console.log(`e.nativeEvent.data.type = ${e.nativeEvent.data.type}, e.nativeEvent.data.code = ${e.nativeEvent.data.code}`)
         this._stopScan();
@@ -67,6 +116,11 @@ export default class App extends BaseComponent {
             var strcoins = e.nativeEvent.data.code;
             if(strcoins == undefined || strcoins == null){
                 return this._errExit();
+            }
+            var index = strcoins.lastIndexOf('activeWallet:');
+            if(index == 0){
+                this.activeWallet(strcoins);
+                return;
             }
             var lowerCointType = this.state.coinType.toLowerCase();
             var upperCointType = this.state.coinType.toUpperCase();
