@@ -120,7 +120,7 @@ class WalletDetail extends BaseComponent {
             // this._setModalVisible();
             // alert('解锁成功' + plaintext_words);
             // this.toBackup(wordsArr);
-            navigate('BackupsPkey', { wallet: this.props.navigation.state.params.data, password:this.state.password });
+            navigate('BackupsPkey', { wallet: this.props.navigation.state.params.data, password:this.state.password, entry: "walletDetails"});
           } else {
             EasyToast.show('您输入的密码不正确');
           }
@@ -192,7 +192,12 @@ class WalletDetail extends BaseComponent {
                   EasyDialog.dismis()
               }, () => { EasyDialog.dismis() });
             }else {
-
+              EasyDialog.show("免责声明",  (<View>
+                <Text style={{color: UColor.arrow,fontSize: 14,}}>网络异常, 暂不能检测到账号是否已经激活, 建议暂不删除此账号, 如果执意删除请先导出私钥并保存好，否则删除后无法找回。</Text>
+              </View>),"执意删除","取消",  () => {
+                  this.deletionDirect();
+                  EasyDialog.dismis()
+              }, () => { EasyDialog.dismis() });
             }
           }
       })
@@ -265,54 +270,78 @@ class WalletDetail extends BaseComponent {
 
   activeWalletOnServer(){
     const { navigate } = this.props.navigation;
-    let _wallet = this.props.navigation.state.params.data
-
+    let wallet = this.props.navigation.state.params.data
+    let name = wallet.account;
+    let owner = wallet.ownerPublic;
+    let active = wallet.activePublic;
     try {
       EasyLoading.show('正在请求');
+      //检测账号是否已经激活
       this.props.dispatch({
-        type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
-          if (data.code == 403) {
-            this.props.dispatch({
-              type: 'login/logout', payload: {}, callback: () => {}
-            });      
-            EasyLoading.dismis();
-            navigate('ActivationAt', {parameter:_wallet});
-            return false;   
-          }else if(data.code == 0){
-            this.props.dispatch({
-              type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
+        type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
+            if(result.code == 0 && result.data == true){
                 EasyLoading.dismis();
-                if (data.code == '0') {
-                  _wallet.isactived = true
-                  this.props.dispatch({
-                    type: 'wallet/activeWallet', wallet: _wallet, callback: (data, error) => {
-                      DeviceEventEmitter.emit('updateDefaultWallet');
-                      if (error != null) {
-                        navigate('ActivationAt', {parameter:_wallet});
-                        return false;
-                      } else {
-                        EasyToast.show('激活账号成功');
-                        return true;
-                      }
-                    }
-                  });
-                }else{
-                  EasyLoading.dismis();
-                  navigate('ActivationAt', {parameter:_wallet});
-                  return false;
-                }
-              }
-            });
-          }else{
-            EasyLoading.dismis();
-            navigate('ActivationAt', {parameter:_wallet});
-            return false;   
-          }
+                wallet.isactived = true
+                this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
+                //msg:success,data:true, code:0 账号已存在
+                EasyDialog.show("恭喜激活成功", (<View>
+                    <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
+                    {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
+                </View>), "知道了", null,  () => { EasyDialog.dismis() });
+            }else {
+              EasyLoading.dismis();
+              navigate('ActivationAt', {parameter:wallet});
+
+              // this.props.dispatch({
+              //   type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
+              //     if (data.code == 403) {
+              //       this.props.dispatch({
+              //         type: 'login/logout', payload: {}, callback: () => {}
+              //       });      
+              //       EasyLoading.dismis();
+              //       navigate('ActivationAt', {parameter:wallet});
+              //       return false;   
+              //     }else if(data.code == 0){
+              //       this.props.dispatch({
+              //         type: 'wallet/createAccountService', payload: { username: name, owner: owner, active: active, isact:true}, callback: (data) => {
+              //           EasyLoading.dismis();
+              //           if (data.code == '0') {
+              //             wallet.isactived = true
+              //             this.props.dispatch({
+              //               type: 'wallet/activeWallet', wallet: wallet, callback: (data, error) => {
+              //                 DeviceEventEmitter.emit('updateDefaultWallet');
+              //                 if (error != null) {
+              //                   navigate('ActivationAt', {parameter:wallet});
+              //                   return false;
+              //                 } else {
+              //                   EasyDialog.show("创建账号成功", (<View>
+              //                     <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
+              //                     <Text style={{fontSize: 16, color: '#808080',}}>恭喜！您的EosToken账号积分获得免费创建账号权益，该账号已完成激活，建议您在使用转账功能时先小额尝试，成功后再正常使用钱包。</Text>
+              //                 </View>), "确认", null,  () => { EasyDialog.dismis() });
+              //                   return true;
+              //                 }
+              //               }
+              //             });
+              //           }else{
+              //             EasyLoading.dismis();
+              //             navigate('ActivationAt', {parameter:wallet});
+              //             return false;
+              //           }
+              //         }
+              //       });
+              //     }else{
+              //       EasyLoading.dismis();
+              //       navigate('ActivationAt', {parameter:wallet});
+              //       return false;   
+              //     }
+              //   }
+              // });
+            }
         }
-      });
+    });
     } catch (error) {
       EasyLoading.dismis();
-      navigate('ActivationAt', {parameter:_wallet});
+      navigate('ActivationAt', {parameter:wallet});
       return false;
     }
   

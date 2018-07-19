@@ -431,41 +431,40 @@ class Route extends React.Component {
 
     BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
 
-    // DeviceEventEmitter.addListener('Activation', (news) => {
-    //   var result = JSON.parse(news);// 转成JSON对象
-    //   this.setState({
-    //     showActivationPay: true,
-    //     cpu: result.cpu ? result.cpu : "",
-    //     net: result.net ? result.net : "",
-    //     ram: result.ram ? result.ram : "",
-    //     turnintoaccount: result.account_name ? result.account_name : "",
-    //     turninamount: result.owner ? result.owner : "",
-    //     turninsymbol: result.active ? result.active : "",
-    //   })
-    //   this.state.APtransformY = new Animated.Value(200);
-    //   this.state.APtransformY1 = new Animated.Value(-1000);
-    //   setTimeout(() => {
-    //     Animated.parallel([
-    //       Animated.timing(this.state.APtransformY,
-    //         {
-    //           toValue: 0,
-    //           duration: 300,
-    //           easing: Easing.linear,
-    //         }
-    //       ),
-    //       Animated.timing(this.state.APtransformY1,
-    //         {
-    //           toValue: 0,
-    //           duration: 300,
-    //           easing: Easing.linear,
-    //         }
-    //       ),
-    //     ]).start();
-    //   }, 300);
-    // });
-    //ReturnActivation
-   
     DeviceEventEmitter.addListener('Activation', (news) => {
+      var result = JSON.parse(news);// 转成JSON对象
+      this.setState({
+        showActivationPay: true,
+        cpu: result.cpu ? result.cpu : "",
+        net: result.net ? result.net : "",
+        ram: result.ram ? result.ram : "",
+        turnintoaccount: result.account_name ? result.account_name : "",
+        turninamount: result.owner ? result.owner : "",
+        turninsymbol: result.active ? result.active : "",
+      })
+      this.state.APtransformY = new Animated.Value(200);
+      this.state.APtransformY1 = new Animated.Value(-1000);
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(this.state.APtransformY,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+          Animated.timing(this.state.APtransformY1,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+        ]).start();
+      }, 300);
+    });
+    
+    DeviceEventEmitter.addListener('ReturnActivation', (news) => {
       var result = JSON.parse(news);// 转成JSON对象
       this.setState({
         showReturnActivationPay: true,
@@ -1106,28 +1105,39 @@ class Route extends React.Component {
                 <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                   <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
                     <View style={{ backgroundColor: "#fff", width: ScreenWidth - 40,}}>
-                      <View style={{ }}>
-                        <Image source={UImage.activation_head} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40)*0.234}} />
-                        <Text style={{ color: '#999999', fontSize: 15, textAlign: 'center',}}>我在ET钱包成功激活了该EOS账号</Text>
-                        <View style={{paddingVertical: 10, paddingHorizontal: 20,}}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center',marginVertical: 5,}}>
-                              <Text style={{fontSize: 20, color:"#000000", }}>账号：</Text>
-                              <Text style={{fontSize: 18, color: "#000000"}}>{this.state.turnintoaccount}</Text>
-                            </View>
-                            
-                            <Text style={{fontSize: 15, color:"#999999", marginVertical: 5,}}>Active公钥：</Text>
-                            <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninsymbol}</Text>
-                            <Text style={{fontSize: 15, color:"#999999", marginVertical: 5, }}>Owner公钥：</Text>
-                            <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninamount}</Text>
+                      <Image source={UImage.activation_head} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40)*0.234}} />
+                      <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
+                        <Text style={{ color: '#999999', fontSize: 15, textAlign: 'left', paddingVertical: 15,}}>我在ET钱包成功激活了该EOS账号</Text>
+                        <View style={{ flexDirection: 'row',alignItems: 'center',marginVertical: 5,}}>
+                          <Text style={{fontSize: 20, color:"#000000", }}>账号：</Text>
+                          <Text style={{fontSize: 18, color: "#000000"}}>{this.state.turnintoaccount}</Text>
                         </View>
-                        <View style={{ backgroundColor: '#FFFFFF', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
-                          <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
-                            <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>扫码进入区块链浏览器</Text>
-                            <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 3 }}>查询该账号激活信息</Text>
-                            <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#47546e', margin: 15 }}>EosToken技术提供</Text>
+                        <View style={{ flexDirection: 'row',borderBottomColor: "#999999", borderBottomWidth: 0.5, }}>
+                          <View  style={{ flex: 1,  alignItems: 'center',}}>
+                            <Text style={{fontSize: 14, color:"#000000", lineHeight: 30, }}>{this.state.ram}</Text>
+                            <Text style={{fontSize: 15, color: "#999999", paddingBottom: 10,}}>分配内存( EOS )</Text>
+                            <Text style={{fontSize: 14, color: "#000000", lineHeight: 30,}}>{this.state.net}</Text>
+                            <Text style={{fontSize: 15, color: "#999999", paddingBottom: 10,}}>网络抵押( EOS )</Text>
                           </View>
-                          <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
-                            <QRCode size={(ScreenWidth - 40) * 0.319 - 20} value={Constants.rootaddr+redirect + (Constants.loginUser ? Constants.loginUser.uid : "nuid") + "/" + (Constants.token ? Constants.token.substr(0, 4) : "ntk") + "/" + this.state.news.id} />
+                          <View style={{ flex: 1,  alignItems: 'center',}}>
+                            <Text style={{fontSize: 14, color: "#000000", lineHeight: 30,}}>{this.state.cpu}</Text>
+                            <Text style={{fontSize: 15, color: "#999999", paddingBottom: 10,}}>CPU抵押( EOS )</Text>
+                          </View>
+                        </View>
+                        <View style={{paddingVertical: 10, borderBottomColor: "#999999", borderBottomWidth: 0.5, }}>
+                          <Text style={{fontSize: 15, color:"#999999", marginVertical: 5,}}>Active公钥：</Text>
+                          <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninsymbol}</Text>
+                          <Text style={{fontSize: 15, color:"#999999", marginVertical: 5, }}>Owner公钥：</Text>
+                          <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninamount}</Text>
+                        </View>
+                        <View style={{ backgroundColor: '#FFFFFF', paddingVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center',}}>
+                          <View style={{flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
+                            <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center',}}>扫码进入区块链浏览器</Text>
+                            <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', marginBottom: 10 }}>查询该账号激活信息</Text>
+                            <Text style={{ color: '#fff', fontSize: 12, textAlign: 'center',width: '100%', paddingVertical: 5, backgroundColor: '#47546e',}}>EosToken技术提供</Text>
+                          </View>
+                          <View style={{justifyContent: 'center', alignSelf: 'center', paddingLeft: 10, }}>
+                            <QRCode size={96} value={"https://eosmonitor.io/account/" + this.state.turnintoaccount} />
                           </View>
                         </View>
                       </View>
@@ -1166,7 +1176,7 @@ class Route extends React.Component {
                     </Button>
                   </View>
                 </View>
-                <Button onPress={() => { this.setState({ showActivationPay: false }) }}>
+                <Button onPress={() => { this.setState({ showReturnActivationPay: false }) }}>
                   <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
                     <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
                   </View>

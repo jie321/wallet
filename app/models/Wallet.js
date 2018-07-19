@@ -482,6 +482,7 @@ export default {
                 try {
                     if (callback) callback(resp);
                 } catch (error) {
+                    if (callback) callback({ code: 600, msg: "未知异常" });
                 }
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });

@@ -106,6 +106,7 @@ class APactivation extends BaseComponent {
                 this.state.cpu + " EOS", this.state.net + " EOS", this.state.ram + " EOS", 1, (r)=>{
                   EasyLoading.dismis();
                   if(r.isSuccess){
+                    //   EasyToast.show("创建账号成功");
                     EasyDialog.show("支付成功", (<View>
                         <Text style={styles.Becarefultext}>{this.state.accountName}</Text>
                         <Text style={styles.inptpasstext}>该账号完成支付，请告知账号主人点击激活即可正常使用。</Text>
@@ -113,8 +114,6 @@ class APactivation extends BaseComponent {
                             <Text style={styles.linktext} onPress={() => this.onShareFriend()}>分享给你的朋友</Text>
                         </View>
                     </View>), "知道了", null,  () => { EasyDialog.dismis() });
-
-                      EasyToast.show("创建账号成功");
                   }else{
                       if(r.data){
                           if(r.data.msg){

@@ -14,6 +14,8 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
+import {NavigationActions} from 'react-navigation';
+
 const ScreenWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -39,7 +41,7 @@ class ActivationAt extends BaseComponent {
       // 构造函数  
     constructor(props) { 
         super(props);
-        this.props.navigation.setParams({ onPress: this._rightTopClick });
+        this.props.navigation.setParams({ onPress: this.checkDeleteWallet });
         this.state = {
             cpu:"0.5",
             net:"1.5",
@@ -70,8 +72,28 @@ class ActivationAt extends BaseComponent {
         });
     }
 
+    componentWillUnmount(){
+        var entry = this.props.navigation.state.params.entry;
+        if(entry == "walletDetails"){
+            this.pop(3, true);
+        }else if(entry == "createWallet"){
+            this.pop(3, true);
+        }
+        //结束页面前，资源释放操作
+        super.componentWillUnmount();
+    }
+
+    pop(nPage, immediate) {
+        const action = NavigationActions.pop({
+            n: nPage,
+            immediate: immediate,
+        });
+        this.props.navigation.dispatch(action);
+    
+    }
+
      //未激活账号直接删除
-    _rightTopClick = () =>{
+    checkDeleteWallet = () =>{
         const c = this.props.navigation.state.params.parameter;
       EasyDialog.show("免责声明",  (<View>
         <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中我们会检测您的账号是否存在激活中，如果您没有保管私钥删除，它将找不回来了，请确保该账号不再使用后删除！</Text>
@@ -99,7 +121,12 @@ class ActivationAt extends BaseComponent {
                             EasyDialog.dismis()
                         }, () => { EasyDialog.dismis() });
                     }else {
-        
+                        EasyDialog.show("免责声明",  (<View>
+                            <Text style={{color: UColor.arrow,fontSize: 14,}}>网络异常, 暂不能检测到账号是否已经激活, 建议暂不删除此账号, 如果执意删除请先导出私钥并保存好，否则删除后无法找回。</Text>
+                          </View>),"执意删除","取消",  () => {
+                              this.deletionDirect();
+                              EasyDialog.dismis()
+                          }, () => { EasyDialog.dismis() });
                     }
                 }
             })
@@ -192,8 +219,37 @@ class ActivationAt extends BaseComponent {
         return qrcode;
     }
 
-    onShareFriend() {
-        DeviceEventEmitter.emit('Activation','{"account_name":"' + this.state.name + '","owner":"' + this.state.ownerPublic + '","active":"' + this.state.activePublic + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.net +'"}');
+    checkAccountActive(){
+        const wallet = this.props.navigation.state.params.parameter;
+        var name = wallet.name;
+        var owner = wallet.ownerPublic;
+        var active = wallet.activePublic
+    
+        // test激活成功
+        // name = "marcol521313";
+        // owner = "EOS5fWc9rcAKd21hKZ21EovY6Sfpp4utZcP32qMmrjrRxmdLxURiV";
+        // active = "EOS5CcWL2qyRpUem3iKpP7H1Zh5bDHy6HsmnHSZurTTrgngqwTft7";
+        //检测账号是否已经激活
+        this.props.dispatch({
+            type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
+                EasyLoading.dismis();
+                if(result.code == 0 && result.data == true){
+                    wallet.isactived = true
+                    this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
+                    //msg:success,data:true, code:0 账号已存在
+                    EasyDialog.show("恭喜激活成功", (<View>
+                        <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
+                        {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
+                    </View>), "知道了", null,  () => { EasyDialog.dismis() });
+                }else if(result.code == 521){
+                    //msg:账号不存在,data:null,code:521
+                    EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+                }else {
+                    // 未知异
+                    EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+                }
+            }
+        });
     }
 
     contactWeChataide() {
@@ -201,51 +257,8 @@ class ActivationAt extends BaseComponent {
         navigate('AssistantQrcode', {});
     }
 
-  checkAccountActive(){
-    const wallet = this.props.navigation.state.params.parameter;
-    var name = wallet.name;
-    var owner = wallet.ownerPublic;
-    var active = wallet.activePublic
-
-    // test激活成功
-    // name = "marcol521313";
-    // owner = "EOS5fWc9rcAKd21hKZ21EovY6Sfpp4utZcP32qMmrjrRxmdLxURiV";
-    // active = "EOS5CcWL2qyRpUem3iKpP7H1Zh5bDHy6HsmnHSZurTTrgngqwTft7";
-    //检测账号是否已经激活
-    this.props.dispatch({
-        type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
-            EasyLoading.dismis();
-            if(result.code == 0 && result.data == true){
-                //msg:success,data:true, code:0 账号已存在
-                EasyToast.show("恭喜 "+name+"激活成功！");
-                // EasyDialog.show("恭喜 激活成功！",  (<View>
-                //     <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
-                // </View>),"执意删除","返回钱包",  () => {
-                //     this.deleteWallet();
-                //     EasyDialog.dismis()
-                // }, () => { EasyDialog.dismis() });
-            }else if(result.code == 521){
-                //msg:账号不存在,data:null,code:521
-                EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
-            }else {
-                // 未知异
-                EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
-            }
-        }
-    });
-  }
-
-  _onPressListItem() {
-    this.setState((previousState) => {
-        return ({
-          Invalid: !previousState.Invalid,
-        })
-    });
-  }
-
-    importActivation() {
-        const { navigate } = this.props.navigation;
-        navigate('ActivationAt', {});
+    onShareFriend() {
+        DeviceEventEmitter.emit('Activation','{"account_name":"' + this.state.name + '","owner":"' + this.state.ownerPublic + '","active":"' + this.state.activePublic + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.net +'"}');
     }
 
     render() {

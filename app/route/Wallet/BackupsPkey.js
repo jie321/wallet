@@ -135,8 +135,11 @@ class BackupsPkey extends BaseComponent {
 
     importPriKey() {
         const { navigate } = this.props.navigation;
-        navigate('BackupsAOkey', {wallet:this.props.navigation.state.params.wallet, password: this.props.navigation.state.params.password});
-      
+        var entry = this.props.navigation.state.params.entry;
+        var wallet = this.props.navigation.state.params.wallet;
+        var password = this.props.navigation.state.params.password;
+        navigate('BackupsAOkey', {wallet:wallet, password:password, entry: entry});
+        this.componentWillUnmount();
     }
 
     render() {
