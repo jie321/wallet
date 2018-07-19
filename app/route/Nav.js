@@ -337,16 +337,25 @@ class Route extends React.Component {
 
   state = {
     news: {},
+    cpu: '',
+    net: '',
+    ram: '',
     turnintoaccount: '',
     turninamount: '',
     turninsymbol: '',
     showShare: false,
     showVoteShare:false,
     showTurninShare:false,
+    showActivationPay:false,
+    showReturnActivationPay: false,
     transformY: new Animated.Value(200),
     transformY1: new Animated.Value(-1000),
     vtransformY: new Animated.Value(200),
-    vtransformY1: new Animated.Value(-1000)
+    vtransformY1: new Animated.Value(-1000),
+    APtransformY: new Animated.Value(200),
+    APtransformY1: new Animated.Value(-1000),
+    rAPtransformY: new Animated.Value(200),
+    rAPtransformY1: new Animated.Value(-1000),
   }
 
   constructor(props) {
@@ -422,6 +431,73 @@ class Route extends React.Component {
 
     BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
 
+    // DeviceEventEmitter.addListener('Activation', (news) => {
+    //   var result = JSON.parse(news);// 转成JSON对象
+    //   this.setState({
+    //     showActivationPay: true,
+    //     cpu: result.cpu ? result.cpu : "",
+    //     net: result.net ? result.net : "",
+    //     ram: result.ram ? result.ram : "",
+    //     turnintoaccount: result.account_name ? result.account_name : "",
+    //     turninamount: result.owner ? result.owner : "",
+    //     turninsymbol: result.active ? result.active : "",
+    //   })
+    //   this.state.APtransformY = new Animated.Value(200);
+    //   this.state.APtransformY1 = new Animated.Value(-1000);
+    //   setTimeout(() => {
+    //     Animated.parallel([
+    //       Animated.timing(this.state.APtransformY,
+    //         {
+    //           toValue: 0,
+    //           duration: 300,
+    //           easing: Easing.linear,
+    //         }
+    //       ),
+    //       Animated.timing(this.state.APtransformY1,
+    //         {
+    //           toValue: 0,
+    //           duration: 300,
+    //           easing: Easing.linear,
+    //         }
+    //       ),
+    //     ]).start();
+    //   }, 300);
+    // });
+    //ReturnActivation
+   
+    DeviceEventEmitter.addListener('Activation', (news) => {
+      var result = JSON.parse(news);// 转成JSON对象
+      this.setState({
+        showReturnActivationPay: true,
+        cpu: result.cpu ? result.cpu : "",
+        net: result.net ? result.net : "",
+        ram: result.ram ? result.ram : "",
+        turnintoaccount: result.account_name ? result.account_name : "",
+        turninamount: result.owner ? result.owner : "",
+        turninsymbol: result.active ? result.active : "",
+      })
+      this.state.rAPtransformY = new Animated.Value(200);
+      this.state.rAPtransformY1 = new Animated.Value(-1000);
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(this.state.rAPtransformY,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+          Animated.timing(this.state.rAPtransformY1,
+            {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.linear,
+            }
+          ),
+        ]).start();
+      }, 300);
+    });
+
     DeviceEventEmitter.addListener('share', (news) => {
       this.setState({ news, showShare: true });
       this.state.transformY = new Animated.Value(200);
@@ -445,6 +521,7 @@ class Route extends React.Component {
         ]).start();
       }, 300);
     });
+    
     DeviceEventEmitter.addListener('voteShare', (news) => {
       this.setState({showVoteShare: true });
       this.state.vtransformY = new Animated.Value(200);
@@ -468,6 +545,7 @@ class Route extends React.Component {
         ]).start();
       }, 300);
     });
+
     DeviceEventEmitter.addListener('turninShare', (news) => {
       this.setState({showTurninShare: true });
       var result = JSON.parse(news);// 转成JSON对象
@@ -726,20 +804,13 @@ class Route extends React.Component {
                 <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
                   <View style={{ backgroundColor: "#fff", flex: 1}}>
                     <Image source={UImage.share_banner} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40) * 0.238 }} />
-                    
                    <View style={{ backgroundColor: UColor.fontColor,flexDirection: "row",marginTop: 10,paddingHorizontal: 20,paddingVertical: 5, justifyContent: "flex-start",}}>
                       <Image source={UImage.share_time} style={{width: 25,height: 25}} />
                       <Text style={{marginLeft: 5,fontSize: 15,color: '#808080'}}> {this.getTime(this.state.news.createdate)}</Text>
                   </View>
-
                   <View style={{ marginTop:10,paddingHorizontal: 20, paddingBottom: 5,marginBottom:20 }}>
                     <Text style={{ color: '#000', fontSize: 24,}}>{this.state.news.title}</Text>
                     <Text style={{ color: '#000', fontSize: 15, marginTop: 15 ,lineHeight:25}}>{this.state.news.content}......</Text>
-                    {/* <View style={{ marginTop: 15,flexDirection: "row", width: '100%', justifyContent: "space-between" }}>
-                      <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>来源:{this.state.news.source}</Text>
-                      <Text style={{ color: '#000', fontSize: 15, marginTop: 15, marginTop: 15 }}>{moment(this.state.news.createdate).fromNow()}</Text>
-                    </View> */}
-
                   </View>
                   <View style={{borderBottomWidth: 1,borderBottomColor: '#e5e5e5' ,justifyContent: 'center',}} >
                   </View>
@@ -765,7 +836,6 @@ class Route extends React.Component {
                 { translateY: this.state.transformY },
               ]
             }}>
-
               <View style={{ height: 125 }}>
                 <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
                 <View style={{ flexDirection: "row" }}>
@@ -797,89 +867,85 @@ class Route extends React.Component {
             </Animated.View>
           </View>
         </View>
-      ) : null
-      }
-
-
-
+      ) : null}
 
 
       {this.state.showVoteShare ? (
-                <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
-                  <Animated.View style={{
-                    height: ScreenHeight - 180, transform: [
-                      { translateX: 0 },
-                      { translateY: this.state.vtransformY1 },
-                    ]
-                  }}>
-                    <ScrollView style={{ marginTop: 50 }}>
-                      <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
-                        <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
-                          <View style={{ backgroundColor: "#fff", width: '100%', height: '100%' }}>
-                          
-                            <View style={{ padding: 10 }}>
-                              <Image source={UImage.Invitation_vote} resizeMode="cover" style={{ width: '100%', height:ScreenWidth-70 }} />
-                              <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center',paddingBottom:20, }}>
-                                <QRCode size={100} style={{ width: 100, }} value={'http://eostoken.im/'} />
-                              </View>
-
-                            </View>
-                            <View style={{ backgroundColor: '#F2F2F2', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center' }}>
-                              <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
-                                <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>EosToken</Text>
-                                <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>专注于柚子生态</Text>
-                                <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#306eb1', margin: 10 }}>更多精彩 下载APP</Text>
-                              </View>                            
-                            </View>
-                          </View>
-                        </ViewShot>
-                      </View>
-                    </ScrollView>
-                  </Animated.View>
-                  <View style={{ height: 170, marginTop: 10 }}>
-                    <Animated.View style={{
-                      height: 170, flex: 1, backgroundColor: '#e7e7e7', transform: [
-                        { translateX: 0 },
-                        { translateY: this.state.vtransformY },
-                      ]
-                    }}>
-
-                      <View style={{ height: 125 }}>
-                        <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
-                        <View style={{ flexDirection: "row" }}>
-                          <Button style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(1) }}>
-                            <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
-                              <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
-                              <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
-                            </View>
-                          </Button>
-                          <Button  style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(2) }}>
-                            <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
-                              <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
-                              <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
-                            </View>
-                          </Button>
-                          <Button  style={{ width: '33%' }} onPress={() => { this.shareAction(3) }}>
-                            <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
-                              <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
-                              <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>
-                            </View>
-                          </Button>
+          <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+            <Animated.View style={{
+              height: ScreenHeight - 180, transform: [
+                { translateX: 0 },
+                { translateY: this.state.vtransformY1 },
+              ]
+            }}>
+              <ScrollView style={{ marginTop: 50 }}>
+                <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                  <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
+                    <View style={{ backgroundColor: "#fff", width: '100%', height: '100%' }}>
+                    
+                      <View style={{ padding: 10 }}>
+                        <Image source={UImage.Invitation_vote} resizeMode="cover" style={{ width: '100%', height:ScreenWidth-70 }} />
+                        <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center',paddingBottom:20, }}>
+                          <QRCode size={100} style={{ width: 100, }} value={'http://eostoken.im/'} />
                         </View>
+
                       </View>
-                      <Button onPress={() => { this.setState({ showVoteShare: false }) }}>
-                        <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
-                          <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
-                        </View>
-                      </Button>
-                    </Animated.View>
+                      <View style={{ backgroundColor: '#F2F2F2', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center' }}>
+                        <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
+                          <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>EosToken</Text>
+                          <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>专注于柚子生态</Text>
+                          <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#306eb1', margin: 10 }}>更多精彩 下载APP</Text>
+                        </View>                            
+                      </View>
+                    </View>
+                  </ViewShot>
+                </View>
+              </ScrollView>
+            </Animated.View>
+            <View style={{ height: 170, marginTop: 10 }}>
+              <Animated.View style={{
+                height: 170, flex: 1, backgroundColor: '#e7e7e7', transform: [
+                  { translateX: 0 },
+                  { translateY: this.state.vtransformY },
+                ]
+              }}>
+                <View style={{ height: 125 }}>
+                  <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Button style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(1) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(2) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%' }} onPress={() => { this.shareAction(3) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>
+                      </View>
+                    </Button>
                   </View>
                 </View>
-              ) : null
-              }    
-             
-        {this.state.showTurninShare ? (
-          <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                <Button onPress={() => { this.setState({ showVoteShare: false }) }}>
+                  <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
+                    <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
+                  </View>
+                </Button>
+              </Animated.View>
+            </View>
+          </View>
+        ) : null
+      }    
+
+
+      {this.state.showTurninShare ? (
+        <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
             <Animated.View style={{
               height: ScreenHeight - 180, transform: [
                 { translateX: 0 },
@@ -916,7 +982,6 @@ class Route extends React.Component {
                   { translateY: this.state.vtransformY },
                 ]
               }}>
-
                 <View style={{ height: 125 }}>
                   <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
                   <View style={{ flexDirection: "row" }}>
@@ -948,8 +1013,168 @@ class Route extends React.Component {
               </Animated.View>
             </View>
           </View>
-        ) : null
-        }            
+        ) : null}   
+
+
+        {this.state.showActivationPay ? (
+          <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+            <Animated.View style={{
+              height: ScreenHeight - 180, transform: [
+                { translateX: 0 },
+                { translateY: this.state.APtransformY1 },
+              ]
+            }}>
+              <ScrollView style={{ marginTop: 50 }}>
+                <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                  <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
+                    <View style={{ backgroundColor: "#fff", width: ScreenWidth - 40,}}>
+                      <View style={{ }}>
+                        <Image source={UImage.activation_head} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40)*0.234}} />
+                        <View style={{ justifyContent: 'center', alignSelf: 'center',paddingVertical:20, }}>
+                          <QRCode size={120}  value={'activeWallet:' + this.state.turnintoaccount + '?owner=' + this.state.turninamount +'&active=' + this.state.turninsymbol +'&cpu=' + this.state.cpu +'&net=' + this.state.net +'&ram=' + this.state.ram}/>
+                        </View>
+                        <Text style={{ color: '#999999', fontSize: 15, textAlign: 'center',}}>使用ET钱包扫一扫支付EOS激活此账号</Text>
+                        <View style={{paddingVertical: 10, paddingHorizontal: 20,}}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center',marginVertical: 5,}}>
+                              <Text style={{fontSize: 20, color:"#000000", }}>账号：</Text>
+                              <Text style={{fontSize: 18, color: "#000000"}}>{this.state.turnintoaccount}</Text>
+                            </View>
+                            <Text style={{fontSize: 15, color:"#999999", marginVertical: 5,}}>Active公钥：</Text>
+                            <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninsymbol}</Text>
+                            <Text style={{fontSize: 15, color:"#999999", marginVertical: 5, }}>Owner公钥：</Text>
+                            <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninamount}</Text>
+                        </View>
+                        <View style={{backgroundColor: '#445877', paddingHorizontal: 18, paddingVertical: 8,}}>
+                            <Text style={{color: '#FFFFFF', fontSize: 12, lineHeight: 25,}}>该好友正在使用EosToken钱包创建账号并向你发出代付求助，建议帮助他支付激活前先联系确认清楚！</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </ViewShot>
+                </View>
+              </ScrollView>
+            </Animated.View>
+            <View style={{ height: 170, marginTop: 10 }}>
+              <Animated.View style={{
+                height: 170, flex: 1, backgroundColor: '#e7e7e7', transform: [
+                  { translateX: 0 },
+                  { translateY: this.state.APtransformY },
+                ]
+              }}>
+                <View style={{ height: 125 }}>
+                  <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Button style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(1) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(2) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%' }} onPress={() => { this.shareAction(3) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>
+                      </View>
+                    </Button>
+                  </View>
+                </View>
+                <Button onPress={() => { this.setState({ showActivationPay: false }) }}>
+                  <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
+                    <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
+                  </View>
+                </Button>
+              </Animated.View>
+            </View>
+          </View>
+        ) : null}
+
+
+         {this.state.showReturnActivationPay ? (
+          <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+            <Animated.View style={{
+              height: ScreenHeight - 180, transform: [
+                { translateX: 0 },
+                { translateY: this.state.rAPtransformY1 },
+              ]
+            }}>
+              <ScrollView style={{ marginTop: 50 }}>
+                <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                  <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
+                    <View style={{ backgroundColor: "#fff", width: ScreenWidth - 40,}}>
+                      <View style={{ }}>
+                        <Image source={UImage.activation_head} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40)*0.234}} />
+                        <Text style={{ color: '#999999', fontSize: 15, textAlign: 'center',}}>我在ET钱包成功激活了该EOS账号</Text>
+                        <View style={{paddingVertical: 10, paddingHorizontal: 20,}}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center',marginVertical: 5,}}>
+                              <Text style={{fontSize: 20, color:"#000000", }}>账号：</Text>
+                              <Text style={{fontSize: 18, color: "#000000"}}>{this.state.turnintoaccount}</Text>
+                            </View>
+                            
+                            <Text style={{fontSize: 15, color:"#999999", marginVertical: 5,}}>Active公钥：</Text>
+                            <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninsymbol}</Text>
+                            <Text style={{fontSize: 15, color:"#999999", marginVertical: 5, }}>Owner公钥：</Text>
+                            <Text style={{fontSize: 14, color: "#000000",}}>{this.state.turninamount}</Text>
+                        </View>
+                        <View style={{ backgroundColor: '#FFFFFF', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
+                          <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
+                            <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>扫码进入区块链浏览器</Text>
+                            <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 3 }}>查询该账号激活信息</Text>
+                            <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#47546e', margin: 15 }}>EosToken技术提供</Text>
+                          </View>
+                          <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
+                            <QRCode size={(ScreenWidth - 40) * 0.319 - 20} value={Constants.rootaddr+redirect + (Constants.loginUser ? Constants.loginUser.uid : "nuid") + "/" + (Constants.token ? Constants.token.substr(0, 4) : "ntk") + "/" + this.state.news.id} />
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  </ViewShot>
+                </View>
+              </ScrollView>
+            </Animated.View>
+            <View style={{ height: 170, marginTop: 10 }}>
+              <Animated.View style={{
+                height: 170, flex: 1, backgroundColor: '#e7e7e7', transform: [
+                  { translateX: 0 },
+                  { translateY: this.state.rAPtransformY },
+                ]
+              }}>
+                <View style={{ height: 125 }}>
+                  <Text style={{ color: '#000', marginTop: 10, width: "100%", textAlign: "center" }}>分享到</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Button style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(1) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_qq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>QQ</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%', justifyContent: 'center' }} onPress={() => { this.shareAction(2) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_wx} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>微信</Text>
+                      </View>
+                    </Button>
+                    <Button  style={{ width: '33%' }} onPress={() => { this.shareAction(3) }}>
+                      <View style={{ alignSelf: 'center', width: '100%', padding: 10 }}>
+                        <Image source={UImage.share_pyq} style={{ width: 50, height: 50, alignSelf: 'center', margin: 5 }} />
+                        <Text style={{ color: "#666666", fontSize: 11, textAlign: 'center' }}>朋友圈</Text>
+                      </View>
+                    </Button>
+                  </View>
+                </View>
+                <Button onPress={() => { this.setState({ showActivationPay: false }) }}>
+                  <View style={{ height: 45, backgroundColor: "#fff", flexDirection: "row" }}>
+                    <Text style={{ color: '#000', fontSize: 15, width: "100%", textAlign: "center", alignSelf: 'center' }}>取消</Text>
+                  </View>
+                </Button>
+              </Animated.View>
+            </View>
+          </View>
+        ) : null}                                  
     </View>)
   }
 }

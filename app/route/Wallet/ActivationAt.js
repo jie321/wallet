@@ -19,7 +19,7 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 
-// @connect(({ login }) => ({ ...login }))
+@connect(({ wallet, }) => ({ ...wallet, }))
 class ActivationAt extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
        
@@ -35,6 +35,41 @@ class ActivationAt extends BaseComponent {
           </Button>),                  
         };
       };
+
+      // 构造函数  
+    constructor(props) { 
+        super(props);
+        this.props.navigation.setParams({ onPress: this._rightTopClick });
+        this.state = {
+            cpu:"0.5",
+            net:"1.5",
+            ram:"0.5",
+            name:"",
+            password: "",
+            ownerPk: '',
+            activePk: '',
+            ownerPublic: '',
+            activePublic: '',
+            show: false,
+            Invalid: false,
+        };
+    }
+
+     //组件加载完成
+   componentDidMount() {
+        // alert(JSON.stringify(this.props.navigation.state.params.parameter))
+        // this.props.dispatch({
+        //   type: "wallet/getDefaultWallet",
+        //   callback: data => {}
+        // });
+        var params = this.props.navigation.state.params.parameter;
+        this.setState({
+        name:  params.name,
+        ownerPublic: params.ownerPublic,
+        activePublic: params.activePublic
+        });
+    }
+
      //未激活账号直接删除
     _rightTopClick = () =>{
         const c = this.props.navigation.state.params.parameter;
@@ -48,21 +83,21 @@ class ActivationAt extends BaseComponent {
                 type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
                     EasyLoading.dismis();
                     if(result.code == 0 && result.data == true){
-                    //msg:success,data:true, code:0 账号已存在
-                    EasyDialog.show("免责声明",  (<View>
-                        <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
-                    </View>),"执意删除","返回钱包",  () => {
-                        this.deleteWallet();
-                        EasyDialog.dismis()
-                    }, () => { EasyDialog.dismis() });
+                        //msg:success,data:true, code:0 账号已存在
+                        EasyDialog.show("免责声明",  (<View>
+                            <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
+                        </View>),"执意删除","返回钱包",  () => {
+                            this.deleteWallet();
+                            EasyDialog.dismis()
+                        }, () => { EasyDialog.dismis() });
                     }else if(result.code == 521){
                         //msg:账号不存在,data:null,code:521
-                    EasyDialog.show("免责声明",  (<View>
-                        <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，我们建议删除。</Text>
-                    </View>),"删除","取消",  () => {
-                        this.deletionDirect();
-                        EasyDialog.dismis()
-                    }, () => { EasyDialog.dismis() });
+                        EasyDialog.show("免责声明",  (<View>
+                            <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，我们建议删除。</Text>
+                        </View>),"删除","取消",  () => {
+                            this.deletionDirect();
+                            EasyDialog.dismis()
+                        }, () => { EasyDialog.dismis() });
                     }else {
         
                     }
@@ -135,64 +170,63 @@ class ActivationAt extends BaseComponent {
         }, () => { EasyDialog.dismis() });
     }
         
-
-  // 构造函数  
-  constructor(props) { 
-    super(props);
-    this.props.navigation.setParams({ onPress: this._rightTopClick });
-    this.state = {
-        name:"",
-        password: "",
-        ownerPk: '',
-        activePk: '',
-        ownerPublic: '',
-        activePublic: '',
-        show: false,
-        Invalid: false,
-    };
-  }
-
-   //组件加载完成
-   componentDidMount() {
-       alert(JSON.stringify(this.props.navigation.state.params.parameter))
-    // this.props.dispatch({
-    //   type: "wallet/getDefaultWallet",
-    //   callback: data => {}
-    // });
-    var params = this.props.navigation.state.params.parameter;
-    this.setState({
-      name:  params.name,
-      ownerPublic: params.ownerPublic,
-      activePublic: params.activePublic
-    });
-  }
-
-  getQRCode() { 
-    if(this.state.name == null || this.state.ownerPublic == null || this.state.activePublic == null || 
-        this.state.name == "" || this.state.ownerPublic == "" || this.state.activePublic == ""){
-        EasyToast.show("生成二维码失败：公钥错误!");
-        return;
+    dismissKeyboardClick() {
+        dismissKeyboard();
     }
-    var  qrcode='activeWallet:' + this.state.name + '?owner=' + this.state.ownerPublic +'&active=' + this.state.activePublic;
-    return qrcode;
-  }
 
-  importActivation() {
-    const { navigate } = this.props.navigation;
-    navigate('ActivationAt', {});
-  }
+    _onPressListItem() {
+        this.setState((previousState) => {
+            return ({
+            Invalid: !previousState.Invalid,
+            })
+        });
+    }
 
-  _onPressListItem() {
-    this.setState((previousState) => {
-        return ({
-          Invalid: !previousState.Invalid,
+    getQRCode() { 
+        // this.state.name == "" || this.state.ownerPublic == "" || this.state.activePublic == ""
+        if(this.state.name == null || this.state.ownerPublic == null || this.state.activePublic == null ){
+            EasyToast.show("生成二维码失败：公钥错误!");
+            return;
+        }
+        var  qrcode='activeWallet:' + this.state.name + '?owner=' + this.state.ownerPublic +'&active=' + this.state.activePublic+'&cpu=' + this.state.cpu +'&net=' + this.state.net +'&ram=' + this.state.ram;
+        return qrcode;
+    }
+
+    completeActivation() {
+        EasyLoading.show();
+        //需要加入新街口检测账号是否在激活中
+        const c = this.props.navigation.state.params.parameter;
+        this.props.dispatch({
+            type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
+                EasyLoading.dismis();
+                if(result.code == 0 && result.data == true){
+                    //msg:success,data:true, code:0 账号已存在
+                    
+                }else if(result.code == 521){
+                    //msg:账号不存在,data:null,code:521
+                   
+                }else {
+                }
+            }
         })
-    });
-  }
+    }
 
-  dismissKeyboardClick() {
-    dismissKeyboard();
-  }
+
+    onShareFriend() {
+        DeviceEventEmitter.emit('Activation','{"account_name":"' + this.state.name + '","owner":"' + this.state.ownerPublic + '","active":"' + this.state.activePublic + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.net +'"}');
+    }
+
+    contactWeChataide() {
+        const { navigate } = this.props.navigation;
+        navigate('AssistantQrcode', {});
+    }
+
+
+
+    importActivation() {
+        const { navigate } = this.props.navigation;
+        navigate('ActivationAt', {});
+    }
 
 
     render() {
@@ -229,17 +263,17 @@ class ActivationAt extends BaseComponent {
                             </View>
                         </View> 
                     </View> 
-                    <Button onPress={() => this.importActivation()}>
+                    <Button onPress={() => this.completeActivation()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>激活（已支付完成）</Text>
                         </View>
                     </Button>
-                    <Button onPress={() => this.importActivation()}>
+                    <Button onPress={() => this.contactWeChataide()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>联系官方小助手激活</Text>
                         </View>
                     </Button>
-                    <Button onPress={() => this.importActivation()}>
+                    <Button onPress={() => this.onShareFriend()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>请朋友支付</Text>
                         </View>

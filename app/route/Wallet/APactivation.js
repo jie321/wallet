@@ -39,7 +39,7 @@ class APactivation extends BaseComponent {
       ownerPuk: "",
       activePuk: "",
       cpu:"0.5",
-      net:"0.5",
+      net:"1.5",
       ram:"0.5",
       isComplete: false,
       hasErrorInput: false,
@@ -50,9 +50,12 @@ class APactivation extends BaseComponent {
   componentDidMount() {
     var accountInfo = this.props.navigation.state.params.accountInfo;
     this.setState({
-      accountName: accountInfo.account,
-      ownerPuk: accountInfo.owner,
-      activePuk: accountInfo.active,
+      cpu: accountInfo.cpu ? accountInfo.cpu : "0.5",
+      net: accountInfo.net ? accountInfo.net : "1.5",
+      ram: accountInfo.ram ? accountInfo.ram : "0.5",
+      accountName: accountInfo.account ? accountInfo.account : "" ,
+      ownerPuk: accountInfo.owner ? accountInfo.owner : "",
+      activePuk: accountInfo.active ? accountInfo.active : "",
     });
   }
   componentWillUnmount(){
@@ -69,6 +72,10 @@ class APactivation extends BaseComponent {
     // this.setState({isComplete: true});
     this._setModalVisible();
     //
+  }
+
+  onShareFriend() {
+    DeviceEventEmitter.emit('ReturnActivation','{"account_name":"' + this.state.accountName + '","owner":"' + this.state.ownerPuk + '","active":"' + this.state.ownerPuk + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.net +'"}');
   }
 
   createAccount() {
@@ -99,6 +106,14 @@ class APactivation extends BaseComponent {
                 this.state.cpu + " EOS", this.state.net + " EOS", this.state.ram + " EOS", 1, (r)=>{
                   EasyLoading.dismis();
                   if(r.isSuccess){
+                    EasyDialog.show("支付成功", (<View>
+                        <Text style={styles.Becarefultext}>{this.state.accountName}</Text>
+                        <Text style={styles.inptpasstext}>该账号完成支付，请告知账号主人点击激活即可正常使用。</Text>
+                        <View style={styles.linkout}>
+                            <Text style={styles.linktext} onPress={() => this.onShareFriend()}>分享给你的朋友</Text>
+                        </View>
+                    </View>), "知道了", null,  () => { EasyDialog.dismis() });
+
                       EasyToast.show("创建账号成功");
                   }else{
                       if(r.data){
@@ -171,7 +186,7 @@ class APactivation extends BaseComponent {
                 <View style={styles.rankout}>
                     <TextInput ref={(ref) => this._raccount = ref} value={this.state.net} returnKeyType="next" 
                         selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                        placeholder="最低可输入0" underlineColorAndroid="transparent" onChange={this.check()} 
+                        placeholder="最低可输入0.1" underlineColorAndroid="transparent" onChange={this.check()} 
                         keyboardType="default" maxLength={12} onChangeText={(net) => this.setState({ net })} 
                     />
                     <Text style={styles.company}>EOS</Text>
@@ -281,6 +296,29 @@ class APactivation extends BaseComponent {
 }
 
 const styles = StyleSheet.create({
+    inptpasstext: {
+        fontSize: 12,
+        color: UColor.arrow,
+        marginBottom: 15,
+        lineHeight: 20,
+      },
+      Becarefultext: {
+         color: UColor.showy,
+         fontSize: 12,
+      },
+      linkout: {
+        flexDirection: 'row',
+        paddingTop: 20,
+        justifyContent: 'flex-end'
+      },
+      linktext: {
+        paddingLeft: 15,
+        color: UColor.tintColor,
+        fontSize: 14,
+      },
+
+
+
     inptoutbg: {
         backgroundColor: UColor.mainColor,
     },

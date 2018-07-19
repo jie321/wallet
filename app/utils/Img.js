@@ -14,6 +14,7 @@ export default {
   add: require('../img/add.png'),
   aab1: require('../img/aab1.png'),
   aab2: require('../img/aab2.png'),
+  activation_head: require('../img/activation_head.png'),
   Agent: require('../img/Agent.png'),
   AgentInfo_bg: require('../img/AgentInfo_bg.png'),
   imvote:require('../img/imvote.png'),
