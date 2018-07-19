@@ -171,7 +171,7 @@ class WalletDetail extends BaseComponent {
     </View>),"下一步",null,  () => {
       EasyDialog.dismis();
       EasyLoading.show();
-       //需要加入新街口检测账号是否在激活中
+       //检测账号是否已经激活
       this.props.dispatch({
           type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
             EasyLoading.dismis();
@@ -263,114 +263,69 @@ class WalletDetail extends BaseComponent {
     }, () => { EasyDialog.dismis() });
   }
 
+  activeWalletOnServer(){
+    const { navigate } = this.props.navigation;
+    let _wallet = this.props.navigation.state.params.data
+
+    try {
+      EasyLoading.show('正在请求');
+      this.props.dispatch({
+        type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
+          if (data.code == 403) {
+            this.props.dispatch({
+              type: 'login/logout', payload: {}, callback: () => {}
+            });      
+            EasyLoading.dismis();
+            navigate('ActivationAt', {parameter:_wallet});
+            return false;   
+          }else if(data.code == 0){
+            this.props.dispatch({
+              type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
+                EasyLoading.dismis();
+                if (data.code == '0') {
+                  _wallet.isactived = true
+                  this.props.dispatch({
+                    type: 'wallet/activeWallet', wallet: _wallet, callback: (data, error) => {
+                      DeviceEventEmitter.emit('updateDefaultWallet');
+                      if (error != null) {
+                        navigate('ActivationAt', {parameter:_wallet});
+                        return false;
+                      } else {
+                        EasyToast.show('激活账号成功');
+                        return true;
+                      }
+                    }
+                  });
+                }else{
+                  EasyLoading.dismis();
+                  navigate('ActivationAt', {parameter:_wallet});
+                  return false;
+                }
+              }
+            });
+          }else{
+            EasyLoading.dismis();
+            navigate('ActivationAt', {parameter:_wallet});
+            return false;   
+          }
+        }
+      });
+    } catch (error) {
+      EasyLoading.dismis();
+      navigate('ActivationAt', {parameter:_wallet});
+      return false;
+    }
+  
+  }
+
   activeWallet(data) {
     const { navigate } = this.props.navigation;
     if(data.name.length != 12){
       EasyToast.show('该账号格式无效，无法进行激活！');
     }else{
-    EasyDialog.dismis();
-    // if(Platform.OS == 'android' ){
-      // EasyLoading.show();
-    // }
-    navigate('ActivationAt', {parameter:data});
-    // this.props.dispatch({
-    //   type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
-    //     EasyLoading.dismis();
-    //     if (data.code == 403) {
-    //       this.props.dispatch({
-    //         type: 'login/logout', payload: {}, callback: () => {
-    //           EasyDialog.show("EOS账号创建说明", (<View>
-    //             <Text style={styles.inptpasstext}>免费激活账户需达到{this.state.integral}积分，请先登录EosToken；</Text>
-    //             <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-    //             </View>), "知道了", null,  () => { EasyDialog.dismis() });
-    //           return;
-    //         }
-    //       });         
-    //     }else if(data.code == 0) {
-    //       this.setState({
-    //           accumulative:this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout
-    //       });
-    //       // if(this.state.accumulative >= this.state.integral){
-    //         const view =
-    //         <View style={styles.passoutsource}>
-    //           <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-    //             selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
-    //             placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
-    //         </View>
-          // EasyDialog.show("密码", view, "确定", "取消", () => {
-          //   if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
-          //     EasyToast.show('密码长度至少4位,请重输');
-          //     return;
-          //   }
-          //   try {
-          //     var data = this.props.navigation.state.params.data;
-          //     var ownerPrivateKey = this.props.navigation.state.params.data.ownerPrivate;
-          //     var bytes_words = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.state.password + this.props.navigation.state.params.data.salt);
-          //     var plaintext_words = bytes_words.toString(CryptoJS.enc.Utf8);
-          //     if (plaintext_words.indexOf('eostoken') != - 1) {
-          //       plaintext_words = plaintext_words.substr(8, plaintext_words.length);
-          //       const { dispatch } = this.props;
-          //       // this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
-          //     let _wallet = this.props.navigation.state.params.data
-          //       EasyLoading.show('正在请求');
-          //       this.props.dispatch({
-          //         type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
-          //           EasyLoading.dismis();
-          //           if (data.code == '0') {
-          //             _wallet.isactived = true
-          //             this.props.dispatch({
-          //               type: 'wallet/activeWallet', wallet: _wallet, callback: (data, error) => {
-          //                 DeviceEventEmitter.emit('updateDefaultWallet');
-          //                 if (error != null) {
-          //                   EasyToast.show('激活账号失败：' + error);
-          //                   this.props.navigation.goBack();
-          //                 } else {
-          //                   EasyToast.show('激活账号成功');
-          //                   this.props.navigation.goBack();
-          //                 }
-          //               }
-          //             });
-          //           }else if(data.code == '512') {
-          //             EasyDialog.show("EOS账号创建说明", (<View>
-          //               <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
-          //               <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
-          //               <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
-          //               <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-          //               <View style={styles.linkout}>
-          //                 <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-          //                 <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
-          //               </View>
-          //               </View>), "知道了", null,  () => { EasyDialog.dismis() });
-          //           }else{
-          //             EasyToast.show('激活账号失败：' + data.msg);
-          //             this.props.navigation.goBack();
-          //           }
-          //         }
-          //       })
-          //     } else {
-          //       EasyToast.show('您输入的密码不正确');
-          //     }
-          //   } catch (error) {
-          //     EasyToast.show('您输入的密码不正确');
-          //   }
-          //   EasyDialog.dismis();
-          // }, () => { EasyDialog.dismis() });
-          // }else {
-            // EasyDialog.show("EOS账号创建说明", (<View>
-            //   <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
-            //   <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
-            //   <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
-            //   <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-            //   <View style={styles.linkout}>
-            //     <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-            //     <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
-            //   </View>
-            //   </View>), "知道了", null,  () => { EasyDialog.dismis() });
-          // } 
-    //     }
-    //   }, 
-    // });
-  }
+      // 通过后台激活账号
+      this.activeWalletOnServer();
+    }
   }
 
   prot(data = {}, key){

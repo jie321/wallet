@@ -19,7 +19,7 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 
-@connect(({ wallet, }) => ({ ...wallet, }))
+@connect(({wallet, login }) => ({ ...wallet, ...login }))
 class ActivationAt extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
        
@@ -78,7 +78,7 @@ class ActivationAt extends BaseComponent {
         </View>),"下一步",null,  () => {
             EasyDialog.dismis();
             EasyLoading.show();
-                //需要加入新街口检测账号是否在激活中
+                //检测账号是否已经激活
             this.props.dispatch({
                 type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
                     EasyLoading.dismis();
@@ -192,26 +192,6 @@ class ActivationAt extends BaseComponent {
         return qrcode;
     }
 
-    completeActivation() {
-        EasyLoading.show();
-        //需要加入新街口检测账号是否在激活中
-        const c = this.props.navigation.state.params.parameter;
-        this.props.dispatch({
-            type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
-                EasyLoading.dismis();
-                if(result.code == 0 && result.data == true){
-                    //msg:success,data:true, code:0 账号已存在
-                    
-                }else if(result.code == 521){
-                    //msg:账号不存在,data:null,code:521
-                   
-                }else {
-                }
-            }
-        })
-    }
-
-
     onShareFriend() {
         DeviceEventEmitter.emit('Activation','{"account_name":"' + this.state.name + '","owner":"' + this.state.ownerPublic + '","active":"' + this.state.activePublic + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.net +'"}');
     }
@@ -221,13 +201,52 @@ class ActivationAt extends BaseComponent {
         navigate('AssistantQrcode', {});
     }
 
+  checkAccountActive(){
+    const wallet = this.props.navigation.state.params.parameter;
+    var name = wallet.name;
+    var owner = wallet.ownerPublic;
+    var active = wallet.activePublic
 
+    // test激活成功
+    // name = "marcol521313";
+    // owner = "EOS5fWc9rcAKd21hKZ21EovY6Sfpp4utZcP32qMmrjrRxmdLxURiV";
+    // active = "EOS5CcWL2qyRpUem3iKpP7H1Zh5bDHy6HsmnHSZurTTrgngqwTft7";
+    //检测账号是否已经激活
+    this.props.dispatch({
+        type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
+            EasyLoading.dismis();
+            if(result.code == 0 && result.data == true){
+                //msg:success,data:true, code:0 账号已存在
+                EasyToast.show("恭喜 "+name+"激活成功！");
+                // EasyDialog.show("恭喜 激活成功！",  (<View>
+                //     <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
+                // </View>),"执意删除","返回钱包",  () => {
+                //     this.deleteWallet();
+                //     EasyDialog.dismis()
+                // }, () => { EasyDialog.dismis() });
+            }else if(result.code == 521){
+                //msg:账号不存在,data:null,code:521
+                EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+            }else {
+                // 未知异
+                EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+            }
+        }
+    });
+  }
+
+  _onPressListItem() {
+    this.setState((previousState) => {
+        return ({
+          Invalid: !previousState.Invalid,
+        })
+    });
+  }
 
     importActivation() {
         const { navigate } = this.props.navigation;
         navigate('ActivationAt', {});
     }
-
 
     render() {
         return (<View style={styles.container}>
@@ -263,7 +282,7 @@ class ActivationAt extends BaseComponent {
                             </View>
                         </View> 
                     </View> 
-                    <Button onPress={() => this.completeActivation()}>
+                    <Button onPress={() => this.checkAccountActive()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>激活（已支付完成）</Text>
                         </View>
