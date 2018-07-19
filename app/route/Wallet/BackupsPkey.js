@@ -124,10 +124,10 @@ class BackupsPkey extends BaseComponent {
         const { navigate } = this.props.navigation; 
         if(key == 'activePk'){
             Clipboard.setString(this.state.activePk);
-            EasyToast.show('ActivePrivateKey已复制成功');
+            EasyToast.show('Active私钥已复制成功');
         } else if(key == 'ownerPk'){
           Clipboard.setString(this.state.ownerPk);
-          EasyToast.show('OwnerPrivateKey已复制成功');
+          EasyToast.show('Owner私钥已复制成功');
         }else  if(key == 'problem') {
           navigate('Web', { title: "什么是私钥", url: "http://static.eostoken.im/html/Keystore.html" });   
         }

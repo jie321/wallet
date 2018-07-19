@@ -62,6 +62,26 @@ export default {
             if (callback) callback({error: wallet.account + "不存在"});
 
         },
+        *updateWallet({ wallet, callback}, {call, put}) {
+            var AES = require("crypto-js/aes");
+            var CryptoJS = require("crypto-js");
+            var walletArr = yield call(store.get, 'walletArr');
+            if (walletArr == null) {
+                walletArr = [];
+                if (callback) callback({error: wallet.account + "不存在"});
+                return;
+            } 
+            for (var i = 0; i < walletArr.length; i++) {
+                if (walletArr[i].account == wallet.account) {
+                    walletArr.splice(i, 1);
+                }
+            }
+            walletArr[walletArr.length] = wallet;
+            yield call(store.save, 'walletArr', walletArr);
+            DeviceEventEmitter.emit('updateDefaultWallet', {}); 
+            if (callback) callback(wallet,null);
+
+        },
         *saveWallet({ wallet, callback }, { call, put }) {
 
             var AES = require("crypto-js/aes");
@@ -361,7 +381,7 @@ export default {
             //     return;
             // }
             try {
-                const resp = yield call(Request.request, createAccount, 'post', payload);
+                const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + createAccount, 'post', payload);
                 if (callback) callback(resp);
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
@@ -457,7 +477,7 @@ export default {
          *isExistAccountNameAndPublicKey({payload, callback},{call,put}) {
             // alert('22' + JSON.stringify(payload) )
             try{
-                let resp = yield call(Request.request,"http://192.168.1.66:8088/api" + isExistAccountNameAndPublicKey,"post", payload);
+                let resp = yield call(Request.request,"http://192.168.1.11:8088/api" + isExistAccountNameAndPublicKey,"post", payload);
                 // alert('22' + resp)
                 try {
                     if (callback) callback(resp);

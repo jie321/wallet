@@ -13,12 +13,13 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
+import { EasyLoading } from '../../components/Loading';
 import ViewShot from "react-native-view-shot";
 import BaseComponent from "../../components/BaseComponent";
 var dismissKeyboard = require('dismissKeyboard');
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-@connect(({wallet}) => ({...wallet}))
+@connect(({wallet, login}) => ({...wallet, ...login}))
 class BackupsAOkey extends BaseComponent {
       static navigationOptions = ({ navigation }) => {
        
@@ -72,14 +73,91 @@ class BackupsAOkey extends BaseComponent {
     }
   }
 
-  importActivation() {
-    if(this.state.txt_owner == ""){
+  activeWalletOnServer(){
+    const { navigate } = this.props.navigation;
+    var _wallet = this.props.navigation.state.params.wallet;
+
+    try {
+      EasyLoading.show('正在请求');
+      this.props.dispatch({
+        type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
+          if (data.code == 403) {
+            this.props.dispatch({
+              type: 'login/logout', payload: {}, callback: () => {}
+            });      
+            EasyLoading.dismis();
+            navigate('ActivationAt', {parameter:_wallet});
+            return false;   
+          }else if(data.code == 0){
+            this.props.dispatch({
+              type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
+                EasyLoading.dismis();
+                if (data.code == '0') {
+                  _wallet.isactived = true
+                  this.props.dispatch({
+                    type: 'wallet/activeWallet', wallet: _wallet, callback: (data, error) => {
+                      DeviceEventEmitter.emit('updateDefaultWallet');
+                      if (error != null) {
+                        navigate('ActivationAt', {parameter:_wallet});
+                        return false;
+                      } else {
+                        EasyToast.show('激活账号成功');
+                        return true;
+                      }
+                    }
+                  });
+                }else{
+                  EasyLoading.dismis();
+                  navigate('ActivationAt', {parameter:_wallet});
+                  return false;
+                }
+              }
+            });
+          }else{
+            EasyLoading.dismis();
+            navigate('ActivationAt', {parameter:_wallet});
+            return false;   
+          }
+        }
+      });
+    } catch (error) {
+      EasyLoading.dismis();
+      navigate('ActivationAt', {parameter:_wallet});
+      return false;
+    }
+  
+  }
+
+  backupOK(){
+    const { navigate } = this.props.navigation;
+    // 将钱包备份状态修改为已备份
+    var wallet = this.props.navigation.state.params.wallet;
+    wallet.isBackups = true;
+    this.props.dispatch({type: 'wallet/updateWallet', wallet: wallet, callback: () => {
+        // 跳转至下一步
+        if(wallet.isactived){
+            // 已经激活，这时钱包为已激活已备份状态，则跳回至钱包管理页面
+            navigate('WalletDetail', { });
+        }else{
+            // 未激活，这时钱包为已备份未激活状态，则开始激活账号流程
+            this.activeWalletOnServer();
+        }
+    }});
+  }
+
+  backupConfirm() {
+    if(this.state.txt_owner == ""){ // 由于导入私钥只导入active, 可能这里备份没有active私钥
         if(this.state.activePk == ""){
             EasyToast.show('请输入私钥');
             return;
         }
         if(this.state.activePk != this.state.txt_active){
             this.setState({PromptActtve: '该私钥内容有误'})
+            return;
+        }
+
+        if(this.state.activePk == this.state.txt_active ){
+            this.backupOK();
             return;
         }
     }else{
@@ -95,8 +173,13 @@ class BackupsAOkey extends BaseComponent {
             this.setState({PromptOwner: '该私钥内容有误'})
             return;
         }
+
+        if(this.state.activePk == this.state.txt_active && this.state.ownerPk == this.state.txt_owner){
+            this.backupOK();
+            return;
+        }
     }
-    alert(3);
+
     // const { navigate } = this.props.navigation;
     // navigate('ActivationAt', {});
   }
@@ -123,33 +206,33 @@ class BackupsAOkey extends BaseComponent {
                     <View style={styles.inptoutbg}>
                         <View style={styles.headout}>
                             <Text style={styles.inptitle}>确认你的钱包私钥</Text>
-                            <Text style={styles.headtitle}>请填入你所抄写的私钥，确保你填入无误后，按下一步</Text>
+                            <Text style={styles.headtitle}>请填入你所抄写的私钥，确保你填入无误后，按下一步.</Text>
                         </View>  
                         {this.state.txt_active != ''&& 
                         <View style={styles.inptoutgo} >
                             <View style={styles.ionicout}>
-                                <Text style={styles.inptitle}>ActivePrivateKey</Text>
+                                <Text style={styles.inptitle}>Active私钥</Text>
                                 <Text style={styles.prompttext}>{this.state.PromptActtve}</Text>
                             </View>
                             <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next" editable={true}
                                 selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} autoFocus={false} 
                                 onChangeText={(activePk) => this.setState({ activePk })}   keyboardType="default" onChange={this.intensity()} 
-                                placeholder="粘贴或输入私钥" underlineColorAndroid="transparent"  multiline={true}  />
+                                placeholder="输入active私钥" underlineColorAndroid="transparent"  multiline={true}  />
                         </View>
                         }
                          {this.state.txt_owner  != ''&&
                         <View style={styles.inptoutgo} >
                             <View style={styles.ionicout}>
-                                <Text style={styles.inptitle}>OwnerPrivateKey</Text>
+                                <Text style={styles.inptitle}>Owner私钥</Text>
                                 <Text style={styles.prompttext}>{this.state.PromptOwner}</Text>
                             </View>
                             <TextInput ref={(ref) => this._lphone = ref} value={this.state.ownerPk} returnKeyType="next" editable={true}
                                 selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} autoFocus={false} 
                                 onChangeText={(ownerPk) => this.setState({ ownerPk })}   keyboardType="default" onChange={this.intensity()} 
-                                placeholder="粘贴或输入私钥" underlineColorAndroid="transparent"  multiline={true}  />
+                                placeholder="输入owner私钥" underlineColorAndroid="transparent"  multiline={true}  />
                         </View>}
                     </View>
-                    <Button onPress={() => this.importActivation()}>
+                    <Button onPress={() => this.backupConfirm()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>下一步</Text>
                         </View>
