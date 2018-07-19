@@ -39,7 +39,7 @@ class WalletDetail extends BaseComponent {
       { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
       { first: true, name: "备份钱包", onPress: this.goPage.bind(this, "ExportPrivateKey") },
       { name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
-     
+      { name: "账户详细信息", onPress: this.goPage.bind(this, "SeeBlockBrowser") },
     ];
     this.state = {
       password: '',
@@ -139,9 +139,38 @@ class WalletDetail extends BaseComponent {
       this._setModalVisiblePublicKey();
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
-    } else {
-      // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    } else if(key == 'SeeBlockBrowser'){
+      if(this.props.navigation.state.params.data.isactived){
+        EasyDialog.show("第三方区块浏览器查看",  (<View style={{flexDirection: "row",}}>
+            <Button onPress={() => { this.eosmonitor() }} style={{flex: 1,}}>
+              <View style={{ marginRight: 10, height: 40, borderRadius: 6, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.buttonText}>eosmonitor</Text>
+              </View>
+            </Button>
+            <Button onPress={() => { this.eostracker() }} style={{flex: 1,}}>
+              <View style={{ marginLeft: 10, height: 40, borderRadius: 6, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.buttonText}>eostracker</Text>
+              </View>
+            </Button>
+        </View>),"取消", null,  () => { EasyDialog.dismis() });
+      }else{
+        EasyToast.show("该账号还没激活，激活之后才能查看详细信息")
+      }
+    }else{
+
     }
+  }
+
+  eosmonitor() {
+    EasyDialog.dismis()
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "区块浏览器", url: "https://eosmonitor.io/accounts/" + this.props.navigation.state.params.data.name});
+  }
+
+  eostracker() {
+    EasyDialog.dismis()
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "区块浏览器", url: "https://eostracker.io/accounts/" + this.props.navigation.state.params.data.name});
   }
 
   importWallet() {
