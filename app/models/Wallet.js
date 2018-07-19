@@ -271,7 +271,7 @@ export default {
         *getWalletDetail({ payload }, { call, put }) {
             const walletArr = yield call(store.get, 'walletArr');
         },
-        *modifyPassword({ payload }, { call, put }) {
+        *modifyPassword({ payload, callback }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == payload._wallet.account) {
@@ -281,6 +281,7 @@ export default {
                     yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload._wallet } });
                 }
             }
+            if(callback) callback(payload);
             DeviceEventEmitter.emit('modify_password', payload);
             DeviceEventEmitter.emit('updateDefaultWallet', payload);
         }, 

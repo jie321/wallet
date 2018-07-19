@@ -116,10 +116,11 @@ class ModifyPassword extends BaseComponent {
                     isBackups: wallet.isBackups
                 }
                 const { dispatch } = this.props;
-                this.props.dispatch({ type: 'wallet/modifyPassword', payload: { _wallet } });
+                this.props.dispatch({ type: 'wallet/modifyPassword', payload: { _wallet }, callback: () => {
+                    EasyToast.show('密码修改成功');
+                } });
 
                 DeviceEventEmitter.addListener('modify_password', (data) => {
-                    EasyToast.show('密码修改成功');
                     this.props.navigation.goBack();
                 });
             } else {
