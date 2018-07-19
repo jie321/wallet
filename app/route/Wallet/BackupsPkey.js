@@ -12,6 +12,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
+import {NavigationActions} from 'react-navigation';
 const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -57,11 +58,25 @@ class BackupsPkey extends BaseComponent {
             })
         }
     }
+
     componentWillUnmount(){
+        var entry = this.props.navigation.state.params.entry;
+        if(entry == "createWallet"){
+            this.pop(1, true);
+        }
         //结束页面前，资源释放操作
         super.componentWillUnmount();
-        
-      }
+    }
+
+    pop(nPage, immediate) {
+        const action = NavigationActions.pop({
+            n: nPage,
+            immediate: immediate,
+        });
+        this.props.navigation.dispatch(action);
+    
+    }
+
     toBackup = (data) => {
         this.props.navigation.goBack();
         const { navigate } = this.props.navigation;
@@ -133,13 +148,12 @@ class BackupsPkey extends BaseComponent {
         }
     }
 
-    importPriKey() {
+    nextStep() {
         const { navigate } = this.props.navigation;
         var entry = this.props.navigation.state.params.entry;
         var wallet = this.props.navigation.state.params.wallet;
         var password = this.props.navigation.state.params.password;
         navigate('BackupsAOkey', {wallet:wallet, password:password, entry: entry});
-        this.componentWillUnmount();
     }
 
     render() {
@@ -154,14 +168,14 @@ class BackupsPkey extends BaseComponent {
                     </View> 
                     {this.state.activePk != ''&& 
                     <View style={styles.inptoutgo} >
-                        <Text style={styles.inptitle}>ActivePrivateKey</Text>
+                        <Text style={styles.inptitle}>Active私钥</Text>
                         <TouchableHighlight style={styles.inptgo} onPress={this.prot.bind(this, 'activePk')} underlayColor={UColor.secdColor}>
                             <Text style={styles.inptext}>{this.state.activePk}</Text>
                         </TouchableHighlight>
                     </View>}  
                     {this.state.ownerPk != ''&&
                     <View style={styles.inptoutgo} >
-                        <Text style={styles.inptitle}>OwnerPrivateKey</Text>
+                        <Text style={styles.inptitle}>Owner私钥</Text>
                         <TouchableHighlight style={styles.inptgo} onPress={this.prot.bind(this, 'ownerPk')} underlayColor={UColor.secdColor}>
                             <Text style={styles.inptext}>{this.state.ownerPk}</Text>
                         </TouchableHighlight>
@@ -170,7 +184,7 @@ class BackupsPkey extends BaseComponent {
                 <Button onPress={this.prot.bind(this, 'problem')}>
                     <Text style={styles.readtext} >什么是私钥？</Text> 
                 </Button> 
-                <Button onPress={() => this.importPriKey()}>
+                <Button onPress={() => this.nextStep()}>
                     <View style={styles.importPriout}>
                         <Text style={styles.importPritext}>下一步(已经抄好)</Text>
                     </View>

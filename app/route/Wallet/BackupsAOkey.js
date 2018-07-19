@@ -76,6 +76,11 @@ class BackupsAOkey extends BaseComponent {
     }
   }
 
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
+  }
+
   goToPayForActive(params){
     const { navigate } = this.props.navigation;
     navigate('ActivationAt', params);

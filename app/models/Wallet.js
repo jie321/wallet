@@ -285,7 +285,7 @@ export default {
             DeviceEventEmitter.emit('modify_password', payload);
             DeviceEventEmitter.emit('updateDefaultWallet', payload);
         }, 
-        *delWallet({ payload }, { call, put }) {
+        *delWallet({ payload, callback }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             var defaultWallet = yield call(store.get, 'defaultWallet');
             if (walletArr.length == 1) {
@@ -307,6 +307,7 @@ export default {
                     }
                 }
             }
+            if(callback) callback(payload);
             DeviceEventEmitter.emit('updateDefaultWallet');
         }, 
         *delWalletList({ payload, callback }, { call, put }) {

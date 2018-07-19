@@ -319,7 +319,7 @@ class WalletDetail extends BaseComponent {
                 </View>), "知道了", null,  () => { EasyDialog.dismis() });
             }else {
               EasyLoading.dismis();
-              navigate('ActivationAt', {parameter:wallet});
+              navigate('ActivationAt', {parameter:wallet, entry: "activeWallet"});
 
               // this.props.dispatch({
               //   type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
@@ -525,11 +525,13 @@ class WalletDetail extends BaseComponent {
                 <Text style={styles.closeText}>×</Text>
               </Button>
               <Text style={styles.titleText}>导出公钥</Text>
+              {this.state.txt_ownerpublic != null && this.state.txt_ownerpublic != "" &&
               <View style={styles.contentText}>
-                <Text style={styles.textContent}>OwnerPublicKey: {this.state.txt_ownerpublic}</Text>
+                <Text style={styles.textContent}>Owner公钥: {this.state.txt_ownerpublic}</Text>
               </View>
+              }
               <View style={styles.contentText}>
-                <Text style={styles.textContent}>ActivePublicKey: {this.state.txt_activepublic}</Text>
+                <Text style={styles.textContent}>Active公钥: {this.state.txt_activepublic}</Text>
               </View>
               <Button onPress={() => { this.copyPublicKey() }}>
                 <View style={styles.buttonView}>

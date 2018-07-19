@@ -15,7 +15,7 @@ import { EasyDialog } from '../../components/Dialog';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
 import {NavigationActions} from 'react-navigation';
-
+import JPushModule from 'jpush-react-native';
 const ScreenWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -78,6 +78,8 @@ class ActivationAt extends BaseComponent {
             this.pop(3, true);
         }else if(entry == "createWallet"){
             this.pop(3, true);
+        }else if(entry == "activeWallet"){
+            this.pop(1, true);
         }
         //结束页面前，资源释放操作
         super.componentWillUnmount();
@@ -148,7 +150,7 @@ class ActivationAt extends BaseComponent {
         }
         });
         DeviceEventEmitter.addListener('delete_wallet', (tab) => {
-        this.props.navigation.goBack();
+            this.props.navigation.goBack();
         });
     }
 
@@ -174,19 +176,22 @@ class ActivationAt extends BaseComponent {
             if (plaintext_words.indexOf('eostoken') != - 1) {
             plaintext_words = plaintext_words.substr(8, plaintext_words.length);
             const { dispatch } = this.props;
-            this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
-            //删除tags
-            JPushModule.deleteTags([data.name],map => {
-                if (map.errorCode === 0) {
-                console.log('Delete tags succeed, tags: ' + map.tags)
-                } else {
-                console.log(map)
-                console.log('Delete tags failed, error code: ' + map.errorCode)
-                }
-            });
-            DeviceEventEmitter.addListener('delete_wallet', (tab) => {
+            this.props.dispatch({ type: 'wallet/delWallet', payload: { data }, callback: () => {
+                //删除tags
+                JPushModule.deleteTags([data.name],map => {
+                    if (map.errorCode === 0) {
+                    console.log('Delete tags succeed, tags: ' + map.tags)
+                    } else {
+                    console.log(map)
+                    console.log('Delete tags failed, error code: ' + map.errorCode)
+                    }
+                });
                 this.props.navigation.goBack();
-            });
+            } });
+
+            // DeviceEventEmitter.addListener('delete_wallet', (tab) => {
+            //     this.props.navigation.goBack();
+            // });
             } else {
             EasyToast.show('您输入的密码不正确');
             }
