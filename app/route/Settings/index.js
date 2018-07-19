@@ -27,14 +27,13 @@ class Setting extends React.Component {
     }
     
     this.config = [
-      { first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
-      { name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      { name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
-      { name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
-      { name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
-      { name: "系统设置", onPress: this.goPage.bind(this, "set") },
+      { avatar:UImage.wallet_1, first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
+      { avatar:UImage.votec,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
+      { avatar:UImage.wallet_1, name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
+      { avatar:UImage.votec, name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
+      { avatar:UImage.wallet_1, name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
+      { avatar:UImage.votec, name: "系统设置", onPress: this.goPage.bind(this, "set") },
     ];
-    
   }
 
     //组件加载完成
