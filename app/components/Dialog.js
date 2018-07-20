@@ -46,7 +46,7 @@ export class EasyDialog {
             okHandler
         });
         clearTimeout(this.tm);
-      },500);
+      },600);
     }
 
     static dismis() {
