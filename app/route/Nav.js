@@ -1030,7 +1030,8 @@ class Route extends React.Component {
                       <View style={{ }}>
                         <Image source={UImage.activation_head} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40)*0.234}} />
                         <View style={{ justifyContent: 'center', alignSelf: 'center',paddingVertical:20, }}>
-                          <QRCode size={120}  value={'activeWallet:' + this.state.turnintoaccount + '?owner=' + this.state.turninamount +'&active=' + this.state.turninsymbol +'&cpu=' + this.state.cpu +'&net=' + this.state.net +'&ram=' + this.state.ram}/>
+                          {/* <QRCode size={120}  value={'activeWallet:' + this.state.turnintoaccount + '?owner=' + this.state.turninamount +'&active=' + this.state.turninsymbol +'&cpu=' + this.state.cpu +'&net=' + this.state.net +'&ram=' + this.state.ram}/> */}
+                          <QRCode size={120}  value={'{"action":"' + 'activeWallet'  + '","account":"' + this.state.turnintoaccount + '","owner":"' + this.state.turninamount + '","active":"' + this.state.turninsymbol  + '","cpu":"' + this.state.cpu  + '","net":"' + this.state.net  + '","ram":"' + this.state.ram + '"}'}/>
                         </View>
                         <Text style={{ color: '#999999', fontSize: 15, textAlign: 'center',}}>使用ET钱包扫一扫支付EOS激活此账号</Text>
                         <View style={{paddingVertical: 10, paddingHorizontal: 20,}}>

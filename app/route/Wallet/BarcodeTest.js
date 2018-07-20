@@ -62,46 +62,68 @@ export default class App extends BaseComponent {
     }
 
     activeWallet(data){
-        if(data == null){
+        if(data == null || data.action == null || data.action != "activeWallet"){
             return this._errExit();
         }
-        var length = data.length;
-        var index = "activeWallet:".length; //"eos:"
-        var point = data.lastIndexOf("?");
-        if(point <= index || point >= length)
-        {
+
+        var account = data.account;
+        var owner = data.owner;
+        var active = data.active;
+        var cpu = data.cpu;
+        var net = data.net;
+        var ram = data.ram;
+        if(account == null || owner == null || active == null || cpu == null || net == null || ram == null){
             return this._errExit();
         }
-        var account = data.substring(index,point);
-        if(account == undefined || account == null || account == ""){
-            return this._errExit();
-        }
-        index = point + 1; //"?"
-        var ownerIndex = data.lastIndexOf("owner=");    
-        if(index != ownerIndex || ownerIndex >= length){
-            return this._errExit();
-        }
-        index += 6; //"owner="
-        var andIndex = data.lastIndexOf("&");    
-        if(andIndex <= index || andIndex >= length){
-            return this._errExit();
-        }
-        var owner = data.substring(index,andIndex);
-        if(owner == undefined || owner == null || owner == ""){
-            return this._errExit();
-        }
-        index = andIndex + 1; //"&"
-        var activeIndex = data.lastIndexOf("active=");   
-        if(index != activeIndex || activeIndex >= length){
-            return this._errExit();
-        } 
-        index += 7; //"active="
-        var active = data.substring(index,length);
-        if(active == null || active == undefined || active == "") 
-        {
-            return this._errExit();
-        }
-        var jsoncode = '{"account":"' + account + '","owner":"' + owner + '","active":"' + active + '"}';
+
+        // var length = data.length;
+        // var index = "activeWallet:".length; //"eos:"
+        // var point = data.lastIndexOf("?");
+        // if(point <= index || point >= length)
+        // {
+        //     return this._errExit();
+        // }
+        // var account = data.substring(index,point);
+        // if(account == undefined || account == null || account == ""){
+        //     return this._errExit();
+        // }
+        // index = point + 1; //"?"
+        // var ownerIndex = data.lastIndexOf("owner=");    
+        // if(index != ownerIndex || ownerIndex >= length){
+        //     return this._errExit();
+        // }
+        // index += 6; //"owner="
+        // var andIndex = data.lastIndexOf("&");    
+        // if(andIndex <= index || andIndex >= length){
+        //     return this._errExit();
+        // }
+        // var owner = data.substring(index,andIndex);
+        // if(owner == undefined || owner == null || owner == ""){
+        //     return this._errExit();
+        // }
+        // index = andIndex + 1; //"&"
+        // var activeIndex = data.lastIndexOf("active=");   
+        // if(index != activeIndex || activeIndex >= length){
+        //     return this._errExit();
+        // } 
+        // index += 7; //"active="
+        // var active = data.substring(index,length);
+        // if(active == null || active == undefined || active == "") 
+        // {
+        //     return this._errExit();
+        // }
+        // index += length; //"&"
+        // var activeIndex = data.lastIndexOf("active=");   
+        // if(index != activeIndex || activeIndex >= length){
+        //     return this._errExit();
+        // } 
+        // index += 7; //"active="
+        // var active = data.substring(index,length);
+        // if(active == null || active == undefined || active == "") 
+        // {
+        //     return this._errExit();
+        // }
+        var jsoncode = '{"account":"' + account + '","owner":"' + owner + '","active":"' + active  + '","cpu":"' + cpu  + '","net":"' + net  + '","ram":"' + ram + '"}';
         var jdata = JSON.parse(jsoncode);
         this.props.navigation.goBack();  //正常返回上一个页面
 
@@ -117,11 +139,11 @@ export default class App extends BaseComponent {
             if(strcoins == undefined || strcoins == null){
                 return this._errExit();
             }
-            var index = strcoins.lastIndexOf('activeWallet:');
-            if(index == 0){
+            if(strcoins != null || strcoins.action != null || strcoins.action == "activeWallet"){
                 this.activeWallet(strcoins);
-                return;
+                return;            
             }
+
             var lowerCointType = this.state.coinType.toLowerCase();
             var upperCointType = this.state.coinType.toUpperCase();
             var length = strcoins.length;
