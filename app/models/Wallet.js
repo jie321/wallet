@@ -383,7 +383,7 @@ export default {
             //     return;
             // }
             try {
-                const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + createAccount, 'post', payload);
+                const resp = yield call(Request.request, createAccount, 'post', payload);
                 if (callback) callback(resp);
             } catch (error) {
                 if (callback) callback({ code: 500, msg: "网络异常" });
@@ -432,7 +432,7 @@ export default {
          },   
          *isExistAccountName({payload, callback}, {call, put}) {
             try{
-                let resp = yield call(Request.request,"http://192.168.1.11:8088/api" + isExistAccountName,"post", payload);
+                let resp = yield call(Request.request, isExistAccountName,"post", payload);
                 try {
                     if (callback) callback(resp);
                 } catch (error) {
@@ -479,7 +479,7 @@ export default {
          *isExistAccountNameAndPublicKey({payload, callback},{call,put}) {
             // alert('22' + JSON.stringify(payload) )
             try{
-                let resp = yield call(Request.request,"http://192.168.1.11:8088/api" + isExistAccountNameAndPublicKey,"post", payload);
+                let resp = yield call(Request.request, isExistAccountNameAndPublicKey,"post", payload);
                 // alert('22' + resp)
                 try {
                     if (callback) callback(resp);
