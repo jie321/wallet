@@ -351,7 +351,7 @@ class ImportEosKey extends BaseComponent {
                   <TextInput ref={(ref) => this._lphone = ref} value={this.state.activePk} returnKeyType="next" editable={true}
                     selectionColor={UColor.tintColor} style={styles.inptgo} placeholderTextColor={UColor.arrow} autoFocus={false} 
                     onChangeText={(activePk) => this.setState({ activePk })}  onChange={this.intensity()} keyboardType="default"
-                    placeholder="粘贴或输入私钥" underlineColorAndroid="transparent"  multiline={true}  />
+                    placeholder="粘贴或输入active私钥" underlineColorAndroid="transparent"  multiline={true}  />
                 </View>
                 {/* <View style={styles.inptout}>
                   <Text style={styles.inptitle}>账号名称</Text>
