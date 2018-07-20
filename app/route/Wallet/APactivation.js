@@ -75,7 +75,7 @@ class APactivation extends BaseComponent {
   }
 
   onShareFriend() {
-    DeviceEventEmitter.emit('ReturnActivation','{"account_name":"' + this.state.accountName + '","owner":"' + this.state.ownerPuk + '","active":"' + this.state.ownerPuk + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.net +'"}');
+    DeviceEventEmitter.emit('ReturnActivation','{"account_name":"' + this.state.accountName + '","owner":"' + this.state.ownerPuk + '","active":"' + this.state.ownerPuk + '","cpu":"' + this.state.cpu + '","net":"' + this.state.net + '","ram":"'+ this.state.ram +'"}');
   }
 
   createAccount() {
@@ -100,6 +100,7 @@ class APactivation extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                EasyDialog.dismis();
                 EasyLoading.show();
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 Eos.createAndDelegateAccount(this.props.defaultWallet.account, plaintext_privateKey, this.state.accountName, this.state.ownerPuk, this.state.activePuk,
