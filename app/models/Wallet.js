@@ -78,6 +78,7 @@ export default {
             }
             walletArr[walletArr.length] = wallet;
             yield call(store.save, 'walletArr', walletArr);
+            yield call(store.save, 'defaultWallet', wallet);
             DeviceEventEmitter.emit('updateDefaultWallet', {}); 
             if (callback) callback(wallet,null);
 

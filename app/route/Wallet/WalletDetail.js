@@ -209,7 +209,7 @@ class WalletDetail extends BaseComponent {
   deleteWarning(c,data){
     // alert(JSON.stringify(c));
     EasyDialog.show("免责声明",  (<View>
-      <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中我们会检测您的账号是否存在激活中，如果您没有保管私钥删除，它将找不回来了，请确保该账号不再使用后删除！</Text>
+      <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中会检测您的账号是否已激活，如果您没有备份私钥，删除后将无法找回！请确保该账号不再使用后再删除！</Text>
     </View>),"下一步","返回钱包",  () => {
       EasyDialog.dismis();
       EasyLoading.show();

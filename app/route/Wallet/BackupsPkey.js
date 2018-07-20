@@ -169,14 +169,14 @@ class BackupsPkey extends BaseComponent {
                     {this.state.activePk != ''&& 
                     <View style={styles.inptoutgo} >
                         <Text style={styles.inptitle}>Active私钥</Text>
-                        <TouchableHighlight style={styles.inptgo} onPress={this.prot.bind(this, 'activePk')} underlayColor={UColor.secdColor}>
+                        <TouchableHighlight style={styles.inptgo}  underlayColor={UColor.secdColor}>
                             <Text style={styles.inptext}>{this.state.activePk}</Text>
                         </TouchableHighlight>
                     </View>}  
                     {this.state.ownerPk != ''&&
                     <View style={styles.inptoutgo} >
                         <Text style={styles.inptitle}>Owner私钥</Text>
-                        <TouchableHighlight style={styles.inptgo} onPress={this.prot.bind(this, 'ownerPk')} underlayColor={UColor.secdColor}>
+                        <TouchableHighlight style={styles.inptgo}  underlayColor={UColor.secdColor}>
                             <Text style={styles.inptext}>{this.state.ownerPk}</Text>
                         </TouchableHighlight>
                     </View>}
