@@ -333,21 +333,6 @@ class createWallet extends BaseComponent {
             <Text style={styles.createWallet}>创建钱包</Text>
           </View>
         </Button>
-        <Button onPress={() => this.importWallet()}> 
-          <View style={styles.createWalletout}>    
-            <Text style={styles.importWallettext}>导入钱包</Text>
-          </View>
-        </Button>
-        <Button onPress={() => this.backupWallet()}> 
-          <View style={styles.createWalletout}>    
-            <Text style={styles.importWallettext}>备份私钥</Text>
-          </View>
-        </Button>
-        <Button onPress={() => this.importAPkey()}> 
-          <View style={styles.createWalletout}>    
-            <Text style={styles.importWallettext}>账号支付激活</Text>
-          </View>
-        </Button>
       </TouchableOpacity>
     </ScrollView>
   </View>
