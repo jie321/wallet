@@ -139,9 +139,16 @@ export default class App extends BaseComponent {
             if(strcoins == undefined || strcoins == null){
                 return this._errExit();
             }
-            if(strcoins != null || strcoins.action != null || strcoins.action == "activeWallet"){
-                this.activeWallet(strcoins);
-                return;            
+            // alert("1" + strcoins);
+            // var actionData = strcoins.replace(/\\/g,'');
+            try{
+                var jActionData = JSON.parse(strcoins);
+                if(jActionData != null && jActionData.action != null && jActionData.action == "activeWallet"){
+                    this.activeWallet(jActionData);
+                    return;            
+                }
+            }catch(e){
+
             }
 
             var lowerCointType = this.state.coinType.toLowerCase();
