@@ -40,6 +40,11 @@ class BackupsAOkey extends BaseComponent {
       };
 
       _rightTopClick = () =>{
+        var entry = this.props.navigation.state.params.entry;
+        if(entry == "createWallet"){
+            this.pop(2, true);
+            return;
+        }
         this.pop(3, true);
         // const { navigate } = this.props.navigation;
         // navigate('WalletManage', {});
@@ -193,7 +198,7 @@ class BackupsAOkey extends BaseComponent {
   backupConfirm() {
     if(this.state.txt_owner == ""){ // 由于导入私钥只导入active, 可能这里备份没有active私钥
         if(this.state.activePk == ""){
-            EasyToast.show('请输入私钥');
+            EasyToast.show('请输入active私钥');
             return;
         }
         if(this.state.activePk != this.state.txt_active){
@@ -206,8 +211,12 @@ class BackupsAOkey extends BaseComponent {
             return;
         }
     }else{
-        if (this.state.activePk == "" && this.state.ownerPk == "") {
-            EasyToast.show('请输入私钥');
+        if (this.state.activePk == "") {
+            EasyToast.show('请输入active私钥');
+            return;
+        }
+        if (this.state.ownerPk == "") {
+            EasyToast.show('请输入owner私钥');
             return;
         }
         if(this.state.activePk != this.state.txt_active){
