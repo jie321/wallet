@@ -294,6 +294,7 @@ export default {
                 yield call(store.save, 'defaultWallet', []);
                 yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: [] } });
                 yield call(store.save, 'walletArr', walletArr);
+                yield put({ type: 'updateGuide', payload: { guide: true } });
                 DeviceEventEmitter.emit('delete_wallet', payload);
             } else {
                 for (var i = 0; i < walletArr.length; i++) {
