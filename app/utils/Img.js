@@ -41,6 +41,7 @@ export default {
   cmy_wx:require('../img/cmy_wx.png'),
   cmy_kydz:require('../img/cmy_kydz.png'),
   cmyhead:require('../img/cmyhead_by.png'),
+  copy:require('../img/copy.png'),
   Calculation:require('../img/Calculation.png'),
   d:require('../img/d.png'),
   line_bg:require('../img/line_bg.png'),

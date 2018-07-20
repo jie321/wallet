@@ -62,7 +62,6 @@ class WalletDetail extends BaseComponent {
       this.props.dispatch({ type: 'wallet/getintegral', payload:{},callback: (data) => { 
         this.setState({integral: data.data});
       } });
-
     }
     componentWillUnmount(){
       //结束页面前，资源释放操作
@@ -450,7 +449,11 @@ class WalletDetail extends BaseComponent {
       return (<Item key={i} {...item} />)
     })
   }
-
+  
+  copyname(c) {
+    Clipboard.setString(c.name);
+    EasyToast.show('账号复制成功');
+  }
 
   render() {
     const c = this.props.navigation.state.params.data
@@ -464,6 +467,9 @@ class WalletDetail extends BaseComponent {
             </View>
             <View style={styles.topout}>
               <Text style={styles.outname}>账户名称：{c.name}</Text>
+              <Button onPress={this.copyname.bind(this,c)}>
+                  <Image source={UImage.copy} style={styles.imgBtn} />
+              </Button>
               {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
             </View>
           </View>
@@ -611,12 +617,17 @@ const styles = StyleSheet.create({
   topout: {
     flexDirection: "row",
     marginBottom: 20,
+    alignItems: 'center',
   },
   outname: {
     fontSize: 14,
     color: UColor.fontColor,
     textAlign: 'left',
-    marginRight: 10,
+  },
+  imgBtn: {
+    width: 25,
+    height: 25,
+    marginHorizontal:5,
   },
   stopoutBackupsout: {
     borderRadius: 10,

@@ -419,6 +419,11 @@ class Home extends React.Component {
     return ret;
   }
 
+  copyname(wallet) {
+    Clipboard.setString(wallet.name);
+    EasyToast.show('账号复制成功');
+  }
+
   render() {
   if(this.props.guide){
     return (
@@ -483,7 +488,8 @@ class Home extends React.Component {
           <View style={styles.addto}>
               <View style={styles.addout}>
                 <View style={styles.topout}>
-                  <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
+                  <Text style={styles.addtotext} onPress={this.copyname.bind(this,this.props.defaultWallet)}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name}</Text>
+                  <Text style={styles.addtotext}> 总资产 </Text>
                   {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text></View>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text></View>) }   
                 </View>
                 <View style={styles.addtoout}>
@@ -685,11 +691,16 @@ const styles = StyleSheet.create({
     flexDirection: "column", 
     alignItems: 'flex-start', 
     justifyContent: "center",
+    paddingLeft: 10,
   },
-  addtotext: {
-    marginLeft: 10, 
+  addtotext: { 
     fontSize: 16, 
     color: UColor.fontColor
+  },
+  imgBtn: {
+    width: 25,
+    height: 25,
+    marginHorizontal:5,
   },
   addtoout: {
     flex: 1,
@@ -698,7 +709,6 @@ const styles = StyleSheet.create({
     justifyContent: "center", 
   },
   addtoouttext: {
-    marginLeft: 10, 
     fontSize: 20, 
     color: UColor.fontColor 
   },
