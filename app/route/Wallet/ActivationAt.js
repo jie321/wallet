@@ -295,7 +295,7 @@ class ActivationAt extends BaseComponent {
                         </View>
                         <View style={styles.headout}>
                             <Text style={styles.inptitle}>扫码激活说明</Text>
-                            <Text style={styles.headtitle}>用另一个有效的EOS账号或请求朋友帮助您支付激活，也可以联系官方小助手购买积分激活账号</Text>
+                            <Text style={styles.headtitle}>用另一个有效的EOS账号自助激活或请求朋友帮助您支付激活，还可以联系官方小助手付费激活。</Text>
                         </View>
                         <View style={styles.codeout}>
                             <View style={styles.qrcode}>

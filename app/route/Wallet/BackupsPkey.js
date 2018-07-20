@@ -164,7 +164,7 @@ class BackupsPkey extends BaseComponent {
                 <View style={styles.inptoutbg}>
                     <View style={styles.headout}>
                         <Text style={styles.inptitle}>立即备份你的私钥</Text>
-                        <Text style={styles.headtitle}>备份私钥：抄写私钥，保存在安全的地方，千万不要存储在网络上（网盘、通讯软件），创建完成后，先小额转入尝试成功后开始使用。</Text>
+                        <Text style={styles.headtitle}>安全警告：私钥相当于您的银行卡密码，请妥善保管！（切勿截图、存储到网络硬盘、微信等传输！）</Text>
                     </View> 
                     {this.state.activePk != ''&& 
                     <View style={styles.inptoutgo} >
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
         paddingBottom: 15,
     },
     headtitle: {
-        color: UColor.arrow,
+        color: UColor.showy,
         fontSize: 14,
         lineHeight: 25,
     },
