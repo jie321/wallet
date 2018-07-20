@@ -40,6 +40,11 @@ class BackupsAOkey extends BaseComponent {
       };
 
       _rightTopClick = () =>{
+        var entry = this.props.navigation.state.params.entry;
+        if(entry == "createWallet"){
+            this.pop(2, true);
+            return;
+        }
         this.pop(3, true);
         // const { navigate } = this.props.navigation;
         // navigate('WalletManage', {});
