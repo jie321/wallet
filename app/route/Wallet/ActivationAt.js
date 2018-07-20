@@ -97,7 +97,7 @@ class ActivationAt extends BaseComponent {
         const c = this.props.navigation.state.params.parameter;
       EasyDialog.show("免责声明",  (<View>
         <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中会检测您的账号是否已激活，如果您没有备份私钥，删除后将无法找回！请确保该账号不再使用后再删除！</Text>
-        </View>),"下一步","返回钱包",  () => {
+        </View>),"下一步",null,  () => {
             EasyDialog.dismis();
             EasyLoading.show();
                 //检测账号是否已经激活
@@ -115,7 +115,7 @@ class ActivationAt extends BaseComponent {
                     }else if(result.code == 521){
                         //msg:账号不存在,data:null,code:521
                         EasyDialog.show("免责声明",  (<View>
-                            <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，我们建议删除。</Text>
+                            <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果您不打算激活此账号，建议删除。</Text>
                         </View>),"删除","取消",  () => {
                             this.deletionDirect();
                             EasyDialog.dismis()
@@ -279,12 +279,12 @@ class ActivationAt extends BaseComponent {
                     <View style={styles.inptoutbg}>
                         <View style={styles.headout}>
                             <Text style={styles.inptitle}>重要说明：</Text>
-                            <Text style={styles.headtitle}>激活EOS主网账户需要消耗EOS，支付完成后将激活该账户.目前激活一个EOS账户最低成本价约1.5EOS</Text>
+                            <Text style={styles.headtitle}>激活EOS主网账户需要消耗EOS，支付完成后将激活该账户.目前激活EOS账户最低内存约需1.5EOS</Text>
                         </View>  
                         <View style={styles.inptoutgo} >
                             <TouchableOpacity onPress={() => this._onPressListItem()}>
                                 <View style={styles.ionicout}>
-                                    <Text style={styles.prompttext}>你的EOS账户信息如下</Text>
+                                    <Text style={styles.prompttext}>您的EOS账户信息如下</Text>
                                     <Ionicons name={this.state.Invalid ? "ios-arrow-down-outline" : "ios-arrow-forward-outline"} size={14} color={UColor.tintColor}/>
                                 </View>
                             </TouchableOpacity>
