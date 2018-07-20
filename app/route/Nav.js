@@ -6,6 +6,7 @@ import UColor from '../utils/Colors'
 import UImage from '../utils/Img'
 import Home from './Home'
 import Coins from './Coins'
+import Transaction from './Transaction'
 import Community from './Settings/Community'
 import News from './News'
 import Settings from './Settings'
@@ -77,6 +78,7 @@ const TabContainer = TabNavigator(
   {
     Home: { screen: Home },
     Coins: { screen: Coins },
+    Transaction: { screen: Transaction },
     News: { screen: News },
     Settings: { screen: Settings }
   },
@@ -92,6 +94,9 @@ const TabContainer = TabNavigator(
           case 'Coins':
             iconName = focused ? UImage.tab_2_h : UImage.tab_2
             break;
+          case 'Transaction':
+            iconName = focused ? UImage.tab_2_h : UImage.tab_2
+            break;  
           case 'News':
             iconName = focused ? UImage.tab_3_h : UImage.tab_3
             break;
@@ -672,7 +677,7 @@ class Route extends React.Component {
           this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: true}});
         }
       }});
-    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
+    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "Transaction" ||action.routeName == "News" || action.routeName == "Settings")) {
       // this.timer && clearTimeout(this.timer);
       this.stopTimer();
       if (action && action.routeName) {

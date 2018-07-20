@@ -176,7 +176,7 @@ class Resources extends BaseComponent {
       }else if(this.state.isNetwork){
         this.goPage('isNetwork');
       }else{
-        this.goPage('isBuyForOther');
+        // this.goPage('isBuyForOther');
       }   
   }
 
@@ -247,20 +247,21 @@ class Resources extends BaseComponent {
                 percentageTwo: '抵押(EOS)',
                 percentageThree: '赎回中('+ (this.props.Resources.refund_request ? this.props.Resources.refund_request.net_amount : '0 EOS') + ')',
             })
-        }else if (current == 'isBuyForOther'){
-            this.setState({ 
-                tetletext: '内存交易',
-                column_One: '0%',
-                column_Two: '0%',
-                column_Three: '0%',
-                ContrastOne: '0.00/0.00',
-                ContrastTwo: '0.00/0.00',
-                ContrastThree: '0.00/0.00',
-                percentageOne: '',
-                percentageTwo: '',
-                percentageThree: '',
-            })
-        } 
+        }
+        // else if (current == 'isBuyForOther'){
+        //     this.setState({ 
+        //         tetletext: '内存交易',
+        //         column_One: '0%',
+        //         column_Two: '0%',
+        //         column_Three: '0%',
+        //         ContrastOne: '0.00/0.00',
+        //         ContrastTwo: '0.00/0.00',
+        //         ContrastThree: '0.00/0.00',
+        //         percentageOne: '',
+        //         percentageTwo: '',
+        //         percentageThree: '',
+        //     })
+        // } 
         EasyLoading.dismis();
     }
 
@@ -296,7 +297,7 @@ class Resources extends BaseComponent {
 
     // 返回内存，计算，网络，内存交易  
     resourceButton(style, selectedSate, stateType, buttonTitle) {  
-        let BTN_SELECTED_STATE_ARRAY = ['isMemory', 'isCalculation','isNetwork', 'isBuyForOther',];  
+        let BTN_SELECTED_STATE_ARRAY = ['isMemory', 'isCalculation','isNetwork', ];  
         return(  
             <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
                 <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
@@ -790,7 +791,7 @@ class Resources extends BaseComponent {
                             {this.resourceButton(styles.buttontab, this.state.isMemory, 'isMemory', '内存资源')}  
                             {this.resourceButton(styles.buttontab, this.state.isCalculation, 'isCalculation', '计算资源')}  
                             {this.resourceButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
-                            {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}  
+                            {/* {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}   */}
                         </View> 
                         {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>请稍候 ，程序猿玩命加班中...</Text></View>:
                         <View style={styles.nhaaout}>
