@@ -40,8 +40,9 @@ class BackupsAOkey extends BaseComponent {
       };
 
       _rightTopClick = () =>{
-        const { navigate } = this.props.navigation;
-        navigate('WalletManage', {});
+        this.pop(3, true);
+        // const { navigate } = this.props.navigation;
+        // navigate('WalletManage', {});
       }
 
   // 构造函数  

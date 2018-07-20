@@ -78,8 +78,6 @@ class ActivationAt extends BaseComponent {
             this.pop(3, true);
         }else if(entry == "createWallet"){
             this.pop(3, true);
-        }else if(entry == "activeWallet"){
-            this.pop(1, true);
         }
         //结束页面前，资源释放操作
         super.componentWillUnmount();
@@ -150,7 +148,9 @@ class ActivationAt extends BaseComponent {
         }
         });
         DeviceEventEmitter.addListener('delete_wallet', (tab) => {
-            this.props.navigation.goBack();
+            // this.props.navigation.goBack();
+            this.pop(2, true);
+
         });
     }
 
@@ -186,7 +186,9 @@ class ActivationAt extends BaseComponent {
                     console.log('Delete tags failed, error code: ' + map.errorCode)
                     }
                 });
-                this.props.navigation.goBack();
+                // this.props.navigation.goBack();
+                this.pop(2, true);
+
             } });
 
             // DeviceEventEmitter.addListener('delete_wallet', (tab) => {
