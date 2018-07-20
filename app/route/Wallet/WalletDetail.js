@@ -140,24 +140,38 @@ class WalletDetail extends BaseComponent {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
     } else if(key == 'SeeBlockBrowser'){
       if(this.props.navigation.state.params.data.isactived){
-        EasyDialog.show("第三方区块浏览器查看",  (<View style={{flexDirection: "row",}}>
-            <Button onPress={() => { this.eosmonitor() }} style={{flex: 1,}}>
-              <View style={{ marginRight: 10, height: 40, borderRadius: 6, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={styles.buttonText}>eosmonitor</Text>
+        EasyDialog.show("",  (<View >
+            <View style={{position: 'absolute', top: -35, right: -30,}}>
+              <Button style={styles.buttonView} onPress={() => { this.closeDialog() }} >
+                  <Text style={styles.butclose}>×</Text>
+              </Button>
+            </View> 
+          <View style={{paddingHorizontal: 11, paddingVertical: 15,  marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5,}}>
+            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eostracker.io</Text>
+            <Button onPress={() => { this.eostracker() }}>
+              <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.buttonText}>查看</Text>
               </View>
             </Button>
-            <Button onPress={() => { this.eostracker() }} style={{flex: 1,}}>
-              <View style={{ marginLeft: 10, height: 40, borderRadius: 6, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={styles.buttonText}>eostracker</Text>
+          </View>
+          <View style={{paddingHorizontal: 11, paddingVertical: 15, marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5, }}>
+            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eosmonitor.io</Text>
+            <Button onPress={() => { this.eosmonitor() }}>
+              <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.buttonText}>查看</Text>
               </View>
             </Button>
-        </View>),"取消", null,  () => { EasyDialog.dismis() });
+          </View>
+        </View>),null, null,);
       }else{
         EasyToast.show("该账号还没激活，激活之后才能查看详细信息")
       }
     }else{
 
     }
+  }
+  closeDialog() {
+    EasyDialog.dismis();
   }
 
   eosmonitor() {
@@ -760,6 +774,18 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color:  UColor.fontColor,
+  },
+
+   // 关闭按钮  
+   buttonView: {
+    alignItems: 'flex-end',
+  },
+  butclose: {
+    width: 30,
+    height: 30,
+    marginBottom: 0,
+    color: '#CBCBCB',
+    fontSize: 28,
   },
 
 });
