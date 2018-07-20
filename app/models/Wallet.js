@@ -156,6 +156,7 @@ export default {
             if(wallet.isactived || (walletArr.length == 1)){
                 yield call(store.save, 'defaultWallet', _wallet);
                 yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
+                yield put({ type: 'updateGuide', payload: { guide: false } });
             }
             // DeviceEventEmitter.emit('wallet_backup', _wallet);
             JPushModule.addTags([_wallet.name], map => {
