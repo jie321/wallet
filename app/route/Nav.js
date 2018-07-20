@@ -337,9 +337,9 @@ class Route extends React.Component {
 
   state = {
     news: {},
-    cpu: '',
-    net: '',
-    ram: '',
+    cpu: '0.5',
+    net: '0.5',
+    ram: '1.5',
     turnintoaccount: '',
     turninamount: '',
     turninsymbol: '',
@@ -435,9 +435,9 @@ class Route extends React.Component {
       var result = JSON.parse(news);// 转成JSON对象
       this.setState({
         showActivationPay: true,
-        cpu: result.cpu ? result.cpu : "",
-        net: result.net ? result.net : "",
-        ram: result.ram ? result.ram : "",
+        cpu: result.cpu ? result.cpu : "0.5",
+        net: result.net ? result.net : "0.5",
+        ram: result.ram ? result.ram : "1.5",
         turnintoaccount: result.account_name ? result.account_name : "",
         turninamount: result.owner ? result.owner : "",
         turninsymbol: result.active ? result.active : "",
@@ -468,9 +468,9 @@ class Route extends React.Component {
       var result = JSON.parse(news);// 转成JSON对象
       this.setState({
         showReturnActivationPay: true,
-        cpu: result.cpu ? result.cpu : "",
-        net: result.net ? result.net : "",
-        ram: result.ram ? result.ram : "",
+        cpu: result.cpu ? result.cpu : "0.5",
+        net: result.net ? result.net : "0.5",
+        ram: result.ram ? result.ram : "1.5",
         turnintoaccount: result.account_name ? result.account_name : "",
         turninamount: result.owner ? result.owner : "",
         turninsymbol: result.active ? result.active : "",
