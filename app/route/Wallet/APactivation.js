@@ -100,6 +100,7 @@ class APactivation extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                EasyDialog.dismis();
                 EasyLoading.show();
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 Eos.createAndDelegateAccount(this.props.defaultWallet.account, plaintext_privateKey, this.state.accountName, this.state.ownerPuk, this.state.activePuk,

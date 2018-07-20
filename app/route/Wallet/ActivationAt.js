@@ -250,10 +250,10 @@ class ActivationAt extends BaseComponent {
                         </View>), "知道了", null,  () => { EasyDialog.dismis() });
                     }else if(result.code == 521){
                         //msg:账号不存在,data:null,code:521
-                        EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+                        EasyToast.show("账户还未成功激活！请确认支付后再次尝试！");
                     }else {
                         // 未知异
-                        EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+                        EasyToast.show("网络异常, 暂不能检测到账号是否已经激活, 请重试！");
                     }
                 }
             });
