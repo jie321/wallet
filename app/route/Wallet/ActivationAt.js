@@ -233,31 +233,33 @@ class ActivationAt extends BaseComponent {
         var owner = wallet.ownerPublic;
         var active = wallet.activePublic
     
-        // test激活成功
-        // name = "marcol521313";
-        // owner = "EOS5fWc9rcAKd21hKZ21EovY6Sfpp4utZcP32qMmrjrRxmdLxURiV";
-        // active = "EOS5CcWL2qyRpUem3iKpP7H1Zh5bDHy6HsmnHSZurTTrgngqwTft7";
-        //检测账号是否已经激活
-        this.props.dispatch({
-            type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
-                EasyLoading.dismis();
-                if(result.code == 0 && result.data == true){
-                    wallet.isactived = true
-                    this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
-                    //msg:success,data:true, code:0 账号已存在
-                    EasyDialog.show("恭喜激活成功", (<View>
-                        <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
-                        {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
-                    </View>), "知道了", null,  () => { EasyDialog.dismis() });
-                }else if(result.code == 521){
-                    //msg:账号不存在,data:null,code:521
-                    EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
-                }else {
-                    // 未知异
-                    EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+        try {
+            //检测账号是否已经激活
+            EasyDialog.dismis();
+            EasyLoading.show();
+            this.props.dispatch({
+                type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
+                    EasyLoading.dismis();
+                    if(result.code == 0 && result.data == true){
+                        wallet.isactived = true
+                        this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
+                        //msg:success,data:true, code:0 账号已存在
+                        EasyDialog.show("恭喜激活成功", (<View>
+                            <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
+                            {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
+                        </View>), "知道了", null,  () => { EasyDialog.dismis() });
+                    }else if(result.code == 521){
+                        //msg:账号不存在,data:null,code:521
+                        EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+                    }else {
+                        // 未知异
+                        EasyToast.show("账户"+name+"还未激活！请确认支付后再次尝试！");
+                    }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            EasyLoading.dismis();
+        }
     }
 
     contactWeChataide() {
