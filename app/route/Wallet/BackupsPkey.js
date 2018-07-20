@@ -257,6 +257,11 @@ const styles = StyleSheet.create({
         color: UColor.showy,
         fontSize: 14,
         lineHeight: 25,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderColor: UColor.showy,
+        borderWidth: 1,
+        borderRadius: 5,
     },
     inptoutbg: {
         backgroundColor: UColor.mainColor,

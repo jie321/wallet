@@ -193,7 +193,7 @@ class APactivation extends BaseComponent {
             </View>
             <View style={styles.inptout} >
                 <View style={styles.rankout}>
-                    <Text style={styles.inptitle}>分配内存(EOS))</Text>
+                    <Text style={styles.inptitle}>分配内存(EOS)</Text>
                     {this.state.hasErrorInput && <Text style={styles.falsehints}>*该内容输入有误！</Text>}
                 </View>
                 <View style={styles.rankout}>
