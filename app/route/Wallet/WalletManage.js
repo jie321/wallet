@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, Clipboard } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -88,6 +88,11 @@ class WalletManage extends BaseComponent {
     alert(state);
   }
 
+  copyname(data) {
+    Clipboard.setString(data.name);
+    EasyToast.show('账号复制成功');
+  }
+
   render() {
     const v = (
     <View style={styles.container}>  
@@ -100,10 +105,13 @@ class WalletManage extends BaseComponent {
             <Button onPress={this.onPress.bind(this, rowData, sectionID, rowID)}>
               <View style={styles.row} >  
                   <View style={styles.top}>
-                      <View style={styles.topout}>
-                          <Text style={styles.outname}>{rowData.name}</Text>
-                          {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(rowData.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
-                      </View>
+                      <Button onPress={this.copyname.bind(this,rowData)}>
+                        <View style={styles.topout}>
+                            <Text style={styles.outname}>{rowData.name}</Text>
+                            <Image source={UImage.copy} style={styles.imgBtn} />
+                            {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(rowData.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
+                        </View>
+                      </Button>
                       <View style={styles.topout}>               
                           <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
                           <Ionicons style={styles.outIon} name="ios-arrow-forward-outline" size={20} />     
@@ -163,12 +171,17 @@ const styles = StyleSheet.create({
   topout: {
       flexDirection: "row",
       marginBottom: 20,
+      alignItems: 'center',
   },
   outname: {
     fontSize: 14,
     color: UColor.fontColor,
     textAlign: 'left',
-    marginRight: 10,
+  },
+  imgBtn: {
+    width: 20,
+    height: 20,
+    marginHorizontal:5,
   },
   stopoutBackupsout: {
     borderRadius: 10,

@@ -479,13 +479,13 @@ class WalletDetail extends BaseComponent {
               {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
               <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
             </View>
-            <View style={styles.topout}>
-              <Text style={styles.outname}>账户名称：{c.name}</Text>
-              <Button onPress={this.copyname.bind(this,c)}>
-                  <Image source={UImage.copy} style={styles.imgBtn} />
-              </Button>
-              {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
-            </View>
+            <Button onPress={this.copyname.bind(this,c)}>
+              <View style={styles.topout}>
+                <Text style={styles.outname}>账户名称：{c.name}</Text>
+                <Image source={UImage.copy} style={styles.imgBtn} />
+                {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
+              </View>
+            </Button>
           </View>
           
           <View style={{ marginBottom: 50 }}>
@@ -639,8 +639,8 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   imgBtn: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
     marginHorizontal:5,
   },
   stopoutBackupsout: {
