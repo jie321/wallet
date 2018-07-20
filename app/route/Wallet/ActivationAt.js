@@ -277,7 +277,7 @@ class ActivationAt extends BaseComponent {
                     <View style={styles.inptoutbg}>
                         <View style={styles.headout}>
                             <Text style={styles.inptitle}>重要说明：</Text>
-                            <Text style={styles.headtitle}>创建EOS账户需要消耗EOS，支付完成后将激活该账户目前创建一个EOS账户成本价约***EOS</Text>
+                            <Text style={styles.headtitle}>激活EOS主网账户需要消耗EOS，支付完成后将激活该账户.目前激活一个EOS账户最低成本价约1.5EOS</Text>
                         </View>  
                         <View style={styles.inptoutgo} >
                             <TouchableOpacity onPress={() => this._onPressListItem()}>
@@ -315,7 +315,7 @@ class ActivationAt extends BaseComponent {
                     </Button>
                     <Button onPress={() => this.onShareFriend()}>
                         <View style={styles.importPriout}>
-                            <Text style={styles.importPritext}>请朋友支付</Text>
+                            <Text style={styles.importPritext}>请朋友协助激活</Text>
                         </View>
                     </Button>
                 </View>

@@ -37,7 +37,7 @@ class WalletDetail extends BaseComponent {
     super(props);
     this.config = [
       { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
-      { first: true, name: "备份钱包", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { first: true, name: "备份私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
       { name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
       { name: "账户详细信息", onPress: this.goPage.bind(this, "SeeBlockBrowser") },
     ];
