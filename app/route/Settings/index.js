@@ -141,7 +141,7 @@ class Setting extends React.Component {
               <View style={styles.Withdrawout}>
                 {
                   this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
-                    <Text style={styles.Withdrawtext}>提币</Text>
+                    <Text style={styles.Withdrawtext}>领取奖励</Text>
                   </Button>
                 }
               </View>
@@ -167,7 +167,7 @@ class Setting extends React.Component {
           <View style={styles.footer}>
             <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
             {/* <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text> */}
-            <Text style={styles.foottext}>EOS专业版钱包 V2.1.8</Text>
+            <Text style={styles.foottext}>EOS专业版钱包 V2.1.8.1</Text>
           </View>
         </View>
       </ScrollView>
