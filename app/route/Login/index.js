@@ -24,11 +24,6 @@ class Login extends BaseComponent {
 
   static navigationOptions = {
     title: '登陆',
-    // headerStyle:{
-    //     backgroundColor:"#586888",
-    //     elevation: 0,
-    //     shadowOpacity: 0
-    // }
   };
 
   constructor(props) {
@@ -221,6 +216,7 @@ class Login extends BaseComponent {
   }
 
   getCapture = () => {
+    EasyDialog.dismis();
     if (this.state.phone == "") {
       EasyToast.show('请输入手机号');
       return;
