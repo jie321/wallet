@@ -141,7 +141,7 @@ class Setting extends React.Component {
               <View style={styles.Withdrawout}>
                 {
                   this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
-                    <Text style={styles.Withdrawtext}>提币</Text>
+                    <Text style={styles.Withdrawtext}>领取奖励</Text>
                   </Button>
                 }
               </View>
@@ -150,24 +150,10 @@ class Setting extends React.Component {
           <View>
             {this._renderListItem()}
           </View>
-          {/* <View style={styles.listItem}>
-             <View style={styles.listInfo}>
-                <View style={{flex: 1}}><Text style={styles.listInfoTitle}>消息推送</Text></View>
-                <View style={styles.listInfoRight}>
-                  <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
-                      value={this.state.value} onValueChange={(value)=>{
-                      this.setState({
-                          value:value,
-                      });
-                      this.changeJpush(value);
-                  }}/>
-                </View>
-              </View>
-          </View> */}
           <View style={styles.footer}>
             <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
-            {/* <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text> */}
-            <Text style={styles.foottext}>EOS专业版钱包 V2.1.8</Text>
+            <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text>
+            {/* <Text style={styles.foottext}>EOS专业版钱包 V2.1.8</Text> */}
           </View>
         </View>
       </ScrollView>
