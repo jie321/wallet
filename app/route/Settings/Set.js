@@ -127,7 +127,7 @@ class Set extends BaseComponent {
       <View style={styles.btnout}>
         <Button onPress={() => this.logout()}>
           <View style={styles.btnloginUser}>
-            <Text style={styles.btntext}>{this.props.loginUser?"退出":"登陆"}</Text>
+            <Text style={styles.btntext}>{this.props.loginUser?"退出登陆":"登陆"}</Text>
           </View>
         </Button>
       </View>
