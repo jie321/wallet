@@ -28,6 +28,8 @@ export default {
   refresh:require('../img/refresh.png'),
   resources:require('../img/resources.png'),
   resources_bj:require('../img/resources_bj.png'),
+  reveal_h:require('../img/reveal_h.png'),
+  reveal:require('../img/reveal.png'),
   logo:require('../img/logo1.png'),
   signed:require('../img/signed.png'),  
   a:require('../img/a.png'),
