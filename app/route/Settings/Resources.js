@@ -880,7 +880,7 @@ class Resources extends BaseComponent {
                                         </Button> 
                                     </View>
                                 </View>
-                                <View style={styles.inptoutsource}>
+                                {!this.state.isTransfer&&<View style={styles.inptoutsource}>
                                     <Text style={styles.inptTitle}>赎回（EOS）</Text>
                                     <View style={styles.outsource}>
                                         <TextInput ref={(ref) => this._rrpass = ref} value={this.state.undelegateb} returnKeyType="go" 
@@ -894,7 +894,7 @@ class Resources extends BaseComponent {
                                             </View>
                                         </Button> 
                                     </View>
-                                </View>
+                                </View>}
                             </View>}
                             {this.state.isMemory?
                             <View style={styles.basc}>
