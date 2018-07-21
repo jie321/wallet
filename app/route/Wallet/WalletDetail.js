@@ -476,12 +476,12 @@ class WalletDetail extends BaseComponent {
         <View>
           <View style={styles.walletout}>
             <View style={styles.accountout} >
-              {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
-              <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
+              <Text style={styles.accounttext}>{c.isactived && c.balance != null && c.balance != ""? c.balance : '0.0000'}</Text>
+               <Text style={styles.company}> EOS</Text>
             </View>
             <Button onPress={this.copyname.bind(this,c)}>
               <View style={styles.topout}>
-                <Text style={styles.outname}>账户名称：{c.name}</Text>
+                <Text style={styles.category}>账户名称：<Text style={styles.outname}>{c.name}</Text></Text>
                 <Image source={UImage.copy} style={styles.imgBtn} />
                 {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
               </View>
@@ -497,7 +497,7 @@ class WalletDetail extends BaseComponent {
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>b
             </View>
           </Button> */}
-          {(!this.props.navigation.state.params.data.isactived || !this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
+          {(!c.isactived || !c.hasOwnProperty('isactived')) ? 
           <Button onPress={this.activeWallet.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.acttiveout}>
               <Text style={styles.delete}>激活账户</Text>
@@ -617,13 +617,19 @@ const styles = StyleSheet.create({
     borderRadius: 5, 
   },
   accountout: { 
+    flexDirection: "row",
     justifyContent: 'center', 
     alignItems: 'center', 
   },
   accounttext: { 
-    fontSize: 17, 
-    color:  UColor.arrow, 
+    fontSize: 24, 
+    color: UColor.fontColor, 
     marginBottom: 10, 
+  },
+  company: {
+    fontSize: 15,
+    color: '#FFFFFF',
+    marginBottom: 5,
   },
 
 
@@ -633,10 +639,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
   },
+  category: {
+    fontSize: 16,
+    color:  UColor.fontColor,
+  },
   outname: {
     fontSize: 14,
-    color: UColor.fontColor,
-    textAlign: 'left',
+    color: UColor.arrow,
   },
   imgBtn: {
     width: 20,

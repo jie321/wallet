@@ -39,6 +39,7 @@ class WalletManage extends BaseComponent {
 
   //组件加载完成
   componentDidMount() {
+    alert(JSON.stringify(this.props.walletList));
     const { dispatch } = this.props;
     var th = this;
     this.props.dispatch({ type: 'wallet/walletList' });
@@ -94,8 +95,7 @@ class WalletManage extends BaseComponent {
   }
 
   render() {
-    const v = (
-    <View style={styles.container}>  
+    return (<View style={styles.container}>  
       <View style={{paddingBottom: 60}}>
         <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor, }} enableEmptySections={true}
           renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
@@ -104,23 +104,19 @@ class WalletManage extends BaseComponent {
           renderRow={(rowData, sectionID, rowID) => (
             <Button onPress={this.onPress.bind(this, rowData, sectionID, rowID)}>
               <View style={styles.row} >  
-                  <View style={styles.top}>
-                      <Button onPress={this.copyname.bind(this,rowData)}>
-                        <View style={styles.topout}>
-                            <Text style={styles.outname}>{rowData.name}</Text>
-                            <Image source={UImage.copy} style={styles.imgBtn} />
-                            {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(rowData.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
-                        </View>
-                      </Button>
-                      <View style={styles.topout}>               
-                          <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.account}</Text>
-                          <Ionicons style={styles.outIon} name="ios-arrow-forward-outline" size={20} />     
-                      </View>
-                  </View>                       
-                  <View style={styles.balanceout}>
-                      <Text style={styles.balance}></Text>
-                      <Text style={styles.balancetext}></Text>                           
+                <Button onPress={this.copyname.bind(this,rowData)}>
+                  <View style={styles.topout}>
+                      <Text style={styles.outname}>{rowData.name}</Text>
+                      <Image source={UImage.copy} style={styles.imgBtn} />
+                      {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(rowData.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
                   </View>
+                </Button>
+                <View style={styles.topout}> 
+                    <Ionicons style={styles.outIon} name="ios-arrow-forward-outline" size={20} />     
+                </View>    
+                <View style={styles.topout}>               
+                    <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000'}<Text style={styles.topouttext}> EOS</Text></Text>
+                </View>
               </View>
             </Button>          
           )}
@@ -140,10 +136,7 @@ class WalletManage extends BaseComponent {
               </View>
           </Button>
       </View> 
-    </View>   
-    );
-   
-    return (v);
+    </View>);
   }
 }
 
@@ -157,20 +150,15 @@ const styles = StyleSheet.create({
     height: 110,
     backgroundColor:UColor.mainColor,
     flexDirection:"column",
-    paddingTop: 10,
+    paddingVertical: 25,
     paddingHorizontal: 20,
     justifyContent:"space-between",
     borderRadius: 5,
     marginTop: 10,
     marginHorizontal: 10,
   },
-  top:{
-      flex:2,
-      flexDirection:"column",
-  },
   topout: {
       flexDirection: "row",
-      marginBottom: 20,
       alignItems: 'center',
   },
   outname: {
@@ -216,11 +204,15 @@ const styles = StyleSheet.create({
  
   outaccount: {
     flex: 1,
-    fontSize: 14,
-    color: UColor.arrow,
+    fontSize: 18,
+    color: UColor.fontColor,
     textAlign: 'left',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  topouttext: {
+    fontSize: 18,
+    color: UColor.arrow,
   },
   outIon: {
     flex: 1,
@@ -228,23 +220,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-
-
-  balanceout: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  balance: {
-    fontSize:20, 
-    color:"#EFEFEF",
-  },
-  balancetext: {
-    fontSize:16, 
-    color: UColor.arrow,
   },
 
   footer:{
