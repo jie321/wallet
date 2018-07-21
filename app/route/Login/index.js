@@ -210,13 +210,12 @@ class Login extends BaseComponent {
         EasyToast.show('请输入计算结果');
         return;
       }
-
+      EasyDialog.dismis();
       this.getCapture();
     }, () => { EasyDialog.dismis() });
   }
 
   getCapture = () => {
-    EasyDialog.dismis();
     if (this.state.phone == "") {
       EasyToast.show('请输入手机号');
       return;
