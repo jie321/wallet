@@ -90,6 +90,7 @@ export default {
   Tick_h:require('../img/Tick_h.png'),
   Magnifier:require('../img/Magnifier.png'),
   Memory:require('../img/Memory.png'),
+  more:require('../img/more.png'),
   my_community:require('../img/my_community.png'),
   my_help:require('../img/my_help.png'),
   my_recovery:require('../img/my_recovery.png'),
