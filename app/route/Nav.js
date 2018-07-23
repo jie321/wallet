@@ -20,6 +20,7 @@ import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Coin_search from './Home/Coin_search'
+import FunctionsMore from './Home/FunctionsMore'
 import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
 import TradeDetails from './Home/TradeDetails'
@@ -275,6 +276,9 @@ const Nav = StackNavigator(
     },
     Coin_search: {
       screen: Coin_search
+    },
+    FunctionsMore: {
+      screen:FunctionsMore
     },
     AssetInfo: {
       screen: AssetInfo
