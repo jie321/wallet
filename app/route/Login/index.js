@@ -24,11 +24,6 @@ class Login extends BaseComponent {
 
   static navigationOptions = {
     title: '登陆',
-    // headerStyle:{
-    //     backgroundColor:"#586888",
-    //     elevation: 0,
-    //     shadowOpacity: 0
-    // }
   };
 
   constructor(props) {
@@ -215,7 +210,7 @@ class Login extends BaseComponent {
         EasyToast.show('请输入计算结果');
         return;
       }
-
+      EasyDialog.dismis();
       this.getCapture();
     }, () => { EasyDialog.dismis() });
   }

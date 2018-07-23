@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     // 按钮  
     btnoutsource: {
         margin: 15,
-        height: 40,
+        height: 45,
         borderRadius: 6,
         backgroundColor: UColor.tintColor,
         justifyContent: 'center',

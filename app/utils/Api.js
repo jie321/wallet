@@ -41,6 +41,7 @@ export const listProducers = rootaddr + '/eosrpc/listProducers';
 export const listAgent = rootaddr + '/eoselector/list';
 
 export const getAccountsByPuk = rootaddr + '/eosrpc/getKeyAccounts';
+export const isExistAccountName = rootaddr + '/eosrpc/isExistAccountName';
 
 export const getActions = rootaddr + '/eosrpc/getActions';
 export const getintegral = rootaddr + '/pocketAsset/getCreateEosAccountNeedPoint';
@@ -49,3 +50,4 @@ export const getGlobalInfo = rootaddr + '/eosrpc/getGlobalInfo'
 export const queryRamPrice = rootaddr + '/eosrpc/queryRamPrice'
 export const listAssets = rootaddr + '/coins/list';
 export const addAssetToServer = rootaddr + '/coins/add';
+export const isExistAccountNameAndPublicKey = rootaddr + '/eosrpc/isExistAccountNameAndPublicKey'

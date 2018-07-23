@@ -48,6 +48,7 @@ class Home extends React.Component {
       Invalid: false,
       arr1: 0,
       isChecked: true,
+      isEye: true,
     };
   }
 
@@ -419,6 +420,19 @@ class Home extends React.Component {
     return ret;
   }
 
+  copyname(wallet) {
+    Clipboard.setString(wallet.name);
+    EasyToast.show('账号复制成功');
+  }
+
+  _onPressListItem() {
+    this.setState((previousState) => {
+        return ({
+          isEye: !previousState.isEye,
+        })
+    });
+  }
+
   render() {
   if(this.props.guide){
     return (
@@ -482,13 +496,19 @@ class Home extends React.Component {
           </ImageBackground>
           <View style={styles.addto}>
               <View style={styles.addout}>
-                <View style={styles.topout}>
-                  <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name} 总资产 </Text>
-                  {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text></View>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text></View>) }   
-                </View>
+                <Button onPress={this.copyname.bind(this,this.props.defaultWallet)} style={styles.topout}>
+                  <View style={styles.topout} >
+                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name}</Text>
+                    <Text style={styles.addtotext}> 总资产 </Text>
+                    <TouchableOpacity onPress={() => this._onPressListItem()}>
+                        <Image source={this.state.isEye ? UImage.reveal : UImage.reveal_h} style={styles.imgTeOy}/>
+                    </TouchableOpacity>
+                    {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text></View>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text></View>) }   
+                  </View>
+                </Button>
                 <View style={styles.addtoout}>
-                  <Text style={styles.addtoouttext}>≈{(this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance)}（￥）</Text>
-                  <Text style={(this.state.increase>=0 || this.state.totalBalance == "0.00")?styles.incdo:styles.incup}>今日 {this.getTodayIncrease()}</Text>
+                  <Text style={styles.addtoouttext}>≈{this.state.isEye ? (this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance) : '****'}（￥）</Text>
+                  <Text style={(this.state.increase>=0 || this.state.totalBalance == "0.00")?styles.incdo:styles.incup}>今日 {this.state.isEye ? this.getTodayIncrease() : '****'}</Text>
                 </View>
               </View>
               <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
@@ -512,8 +532,8 @@ class Home extends React.Component {
                   <View style={styles.rights}>
                     <View style={styles.rightout}>
                       <View>
-                        <Text style={styles.rightbalance}>{(rowData.balance==null || rowData.balance=="" || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')))? "0.0000" : rowData.balance.replace(rowData.asset.name, "")}</Text>
-                        <Text style={styles.rightmarket}>≈{(rowData.balance==null || rowData.balance=="" || rowData.asset.value == null || rowData.asset.value == "" || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')))? "0.00" : (rowData.balance.replace(rowData.asset.name, "")*rowData.asset.value).toFixed(2)}（￥）</Text>
+                        <Text style={styles.rightbalance}>{this.state.isEye ? (rowData.balance==null || rowData.balance=="" || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')))? "0.0000" : rowData.balance.replace(rowData.asset.name, "") : '****'}</Text>
+                        <Text style={styles.rightmarket}>≈{this.state.isEye ? (rowData.balance==null || rowData.balance=="" || rowData.asset.value == null || rowData.asset.value == "" || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')))? "0.00" : (rowData.balance.replace(rowData.asset.name, "")*rowData.asset.value).toFixed(2) : '****'}（￥）</Text>
                       </View>
                     </View>
                   </View>
@@ -685,11 +705,16 @@ const styles = StyleSheet.create({
     flexDirection: "column", 
     alignItems: 'flex-start', 
     justifyContent: "center",
+    paddingLeft: 10,
   },
-  addtotext: {
-    marginLeft: 10, 
+  addtotext: { 
     fontSize: 16, 
     color: UColor.fontColor
+  },
+  imgTeOy: {
+    width: 35,
+    height: 30,
+    marginHorizontal:5,
   },
   addtoout: {
     flex: 1,
@@ -698,7 +723,6 @@ const styles = StyleSheet.create({
     justifyContent: "center", 
   },
   addtoouttext: {
-    marginLeft: 10, 
     fontSize: 20, 
     color: UColor.fontColor 
   },

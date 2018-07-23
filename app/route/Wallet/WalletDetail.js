@@ -37,8 +37,9 @@ class WalletDetail extends BaseComponent {
     super(props);
     this.config = [
       { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
-      { first: true, name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
-      { name: "导出私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { first: true, name: "备份私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
+      { name: "账户详细信息", onPress: this.goPage.bind(this, "SeeBlockBrowser") },
     ];
     this.state = {
       password: '',
@@ -61,7 +62,6 @@ class WalletDetail extends BaseComponent {
       this.props.dispatch({ type: 'wallet/getintegral', payload:{},callback: (data) => { 
         this.setState({integral: data.data});
       } });
-
     }
     componentWillUnmount(){
       //结束页面前，资源释放操作
@@ -88,8 +88,8 @@ class WalletDetail extends BaseComponent {
     });
   }
 
-  goPage(key, data = {}) {
-    const { navigate, goBack } = this.props.navigation;
+  goPage(key, data) {
+    const { navigate } = this.props.navigation;
     if (key == 'ExportPrivateKey') {
       const view =
         <View style={styles.passoutsource}>
@@ -112,13 +112,14 @@ class WalletDetail extends BaseComponent {
           if (plaintext_words_owner.indexOf('eostoken') != - 1) {
             plaintext_words_active = plaintext_words_active.substr(8, plaintext_words_active.length);
             plaintext_words_owner = plaintext_words_owner.substr(8, plaintext_words_owner.length);
-            this.setState({
-              txt_active: plaintext_words_active,
-              txt_owner: plaintext_words_owner
-            });
-            this._setModalVisible();
+            // this.setState({
+            //   txt_active: plaintext_words_active,
+            //   txt_owner: plaintext_words_owner
+            // });
+            // this._setModalVisible();
             // alert('解锁成功' + plaintext_words);
             // this.toBackup(wordsArr);
+            navigate('BackupsPkey', { wallet: this.props.navigation.state.params.data, password:this.state.password, entry: "walletDetails"});
           } else {
             EasyToast.show('您输入的密码不正确');
           }
@@ -137,9 +138,52 @@ class WalletDetail extends BaseComponent {
       this._setModalVisiblePublicKey();
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
-    } else {
-      // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    } else if(key == 'SeeBlockBrowser'){
+      if(this.props.navigation.state.params.data.isactived){
+        EasyDialog.show("",  (<View >
+            <View style={{position: 'absolute', top: -35, right: -30,}}>
+              <Button style={styles.buttonView} onPress={() => { this.closeDialog() }} >
+                  <Text style={styles.butclose}>×</Text>
+              </Button>
+            </View> 
+          <View style={{paddingHorizontal: 11, paddingVertical: 15,  marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5,}}>
+            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eostracker.io</Text>
+            <Button onPress={() => { this.eostracker() }}>
+              <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.buttonText}>查看</Text>
+              </View>
+            </Button>
+          </View>
+          <View style={{paddingHorizontal: 11, paddingVertical: 15, marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5, }}>
+            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eosmonitor.io</Text>
+            <Button onPress={() => { this.eosmonitor() }}>
+              <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.buttonText}>查看</Text>
+              </View>
+            </Button>
+          </View>
+        </View>),null, null,);
+      }else{
+        EasyToast.show("该账号还没激活，激活之后才能查看详细信息")
+      }
+    }else{
+
     }
+  }
+  closeDialog() {
+    EasyDialog.dismis();
+  }
+
+  eosmonitor() {
+    EasyDialog.dismis()
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "区块浏览器", url: "https://eosmonitor.io/accounts/" + this.props.navigation.state.params.data.name});
+  }
+
+  eostracker() {
+    EasyDialog.dismis()
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "区块浏览器", url: "https://eostracker.io/accounts/" + this.props.navigation.state.params.data.name});
   }
 
   importWallet() {
@@ -162,21 +206,66 @@ class WalletDetail extends BaseComponent {
     EasyToast.show("复制成功")
   }
 
-  deleteWarning(){
-    var wallet = this.props.navigation.state.params.data;
-    if(!wallet.isactived || !wallet.hasOwnProperty('isactived')){
-      EasyDialog.show("重要提示",  (<View>
-        <Text style={{color: UColor.showy,fontSize: 15,paddingBottom: 15,}}>若您的积分达到100以上，创建的账号存在未激活现象，请不要删除！若删除激活中的账号将可能给您带来损失！</Text>
-        <Text style={{color: UColor.showy,fontSize: 15,}}>建议您间隔5-10分钟，再次点击激活账户！如还是不能激活帐号，请联系客服！</Text>
-      </View>),"执意删除","返回钱包",  () => {
-        this.deleteWallet();
-        EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });
-    }else{
-      this.deleteWallet();
-    }
+  deleteWarning(c,data){
+    // alert(JSON.stringify(c));
+    EasyDialog.show("免责声明",  (<View>
+      <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中会检测您的账号是否已激活，如果您没有备份私钥，删除后将无法找回！请确保该账号不再使用后再删除！</Text>
+    </View>),"下一步","返回钱包",  () => {
+      EasyDialog.dismis();
+      EasyLoading.show();
+       //检测账号是否已经激活
+      this.props.dispatch({
+          type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
+            EasyLoading.dismis();
+            if(result.code == 0 && result.data == true){
+            //msg:success,data:true, code:0 账号已存在
+              EasyDialog.show("免责声明",  (<View>
+                <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
+              </View>),"执意删除","返回钱包",  () => {
+                  this.deleteWallet();
+                  EasyDialog.dismis()
+              }, () => { EasyDialog.dismis() });
+            }else if(result.code == 521){
+                //msg:账号不存在,data:null,code:521
+              EasyDialog.show("免责声明",  (<View>
+                <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，我们建议删除。</Text>
+              </View>),"删除","取消",  () => {
+                  this.deletionDirect();
+                  EasyDialog.dismis()
+              }, () => { EasyDialog.dismis() });
+            }else {
+              EasyDialog.show("免责声明",  (<View>
+                <Text style={{color: UColor.arrow,fontSize: 14,}}>网络异常, 暂不能检测到账号是否已经激活, 建议暂不删除此账号, 如果执意删除请先导出私钥并保存好，否则删除后无法找回。</Text>
+              </View>),"执意删除","取消",  () => {
+                  this.deletionDirect();
+                  EasyDialog.dismis()
+              }, () => { EasyDialog.dismis() });
+            }
+          }
+      })
+    }, () => { EasyDialog.dismis() });
   }
 
+  //未激活账号直接删除
+  deletionDirect() {
+    EasyDialog.dismis();
+    var data = this.props.navigation.state.params.data;
+    this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
+    //删除tags
+    JPushModule.deleteTags([data.name],map => {
+      if (map.errorCode === 0) {
+        console.log('Delete tags succeed, tags: ' + map.tags)
+      } else {
+        console.log(map)
+        console.log('Delete tags failed, error code: ' + map.errorCode)
+      }
+    });
+    DeviceEventEmitter.addListener('delete_wallet', (tab) => {
+      this.props.navigation.goBack();
+    });
+  }
+
+  //已激活账号需要验证密码
   deleteWallet() {
     EasyDialog.dismis();
     const view =
@@ -221,113 +310,93 @@ class WalletDetail extends BaseComponent {
     }, () => { EasyDialog.dismis() });
   }
 
+  activeWalletOnServer(){
+    const { navigate } = this.props.navigation;
+    let wallet = this.props.navigation.state.params.data
+    let name = wallet.account;
+    let owner = wallet.ownerPublic;
+    let active = wallet.activePublic;
+    try {
+      EasyLoading.show('正在请求');
+      //检测账号是否已经激活
+      this.props.dispatch({
+        type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
+            if(result.code == 0 && result.data == true){
+                EasyLoading.dismis();
+                wallet.isactived = true
+                this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
+                //msg:success,data:true, code:0 账号已存在
+                EasyDialog.show("恭喜激活成功", (<View>
+                    <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
+                    {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
+                </View>), "知道了", null,  () => { EasyDialog.dismis() });
+            }else {
+              EasyLoading.dismis();
+              navigate('ActivationAt', {parameter:wallet, entry: "activeWallet"});
+
+              // this.props.dispatch({
+              //   type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
+              //     if (data.code == 403) {
+              //       this.props.dispatch({
+              //         type: 'login/logout', payload: {}, callback: () => {}
+              //       });      
+              //       EasyLoading.dismis();
+              //       navigate('ActivationAt', {parameter:wallet});
+              //       return false;   
+              //     }else if(data.code == 0){
+              //       this.props.dispatch({
+              //         type: 'wallet/createAccountService', payload: { username: name, owner: owner, active: active, isact:true}, callback: (data) => {
+              //           EasyLoading.dismis();
+              //           if (data.code == '0') {
+              //             wallet.isactived = true
+              //             this.props.dispatch({
+              //               type: 'wallet/activeWallet', wallet: wallet, callback: (data, error) => {
+              //                 DeviceEventEmitter.emit('updateDefaultWallet');
+              //                 if (error != null) {
+              //                   navigate('ActivationAt', {parameter:wallet});
+              //                   return false;
+              //                 } else {
+              //                   EasyDialog.show("创建账号成功", (<View>
+              //                     <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
+              //                     <Text style={{fontSize: 16, color: '#808080',}}>恭喜！您的EosToken账号积分获得免费创建账号权益，该账号已完成激活，建议您在使用转账功能时先小额尝试，成功后再正常使用钱包。</Text>
+              //                 </View>), "确认", null,  () => { EasyDialog.dismis() });
+              //                   return true;
+              //                 }
+              //               }
+              //             });
+              //           }else{
+              //             EasyLoading.dismis();
+              //             navigate('ActivationAt', {parameter:wallet});
+              //             return false;
+              //           }
+              //         }
+              //       });
+              //     }else{
+              //       EasyLoading.dismis();
+              //       navigate('ActivationAt', {parameter:wallet});
+              //       return false;   
+              //     }
+              //   }
+              // });
+            }
+        }
+    });
+    } catch (error) {
+      EasyLoading.dismis();
+      navigate('ActivationAt', {parameter:wallet});
+      return false;
+    }
+  
+  }
+
   activeWallet(data) {
+    const { navigate } = this.props.navigation;
     if(data.name.length != 12){
       EasyToast.show('该账号格式无效，无法进行激活！');
     }else{
-    EasyDialog.dismis();
-    // if(Platform.OS == 'android' ){
-      EasyLoading.show();
-    // }
-
-    this.props.dispatch({
-      type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
-        EasyLoading.dismis();
-        if (data.code == 403) {
-          this.props.dispatch({
-            type: 'login/logout', payload: {}, callback: () => {
-              EasyDialog.show("EOS账号创建说明", (<View>
-                <Text style={styles.inptpasstext}>免费激活账户需达到{this.state.integral}积分，请先登录EosToken；</Text>
-                <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-                </View>), "知道了", null,  () => { EasyDialog.dismis() });
-              return;
-            }
-          });         
-        }else if(data.code == 0) {
-          this.setState({
-              accumulative:this.props.pointInfo.signin + this.props.pointInfo.share + this.props.pointInfo.interact + this.props.pointInfo.store + this.props.pointInfo.turnin + this.props.pointInfo.turnout
-          });
-          // if(this.state.accumulative >= this.state.integral){
-            const view =
-            <View style={styles.passoutsource}>
-              <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
-                selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
-                placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
-            </View>
-          EasyDialog.show("密码", view, "确定", "取消", () => {
-            if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
-              EasyToast.show('密码长度至少4位,请重输');
-              return;
-            }
-            try {
-              var data = this.props.navigation.state.params.data;
-              var ownerPrivateKey = this.props.navigation.state.params.data.ownerPrivate;
-              var bytes_words = CryptoJS.AES.decrypt(ownerPrivateKey.toString(), this.state.password + this.props.navigation.state.params.data.salt);
-              var plaintext_words = bytes_words.toString(CryptoJS.enc.Utf8);
-              if (plaintext_words.indexOf('eostoken') != - 1) {
-                plaintext_words = plaintext_words.substr(8, plaintext_words.length);
-                const { dispatch } = this.props;
-                // this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
-              let _wallet = this.props.navigation.state.params.data
-                EasyLoading.show('正在请求');
-                this.props.dispatch({
-                  type: 'wallet/createAccountService', payload: { username: _wallet.account, owner: _wallet.ownerPublic, active: _wallet.activePublic, isact:true}, callback: (data) => {
-                    EasyLoading.dismis();
-                    if (data.code == '0') {
-                      _wallet.isactived = true
-                      this.props.dispatch({
-                        type: 'wallet/activeWallet', wallet: _wallet, callback: (data, error) => {
-                          DeviceEventEmitter.emit('updateDefaultWallet');
-                          if (error != null) {
-                            EasyToast.show('激活账号失败：' + error);
-                            this.props.navigation.goBack();
-                          } else {
-                            EasyToast.show('激活账号成功');
-                            this.props.navigation.goBack();
-                          }
-                        }
-                      });
-                    }else if(data.code == '512') {
-                      EasyDialog.show("EOS账号创建说明", (<View>
-                        <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
-                        <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
-                        <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
-                        <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-                        <View style={styles.linkout}>
-                          <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-                          <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
-                        </View>
-                        </View>), "知道了", null,  () => { EasyDialog.dismis() });
-                    }else{
-                      EasyToast.show('激活账号失败：' + data.msg);
-                      this.props.navigation.goBack();
-                    }
-                  }
-                })
-              } else {
-                EasyToast.show('您输入的密码不正确');
-              }
-            } catch (error) {
-              EasyToast.show('您输入的密码不正确');
-            }
-            EasyDialog.dismis();
-          }, () => { EasyDialog.dismis() });
-          // }else {
-            // EasyDialog.show("EOS账号创建说明", (<View>
-            //   <Text style={styles.inptpasstext}>1.系统检测到您当前的积分不足，无法获得免费激活账户权益；</Text>
-            //   <Text style={styles.inptpasstext}>2.当前创建账号需满{this.state.integral}积分，后期会按照市场价格调整；</Text>
-            //   <Text style={styles.inptpasstext}>3.您可以联系官方小助手购买积分进行激活；</Text>
-            //   <Text style={styles.Becarefultext}>警告：未激活账户无法使用账户所有功能！</Text>
-            //   <View style={styles.linkout}>
-            //     <Text style={styles.linktext} onPress={() => this.prot(this,'Explain')}>积分说明</Text>
-            //     <Text style={styles.linktext} onPress={() => this.prot(this,'EOS-TOKEN')}>官方小助手</Text>
-            //   </View>
-            //   </View>), "知道了", null,  () => { EasyDialog.dismis() });
-          // } 
-        }
-      }, 
-    });
-  }
+      // 通过后台激活账号
+      this.activeWalletOnServer();
+    }
   }
 
   prot(data = {}, key){
@@ -394,7 +463,11 @@ class WalletDetail extends BaseComponent {
       return (<Item key={i} {...item} />)
     })
   }
-
+  
+  copyname(c) {
+    Clipboard.setString(c.name);
+    EasyToast.show('账号复制成功');
+  }
 
   render() {
     const c = this.props.navigation.state.params.data
@@ -403,13 +476,16 @@ class WalletDetail extends BaseComponent {
         <View>
           <View style={styles.walletout}>
             <View style={styles.accountout} >
-              {/* <Text style={{ fontSize: 17, color: '#FFFFFF', marginBottom: 5, }}></Text> */}
-              <Text style={styles.accounttext}> {this.props.navigation.state.params.data.account}</Text>
+              <Text style={styles.accounttext}>{c.isactived && c.balance != null && c.balance != ""? c.balance : '0.0000'}</Text>
+               <Text style={styles.company}> EOS</Text>
             </View>
-            <View style={styles.topout}>
-              <Text style={styles.outname}>账户名称：{c.name}</Text>
-              {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
-            </View>
+            <Button onPress={this.copyname.bind(this,c)}>
+              <View style={styles.topout}>
+                <Text style={styles.category}>账户名称：<Text style={styles.outname}>{c.name}</Text></Text>
+                <Image source={UImage.copy} style={styles.imgBtn} />
+                {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
+              </View>
+            </Button>
           </View>
           
           <View style={{ marginBottom: 50 }}>
@@ -421,7 +497,7 @@ class WalletDetail extends BaseComponent {
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>b
             </View>
           </Button> */}
-          {(!this.props.navigation.state.params.data.isactived || !this.props.navigation.state.params.data.hasOwnProperty('isactived')) ? 
+          {(!c.isactived || !c.hasOwnProperty('isactived')) ? 
           <Button onPress={this.activeWallet.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.acttiveout}>
               <Text style={styles.delete}>激活账户</Text>
@@ -429,7 +505,7 @@ class WalletDetail extends BaseComponent {
           </Button>
           :null
           }
-          <Button onPress={() => this.deleteWarning()} style={{ flex: 1 }}>
+          <Button onPress={this.deleteWarning.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.deleteout}>
               <Text style={styles.delete}>删除账户</Text>
             </View>
@@ -469,11 +545,13 @@ class WalletDetail extends BaseComponent {
                 <Text style={styles.closeText}>×</Text>
               </Button>
               <Text style={styles.titleText}>导出公钥</Text>
+              {this.state.txt_ownerpublic != null && this.state.txt_ownerpublic != "" &&
               <View style={styles.contentText}>
-                <Text style={styles.textContent}>OwnerPublicKey: {this.state.txt_ownerpublic}</Text>
+                <Text style={styles.textContent}>Owner公钥: {this.state.txt_ownerpublic}</Text>
               </View>
+              }
               <View style={styles.contentText}>
-                <Text style={styles.textContent}>ActivePublicKey: {this.state.txt_activepublic}</Text>
+                <Text style={styles.textContent}>Active公钥: {this.state.txt_activepublic}</Text>
               </View>
               <Button onPress={() => { this.copyPublicKey() }}>
                 <View style={styles.buttonView}>
@@ -539,13 +617,19 @@ const styles = StyleSheet.create({
     borderRadius: 5, 
   },
   accountout: { 
+    flexDirection: "row",
     justifyContent: 'center', 
     alignItems: 'center', 
   },
   accounttext: { 
-    fontSize: 17, 
-    color:  UColor.arrow, 
+    fontSize: 24, 
+    color: UColor.fontColor, 
     marginBottom: 10, 
+  },
+  company: {
+    fontSize: 15,
+    color: '#FFFFFF',
+    marginBottom: 5,
   },
 
 
@@ -553,12 +637,20 @@ const styles = StyleSheet.create({
   topout: {
     flexDirection: "row",
     marginBottom: 20,
+    alignItems: 'center',
+  },
+  category: {
+    fontSize: 16,
+    color:  UColor.fontColor,
   },
   outname: {
     fontSize: 14,
-    color: UColor.fontColor,
-    textAlign: 'left',
-    marginRight: 10,
+    color: UColor.arrow,
+  },
+  imgBtn: {
+    width: 20,
+    height: 20,
+    marginHorizontal:5,
   },
   stopoutBackupsout: {
     borderRadius: 10,
@@ -691,6 +783,18 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color:  UColor.fontColor,
+  },
+
+   // 关闭按钮  
+   buttonView: {
+    alignItems: 'flex-end',
+  },
+  butclose: {
+    width: 30,
+    height: 30,
+    marginBottom: 0,
+    color: '#CBCBCB',
+    fontSize: 28,
   },
 
 });

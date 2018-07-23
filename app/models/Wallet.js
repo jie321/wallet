@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { address, getAccountsByPuk, getintegral } from '../utils/Api';
+import { address, getAccountsByPuk, isExistAccountName, getintegral, isExistAccountNameAndPublicKey } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
 import { EasyLoading } from '../components/Loading';
 import store from 'react-native-simple-store';
@@ -60,6 +60,27 @@ export default {
             }
 
             if (callback) callback({error: wallet.account + "不存在"});
+
+        },
+        *updateWallet({ wallet, callback}, {call, put}) {
+            var AES = require("crypto-js/aes");
+            var CryptoJS = require("crypto-js");
+            var walletArr = yield call(store.get, 'walletArr');
+            if (walletArr == null) {
+                walletArr = [];
+                if (callback) callback({error: wallet.account + "不存在"});
+                return;
+            } 
+            for (var i = 0; i < walletArr.length; i++) {
+                if (walletArr[i].account == wallet.account) {
+                    walletArr.splice(i, 1);
+                }
+            }
+            walletArr[walletArr.length] = wallet;
+            yield call(store.save, 'walletArr', walletArr);
+            yield call(store.save, 'defaultWallet', wallet);
+            DeviceEventEmitter.emit('updateDefaultWallet', {}); 
+            if (callback) callback(wallet,null);
 
         },
         *saveWallet({ wallet, callback }, { call, put }) {
@@ -136,6 +157,7 @@ export default {
             if(wallet.isactived || (walletArr.length == 1)){
                 yield call(store.save, 'defaultWallet', _wallet);
                 yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: _wallet } });
+                yield put({ type: 'updateGuide', payload: { guide: false } });
             }
             // DeviceEventEmitter.emit('wallet_backup', _wallet);
             JPushModule.addTags([_wallet.name], map => {
@@ -251,7 +273,7 @@ export default {
         *getWalletDetail({ payload }, { call, put }) {
             const walletArr = yield call(store.get, 'walletArr');
         },
-        *modifyPassword({ payload }, { call, put }) {
+        *modifyPassword({ payload, callback }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             for (var i = 0; i < walletArr.length; i++) {
                 if (walletArr[i].account == payload._wallet.account) {
@@ -261,10 +283,11 @@ export default {
                     yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: payload._wallet } });
                 }
             }
+            if(callback) callback(payload);
             DeviceEventEmitter.emit('modify_password', payload);
             DeviceEventEmitter.emit('updateDefaultWallet', payload);
         }, 
-        *delWallet({ payload }, { call, put }) {
+        *delWallet({ payload, callback }, { call, put }) {
             var walletArr = yield call(store.get, 'walletArr');
             var defaultWallet = yield call(store.get, 'defaultWallet');
             if (walletArr.length == 1) {
@@ -272,6 +295,7 @@ export default {
                 yield call(store.save, 'defaultWallet', []);
                 yield put({ type: 'updateDefaultWallet', payload: { defaultWallet: [] } });
                 yield call(store.save, 'walletArr', walletArr);
+                yield put({ type: 'updateGuide', payload: { guide: true } });
                 DeviceEventEmitter.emit('delete_wallet', payload);
             } else {
                 for (var i = 0; i < walletArr.length; i++) {
@@ -286,6 +310,7 @@ export default {
                     }
                 }
             }
+            if(callback) callback(payload);
             DeviceEventEmitter.emit('updateDefaultWallet');
         }, 
         *delWalletList({ payload, callback }, { call, put }) {
@@ -408,6 +433,17 @@ export default {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
          },   
+         *isExistAccountName({payload, callback}, {call, put}) {
+            try{
+                let resp = yield call(Request.request, isExistAccountName,"post", payload);
+                try {
+                    if (callback) callback(resp);
+                } catch (error) {
+                }
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
+         },
          *getintegral({payload, callback},{call,put}) {
             try{
                 const resp = yield call(Request.request, getintegral, "post", payload);
@@ -442,6 +478,20 @@ export default {
             if(callback) callback(invalidWalletArr);
             yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr} });
             yield call(store.save, 'invalidWalletArr', invalidWalletArr);
+         },
+         *isExistAccountNameAndPublicKey({payload, callback},{call,put}) {
+            // alert('22' + JSON.stringify(payload) )
+            try{
+                let resp = yield call(Request.request, isExistAccountNameAndPublicKey,"post", payload);
+                // alert('22' + resp)
+                try {
+                    if (callback) callback(resp);
+                } catch (error) {
+                    if (callback) callback({ code: 600, msg: "未知异常" });
+                }
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
          },
     },
     reducers: {

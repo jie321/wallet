@@ -67,9 +67,19 @@ class createWallet extends BaseComponent {
     navigate('ImportEosKey');
     // EasyToast.show('测试网络暂不开放');
   }
+  backupWallet(wallet) {
+     // 备份私钥
+     const { navigate } = this.props.navigation;
+     navigate('BackupsPkey', {wallet: wallet, password: this.state.walletPassword, entry: "createWallet"});
+  }
+  importAPkey() {
+     // 账号支付激活
+     const { navigate } = this.props.navigation;
+     navigate('APactivation', {});
+  }
 
 
-  createWallet() {
+  checkAccountAndCreateWallet(){
     AnalyticsUtil.onEvent('Create_wallet');
     const { dispatch } = this.props;
     if (this.state.walletName == "") {
@@ -101,127 +111,72 @@ class createWallet extends BaseComponent {
       return;
     }
 
-    var arr_owner = [];
-    var arr_active = [];
-    var words_owner = [];
-    var words_active = [];
-    var wordsStr_owner = '';
-    var wordsStr_active = '';
-    for (var i = 0; i < 15; i++) {
-      var randomNum = this.getx(arr_owner);
-      words_owner.push(english[randomNum]);
-    }
-    for (var i = 0; i < arr_owner.length; i++) {
-      words_owner[i] = english[arr_owner[i]];
-      wordsStr_owner = wordsStr_owner + "," + words_owner[i];
-    }
-    for (var i = 0; i < 15; i++) {
-      var randomNum = this.getx(arr_active);
-      words_active.push(english[randomNum]);
-    }
-    for (var i = 0; i < arr_active.length; i++) {
-      words_active[i] = english[arr_active[i]];
-      wordsStr_active = wordsStr_active + "," + words_active[i];
-    }
-    const { navigate } = this.props.navigation;
-    this.clearFoucs();
-    EasyLoading.show('正在请求');
     try {
-      Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
+      // 检测账号是否已经在EOS主网上存在
+      EasyLoading.show();
+      this.props.dispatch({type: 'wallet/isExistAccountName', payload: {account_name: this.state.walletName}, callback: (resp) => {
+        if(resp.code == '0'){ 
+          // 账户已被注册, 异常处理
+          EasyLoading.dismis();
+          EasyToast.show("账号已被别人占用，请换个账号吧！");
+        }else{
+          // 创建未激活钱包，并进入备份钱包流程
+          var arr_owner = [];
+          var arr_active = [];
+          var words_owner = [];
+          var words_active = [];
+          var wordsStr_owner = '';
+          var wordsStr_active = '';
+          for (var i = 0; i < 15; i++) {
+            var randomNum = this.getx(arr_owner);
+            words_owner.push(english[randomNum]);
+          }
+          for (var i = 0; i < arr_owner.length; i++) {
+            words_owner[i] = english[arr_owner[i]];
+            wordsStr_owner = wordsStr_owner + "," + words_owner[i];
+          }
+          for (var i = 0; i < 15; i++) {
+            var randomNum = this.getx(arr_active);
+            words_active.push(english[randomNum]);
+          }
+          for (var i = 0; i < arr_active.length; i++) {
+            words_active[i] = english[arr_active[i]];
+            wordsStr_active = wordsStr_active + "," + words_active[i];
+          }
 
-        if (result.isSuccess) {
-          var salt;
-          Eos.randomPrivateKey((r) => {
-            salt = r.data.ownerPrivate.substr(0, 18);
-            result.data.words = wordsStr_owner;
-            result.data.words_active = wordsStr_active;
-            result.password = this.state.walletPassword;
-            result.name = this.state.walletName;
-            result.account = this.state.walletName;
-            result.salt = salt;
-            this.props.dispatch({
-              type: 'wallet/createAccountService',
-              payload: {
-                username: result.account,
-                owner: result.data.ownerPublic,
-                active: result.data.activePublic,
-                isact: false
-              },
-              callback: (data) => {
-                EasyLoading.dismis();
-                this.setState({
-                  errorcode: data.code,
-                  errormsg: data.msg
+          Eos.seedPrivateKey(wordsStr_owner, wordsStr_active, (result) => {
+    
+            if (result.isSuccess) {
+              var salt;
+              Eos.randomPrivateKey((r) => {
+                salt = r.data.ownerPrivate.substr(0, 18);
+                result.data.words = wordsStr_owner;
+                result.data.words_active = wordsStr_active;
+                result.password = this.state.walletPassword;
+                result.name = this.state.walletName;
+                result.account = this.state.walletName;
+                result.salt = salt;
+                result.isactived = false
+                this.props.dispatch({
+                  type: 'wallet/saveWallet',
+                  wallet: result,
+                  callback: (wallet) => {
+                    EasyLoading.dismis();
+                    this.backupWallet(wallet);
+                  }
                 });
-                if (data.code == '0') {
-                  result.isactived = true
-                  this.props.dispatch({
-                    type: 'wallet/saveWallet',
-                    wallet: result,
-                    callback: (data, error) => {
-                      DeviceEventEmitter.emit('updateDefaultWallet');
-                      if (error != null) {
-                        // EasyToast.show('生成账号失败：' + error);
-                        this.ExplainPopup();
-                      } else {
-                        EasyToast.show('生成账号成功');
-                        this.props.dispatch({
-                          type: 'wallet/updateGuideState',
-                          payload: {
-                            guide: false
-                          }
-                        });
-                        DeviceEventEmitter.emit('updateDefaultWallet');
-                        this.props.navigation.goBack();
-                        // const { navigate } = this.props.navigation;
-                        // navigate('BackupNote', data); 
-                      }
-                    }
-                  });
-                } else if (data.code == '515') { // 511: 已经创建过账户， 515：账户已经被占用
-                  // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
-                  this.ExplainPopup();
-                } else {
-                  result.isactived = false
-                  this.props.dispatch({
-                    type: 'wallet/saveWallet',
-                    wallet: result,
-                    callback: (data) => {
-                      DeviceEventEmitter.emit('updateDefaultWallet');
-                      if (this.props.navigation.state.params.entry == "wallet_home") {
-                        this.props.dispatch({
-                          type: 'wallet/updateGuideState',
-                          payload: {
-                            guide: false
-                          },
-                          callback: (data) => {
-                            this.props.navigation.goBack();
-                          }
-                        });
-                      }
-                      // const { navigate } = this.props.navigation;
-                      this.ExplainPopup();
-                    }
-                  });
-                  // EasyToast.show('生成账号失败：' + data.msg + " 错误码：" + data.code);
-                  this.ExplainPopup();
-                }
-              }
-            })
+              });
+            }
           });
-        }
-      });
-    } catch (error) {
-      EasyToast.show(error);
-    }
-    EasyLoading.dismis();
-    DeviceEventEmitter.addListener('wallet_10', () => {
-      EasyToast.show('您不能创建更多钱包账号了');
-    });
 
-    DeviceEventEmitter.addListener('active_wallet', (tab) => {
-      this.props.navigation.goBack();
-    });
+        }
+      }});
+
+  } catch (error) {
+    EasyToast.show(error);
+    EasyLoading.dismis();
+  }
+
   }
 
   ExplainPopup(){
@@ -325,8 +280,8 @@ class createWallet extends BaseComponent {
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
           <View style={styles.significantout}>
             <Text style={styles.significanttext} >重要声明:</Text>
-            <Text style={styles.significanttext} >密码用于保护私钥和交易授权，建议设置高强度密码</Text>
-            <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记</Text>
+            <Text style={styles.significanttext} >密码用于保护私钥和交易授权，建议设置高强度密码.</Text>
+            <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记.</Text>
           </View>
           <View style={styles.outsource}>
             <View style={styles.inptout} >
@@ -373,14 +328,9 @@ class createWallet extends BaseComponent {
             <Text style={styles.welcome} >我已经仔细阅读并同意 <Text onPress={() => this.prot()} style={styles.clausetext}>服务及隐私条款</Text></Text>
           </View>
         </KeyboardAvoidingView>
-        <Button onPress={() => this.createWallet()}>
+        <Button onPress={() => this.checkAccountAndCreateWallet()}>
           <View style={styles.createWalletout} backgroundColor = {this.state.CreateButton}>
             <Text style={styles.createWallet}>创建钱包</Text>
-          </View>
-        </Button>
-        <Button onPress={() => this.importWallet()}> 
-          <View style={styles.createWalletout}>    
-            <Text style={styles.importWallettext}>导入钱包</Text>
           </View>
         </Button>
       </TouchableOpacity>
