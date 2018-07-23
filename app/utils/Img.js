@@ -71,6 +71,7 @@ export default {
   turn_out:require('../img/turn_out.png'),
   shift_to:require('../img/shift_to.png'),
   wallet_1:require('../img/wallet_1.png'),
+  warning:require('../img/warning.png'),
   xin0:require('../img/xin0.png'),
   xin1:require('../img/xin1.png'),
   vote:require('../img/vote.png'),
