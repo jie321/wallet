@@ -147,16 +147,16 @@ class WalletDetail extends BaseComponent {
               </Button>
             </View> 
           <View style={{paddingHorizontal: 11, paddingVertical: 15,  marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5,}}>
-            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eostracker.io</Text>
-            <Button onPress={() => { this.eostracker() }}>
+            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eospark.com</Text>
+            <Button onPress={() => { this.eospark() }}>
               <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
                 <Text style={styles.buttonText}>查看</Text>
               </View>
             </Button>
           </View>
           <View style={{paddingHorizontal: 11, paddingVertical: 15, marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5, }}>
-            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eosmonitor.io</Text>
-            <Button onPress={() => { this.eosmonitor() }}>
+            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eoseco.com</Text>
+            <Button onPress={() => { this.eoseco() }}>
               <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
                 <Text style={styles.buttonText}>查看</Text>
               </View>
@@ -172,6 +172,18 @@ class WalletDetail extends BaseComponent {
   }
   closeDialog() {
     EasyDialog.dismis();
+  }
+
+  eospark() {
+    EasyDialog.dismis()
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "区块浏览器", url: "https://eospark.com/MainNet/account/" + this.props.navigation.state.params.data.name});
+  }
+
+  eoseco() {
+    EasyDialog.dismis()
+    const { navigate } = this.props.navigation;
+    navigate('Web', { title: "区块浏览器", url: "https://eoseco.com/accounts/" + this.props.navigation.state.params.data.name});
   }
 
   eosmonitor() {
