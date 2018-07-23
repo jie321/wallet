@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice} from '../utils/Api';
+import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice, listMortgage} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 let newarr = new Array();
@@ -96,11 +96,27 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
      },
+     *getMortgagelist({payload,callback},{call,put}) {
+        try{
+            const resp = yield call(Request.request, listMortgage, 'post', payload);
+            if(resp.code=='0'){               
+                yield put({ type: 'updateMortgage', payload: { Mortgagelist:resp.data } });
+            }else{
+                EasyToast.show(resp.msg);
+            }
+            if (callback) callback(resp);
+        } catch (error) {
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+     },
     },
 
     reducers : {
         updateVote(state, action) {      
             return {...state,voteData:action.payload.voteData};  
+        },
+        updateMortgage(state, action) {  
+            return {...state,Mortgagelist:action.payload.Mortgagelist.rows};  
         },
         updateSelect(state, action) {
             let dts = state.voteData;
@@ -124,10 +140,9 @@ export default {
                 for(var j = 0; j < action.payload.producers.length; j++){
                     if(action.payload.producers[j] == (arr[i].account)){
                         arr1.push(arr[i]);
-                       }
+                    }
                 }
             }
-            // alert("producers : " + JSON.stringify(arr1));
             return {...state, producers: arr1};      
         }, 
         updateResources(state, action) {      

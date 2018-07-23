@@ -35,13 +35,22 @@ class Resources extends BaseComponent {
             paddingTop:Platform.OS == 'ios' ? 30 : 20,
             backgroundColor: UColor.mainColor,
             borderBottomWidth:0,
-          },        
+          }, 
+          headerRight: (<Button onPress={navigation.state.params.onPress}>
+            <Text style={{color: UColor.arrow, fontSize: 18,justifyContent: 'flex-end',paddingRight:15}}>抵押记录</Text>
+          </Button>),       
         };
     };
+
+    recordMortgage = () =>{  
+        const { navigate } = this.props.navigation;
+        navigate('MortgageRecord', {account_name: this.props.defaultWallet.account});
+    }  
 
   // 构造函数  
   constructor(props) { 
     super(props);
+    this.props.navigation.setParams({ onPress: this.recordMortgage});
     this.state = {
         isMemory: true,
         isCalculation: false,
