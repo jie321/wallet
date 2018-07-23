@@ -135,7 +135,7 @@ class Setting extends React.Component {
           <Button style={styles.eosbtn}>
             <View style={styles.eosbtnout}>
               <View style={styles.eosout}>
-                <Text style={styles.eosbtntext}>EOS资产</Text>
+                <Text style={styles.eosbtntext}>EOS奖励</Text>
                 <Text style={styles.eostext}>{(this.props.loginUser) ? this.props.loginUser.eost : "0"} EOS</Text>
               </View>
               <View style={styles.Withdrawout}>
