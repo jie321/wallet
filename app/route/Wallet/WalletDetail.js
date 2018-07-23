@@ -48,9 +48,6 @@ class WalletDetail extends BaseComponent {
       txt_active: '',
       integral: 0,
       accumulative: 0,
-      showpublickey: false,
-      txt_ownerpublic: '',
-      txt_activepublic: '',
     }
     DeviceEventEmitter.addListener('modify_password', () => {
       this.props.navigation.goBack();
@@ -78,13 +75,6 @@ class WalletDetail extends BaseComponent {
     let isShow = this.state.show;
     this.setState({
       show: !isShow,
-    });
-  }
-
-  _setModalVisiblePublicKey() {
-    let isShow = this.state.showpublickey;
-    this.setState({
-      showpublickey: !isShow,
     });
   }
 
@@ -129,13 +119,7 @@ class WalletDetail extends BaseComponent {
         EasyDialog.dismis();
       }, () => { EasyDialog.dismis() });
     } else if(key == 'ExportPublicKey') {
-      var ownerPublicKey = this.props.navigation.state.params.data.ownerPublic;
-      var activePublicKey = this.props.navigation.state.params.data.activePublic;
-      this.setState({
-        txt_activepublic: activePublicKey,
-        txt_ownerpublic: ownerPublicKey
-      });
-      this._setModalVisiblePublicKey();
+      navigate('ExportPublicKey', { ownerPublicKey: this.props.navigation.state.params.data.ownerPublic, activePublicKey:this.props.navigation.state.params.data.activePublic});
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
     } else if(key == 'SeeBlockBrowser'){
@@ -200,14 +184,7 @@ class WalletDetail extends BaseComponent {
     EasyToast.show("复制成功")
   }
 
-  copyPublicKey() {
-    this._setModalVisiblePublicKey();
-    Clipboard.setString('OwnerPublicKey: ' + this.state.txt_ownerpublic + "\n" + 'ActivePublicKey: ' + this.state.txt_activepublic);
-    EasyToast.show("复制成功")
-  }
-
   deleteWarning(c,data){
-    // alert(JSON.stringify(c));
     EasyDialog.show("免责声明",  (<View>
       <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中会检测您的账号是否已激活，如果您没有备份私钥，删除后将无法找回！请确保该账号不再使用后再删除！</Text>
     </View>),"下一步","返回钱包",  () => {
@@ -529,31 +506,6 @@ class WalletDetail extends BaseComponent {
                 <Text style={styles.textContent}>ActivePrivateKey: {this.state.txt_active}</Text>
               </View>
               <Button onPress={() => { this.copy() }}>
-                <View style={styles.buttonView}>
-                  <Text style={styles.buttonText}>复制</Text>
-                </View>
-              </Button>
-            </View>
-          </View>
-        </Modal>
-      </View>
-      <View style={styles.pupuo}>
-        <Modal animationType='slide' transparent={true} visible={this.state.showpublickey} onShow={() => { }} onRequestClose={() => { }} >
-          <View style={styles.modalStyle}>
-            <View style={styles.subView} >
-              <Button style={{ alignItems: 'flex-end', }} onPress={this._setModalVisiblePublicKey.bind(this)}>
-                <Text style={styles.closeText}>×</Text>
-              </Button>
-              <Text style={styles.titleText}>导出公钥</Text>
-              {this.state.txt_ownerpublic != null && this.state.txt_ownerpublic != "" &&
-              <View style={styles.contentText}>
-                <Text style={styles.textContent}>Owner公钥: {this.state.txt_ownerpublic}</Text>
-              </View>
-              }
-              <View style={styles.contentText}>
-                <Text style={styles.textContent}>Active公钥: {this.state.txt_activepublic}</Text>
-              </View>
-              <Button onPress={() => { this.copyPublicKey() }}>
                 <View style={styles.buttonView}>
                   <Text style={styles.buttonText}>复制</Text>
                 </View>

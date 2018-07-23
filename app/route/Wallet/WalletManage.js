@@ -39,7 +39,6 @@ class WalletManage extends BaseComponent {
 
   //组件加载完成
   componentDidMount() {
-    alert(JSON.stringify(this.props.walletList));
     const { dispatch } = this.props;
     var th = this;
     this.props.dispatch({ type: 'wallet/walletList' });
