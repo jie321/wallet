@@ -422,7 +422,7 @@ class Route extends React.Component {
       this.props.dispatch({
         type: 'common/upgrade', payload: { os: DeviceInfo.getSystemName() }, callback: (data) => {
           if (data.code == 0) {
-            if (DeviceInfo.getVersion() <= data.data.version) {
+            if (DeviceInfo.getVersion() < data.data.version) {
               if (data.data.must == 1) {
                 EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
               } else {
