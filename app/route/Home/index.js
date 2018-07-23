@@ -54,6 +54,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     //加载地址数据
+    this.props.dispatch({type:'assets/getReveal',callback:(reveal)=>{ this.setState({isEye:reveal.reveal,});}});
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
       this.getDefaultWalletEosBalance();
@@ -424,13 +425,12 @@ class Home extends React.Component {
     EasyToast.show('账号复制成功');
   }
 
-  onPressReveal = (wallet) => {
-    this.props.dispatch({ type: 'assets/reveal', payload: { wallet: wallet } });
-    this.setState((previousState) => {
-        return ({
-          isEye: !previousState.isEye,
-        })
-    });
+  onPressReveal() {
+    this.props.dispatch({type:'assets/changeReveal',callback:(reveal)=>{
+      this.setState({
+        isEye:reveal.reveal,
+      });
+    }});
   }
 
   render() {
@@ -501,7 +501,7 @@ class Home extends React.Component {
                         <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name}</Text>
                     </Button>
                     <Text style={styles.addtotext}> 总资产</Text>
-                    <TouchableOpacity onPress={this.onPressReveal.bind(this,(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name)}>
+                    <TouchableOpacity onPress={this.onPressReveal.bind(this,this.state.isEye)}>
                         <Image source={this.state.isEye ? UImage.reveal : UImage.reveal_h} style={styles.imgTeOy}/>
                     </TouchableOpacity>
                     {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text></View>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text></View>) }   

@@ -213,6 +213,24 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
      },
+      *changeReveal({ payload,callback }, { call, put }) {
+        var reveal = yield call(store.get, 'reveal');  
+        // alert(JSON.stringify(reveal) );      
+        if (reveal == null) {
+            reveal = false;              
+        }else{
+            reveal = !reveal;
+        }
+        if (callback) callback({ reveal: reveal });
+        yield call(store.save, 'reveal', reveal);
+      },
+      *getReveal({ payload,callback }, { call, put }) {
+        var reveal = yield call(store.get, 'reveal');
+        if (reveal == null) {
+            reveal = false;              
+        }
+        if (callback) callback({ reveal: reveal });
+      },
     },
 
     reducers: {
