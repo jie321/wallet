@@ -41,7 +41,7 @@ class FunctionsMore extends React.Component {
     }else if (key == 'transfer') {
       navigate('TurnOut', { coins:'EOS', balance: this.props.navigation.state.params.balance });
     }else if (key == 'Resources') {
-      navigate('Resources', {});
+      navigate('Resources', {account_name:this.props.navigation.state.params.account_name});
     }else if(key == 'candy'){
       navigate('Web', { title: "糖果信息", url: "https://eosdrops.io/" });
     }else if(key == 'Bvote'){

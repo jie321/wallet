@@ -44,7 +44,7 @@ class Resources extends BaseComponent {
 
     recordMortgage = () =>{  
         const { navigate } = this.props.navigation;
-        navigate('MortgageRecord', {account_name: this.props.defaultWallet.account});
+        navigate('MortgageRecord', {account_name: this.props.navigation.state.params.account_name});
     }  
 
   // 构造函数  
@@ -85,7 +85,6 @@ class Resources extends BaseComponent {
 
   componentDidMount() {
      
-
     try {
 
         EasyLoading.show();
@@ -155,12 +154,13 @@ class Resources extends BaseComponent {
   }
 
   getAccountInfo(){
-    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
-      this.setState({ ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
+    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.navigation.state.params.account_name},callback: (data) => {
+      this.setState({ 
+          ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
           this.getInitialization(); 
     } });
     this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: (data) => {
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.navigation.state.params.account_name , symbol: 'EOS' }, callback: (data) => {
             this.setState({ currency_surplus:data?data.data.replace('EOS', "") :'0',});
     }});
   } 
@@ -178,9 +178,9 @@ class Resources extends BaseComponent {
   }
 
   getBalance() { 
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+    if (this.props.navigation.state.params != null && this.props.navigation.state.params.account_name != null) {
       this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.navigation.state.params.account_name, symbol: 'EOS' }, callback: (data) => {
             this.setEosBalance(data);
         }
       })

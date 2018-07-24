@@ -270,7 +270,7 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });  
         return;
       }
-      navigate('FunctionsMore', {data, balance: this.state.balance});
+      navigate('FunctionsMore', {data, balance: this.state.balance,account_name:(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name});
     }else if (key == 'transfer') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
@@ -288,7 +288,7 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });  
         return;
       }
-      navigate('Resources', {});
+      navigate('Resources', {account_name:(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name});
     }else if(key == 'addAssets'){
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
