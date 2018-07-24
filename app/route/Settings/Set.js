@@ -78,7 +78,7 @@ class Set extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
-      <View style={styles.scrollView}>
+      {/* <View style={styles.scrollView}>
           <Button onPress={() => this.gesturepass()}>
             <View style={styles.listItem}>
                 <View style={styles.listInfo}>
@@ -123,7 +123,7 @@ class Set extends BaseComponent {
                 </View>
               </View>
           </View>
-      </View>
+      </View> */}
       <View style={styles.btnout}>
         <Button onPress={() => this.logout()}>
           <View style={styles.btnloginUser}>

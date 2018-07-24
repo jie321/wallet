@@ -27,12 +27,13 @@ class Setting extends React.Component {
     }
     
     this.config = [
-      { avatar:UImage.my_wallet, first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
-      { avatar:UImage.my_share,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      { avatar:UImage.my_recovery, name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
-      { avatar:UImage.my_community, name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
-      { avatar:UImage.my_help, name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
-      { avatar:UImage.my_system, name: "系统设置", onPress: this.goPage.bind(this, "set") },
+      // { avatar:UImage.my_wallet, first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
+      // { avatar:UImage.my_share,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
+      // { avatar:UImage.my_recovery, name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
+      // { avatar:UImage.my_community, name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
+      // { avatar:UImage.my_help, name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
+      // { avatar:UImage.my_system, name: "系统设置", onPress: this.goPage.bind(this, "set") },
+
     ];
   }
 
@@ -113,6 +114,18 @@ class Setting extends React.Component {
     }
   }
 
+  logout = () =>{
+    if(this.props.loginUser){
+      this.props.dispatch({type:'login/logout',payload:{},callback:()=>{
+        // this.props.navigation.goBack();
+        AnalyticsUtil.onEvent('Sign_out');
+      }});
+    }else{
+      const { navigate } = this.props.navigation;
+      navigate('Login', {});
+    } 
+  }
+
   render() {
     return <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -123,16 +136,18 @@ class Setting extends React.Component {
                 <Image source={UImage.logo} style={styles.headimg} />
                 <Text style={styles.headtext}>{(this.props.loginUser) ? this.props.loginUser.nickname : "登陆"}</Text>
               </View>
-              <View style={styles.signedout}>
+              {/* <View style={styles.signedout}>
                 {
                   <Button onPress={this.signIn.bind(this)} style={styles.signedbtn}>
                     <Image source={UImage.signed} style={styles.signedimg} />
                   </Button>
                 }
-              </View>
+              </View> */}
             </View>
+
+ 
           </Button>
-          <Button style={styles.eosbtn}>
+          {/* <Button style={styles.eosbtn}>
             <View style={styles.eosbtnout}>
               <View style={styles.eosout}>
                 <Text style={styles.eosbtntext}>EOS奖励</Text>
@@ -146,13 +161,25 @@ class Setting extends React.Component {
                 }
               </View>
             </View>
-          </Button>
+          </Button> */}
           <View>
-            {this._renderListItem()}
+
+
+              <View style={styles.btnout}>
+                <Button onPress={() => this.logout()}>
+                  <View style={styles.btnloginUser}>
+                    <Text style={styles.btntext}>{this.props.loginUser?"退出登陆":"登陆"}</Text>
+                  </View>
+                </Button>
+              </View>
+           
+
+
+            {/* {this._renderListItem()} */}
           </View>
           <View style={styles.footer}>
             <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
-            <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text>
+            <Text style={styles.foottext}>eostoken V{DeviceInfo.getVersion()}</Text>
             {/* <Text style={styles.foottext}>EOS专业版钱包 V2.1.8</Text> */}
           </View>
         </View>
@@ -293,8 +320,8 @@ const styles = StyleSheet.create({
 
   footer: {
     flex: 1,
-    marginTop: 10,
-    flexDirection: 'column'
+    marginTop: 100,
+    flexDirection: 'column',
   },
   foottext: {
     fontSize: 10,
@@ -303,6 +330,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 5
   },
+
+
+  btnout: {
+    height: 80, 
+    marginBottom: 30,
+  },
+  btnloginUser: {
+    height: 45,
+    backgroundColor: UColor.tintColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    borderRadius: 5
+  },
+  btntext: {
+    fontSize:15,
+    color: UColor.fontColor,
+  },
+
+
 });
 
 export default Setting;

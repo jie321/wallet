@@ -83,7 +83,7 @@ var WeChat = require('react-native-wechat');
 
 const TabContainer = TabNavigator(
   {
-    Home: { screen: Home },
+    // Home: { screen: Home },
     Coins: { screen: Coins },
     News: { screen: News },
     Settings: { screen: Settings }
@@ -94,9 +94,9 @@ const TabContainer = TabNavigator(
         const { routeName } = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'Home':
-            iconName = focused ? UImage.tab_1_h : UImage.tab_1
-            break;
+          // case 'Home':
+          //   iconName = focused ? UImage.tab_1_h : UImage.tab_1
+          //   break;
           case 'Coins':
             iconName = focused ? UImage.tab_2_h : UImage.tab_2
             break;
