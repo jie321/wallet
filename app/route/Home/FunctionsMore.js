@@ -43,9 +43,9 @@ class FunctionsMore extends React.Component {
     }else if (key == 'Resources') {
       navigate('Resources', {});
     }else if(key == 'candy'){
-        // navigate('Web', { title: "服务及隐私条款", url: "http://static.eostoken.im/html/reg.html" });
+      navigate('Web', { title: "糖果信息", url: "https://eosdrops.io/" });
     }else if(key == 'Bvote'){
-        navigate('Bvote', {});
+      navigate('Bvote', {});
     } else{
       EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -72,14 +72,20 @@ class FunctionsMore extends React.Component {
                     <Text style={styles.headbtntext}>资源管理</Text>
                 </View>
             </Button>
+            <Button onPress={this.onPress.bind(this, 'Cputrend')} style={styles.headbtn}>
+                <View style={styles.headbtnout}>
+                    <Image source={UImage.trend_cpu} style={styles.imgBtn} />
+                    <Text style={styles.headbtntext}>内存走势</Text>
+                </View>                      
+            </Button>
+        </View>
+        <View style={styles.head}>
             <Button onPress={this.onPress.bind(this, 'Bvote')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>
                     <Image source={UImage.vote_node} style={styles.imgBtn} />
                     <Text style={styles.headbtntext}>节点投票</Text>
                 </View>                      
             </Button>
-        </View>
-        <View style={styles.head}>
             <Button onPress={this.onPress.bind(this, 'candy')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>
                     <Image source={UImage.candy} style={styles.imgBtn} />
