@@ -164,7 +164,10 @@ class BackupsPkey extends BaseComponent {
                 <View style={styles.inptoutbg}>
                     <View style={styles.headout}>
                         <Text style={styles.inptitle}>立即备份你的私钥</Text>
-                        <Text style={styles.headtitle}>安全警告：私钥相当于您的银行卡密码，请妥善保管！（切勿截图、存储到网络硬盘、微信等传输！）</Text>
+                        <View style={styles.warningout}>
+                            <Image source={UImage.warning} style={styles.imgBtn} />
+                            <Text style={styles.headtitle}>安全警告：私钥相当于您的银行卡密码，请妥善保管！（切勿截图、存储到网络硬盘、微信等传输！）</Text>
+                        </View>
                     </View> 
                     {this.state.activePk != ''&& 
                     <View style={styles.inptoutgo} >
@@ -253,15 +256,26 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 15,
     },
-    headtitle: {
-        color: UColor.showy,
-        fontSize: 14,
-        lineHeight: 25,
+    warningout: {
+        width: maxWidth-40,
+        flexDirection: "row",
+        alignItems: 'center', 
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderColor: UColor.showy,
         borderWidth: 1,
         borderRadius: 5,
+    },
+    imgBtn: {
+        width: 20,
+        height: 20,
+    },
+    headtitle: {
+        flex: 1,
+        color: UColor.showy,
+        fontSize: 14,
+        lineHeight: 25,
+        paddingLeft: 10,
     },
     inptoutbg: {
         backgroundColor: UColor.mainColor,

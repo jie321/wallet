@@ -48,12 +48,13 @@ class Home extends React.Component {
       Invalid: false,
       arr1: 0,
       isChecked: true,
-      isEye: true,
+      isEye: false,
     };
   }
 
   componentDidMount() {
     //加载地址数据
+    this.props.dispatch({type:'assets/getReveal',callback:(reveal)=>{ this.setState({isEye:reveal.reveal,});}});
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
       this.getDefaultWalletEosBalance();
@@ -250,9 +251,8 @@ class Home extends React.Component {
       return;
     }
 
-    if (key == 'qr') {
+    if (key == 'Receivables') {
       AnalyticsUtil.onEvent('Receipt_code');
-
       if (this.props.defaultWallet != null && this.props.defaultWallet.name != null && (this.props.defaultWallet.isactived && this.props.defaultWallet.hasOwnProperty('isactived'))) {
         // this._setModalVisible();
         navigate('TurnIn', {});
@@ -262,7 +262,7 @@ class Home extends React.Component {
           EasyDialog.dismis()
         }, () => { EasyDialog.dismis() });
       }
-    }else if (key == 'Bvote') {
+    }else if (key == 'functionsMore') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
@@ -270,7 +270,7 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });  
         return;
       }
-      navigate('Bvote', {data, balance: this.state.balance});
+      navigate('FunctionsMore', {data, balance: this.state.balance,account_name:(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name});
     }else if (key == 'transfer') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
@@ -288,8 +288,8 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });  
         return;
       }
-      navigate('Resources', {});
-    }else if(key == 'add'){
+      navigate('Resources', {account_name:(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name});
+    }else if(key == 'addAssets'){
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
         EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
@@ -425,12 +425,12 @@ class Home extends React.Component {
     EasyToast.show('账号复制成功');
   }
 
-  _onPressListItem() {
-    this.setState((previousState) => {
-        return ({
-          isEye: !previousState.isEye,
-        })
-    });
+  onPressReveal() {
+    this.props.dispatch({type:'assets/changeReveal',callback:(reveal)=>{
+      this.setState({
+        isEye:reveal.reveal,
+      });
+    }});
   }
 
   render() {
@@ -467,7 +467,7 @@ class Home extends React.Component {
           </View>
           <ImageBackground style={styles.bgout} source={UImage.home_bg} resizeMode="cover">
             <View style={styles.head}>
-              <Button onPress={this.onPress.bind(this, 'qr')} style={styles.headbtn}>
+              <Button onPress={this.onPress.bind(this, 'Receivables')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>
                   <Image source={UImage.qr} style={styles.imgBtn} />
                   <Text style={styles.headbtntext}>收币</Text>
@@ -479,39 +479,39 @@ class Home extends React.Component {
                   <Text style={styles.headbtntext}>转账</Text>
                 </View>
               </Button>
-              <Button onPress={this.onPress.bind(this, 'Bvote')} style={styles.headbtn}>
-                <View style={styles.headbtnout}>
-                  <Image source={UImage.vote_node} style={styles.imgBtn} />
-                  <Text style={styles.headbtntext}>节点投票</Text>
-                </View>                      
-              </Button>
-              
               <Button  onPress={this.onPress.bind(this, 'Resources')}  style={styles.headbtn}>
                 <View style={styles.headbtnout}>
                   <Image source={UImage.resources} style={styles.imgBtn} />
                   <Text style={styles.headbtntext}>资源管理</Text>
                 </View>
               </Button>
+              <Button  onPress={this.onPress.bind(this, 'functionsMore')}  style={styles.headbtn}>
+                <View style={styles.headbtnout}>
+                  <Image source={UImage.more} style={styles.imgBtn} />
+                  <Text style={styles.headbtntext}>更多</Text>
+                </View>
+              </Button>
+              
             </View>
           </ImageBackground>
           <View style={styles.addto}>
               <View style={styles.addout}>
-                <Button onPress={this.copyname.bind(this,this.props.defaultWallet)} style={styles.topout}>
                   <View style={styles.topout} >
-                    <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name}</Text>
-                    <Text style={styles.addtotext}> 总资产 </Text>
-                    <TouchableOpacity onPress={() => this._onPressListItem()}>
+                    <Button onPress={this.copyname.bind(this,this.props.defaultWallet)} >
+                        <Text style={styles.addtotext}>{(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name}</Text>
+                    </Button>
+                    <Text style={styles.addtotext}> 总资产</Text>
+                    <TouchableOpacity onPress={this.onPressReveal.bind(this,this.state.isEye)}>
                         <Image source={this.state.isEye ? UImage.reveal : UImage.reveal_h} style={styles.imgTeOy}/>
                     </TouchableOpacity>
                     {(this.props.defaultWallet != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) ? <View style={styles.notactivedout}><Text style={styles.notactived} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未激活</Text></View>:((this.props.defaultWallet == null || this.props.defaultWallet.name == null || (this.props.defaultWallet != null &&this.props.defaultWallet.isBackups)) ? null :  <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups} onPress={this.WalletDetail.bind(this,this.props.defaultWallet)}>未备份</Text></View>) }   
                   </View>
-                </Button>
                 <View style={styles.addtoout}>
                   <Text style={styles.addtoouttext}>≈{this.state.isEye ? (this.props.defaultWallet == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) ? '0.00' : this.adjustTotalBalance(this.state.totalBalance) : '****'}（￥）</Text>
                   <Text style={(this.state.increase>=0 || this.state.totalBalance == "0.00")?styles.incdo:styles.incup}>今日 {this.state.isEye ? this.getTodayIncrease() : '****'}</Text>
                 </View>
               </View>
-              <Button onPress={this.onPress.bind(this, 'add')} style={styles.addtobtn}>  
+              <Button onPress={this.onPress.bind(this, 'addAssets')} style={styles.addtobtn}>  
                 <View style={styles.addbtnout}>             
                   <Image source={UImage.add} style={styles.imgBtn} />
                   <Text style={styles.addbtnimg}>添加资产</Text>  
@@ -712,8 +712,8 @@ const styles = StyleSheet.create({
     color: UColor.fontColor
   },
   imgTeOy: {
-    width: 35,
-    height: 30,
+    width: 25,
+    height: 15,
     marginHorizontal:5,
   },
   addtoout: {
@@ -860,31 +860,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalStyle: {
-    width: maxWidth,  height: maxHeight*2/3,  backgroundColor: UColor.fontColor,
-  }, 
+      width: maxWidth,
+      height: maxHeight * 2 / 3,
+      backgroundColor: UColor.fontColor,
+  },
   subView: {
-    flexDirection: "row", alignItems: 'center', justifyContent: 'center', height: 30, marginVertical: 15, paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
+    marginVertical: 15,
+    paddingHorizontal: 10,
   },
   titleText: {
-    width: 40, color: '#CBCBCB', fontSize: 28, textAlign: 'center',
+    width: 40,
+    color: '#CBCBCB',
+    fontSize: 28,
+    textAlign: 'center',
   },
   contentText: {
-    flex: 1, fontSize: 18,fontWeight: 'bold',textAlign: 'center',
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   buttonView: {
     alignItems: 'flex-end',
   },
   prompt: {
-    fontSize: 12, color: UColor.showy, textAlign: 'left', marginBottom: 20, paddingHorizontal: 20,
+    fontSize: 12,
+    color: UColor.showy,
+    textAlign: 'left',
+    marginBottom: 20,
+    paddingHorizontal: 20,
   },
   codeout: {
-    height: 50,flexDirection: "row", alignItems: 'center', marginHorizontal: 15, borderBottomColor: '#E5E5E5', borderBottomWidth: 1, 
+    height: 50,
+    flexDirection: "row",
+    alignItems: 'center',
+    marginHorizontal: 15,
+    borderBottomColor: '#E5E5E5',
+    borderBottomWidth: 1,
   },
   copyout: {
-    flex: 1, paddingLeft: 30,
+    flex: 1,
+    paddingLeft: 30,
   },
   copytext: {
-    fontSize: 15, color: '#4D4D4D'
+    fontSize: 15,
+    color: '#4D4D4D'
   },
 
   lefts: {

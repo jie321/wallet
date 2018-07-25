@@ -21,6 +21,7 @@ import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
 import Add_assets from './Home/Add_assets'
 import Coin_search from './Home/Coin_search'
+import FunctionsMore from './Home/FunctionsMore'
 import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
 import TradeDetails from './Home/TradeDetails'
@@ -43,7 +44,8 @@ import WalletManage from './Wallet/WalletManage'
 import WalletDetail from './Wallet/WalletDetail'
 import ModifyPassword from './Wallet/ModifyPassword'
 import ExportKeystore from './Wallet/ExportKeystore'
-import ExportPrivateKey from './Wallet/ExportPrivateKey'
+import ExportPrivateKey from './Wallet/ExportPrivateKey' 
+import ExportPublicKey from './Wallet/ExportPublicKey'
 import BarCode from './Wallet/BarcodeTest'
 // import AddressQr from './Wallet/AddressQr'
 import { EasyToast } from "../components/Toast"
@@ -63,6 +65,8 @@ import Nodevoting from './Settings/Nodevoting'
 import Bvote from './Settings/Bvote'
 import Calculation from './Settings/Calculation'
 import Memory from './Settings/Memory'
+import MortgageInquiry from './Settings/MortgageInquiry'
+import MortgageRecord from './Settings/MortgageRecord'
 import Network from './Settings/Network'
 import Boot from './Boot'
 import moment from 'moment';
@@ -207,11 +211,20 @@ const Nav = StackNavigator(
     ExportPrivateKey: {
       screen: ExportPrivateKey
     },
+    ExportPublicKey: {
+      screen: ExportPublicKey
+    },
     ModifyPassword: {
       screen: ModifyPassword
     },
     Memory: {
       screen: Memory
+    },
+    MortgageInquiry: {
+      screen: MortgageInquiry
+    },
+    MortgageRecord: {
+      screen: MortgageRecord
     },
     Network: {
       screen: Network
@@ -269,6 +282,9 @@ const Nav = StackNavigator(
     },
     Coin_search: {
       screen: Coin_search
+    },
+    FunctionsMore: {
+      screen:FunctionsMore
     },
     AssetInfo: {
       screen: AssetInfo

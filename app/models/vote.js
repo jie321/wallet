@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice} from '../utils/Api';
+import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice, listMortgage} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 let newarr = new Array();
@@ -73,12 +73,15 @@ export default {
      *getGlobalInfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getGlobalInfo, 'post', payload);
-            if(resp.code=='0'){               
-                // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
+            let total = (resp.data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2);
+            let used = (resp.data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2);
+            let used_Percentage= (((resp.data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) / (resp.data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2)) * 10000 / 100).toFixed()
+            if(resp.code=='0'){    
+                yield put({ type: 'updateGlobal', payload: { total:total,used:used,used_Percentage:used_Percentage } });
             }else{
                 EasyToast.show(resp.msg);
             }
-            if (callback) callback(resp.data);
+            // if (callback) callback({total:total,used:used,used_Percentage:used_Percentage});
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
         }
@@ -87,7 +90,20 @@ export default {
         try{
             const resp = yield call(Request.request, queryRamPrice, 'post', payload);
             if(resp.code=='0'){               
-                // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
+                // yield put({ type: 'updatequeryRamPrice', payload: { Currentprice:resp.data } });
+            }else{
+                EasyToast.show(resp.msg);
+            }
+            if (callback) callback(resp.data);
+        } catch (error) {
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+     },
+     *getMortgagelist({payload,callback},{call,put}) {
+        try{
+            const resp = yield call(Request.request, listMortgage, 'post', payload);
+            if(resp.code=='0'){               
+                yield put({ type: 'updateMortgage', payload: { Mortgagelist:resp.data } });
             }else{
                 EasyToast.show(resp.msg);
             }
@@ -101,6 +117,9 @@ export default {
     reducers : {
         updateVote(state, action) {      
             return {...state,voteData:action.payload.voteData};  
+        },
+        updateMortgage(state, action) {  
+            return {...state,Mortgagelist:action.payload.Mortgagelist.rows};  
         },
         updateSelect(state, action) {
             let dts = state.voteData;
@@ -124,14 +143,16 @@ export default {
                 for(var j = 0; j < action.payload.producers.length; j++){
                     if(action.payload.producers[j] == (arr[i].account)){
                         arr1.push(arr[i]);
-                       }
+                    }
                 }
             }
-            // alert("producers : " + JSON.stringify(arr1));
             return {...state, producers: arr1};      
         }, 
         updateResources(state, action) {      
             return {...state,Resources:action.payload.Resources};  
+        },
+        updateGlobal(state, action) {  
+            return {...state,globaldata:action.payload};  
         },
     }
   }
