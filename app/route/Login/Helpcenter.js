@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, Switch } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, Switch, TouchableHighlight } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -38,15 +38,15 @@ class Helpcenter extends BaseComponent {
     }
     
     this.config = [
-      { first: true, name: "EOS常见问题？", onPress: this.goPage.bind(this, "commonproblem") },
-      { name: "什么是钱包？", onPress: this.goPage.bind(this, "wallet") },
+      //{ first: true, name: "EOS常见问题？", onPress: this.goPage.bind(this, "commonproblem") },
+      { first: true, name: "什么是钱包？", onPress: this.goPage.bind(this, "wallet") },
       { name: "什么是私钥？", onPress: this.goPage.bind(this, "ks") },
-      { name: "什么是助记词？", onPress: this.goPage.bind(this, "mw") },
-      { first: true, name: "如何导入EOS钱包？", onPress: this.goPage.bind(this, "iw") },
+      //{ name: "什么是助记词？", onPress: this.goPage.bind(this, "mw") },
+      { name: "如何导入EOS钱包？", onPress: this.goPage.bind(this, "iw") },
       { name: "如何添加钱包？", onPress: this.goPage.bind(this, "atw") },
-      { name: "如何备份钱包？", onPress: this.goPage.bind(this, "bw") },
+      //{ name: "如何备份钱包？", onPress: this.goPage.bind(this, "bw") },
       { name: "如何转账？", onPress: this.goPage.bind(this, "ta") },
-      { name: "EOS超级代理投票说明", onPress: this.goPage.bind(this, "vote") },
+      //{ name: "EOS超级代理投票说明", onPress: this.goPage.bind(this, "vote") },
     ];
 
     
@@ -65,7 +65,7 @@ class Helpcenter extends BaseComponent {
   goPage(key, data = {}) {
     const { navigate } = this.props.navigation;
     if (key == "commonproblem"){
-      navigate('Web', { title: "关于EosToken常见问题及解答", url: "http://static.eostoken.im/html/20180705/1530781835326.html" });
+      navigate('Web', { title: "EOS常见问题", url: "http://static.eostoken.im/html/20180705/1530781835326.html" });
     } else if (key == "wallet") {
       navigate('Web', { title: "帮助中心", url: "http://static.eostoken.im/html/Wallet.html" });
     } else if (key == 'ks') {
@@ -84,6 +84,10 @@ class Helpcenter extends BaseComponent {
       navigate('Web', { title: "帮助中心", url: "http://static.eostoken.im/html/VoteCourse.html" });
     }else if (key == 'pf'){
       navigate('ProblemFeedback', {});
+    }else if (key == 'NoviceMustRead') {
+      navigate('Web', { title: "新手必读", url: "http://static.eostoken.im/html/NoviceMustRead.html" });
+    }else if (key == 'Troubleshooting') {
+      navigate('Web', { title: "疑难解答", url: "http://static.eostoken.im/html/Troubleshooting.html" });
     }else{
       EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
@@ -96,20 +100,34 @@ class Helpcenter extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView>
+          <View style={styles.touchableout}>
+            <TouchableHighlight onPress={this.goPage.bind(this, 'commonproblem')} style={styles.touchable} activeOpacity={0.5} underlayColor={UColor.secdColor}>
+              <View style={styles.listItem} borderColor={UColor.arrow}>
+                <Text style={styles.fontColortext}>EOS常见问题？</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.goPage.bind(this, 'NoviceMustRead')} style={styles.touchable} activeOpacity={0.5} underlayColor={UColor.secdColor}>
+              <View style={styles.listItem} borderColor={UColor.arrow}>
+                <Text style={styles.fontColortext}>新手必读？</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.touchableout}>
+            <TouchableHighlight onPress={this.goPage.bind(this, 'Troubleshooting')}  style={styles.touchable} activeOpacity={0.5} underlayColor={UColor.secdColor}>
+              <View style={styles.listItem} borderColor={UColor.arrow}>
+                <Text style={styles.fontColortext} >疑难解答？</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.goPage.bind(this, 'pf')} style={styles.touchable} activeOpacity={0.5} underlayColor={UColor.secdColor}>
+              <View style={styles.listItem} borderColor={UColor.tintColor}>
+                <Text style={styles.tintColortext}  >问题反馈</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
           <View>
             {this._renderListItem()}
           </View>
-          <Button onPress={this.goPage.bind(this, 'pf')}>
-            <View style={styles.listItem}>
-                <View style={styles.listInfo}>
-                  <View style={{flex: 1}}><Text style={{color:UColor.tintColor, fontSize:16}}>问题反馈</Text></View>
-                  <View style={styles.listInfoRight}>            
-                    <Font.Ionicons style={{marginLeft: 10}} name="ios-arrow-forward-outline" size={16} color={UColor.arrow} />
-                  </View>
-                </View>
-              </View>
-          </Button>
         </ScrollView>
     </View>
   }
@@ -121,27 +139,33 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       backgroundColor: UColor.secdColor,
     },
+    touchableout: {
+      flex: 1, 
+      flexDirection: "row",
+      paddingTop: 10,
+    },
+    touchable:{
+      flex: 1, 
+      marginHorizontal: 3, 
+    },
+    fontColortext: {
+      fontSize:15,
+      color:UColor.fontColor,
+    },
+    tintColortext: {
+      fontSize:15,
+      color:UColor.tintColor
+    },
     listItem: {
-      height: 56,
+      height: 76,
       backgroundColor: UColor.mainColor,
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      marginTop: 15
+      borderWidth: 1,
+      borderRadius: 5, 
     },
-    listInfo: {
-      height: 56,
-      flex: 1,
-      paddingLeft: 16,
-      paddingRight: 16,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    listInfoRight: {
-      flexDirection: "row",
-      alignItems: "center"
-    }
+  
 });
 
 export default Helpcenter;
