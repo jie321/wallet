@@ -120,7 +120,7 @@ class createWallet extends BaseComponent {
           EasyLoading.dismis();
           EasyToast.show("账号已被别人占用，请换个账号吧！");
         }else{
-          // 创建未激活钱包，并进入备份钱包流程
+          // 创建未激活钱包，并进入备份私钥流程
           var arr_owner = [];
           var arr_active = [];
           var words_owner = [];
