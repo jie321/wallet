@@ -63,11 +63,6 @@ class MortgageRecord extends React.Component {
     });
   }
 
-  componentWillUnmount(){
-    //结束页面前，资源释放操作
-    super.componentWillUnmount();
-  }
-
   render() {
     return (<View style={styles.container}>
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 

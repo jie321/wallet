@@ -8,6 +8,7 @@ import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import Item from '../../components/Item'
+import CountDownReact from '../../components/CountDownReact'
 import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
@@ -145,7 +146,6 @@ class Resources extends BaseComponent {
     } catch (error) {
         EasyLoading.dismis();
     }
-    
   }
 
   componentWillUnmount(){
@@ -226,10 +226,10 @@ class Resources extends BaseComponent {
                 column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.cpu_weight.replace("EOS", "")*100)/100,
-                ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
+                ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.cpu_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '剩余(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.cpu_amount.replace("EOS", "")*100)/100 : '0.00 EOS') + ')',
+                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.cpu_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
             })
         }else if (current == 'isNetwork'){
             this.setState({ 
@@ -239,10 +239,10 @@ class Resources extends BaseComponent {
                 column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
-                ContrastThree: (this.props.Resources.refund_request?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
+                ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.net_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '剩余(kb)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ (this.props.Resources.refund_request ?  Math.floor(this.props.Resources.refund_request.net_amount.replace("EOS", "")*100)/100 : '0.00 EOS') + ')',
+                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.net_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
             })
         }else if (current == 'isBuyForOther'){
             this.setState({ 
@@ -392,33 +392,12 @@ class Resources extends BaseComponent {
 
     //转换时间
     transferTimeZone(date){
-        //转换时间
-        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-        let regEx = new RegExp("\\-","gi");
-        let validDateStr=timezone.replace(regEx,"/");
-        let milliseconds=Date.parse(validDateStr);
-        let sendTime = new Date(milliseconds).getTime();
-        //当前时间
-        let nowTime = new Date().getTime();
-        //72小时
-        let ThreeTime = 259200000;
-        //差值
-        let Dvalue = nowTime - sendTime ;
-        let SurplusTime = ThreeTime - Dvalue
-        // 时 
-        const hours = Math.floor(SurplusTime / (3600 * 1000)); 
-        // 分 
-        const leave2 = SurplusTime % (3600 * 1000); 
-        const minutes = Math.floor(leave2 / (60 * 1000)); 
-        // 秒 
-        const leave3 = leave2 % (60 * 1000); 
-        const seconds = Math.round(leave3 / 1000); 
-        let Surplus = hours + ':' + minutes + ':' + seconds
-        return Surplus;
+        // //转换时间
+        let timezone = moment(date).add(72,'hours').format('YYYY-MM-DDTHH:mm:ss');
+        return  timezone;
     }
 
-    chkAmountIsZero(amount,errInfo)
-    {
+    chkAmountIsZero(amount,errInfo){
         var tmp;
         try {
              tmp = parseFloat(amount);
@@ -756,32 +735,41 @@ class Resources extends BaseComponent {
                 <ScrollView keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                         <View style={styles.tetleout}>
-                        <Text style={styles.tetletext}>{this.state.tetletext}</Text>
-                        <ImageBackground source={UImage.line_bg} resizeMode="cover" style={styles.linebgout}>
-                            <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
-                                <View style={styles.stripbg} height={this.state.column_One}/>
+                            <Text style={styles.tetletext}>{this.state.tetletext}</Text>
+                            <ImageBackground source={UImage.line_bg} resizeMode="cover" style={styles.linebgout}>
+                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                    <View style={styles.stripbg} height={this.state.column_One}/>
+                                </ImageBackground>
+                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                    <View style={styles.stripbg} height={this.state.column_Two}/>
+                                </ImageBackground>
+                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                    <View style={styles.stripbg} height={this.state.column_Three}/>
+                                </ImageBackground>
                             </ImageBackground>
-                            <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
-                                <View style={styles.stripbg} height={this.state.column_Two}/>
-                            </ImageBackground>
-                            <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
-                                <View style={styles.stripbg} height={this.state.column_Three}/>
-                            </ImageBackground>
-                        </ImageBackground>
-                        <View style={styles.record}>
-                            <View style={styles.recordout}>
-                                <Text style={styles.ratiotext}>{this.state.ContrastOne}</Text>
-                                <Text style={styles.recordtext}>{this.state.percentageOne}</Text>
+                            <View style={styles.record}>
+                                <View style={styles.recordout}>
+                                    <Text style={styles.ratiotext}>{this.state.ContrastOne}</Text>
+                                    <Text style={styles.recordtext}>{this.state.percentageOne}</Text>
+                                </View>
+                                <View style={styles.recordout}>
+                                    <Text  style={styles.ratiotext}>{this.state.ContrastTwo}</Text>
+                                    <Text style={styles.recordtext}>{this.state.percentageTwo}</Text>
+                                </View>
+                                <View style={styles.recordout}>
+                                {this.state.isCalculation||this.state.isNetwork?<CountDownReact
+                                    date= {this.state.ContrastThree}
+                                    hours=':'
+                                    mins=':'
+                                    hoursStyle={styles.ratiotext}
+                                    minsStyle={styles.ratiotext}
+                                    secsStyle={styles.ratiotext}
+                                    firstColonStyle={styles.ratiotext}
+                                    secondColonStyle={styles.ratiotext}
+                                />:<Text  style={styles.ratiotext}>{this.state.ContrastThree}</Text>}
+                                    <Text style={styles.recordtext}>{this.state.percentageThree}</Text>
+                                </View>
                             </View>
-                            <View style={styles.recordout}>
-                                <Text  style={styles.ratiotext}>{this.state.ContrastTwo}</Text>
-                                <Text style={styles.recordtext}>{this.state.percentageTwo}</Text>
-                            </View>
-                            <View style={styles.recordout}>
-                                <Text  style={styles.ratiotext}>{this.state.ContrastThree}</Text>
-                                <Text style={styles.recordtext}>{this.state.percentageThree}</Text>
-                            </View>
-                        </View>
                         </View>
                         <View style={styles.tablayout}>  
                             {this.resourceButton(styles.buttontab, this.state.isMemory, 'isMemory', '内存资源')}  
