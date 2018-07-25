@@ -151,13 +151,27 @@ class News extends React.Component {
     AnalyticsUtil.onEvent('Forward');
   }
 
-  bannerPress = (banner) => {
-    if (banner && banner.url && banner.url != "") {
+  // bannerPress = (banner) => {
+  //   if (banner && banner.url && banner.url != "") {
+  //     const { navigate } = this.props.navigation;
+  //     // let url = banner.url.replace(/^\s+|\s+$/g, "");
+  //     // navigate('Web', { title: banner.title, url: url });
+  //     let url = "https://github.com/eostoken/wallet".replace(/^\s+|\s+$/g, "");
+  //     navigate('Web', { title: "EosToken开源", url: url });
+  //   }
+  // }
+
+  bannerPress = () => {
+
       const { navigate } = this.props.navigation;
-      let url = banner.url.replace(/^\s+|\s+$/g, "");
-      navigate('Web', { title: banner.title, url: url });
-    }
+      // let url = banner.url.replace(/^\s+|\s+$/g, "");
+      // navigate('Web', { title: banner.title, url: url });
+      let url = "https://github.com/eostoken/wallet".replace(/^\s+|\s+$/g, "");
+      navigate('Web', { title: "EosToken开源", url: url });
+    
   }
+  
+
 
   //切换tab
   _handleIndexChange = index => {
@@ -211,7 +225,7 @@ class News extends React.Component {
           <Swiper
             height={this.state.h}
             loop={true}  
-            autoplay={true}
+            autoplay={false}
             horizontal={true}  
             autoplayTimeout={5} 
             paginationStyle={{ bottom: 10 }}
@@ -269,11 +283,17 @@ class News extends React.Component {
 
   renderSwipeView() {
     if (this.props.banners != null) {
-      return this.props.banners.map((item, i) => {
-        return (<Button key={i} onPress={this.bannerPress.bind(this, item)}>
-          <Image source={{ uri: item.img }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+      // return this.props.banners.map((item, i) => {
+      //   return (<Button key={i} onPress={this.bannerPress.bind(this, item)}>
+      //     {/* <Image source={{ uri: item.img }} style={{ width: '100%', height: '100%' }} resizeMode="cover" /> */}
+      //     <Image source={{ uri: "http://static.eostoken.im/images/20180607/1528354652779.png" }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+          
+
+      //   </Button>)
+      // })
+        return (<Button   onPress={this.bannerPress.bind(this)}>
+          <Image source={{ uri: "http://static.eostoken.im/images/20180607/1528354652779.png" }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
         </Button>)
-      })
     } else {
       return (<View></View>)
     }

@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
 
 
   btnout: {
+    marginTop: 180,
     height: 80, 
     marginBottom: 30,
   },
