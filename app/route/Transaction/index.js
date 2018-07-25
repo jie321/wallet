@@ -119,15 +119,10 @@ class Transaction extends BaseComponent {
         this.getAccountInfo();
         this.getBalance();
     }});
-    
-    DeviceEventEmitter.addListener('eos_balance', (data) => {
-        if (data.code == '0') {
-            this.setEosBalance(data.data);
-        }
-    });
 
     DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
         this.getRamInfo();
+        this.getBalance();
     });
 
   }

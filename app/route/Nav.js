@@ -802,6 +802,7 @@ class Route extends React.Component {
         }
       }});
     }else if(action && action.routeName && action.routeName == "Transaction"){
+      this.stopTimer();
       this.startTxTimer();
       DeviceEventEmitter.emit('changeTab', action.routeName);
       routeLength = nav.routes.length;
