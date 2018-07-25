@@ -55,4 +55,8 @@ export const listMortgage = rootaddr + '/eosrpc/getAccountDelbandInfo'
 
 export const getRamInfo = rootaddr + '/ramprice/ramPriceInfo';
 export const getRamPriceLine = rootaddr + '/ramprice/line/';
+export const getRamTradeLog = rootaddr + '/ramprice/getNewTradeOrders';
+export const getRamBigTradeLog = rootaddr + '/ramprice/getBigTradeOrders';
+
+
 

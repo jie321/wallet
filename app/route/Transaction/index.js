@@ -18,6 +18,8 @@ import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
+const trackOption = ['最近交易','持量大户'];
+
 @connect(({ram,sticker,wallet}) => ({...ram, ...sticker, ...wallet}))
 class Transaction extends BaseComponent {
 
@@ -46,7 +48,7 @@ class Transaction extends BaseComponent {
 
     this.state = {
       selectedSegment:"2小时",
-      selectedTrackSegment:"最近交易",
+      selectedTrackSegment: trackOption[0],
 
       isBuy: true,
       isSell: false,
@@ -59,24 +61,9 @@ class Transaction extends BaseComponent {
       eosToBytes: '0',
       bytesToEos: '0.00',
       sellRamBytes: "0",    //输入出售的字节数
-
       queryaccount:"",     //查询账户 
       myRamAvailable: '0', // 我的可用字节
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-      coins:{
-          code : "eos",
-          id:27,
-          img: "http://static.eostoken.im/images/20180319/1521432637907.png",
-          increase: 8.21,
-          max: 54.1535,
-          min: 48.4136,
-          name: "EOS",
-          price: 52.6686,
-          start: 48.7865,
-          txs: 8389205,
-          usd: 7.938,
-          value: 7144200000,
-      }
    };
   }
 
@@ -99,8 +86,6 @@ class Transaction extends BaseComponent {
   }
 
   componentDidMount(){
-    // const c = this.props.navigation.state.params.coins;
-    const c = this.state.coins;
 
     // 获取内存市场相关信息
     EasyLoading.show();
@@ -119,10 +104,16 @@ class Transaction extends BaseComponent {
         this.getAccountInfo();
         this.getBalance();
     }});
-
+    
     DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
         this.getRamInfo();
         this.getBalance();
+        if(this.state.isTxRecord){
+            this.getRamTradeLog();
+        }
+        if(this.state.selectedTrackSegment == trackOption[0]) {
+            this.getRamBigTradeLog();
+        }
     });
 
   }
@@ -137,6 +128,14 @@ class Transaction extends BaseComponent {
 
     // 获取曲线
     this.setSelectedOption(this.state.selectedSegment);
+  }
+
+  getRamTradeLog(){
+    this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}});    
+  }
+
+  getRamBigTradeLog(){
+    this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}});    
   }
 
   getAccountInfo(){
@@ -177,18 +176,19 @@ class Transaction extends BaseComponent {
   fetchTrackLine(type,opt){
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
-        EasyToast.show('待实现，查询区块最近交易记录');   
+        EasyLoading.show();
+        this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
+            EasyLoading.dismis();
+        }});    
     }else{
-        EasyToast.show('待实现，查询区块持量大户前10名记录');   
+        EasyToast.show('开发中，查询区块持量大户前10名记录');   
     }
   }
 
   setSelectedTrackOption(opt){
-    if(opt=="最近交易"){
-      type=0;
+    if(opt== trackOption[0]){
       this.fetchTrackLine(0,opt);
     }else {
-      type=1;
       this.fetchTrackLine(1,opt);
     }
   }
@@ -220,10 +220,18 @@ class Transaction extends BaseComponent {
     }else if (current == 'isSell'){
         // EasyToast.show('卖');
     }else if (current == 'isTxRecord'){
-         EasyToast.show('待实现,查询区块最近的20笔交易记录');
+        //  EasyToast.show('待实现,查询区块最近的20笔交易记录');
+        EasyLoading.show();
+        this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
+            EasyLoading.dismis();
+        }});    
+
     }
     else if (current == 'isTrackRecord'){
-          
+        EasyLoading.show();
+        this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
+            EasyLoading.dismis();
+        }});   
     } 
     // EasyLoading.dismis(); 
  }
@@ -569,8 +577,6 @@ class Transaction extends BaseComponent {
     return ((bytes * currentPrice) / 1024).toFixed(2);
   }
   render() {
-    // const c = this.props.navigation.state.params.coins;
-    const c = this.state.coins;
     return <View style={styles.container}>
      <ScrollView style={styles.scrollView}>
       <View>
@@ -732,7 +738,7 @@ class Transaction extends BaseComponent {
                     </TouchableOpacity> 
                  </View>
                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.ramTradeLog == null ? [] : this.props.ramTradeLog)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
                         <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
@@ -741,16 +747,16 @@ class Transaction extends BaseComponent {
                                       borderRadius: 5,margin: 5,}}>
                             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
-                                    <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
+                                    <Text style={styles.timetext}>{rowData.payer}</Text>
+                                    <Text style={styles.quantity}>{rowData.record_date}</Text>
                                 </View>
                                 <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                    {rowData.type == '转出' ? 
-                                    <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                    {rowData.action_name == 'sellram' ? 
+                                    <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {rowData.eos_qty}</Text>
                                     :
-                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
                                     }
-                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>（{rowData.description}）</Text>
+                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.price} EOS/KB</Text>
                                 </View>
                             </View>
                             <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
@@ -770,12 +776,12 @@ class Transaction extends BaseComponent {
                   selectedTint= {'#43536D'}
                   onSelection={this.setSelectedTrackOption.bind(this) }
                   selectedOption={ this.state.selectedTrackSegment }
-                  backTint= {'#43536D'} options={['最近交易','持量大户']} />
+                  backTint= {'#43536D'} options={trackOption} />
                 </View>
-                {this.state.selectedTrackSegment == '最近交易' ? 
+                {this.state.selectedTrackSegment == trackOption[0] ? 
                   <View>
                     <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                      dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.getTradeRecord())} 
+                      dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                       renderRow={(rowData, sectionID, rowID) => (                 
                       <View>
                           <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
@@ -784,16 +790,16 @@ class Transaction extends BaseComponent {
                                         borderRadius: 5,margin: 5,}}>
                               <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                   <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                      <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
-                                      <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
+                                      <Text style={styles.timetext}>{rowData.payer}</Text>
+                                      <Text style={styles.quantity}>{rowData.record_date}</Text>
                                   </View>
                                   <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                      {rowData.type == '转出' ? 
-                                      <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                      {rowData.action_name == 'sellram' ? 
+                                      <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {rowData.eos_qty}</Text>
                                       :
-                                      <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                      <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
                                       }
-                                      <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>（{rowData.description}）</Text>
+                                      <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.price} EOS/KB</Text>
                                   </View>
                               </View>
                               <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
@@ -806,7 +812,7 @@ class Transaction extends BaseComponent {
                   </View> :
                   <View>
                       <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                        dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.getTradeRecord())} 
+                        dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                         renderRow={(rowData, sectionID, rowID) => (                 
                         <View>
                             <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
@@ -815,16 +821,16 @@ class Transaction extends BaseComponent {
                                           borderRadius: 5,margin: 5,}}>
                                 <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                     <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                        <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
-                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
+                                        <Text style={styles.timetext}>{rowData.payer}</Text>
+                                        <Text style={styles.quantity}>{rowData.record_date}</Text>
                                     </View>
                                     <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                        {rowData.type == '转出' ? 
-                                        <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                        {rowData.action_name == 'sellram' ? 
+                                        <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>卖 {rowData.eos_qty}</Text>
                                         :
-                                        <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                        <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
                                         }
-                                        <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>（{rowData.description}）</Text>
+                                        <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.price} EOS/KB</Text>
                                     </View>
                                 </View>
                                 <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
@@ -836,43 +842,55 @@ class Transaction extends BaseComponent {
                     /> 
                   </View>
                 }
-                  <Text style={{fontSize: 14,color: UColor.fontColor,lineHeight: 15,paddingHorizontal: 25,textAlign: "center"}}>成交资金分布</Text>
-                  <Text style={{fontSize: 12,color: UColor.tintColor,lineHeight: 15,paddingHorizontal: 25,textAlign: "left"}}>{this.getTextPromp()}</Text>
-                  <View style={{flex:1,paddingTop:1}}>
+                  {/* <Text style={{fontSize: 14,color: UColor.fontColor,lineHeight: 15,paddingHorizontal: 25,textAlign: "center"}}>成交资金分布</Text>
+                  <Text style={{fontSize: 12,color: UColor.tintColor,lineHeight: 15,paddingHorizontal: 25,textAlign: "left"}}>{this.getTextPromp()}</Text> */}
+                  {/* <View style={{flex:1,paddingTop:1}}>
                     {
                       <Echarts option={
                    {
-                            // title : {
-                            //     text: '某站点用户访问来源',
-                            //     subtext: '纯属虚构',
-                            //     x:'center'
-                            // },
+                            title : {
+                                text: '成交资金分布',
+                                textStyle: {
+                                    align: 'center',
+                                    color: UColor.fontColor,
+                                    fontSize: 14,
+                                },
+                                subtext: "大单>2000 中单500-200 小单<500",
+                                subtextStyle:{
+                                    align: 'left',
+                                }
+                            },
                             // tooltip : {
                             //     trigger: 'item',
                             //     formatter: "{a} <br/>{b} : {c} ({d}%)"
                             // },
                             legend: {
                                 orient: 'vertical',
-                                left: 'left',
-                                data: ['10%超大','10%大单','10%大中','15%中单','20%中小','35%小单']
+                                left: 'right',
+                                top: 'middle',
+                                data: ['超大','大单','大中','中单','中小','小单']
                             },
                             series : [
                                 {
                                     name: '',   //访问来源
                                     type: 'pie',
-                                    radius : '55%',
-                                    center: ['50%', '60%'],
+                                    radius : ['40%', '70%'],
+                                    center: ['35%', '60%'],
                                     hoverAnimation: false,
                                     animation:false,
                                     roam:false,
                                     silent:true,
+                                    label:{
+                                        show: true,
+                                        position: 'inner',
+                                    },
                                     data:[
-                                        {value:335, name:'10%超大'},
-                                        {value:310, name:'10%大单'},
-                                        {value:234, name:'10%大中'},
-                                        {value:135, name:'15%中单'},
-                                        {value:1548, name:'20%中小'},
-                                        {value:1548, name:'35%小单'}
+                                        {value:335, name:'超大'},
+                                        {value:310, name:'大单'},
+                                        {value:234, name:'大中'},
+                                        {value:135, name:'中单'},
+                                        {value:1548, name:'中小'},
+                                        {value:1548, name:'小单'}
                                     ],
                                     itemStyle: {
                                         emphasis: {
@@ -885,9 +903,9 @@ class Transaction extends BaseComponent {
                             ]
                         }
                         
-                        } width={ScreenWidth - 50} height={200} />
+                        } width={ScreenWidth - 10} height={200} />
                     }
-                  </View>
+                  </View> */}
                  </View>}
                </View>}
             </View>
