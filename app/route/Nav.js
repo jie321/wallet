@@ -775,8 +775,9 @@ class Route extends React.Component {
         }
       }});
     }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "Transaction" ||action.routeName == "News" || action.routeName == "Settings")) {
-      // this.timer && clearTimeout(this.timer);
-      this.stopTimer();
+      if(action.routeName != "Transaction"){
+        this.stopTimer();
+      }
       if (action && action.routeName) {
         DeviceEventEmitter.emit('changeTab', action.routeName);
       }

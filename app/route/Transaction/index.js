@@ -12,26 +12,21 @@ import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-const type = 1;
 let timer;
 
-var DetailsData = new Array();
-
-@connect(({coinLine,sticker}) => ({...coinLine,...sticker}))
+@connect(({ram,sticker,wallet}) => ({...ram, ...sticker, ...wallet}))
 class Transaction extends BaseComponent {
-
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
           title: '交易',
-          headerTitle: "RAM交易",
+          headerTitle: "内存交易",
           headerStyle: {
             paddingTop: Platform.OS == "ios" ? 30 : 20,
             backgroundColor: UColor.mainColor,
@@ -70,14 +65,7 @@ class Transaction extends BaseComponent {
   constructor(props) {
     super(props);
     // this.props.navigation.setParams({ onPress: this._rightTopClick });
-    var testobj = new Object();
-    testobj.blockTime = 4555455;
-    testobj.quantity ="1.0000";
-    testobj.type = '买';
-    testobj.description = "12345678EOS/KB";
 
-    DetailsData[0] =  testobj;
-    DetailsData[1] =  testobj;
     this.state = {
       selectedSegment:"2小时",
       selectedTrackSegment:"最近交易",
@@ -89,13 +77,13 @@ class Transaction extends BaseComponent {
 
       balance: '0.0000',   
 
-      ram_available:'0',   //可用ram 字节数
-      Currentprice: '0',   //当前ram价格
+      buyRamAmount: "0.00",    //输入购买的额度
+      eosToBytes: '0',
+      bytesToEos: '0.00',
+      sellRamBytes: "0",    //输入出售的字节数
 
-      buyRamAmount: "",    //输入购买的额度
-      sellRamBytes: "",    //输入出售的字节数
       queryaccount:"",     //查询账户 
-
+      myRamAvailable: '0', // 我的可用字节
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       coins:{
           code : "eos",
@@ -128,8 +116,10 @@ class Transaction extends BaseComponent {
   componentDidMount(){
     // const c = this.props.navigation.state.params.coins;
     const c = this.state.coins;
-    this.fetchLine(1,'24小时');
-    this.props.dispatch({type: 'coinLine/info',payload:{id:c.id}});
+
+    this.props.dispatch({type: 'ram/getRamInfo',payload: {}});
+
+    this.fetchLine(2,'2小时');
    
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
         this.getBalance();
@@ -154,17 +144,7 @@ class Transaction extends BaseComponent {
           this.getAccountInfo();
 
       }
-  });
-
-    this.props.dispatch({
-      type: 'vote/getqueryRamPrice',
-      payload: {},
-      callback: (data) => {
-          this.setState({
-              Currentprice: data.data ? data.data : '0.00000'
-          });
-      }
-  });
+    });
 
     InteractionManager.runAfterInteractions(() => {
        //开定时器，刷新
@@ -187,6 +167,14 @@ class Transaction extends BaseComponent {
         }, 7000);
     });
     
+    DeviceEventEmitter.addListener('eos_balance', (data) => {
+        if (data.code == '0') {
+            this.setEosBalance(data.data);
+        } else {
+            // EasyToast.show('获取余额失败：' + data.msg);
+          }
+    });
+
   }
   componentWillUnmount(){
     //结束页面前，资源释放操作
@@ -198,12 +186,8 @@ class Transaction extends BaseComponent {
   }
 
   getAccountInfo(){
-    if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
-        return;
-    }
-
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
-      this.setState({ ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
+      this.setState({ myRamAvailable:((data.total_resources.ram_bytes - data.ram_usage)).toFixed(0)});
           this.getInitialization(); 
     } });
     this.props.dispatch({
@@ -223,27 +207,20 @@ class Transaction extends BaseComponent {
 
   fetchLine(type,opt){
     this.setState({selectedSegment:opt});
-    const {dispatch} =  this.props;
-    // const c = this.props.navigation.state.params.coins;
-    const c = this.state.coins;
     InteractionManager.runAfterInteractions(() => {
-      dispatch({type:'coinLine/list',payload:{coin:c.name,type}});
+        this.props.dispatch({type:'ram/getRamPriceLine',payload:{type}});
     });
   }
 
   setSelectedOption(opt){
     if(opt=="2小时"){
-      type=0;
-      this.fetchLine(0,opt);
-    }else if(opt=="24小时"){
-      type=1;
-      this.fetchLine(1,opt);
-    }else if(opt=="7天"){
-      type=2;
       this.fetchLine(2,opt);
-    }else if(opt=="30天"){
-      type=3;
-      this.fetchLine(3,opt);
+    }else if(opt=="6小时"){
+      this.fetchLine(6,opt);
+    }else if(opt=="24小时"){
+      this.fetchLine(24,opt);
+    }else if(opt=="48小时"){
+      this.fetchLine(48,opt);
     }
   }
 
@@ -269,20 +246,22 @@ class Transaction extends BaseComponent {
     }
   }
 
+  setEosBalance(balance){
+    if (balance == null || balance == "") {
+        this.setState({balance: '0.0000 EOS'});
+      } else {
+          this.setState({ balance: balance });
+      }
+  }
+
   getBalance() {
     if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
     }
     this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: "eosbille1234", symbol: 'EOS' }, callback: (data) => {
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
           if (data.code == '0') {
-            if (data.data == "") {
-              this.setState({
-                balance: '0.0000 EOS',
-              })
-            } else {
-                this.setState({ balance: data.data });
-            }
+            this.setEosBalance(data.data);
           } else {
             // EasyToast.show('获取余额失败：' + data.msg);
           }
@@ -293,18 +272,14 @@ class Transaction extends BaseComponent {
 
   goPage(current) {
     if (current == 'isBuy'){
-        this.getBalance();
+        // EasyToast.show('买');
     }else if (current == 'isSell'){
-        this.getAccountInfo();
+        // EasyToast.show('卖');
     }else if (current == 'isTxRecord'){
-        //默认显示钱包账户的交易记录
-        // this.setState({queryaccount:"eosbille1234"});
-        // this.serach();
-        const { navigate } = this.props.navigation;
-        navigate('Warning', {});
+         EasyToast.show('待实现,查询区块最近的20笔交易记录');
     }
     else if (current == 'isTrackRecord'){
-        this.setSelectedTrackOption(this.state.selectedTrackSegment)
+          
     } 
     // EasyLoading.dismis(); 
  }
@@ -325,7 +300,8 @@ class Transaction extends BaseComponent {
     } 
     this.goPage(currentPressed);
   }  
-    //响应 , 买,卖,交易记录,大单追踪
+
+    // 返回内存，计算，网络，内存交易  
     resourceButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isBuy', 'isSell','isTxRecord', 'isTrackRecord'];  
         return(  
@@ -419,10 +395,9 @@ class Transaction extends BaseComponent {
       return false;
   }
   
-  //查询指定账户的交易记录
+  //寻找
   serach = (rowData) =>{
     // this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-    // EasyLoading.show();
     this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.state.queryaccount, contract_account : "eosio.token",  code : "eos", start_account_action_seq: "-1"}, callback: (resp) => {
         if(resp.code != '0'){
             EasyToast.show("暂未找到交易哟~");
@@ -504,7 +479,7 @@ class Transaction extends BaseComponent {
         return;
     }
     if(this.state.sellRamBytes == ""){
-        EasyToast.show('请输入出售内存kb数量');
+        EasyToast.show('请输入出售内存字节数量');
         return;
     }
     if(this.chkAmountIsZero(this.state.sellRamBytes,'请输入出售内存kb数量')){
@@ -531,7 +506,7 @@ class Transaction extends BaseComponent {
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 EasyLoading.show();
-                Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
+                Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes, (r) => {
                     EasyLoading.dismis();
                     if(r.isSuccess){
                         this.getAccountInfo();
@@ -610,13 +585,13 @@ class Transaction extends BaseComponent {
      try {
          if(this.state.sellRamBytes)
          {
-             if(this.state.ram_available){
+             if(this.state.myRamAvailable){
                 //可用字节数存在且大于0
                 var tmpsellRamBytes = 0;
                 var tmpram_available = 0; 
                 try {
                     tmpsellRamBytes = parseFloat(this.state.sellRamBytes);
-                    tmpram_available = parseFloat(this.state.ram_available);
+                    tmpram_available = parseFloat(this.state.myRamAvailable);
                   } catch (error) {
                     tmpsellRamBytes = 0;
                     tmpram_available = 0;
@@ -636,28 +611,51 @@ class Transaction extends BaseComponent {
      }
      return ratio;
   }
+
+  eosToBytes(eos, currentPrice) {
+    if(eos == null || eos == '' || currentPrice == null || currentPrice == ''){
+        return '0';
+    }
+    return ((eos/currentPrice) * 1024).toFixed(0); 
+  }
+
+  bytesToEos(bytes, currentPrice){
+    if(bytes == null || bytes == '' || currentPrice == null || currentPrice == ''){
+        return '0.00';
+    }
+    return ((bytes * currentPrice) / 1024).toFixed(2);
+  }
   render() {
     // const c = this.props.navigation.state.params.coins;
     const c = this.state.coins;
     return <View style={styles.container}>
      <ScrollView style={styles.scrollView}>
       <View>
-          <View style={{flex:1,flexDirection:'row'}}>
+          <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
             <View style={{flexDirection:"column",flexGrow:1}}>
-              <Text style={{color:'#8696B0',fontSize:11,textAlign:'center'}}>开盘</Text>
-              <Text style={{color:'#fff',fontSize:15,marginTop:2,textAlign:'center'}}>{c.start}</Text>
+              <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
+                <Text style={{color:'#8696B0',fontSize:11,textAlign:'center', marginLeft:10}}>开盘   </Text>
+                <Text style={{color:'#fff',fontSize:11,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.open : '0'} EOS/KB</Text>
+              </View>
+              <View style={{flexDirection:"row",flexGrow:1}}>
+                <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>内存占比</Text>
+                <Text style={{color:'#fff',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.usage_ram : 0} GB/{this.props.ramInfo ? this.props.ramInfo.total_ram : 0} GB</Text>
+                <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center'}}> ({((this.props.ramInfo ? this.props.ramInfo.usage_ram_percent : '0') * 100).toFixed(2)}%)</Text>
+              </View>
+              <View style={{flexDirection:"row",flexGrow:1}}>
+                <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>总资金</Text>
+                <Text style={{color:'#fff',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.total_eos : '0'} EOS</Text>
+              </View>
             </View>
-            <View style={{flexDirection:"column",flexGrow:1}}>
-              <Text style={{color:'#8696B0',fontSize:11,textAlign:'center'}}>最高</Text>
-              <Text style={{color:'#fff',fontSize:15,marginTop:2,textAlign:'center'}}>{c.max}</Text>
-            </View>
-            <View style={{flexDirection:"column",flexGrow:1}}>
-              <Text style={{color:'#8696B0',fontSize:11,textAlign:'center'}}>最低</Text>
-              <Text style={{color:'#fff',fontSize:15,marginTop:2,textAlign:'center'}}>{c.min}</Text>
-            </View>
-            <View style={{flexDirection:"column",flexGrow:1}}>
-              <Text style={{color:'#8696B0',fontSize:11,textAlign:'center'}}>成交量</Text>
-              <Text style={{color:'#fff',fontSize:15,marginTop:2,textAlign:'center'}}>{formatterNumber(c.txs)}</Text>
+            <View style={{flexDirection:'column',flexGrow:1}}>
+                <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
+                    <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>涨幅 </Text>
+                    <Text style={(this.props.ramInfo && this.props.ramInfo.increase>=0)?styles.incdo:styles.incup}> {this.props.ramInfo ? (this.props.ramInfo.increase > 0 ? '+' + (this.props.ramInfo.increase * 100).toFixed(2) : (this.props.ramInfo.increase * 100).toFixed(2)): '0.00'}%</Text>
+                </View>
+                <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
+                    <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>当前价格</Text>
+                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price : '0.00'}</Text>
+                </View>
             </View>
           </View>
         
@@ -667,19 +665,19 @@ class Transaction extends BaseComponent {
           selectedTint= {'#43536D'}
           onSelection={this.setSelectedOption.bind(this) }
           selectedOption={ this.state.selectedSegment }
-          backTint= {'#43536D'} options={['2小时','24小时','7天','30天']} />
+          backTint= {'#43536D'} options={['2小时','6小时','24小时','48小时']} />
         </View>
-        <View style={{flex:1,paddingTop:1}}>
+        <View style={{flex:1,paddingTop:10}}>
           {
-            <Echarts option={this.props.lineDatas?this.props.lineDatas:{}} width={ScreenWidth} height={200} />
+            <Echarts option={this.props.ramLineDatas?this.props.ramLineDatas:{}} width={ScreenWidth} height={160} />
           }
         </View>
-        <View style={{justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
+        {/* <View style={{justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
             <View style={{width:8,height:8,borderRadius:4,backgroundColor:'#65CAFF'}}></View>
             <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>价格走势</Text>
-            {/* <View style={{width:8,height:8,borderRadius:4,backgroundColor:'#556E95',marginLeft:10}}></View> */}
-            {/* <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>交易量</Text> */}
-        </View>
+            <View style={{width:8,height:8,borderRadius:4,backgroundColor:'#556E95',marginLeft:10}}></View>
+            <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>交易量</Text>
+        </View> */}
         <View style={styles.tablayout}>  
             {this.resourceButton(styles.buttontab, this.state.isBuy, 'isBuy', '买')}  
             {this.resourceButton(styles.buttontab, this.state.isSell, 'isSell', '卖')}  
@@ -692,23 +690,22 @@ class Transaction extends BaseComponent {
                   <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                   selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                   placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                  onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount)})}
+                  onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount), eosToBytes: this.eosToBytes(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
                   />
                 <Text style={{marginLeft: 10, borderRadius: 3, 
                       justifyContent: 'center', alignItems: 'center' }}>EOS</Text>
               </View>
               <View style={styles.inptoutsource}>
-                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{(this.state.buyRamAmount/this.state.Currentprice).toFixed(3)}</Text>
+                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{this.state.eosToBytes}</Text>
                   <Text style={{ fontSize: 15, height: 30, paddingLeft: 10, 
-                        justifyContent: 'center', alignItems: 'center' }}>kb</Text>
+                        justifyContent: 'center', alignItems: 'center' }}>byte</Text>
               </View>
               <View style={styles.inptoutsource}>
                 <View style={styles.outsource}>
                         <View style={{flex: 1, paddingLeft: 10, marginRight:18}}>
-                          <ProgressBarAndroid clolor="blue" styleAttr='Horizontal' progress={this.getBuyRamRadio()}
+                          <ProgressBarAndroid color={UColor.tintColor} styleAttr='Horizontal' progress={this.getBuyRamRadio()}
                                         indeterminate={false} />
-                          <View style={{fontSize: 12,color:  UColor.arrow,flex: 1,  flexDirection: 'row',  
-                                    padding: 0,margin:0,marginTop:0  }}>
+                          <View style={{flex: 1,  flexDirection: 'row',  padding: 0,margin:0,marginTop:0  }}>
                             <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
                                               borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>0</Text>
 
@@ -722,37 +719,37 @@ class Transaction extends BaseComponent {
                                               borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>ALL</Text>                                
                         </View>    
                         </View>
-                        <Button onPress={this.buyram.bind()}>
-                            <View style={styles.botn}>
-                                <Text style={styles.botText}>买入</Text>
-                            </View>
-                        </Button> 
-                    </View>
+                            <Button onPress={this.buyram.bind()}>
+                                <View style={styles.botn}>
+                                    <Text style={styles.botText}>买入</Text>
+                                </View>
+                            </Button> 
+                        </View>
                 </View>
           </View>:  
                <View>{this.state.isSell?
                   <View>
-                  <Text style={styles.inptTitle}>可卖:{this.state.ram_available}KB</Text>
+                  <Text style={styles.inptTitle}>可卖:{this.state.myRamAvailable}byte</Text>
                   <View style={styles.inptoutsource}>
                       <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                       selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                       placeholder="输入出售数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                      onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes)})}
+                      onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes), bytesToEos: this.bytesToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
                       />
                       <Text style={{marginLeft: 10, borderRadius: 3, 
                           justifyContent: 'center', alignItems: 'center' }}>byte</Text>
                   </View>
                   <View style={styles.inptoutsource}>
-                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{(this.state.sellRamBytes*this.state.Currentprice).toFixed(4)}</Text>
+                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{this.state.bytesToEos}</Text>
                       <Text style={{ fontSize: 15, height: 30, paddingLeft: 10, 
                             justifyContent: 'center', alignItems: 'center' }}>EOS</Text>
                   </View>
                   <View style={styles.inptoutsource}>
                         <View style={styles.outsource}>
                            <View style={{flex: 1, paddingLeft: 10, marginRight:18}}>
-                             <ProgressBarAndroid clolor="blue" styleAttr='Horizontal' progress={this.getSellRamRadio()}
+                             <ProgressBarAndroid clolor={UColor.tintColor} styleAttr='Horizontal' progress={this.getSellRamRadio()}
                                             indeterminate={false} />
-                             <View style={{fontSize: 12,color:  UColor.arrow,flex: 1,  flexDirection: 'row',  
+                             <View style={{flex: 1,  flexDirection: 'row',  
                                         padding: 0,margin:0,marginTop:0  }}>
                                 <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
                                                   borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>0</Text>
@@ -776,7 +773,7 @@ class Transaction extends BaseComponent {
                 </View>
             </View>:
                 <View>{this.state.isTxRecord ? <View >
-                   <View style={{      flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, 
+                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, 
                                   borderBottomWidth: 0.5,}}>
                     <View style={{   flex: 1,paddingHorizontal: 20,justifyContent: 'center', }} >
                       <TextInput ref={(ref) => this._account = ref} value={this.state.queryaccount} returnKeyType="go"
@@ -786,14 +783,13 @@ class Transaction extends BaseComponent {
                         />
                     </View>     
                     <TouchableOpacity onPress={this.serach.bind()}>  
-                        <View style={{ color: UColor.arrow,fontSize: 18,justifyContent: 'flex-end',paddingRight: 15}} >
+                        <View style={{justifyContent: 'flex-end',paddingRight: 15}} >
                             <Image source={UImage.Magnifier} style={{ width: 30,height: 30}}></Image>
                         </View>
                     </TouchableOpacity> 
                  </View>
                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                    // dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
-                    dataSource={this.state.dataSource.cloneWithRows(DetailsData)}   //debug
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
                         <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
@@ -802,16 +798,16 @@ class Transaction extends BaseComponent {
                                       borderRadius: 5,margin: 5,}}>
                             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={styles.quantity}>eosbille1234</Text>
-                                    <Text style={styles.timetext}>{this.transferTimeZone(rowData.blockTime)}</Text>
+                                    <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
+                                    <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
                                 </View>
                                 <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                     {rowData.type == '转出' ? 
-                                    <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>买 {rowData.quantity}</Text>
+                                    <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>类型 : {rowData.type}</Text>
                                     :
-                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>卖 {rowData.quantity}</Text>
+                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>类型 : {rowData.type}</Text>
                                     }
-                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.description}</Text>
+                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>（{rowData.description}）</Text>
                                 </View>
                             </View>
                             <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
@@ -835,64 +831,66 @@ class Transaction extends BaseComponent {
                 </View>
                 {this.state.selectedTrackSegment == '最近交易' ? 
                   <View>
-                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                    // dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
-                    dataSource={this.state.dataSource.cloneWithRows(DetailsData)}   //debug
-                    renderRow={(rowData, sectionID, rowID) => (                 
-                    <View>
-                        <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
-                                       backgroundColor: UColor.mainColor,
-                                      flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
-                                      borderRadius: 5,margin: 5,}}>
-                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                                <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={styles.quantity}>eosbille1234</Text>
-                                    <Text style={styles.timetext}>{this.transferTimeZone(rowData.blockTime)}</Text>
-                                </View>
-                                <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                    {rowData.type == '转出' ? 
-                                    <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>买 {rowData.quantity}</Text>
-                                    :
-                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>卖 {rowData.quantity}</Text>
-                                    }
-                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.description}</Text>
-                                </View>
-                            </View>
-                            <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
-                                <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                            </View>
-                        </View>
-                    </View>         
-                     )}                
-                 />  
+                    <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
+                      dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.getTradeRecord())} 
+                      renderRow={(rowData, sectionID, rowID) => (                 
+                      <View>
+                          <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
+                                        backgroundColor: UColor.mainColor,
+                                        flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
+                                        borderRadius: 5,margin: 5,}}>
+                              <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
+                                  <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
+                                      <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
+                                      <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
+                                  </View>
+                                  <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
+                                      {rowData.type == '转出' ? 
+                                      <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                      :
+                                      <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                      }
+                                      <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>（{rowData.description}）</Text>
+                                  </View>
+                              </View>
+                              <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
+                                  <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
+                              </View>
+                          </View>
+                      </View>         
+                      )}                
+                  /> 
                   </View> :
                   <View>
-                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                    // dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
-                    dataSource={this.state.dataSource.cloneWithRows(DetailsData)}   //debug
-                    renderRow={(rowData, sectionID, rowID) => (                 
-                    <View>
-                        <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
-                                       backgroundColor: UColor.mainColor,
-                                      flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
-                                      borderRadius: 5,margin: 5,}}>
-                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                                <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={styles.quantity}>eosbille1234</Text>
-                                    <Text style={styles.timetext}>排名1</Text>
+                      <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
+                        dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.getTradeRecord())} 
+                        renderRow={(rowData, sectionID, rowID) => (                 
+                        <View>
+                            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
+                                          backgroundColor: UColor.mainColor,
+                                          flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
+                                          borderRadius: 5,margin: 5,}}>
+                                <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
+                                    <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
+                                        <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
+                                        <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
+                                    </View>
+                                    <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
+                                        {rowData.type == '转出' ? 
+                                        <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                        :
+                                        <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>类型 : {rowData.type}</Text>
+                                        }
+                                        <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>（{rowData.description}）</Text>
+                                    </View>
                                 </View>
-                                <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>2.83%</Text>
-                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>1.8G</Text>
+                                <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
+                                    <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
                                 </View>
                             </View>
-                            <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
-                                <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                            </View>
-                        </View>
-                    </View>         
-                     )}                
-                 /> 
+                        </View>         
+                        )}                
+                    /> 
                   </View>
                 }
                   <Text style={{fontSize: 14,color: UColor.fontColor,lineHeight: 15,paddingHorizontal: 25,textAlign: "center"}}>成交资金分布</Text>
@@ -986,24 +984,16 @@ const styles = StyleSheet.create({
     flexDirection:"column"
   },
   incup:{
-    fontSize:12,
-    color:UColor.fontColor,
-    backgroundColor:'#F25C49',
-    padding:5,
+    fontSize:20,
+    color:'#F25C49',
     textAlign:'center',
-    marginLeft:10,
-    borderRadius:5,
-    minWidth:60
+    marginTop:2,
   },
   incdo:{
-    fontSize:12,
-    color:UColor.fontColor,
-    backgroundColor:'#25B36B',
-    padding:5,
+    fontSize:20,
+    color:'#25B36B',
     textAlign:'center',
-    marginLeft:10,
-    borderRadius:5,
-    minWidth:60
+    marginTop:2,
   },
    tablayout: {   
         flexDirection: 'row',  
@@ -1099,23 +1089,12 @@ const styles = StyleSheet.create({
     fontSize: 17, 
     color: UColor.fontColor,
   },
-    timetext: {
-        fontSize: 14,
-        color: UColor.arrow,
-        textAlign: 'left'
-    },
-    quantity: {
-        fontSize: 14,
-        color: UColor.arrow,
-        textAlign: 'left',
-        marginTop: 3
-    },
-    description: {
-        fontSize: 14,
-        color: UColor.arrow,
-        textAlign: 'center',
-        marginTop: 3
-    },
+     scanningimg: {
+        width:30,
+        height:30,
+        justifyContent: 'center', 
+        alignItems: 'center'
+    }
 });
 
 export default Transaction;
