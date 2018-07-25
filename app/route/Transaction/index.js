@@ -126,11 +126,22 @@ class Transaction extends BaseComponent {
         }
     });
 
+    DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
+        this.getRamInfo();
+    });
+
   }
 
   componentWillUnmount(){
     //结束页面前，资源释放操作
     super.componentWillUnmount();
+  }
+
+  getRamInfo(){
+    this.props.dispatch({type: 'ram/getRamInfo',payload: {}});
+
+    // 获取曲线
+    this.setSelectedOption(this.state.selectedSegment);
   }
 
   getAccountInfo(){
@@ -139,7 +150,7 @@ class Transaction extends BaseComponent {
           this.getInitialization(); 
     } });
   } 
-  
+
   getInitialization() {
     if(this.state.isBuy){
         this.goPage('isBuy');

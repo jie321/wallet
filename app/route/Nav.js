@@ -713,6 +713,16 @@ class Route extends React.Component {
     this.timer && clearTimeout(this.timer);
   }
 
+  startTxTimer(){
+    this.txTimer = setInterval( ()  =>{
+      DeviceEventEmitter.emit('getRamInfoTimer', '');
+    },60000);
+  }
+
+  stopTxTimer(){
+    this.txTimer && clearTimeout(this.txTimer);
+  }
+
   switchRoute = (prevNav, nav, action) => {
     //切换到个人中心，更新用户信息
     if (action && action.routeName && action.routeName == "Settings") {
@@ -722,6 +732,7 @@ class Route extends React.Component {
     }
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
+      this.stopTxTimer();
       if(this.props.walletList == null || this.props.walletList.length == 0){
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
           this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
@@ -774,10 +785,13 @@ class Route extends React.Component {
           this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: true}});
         }
       }});
-    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "Transaction" ||action.routeName == "News" || action.routeName == "Settings")) {
-      if(action.routeName != "Transaction"){
-        this.stopTimer();
-      }
+    }else if(action && action.routeName && action.routeName == "Transaction"){
+      this.startTxTimer();
+      DeviceEventEmitter.emit('changeTab', action.routeName);
+      routeLength = nav.routes.length;
+    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
+      this.stopTimer();
+      this.stopTxTimer();
       if (action && action.routeName) {
         DeviceEventEmitter.emit('changeTab', action.routeName);
       }
