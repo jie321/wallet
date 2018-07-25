@@ -305,11 +305,6 @@ class ActivationAt extends BaseComponent {
                             </View>
                         </View> 
                     </View> 
-                    <Button onPress={() => this.checkAccountActive()}>
-                        <View style={styles.importPriout}>
-                            <Text style={styles.importPritext}>激活（已支付完成）</Text>
-                        </View>
-                    </Button>
                     <Button onPress={() => this.contactWeChataide()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>联系官方小助手激活</Text>
@@ -318,6 +313,11 @@ class ActivationAt extends BaseComponent {
                     <Button onPress={() => this.onShareFriend()}>
                         <View style={styles.importPriout}>
                             <Text style={styles.importPritext}>请朋友协助激活</Text>
+                        </View>
+                    </Button>
+                    <Button onPress={() => this.checkAccountActive()}>
+                        <View style={styles.importPriout}>
+                            <Text style={styles.importPritext}>激活（已支付完成）</Text>
                         </View>
                     </Button>
                 </View>
