@@ -18,10 +18,15 @@ export default {
             }else{
                 EasyToast.show(resp.msg);
             }
-            if (callback) callback(resp);
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
         }
+        try {
+            if (callback) callback(resp);
+        } catch (error) {
+            if (callback) callback({ code: 500, msg: "网络异常" });
+        }
+
      },
      *getRamPriceLine({payload,callback},{call,put}) {
         try{
@@ -37,6 +42,13 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
      },
+     *clearRamPriceLine({ payload }, { call, put }) {
+        try {
+            yield put({ type: 'clearRamPriceLine', payload: { data: null } });
+        } catch (error) {
+            EasyToast.show('网络繁忙,请稍后!');
+        }
+    },
     },
 
     reducers : {
@@ -45,6 +57,10 @@ export default {
         },
         updateRamPriceLine(state, action) {      
             let ramLineDatas = combine(action.payload.data);
+            return { ...state, ramLineDatas };
+        },
+        clearRamPriceLine(state, action) {
+            let ramLineDatas = null;
             return { ...state, ramLineDatas };
         },
     }

@@ -12,12 +12,11 @@ import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
+import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-
-let timer;
 
 @connect(({ram,sticker,wallet}) => ({...ram, ...sticker, ...wallet}))
 class Transaction extends BaseComponent {
@@ -42,29 +41,8 @@ class Transaction extends BaseComponent {
         };
       };
 
-  componentWillMount() {
-
-    super.componentWillMount();
-
-    // const c = this.props.navigation.state.params.coins;
-    const c = this.state.coins;
-    this.props.dispatch({type: 'coinLine/clear',payload:{id:c.id}});
-
-    if(this.props.coinSelf && this.props.coinSelf[c.name.toLowerCase()]==1){
-      this.props.navigation.setParams({img:UImage.fav_h,onPress:this.onPress});
-    }else{
-      this.props.navigation.setParams({img:UImage.fav,onPress:this.onPress});
-    }
-  }
-
-  // onPress = () =>{
-  //   // const c = this.props.navigation.state.params.coins;
-  //   const c = this.state.coins;
-  // }
-
   constructor(props) {
     super(props);
-    // this.props.navigation.setParams({ onPress: this._rightTopClick });
 
     this.state = {
       selectedSegment:"2小时",
@@ -113,76 +91,46 @@ class Transaction extends BaseComponent {
     // );
   };
 
+  componentWillMount() {
+
+    super.componentWillMount();
+
+    this.props.dispatch({type: 'clearRamPriceLine/clear',payload:{}});
+  }
+
   componentDidMount(){
     // const c = this.props.navigation.state.params.coins;
     const c = this.state.coins;
 
-    this.props.dispatch({type: 'ram/getRamInfo',payload: {}});
+    // 获取内存市场相关信息
+    EasyLoading.show();
+    this.props.dispatch({type: 'ram/getRamInfo',payload: {}, callback: () => {
+        EasyLoading.dismis();
+    }});
 
+    // 默认获取2小时K线图
     this.fetchLine(2,'2小时');
    
+    // 获取钱包信息和余额
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-        this.getBalance();
-    }});
-   
-    //加载先获取
-    this.props.dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
-      if(data == undefined || data == null){
-        reurn;
-      }
-      if(data[0]){
-        this.setState({coins: data[0]});
-      }
-    } });
-
-    this.props.dispatch({
-      type: 'wallet/getDefaultWallet',
-      callback: (data) => {
         if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
             return;
           }
-          this.getAccountInfo();
-
-      }
-    });
-
-    InteractionManager.runAfterInteractions(() => {
-       //开定时器，刷新
-      clearInterval(timer);
-      timer = setInterval(() => {
-          const {dispatch}=this.props;
-          dispatch({ type: 'sticker/listincrease', payload: { type: 0}, callback: (data) => { 
-            if(data == undefined || data == null){
-              reurn;
-            }
-            if(data[0]){
-              this.setState({coins: data[0]});
-            }
-         } });
-
-          // this.setState({showText: true});
-          // this.setState(preState => {
-          //   return { showText: !preState.showText };
-          // });
-        }, 7000);
-    });
+        this.getAccountInfo();
+        this.getBalance();
+    }});
     
     DeviceEventEmitter.addListener('eos_balance', (data) => {
         if (data.code == '0') {
             this.setEosBalance(data.data);
-        } else {
-            // EasyToast.show('获取余额失败：' + data.msg);
-          }
+        }
     });
 
   }
+
   componentWillUnmount(){
     //结束页面前，资源释放操作
     super.componentWillUnmount();
-    //关闭定时器
-    if(timer){
-      clearInterval(timer);
-    }
   }
 
   getAccountInfo(){
@@ -190,18 +138,14 @@ class Transaction extends BaseComponent {
       this.setState({ myRamAvailable:((data.total_resources.ram_bytes - data.ram_usage)).toFixed(0)});
           this.getInitialization(); 
     } });
-    this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: (data) => {
-            this.setState({ currency_surplus:data?data.data.replace('EOS', "") :'0',});
-    }});
   } 
+  
   getInitialization() {
     if(this.state.isBuy){
         this.goPage('isBuy');
       }else if(this.state.isSell){
         this.goPage('isSell');
       }else{
-        // this.goPage('isBuyForOther');
       }   
   }
 
@@ -228,9 +172,6 @@ class Transaction extends BaseComponent {
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
         EasyToast.show('待实现，查询区块最近交易记录');   
-        // InteractionManager.runAfterInteractions(() => {
-        //     dispatch({type:'coinLine/list',payload:{coin:c.name,type}});
-        //   });
     }else{
         EasyToast.show('待实现，查询区块持量大户前10名记录');   
     }
@@ -262,10 +203,7 @@ class Transaction extends BaseComponent {
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
           if (data.code == '0') {
             this.setEosBalance(data.data);
-          } else {
-            // EasyToast.show('获取余额失败：' + data.msg);
           }
-          // EasyLoading.dismis();
         }
       })
 }
@@ -301,15 +239,14 @@ class Transaction extends BaseComponent {
     this.goPage(currentPressed);
   }  
 
-    // 返回内存，计算，网络，内存交易  
-    resourceButton(style, selectedSate, stateType, buttonTitle) {  
-        let BTN_SELECTED_STATE_ARRAY = ['isBuy', 'isSell','isTxRecord', 'isTrackRecord'];  
-        return(  
-            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
-                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
-            </TouchableOpacity>  
-        );  
-    } 
+  funcButton(style, selectedSate, stateType, buttonTitle) {  
+    let BTN_SELECTED_STATE_ARRAY = ['isBuy', 'isSell','isTxRecord', 'isTrackRecord'];  
+    return(  
+        <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
+        </TouchableOpacity>  
+    );  
+  } 
 
   chkAccount(obj) {
       var charmap = '.12345abcdefghijklmnopqrstuvwxyz';
@@ -534,7 +471,7 @@ class Transaction extends BaseComponent {
         }
         EasyDialog.dismis();
     }, () => { EasyDialog.dismis() });
-};
+  };
 
     dismissKeyboardClick() {
       dismissKeyboard();
@@ -679,10 +616,10 @@ class Transaction extends BaseComponent {
             <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>交易量</Text>
         </View> */}
         <View style={styles.tablayout}>  
-            {this.resourceButton(styles.buttontab, this.state.isBuy, 'isBuy', '买')}  
-            {this.resourceButton(styles.buttontab, this.state.isSell, 'isSell', '卖')}  
-            {this.resourceButton(styles.buttontab, this.state.isTxRecord, 'isTxRecord', '交易记录')}  
-            {this.resourceButton(styles.buttontab, this.state.isTrackRecord, 'isTrackRecord', '大单追踪')}  
+            {this.funcButton(styles.buttontab, this.state.isBuy, 'isBuy', '买')}  
+            {this.funcButton(styles.buttontab, this.state.isSell, 'isSell', '卖')}  
+            {this.funcButton(styles.buttontab, this.state.isTxRecord, 'isTxRecord', '交易记录')}  
+            {this.funcButton(styles.buttontab, this.state.isTrackRecord, 'isTrackRecord', '大单追踪')}  
         </View> 
          {this.state.isBuy?<View>
               <Text style={styles.inptTitle}>余额:{this.state.balance==""? "0.0000" :this.state.balance.replace("EOS", "")}EOS</Text>
