@@ -48,7 +48,7 @@ class Home extends React.Component {
       Invalid: false,
       arr1: 0,
       isChecked: true,
-      isEye: true,
+      isEye: false,
     };
   }
 

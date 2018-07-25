@@ -11,30 +11,38 @@ export default {
         updateTime:"",
     },
     effects: {
-      *list({payload},{call,put}) {
-        try{
-            if(payload.page==1){
-                yield put({type:'upstatus',payload:{newsRefresh:true}});
+        *list({payload},{call,put}) {
+            try{
+                if(payload.page==1){
+                    yield put({type:'upstatus',payload:{newsRefresh:true}});
+                }
+                const resp = yield call(Request.request,newsList+payload.type+"?page="+payload.page,'get');
+                if(resp.code=='0'){
+                    let dts = new Array();
+                    for(let i in resp.data){
+                        let item = resp.data[i];
+                        if(item && item.id){
+                            let up = yield call(store.get, "news_up_"+item.id);
+                            if(up=="1"){
+                                item.isUp=true;
+                            }
+                            let down = yield call(store.get, "news_down_"+item.id);
+                            if(down=="1"){
+                                item.isDown=true;
+                            }
+                         }
+                         dts.push(item);
+                    }
+                    yield put({type:'update',payload:{data:dts,...payload}});
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+                yield put({type:'upstatus',payload:{newsRefresh:false}});
+            } catch (error) {
+                yield put({type:'upstatus',payload:{newsRefresh:false}});
+                EasyToast.show('网络繁忙,请稍后!');
             }
-            
-            const resp = yield call(Request.request,newsList+payload.type+"?page="+payload.page,'get');
-            
-            if(resp.code=='0'){
-                let dts = new Array();
-                resp.data.map((item)=>{
-                    item.row=3;
-                    dts.push(item);
-                });
-                yield put({type:'update',payload:{data:dts,...payload}});
-            }else{
-                EasyToast.show(resp.msg);
-            }
-            yield put({type:'upstatus',payload:{newsRefresh:false}});
-        } catch (error) {
-            yield put({type:'upstatus',payload:{newsRefresh:false}});
-            EasyToast.show('网络繁忙,请稍后!');
-        }
-      },
+        },
       *up({payload},{call,put}) {
         try{
             const up = yield call(store.get, "news_up_"+payload.news.id);
