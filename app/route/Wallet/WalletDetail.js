@@ -36,10 +36,11 @@ class WalletDetail extends BaseComponent {
   constructor(props) {
     super(props);
     this.config = [
-      { first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
-      { first: true, name: "备份私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
-      { name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
-      { name: "账户详细信息", onPress: this.goPage.bind(this, "SeeBlockBrowser") },
+      { avatar:UImage.lock, first: true, name: "修改密码", onPress: this.goPage.bind(this, "ModifyPassword") },
+      { avatar:UImage.privatekey, first: true, name: "备份私钥", onPress: this.goPage.bind(this, "ExportPrivateKey") },
+      { avatar:UImage.publickey, name: "导出公钥", onPress: this.goPage.bind(this, "ExportPublicKey") },
+      { avatar:UImage.resources_f, name: "资源管理", onPress: this.goPage.bind(this, "Resources") },
+      { avatar:UImage.details, first: true, name: "账户详细信息", onPress: this.goPage.bind(this, "SeeBlockBrowser") },
     ];
     this.state = {
       password: '',
@@ -122,6 +123,8 @@ class WalletDetail extends BaseComponent {
       navigate('ExportPublicKey', { ownerPublicKey: this.props.navigation.state.params.data.ownerPublic, activePublicKey:this.props.navigation.state.params.data.activePublic});
     } else if (key == 'ModifyPassword') {
       navigate('ModifyPassword', this.props.navigation.state.params.data);
+    } else if (key == 'Resources') {
+      navigate('Resources', {account_name:this.props.navigation.state.params.data.name});
     } else if(key == 'SeeBlockBrowser'){
       if(this.props.navigation.state.params.data.isactived){
         EasyDialog.show("",  (<View >

@@ -73,12 +73,15 @@ export default {
      *getGlobalInfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getGlobalInfo, 'post', payload);
-            if(resp.code=='0'){               
-                // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
+            let total = (resp.data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2);
+            let used = (resp.data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2);
+            let used_Percentage= (((resp.data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) / (resp.data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2)) * 10000 / 100).toFixed()
+            if(resp.code=='0'){    
+                yield put({ type: 'updateGlobal', payload: { total:total,used:used,used_Percentage:used_Percentage } });
             }else{
                 EasyToast.show(resp.msg);
             }
-            if (callback) callback(resp.data);
+            // if (callback) callback({total:total,used:used,used_Percentage:used_Percentage});
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
         }
@@ -87,11 +90,11 @@ export default {
         try{
             const resp = yield call(Request.request, queryRamPrice, 'post', payload);
             if(resp.code=='0'){               
-                // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
+                // yield put({ type: 'updatequeryRamPrice', payload: { Currentprice:resp.data } });
             }else{
                 EasyToast.show(resp.msg);
             }
-            if (callback) callback(resp);
+            if (callback) callback(resp.data);
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
         }
@@ -147,6 +150,9 @@ export default {
         }, 
         updateResources(state, action) {      
             return {...state,Resources:action.payload.Resources};  
+        },
+        updateGlobal(state, action) {  
+            return {...state,globaldata:action.payload};  
         },
     }
   }

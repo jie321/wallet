@@ -50,5 +50,13 @@ export const getGlobalInfo = rootaddr + '/eosrpc/getGlobalInfo'
 export const queryRamPrice = rootaddr + '/eosrpc/queryRamPrice'
 export const listAssets = rootaddr + '/coins/list';
 export const addAssetToServer = rootaddr + '/coins/add';
-export const isExistAccountNameAndPublicKey = rootaddr + '/eosrpc/isExistAccountNameAndPublicKey';
+export const isExistAccountNameAndPublicKey = rootaddr + '/eosrpc/isExistAccountNameAndPublicKey'
 export const listMortgage = rootaddr + '/eosrpc/getAccountDelbandInfo'
+
+export const getRamInfo = rootaddr + '/ramprice/ramPriceInfo';
+export const getRamPriceLine = rootaddr + '/ramprice/line/';
+export const getRamTradeLog = rootaddr + '/ramprice/getNewTradeOrders';
+export const getRamBigTradeLog = rootaddr + '/ramprice/getBigTradeOrders';
+
+
+

@@ -24,7 +24,7 @@ class BackupsPkey extends BaseComponent {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            headerTitle: '备份钱包',
+            headerTitle: '备份私钥',
             headerStyle: {
                 paddingTop:Platform.OS == 'ios' ? 30 : 20,
                 backgroundColor: UColor.mainColor,

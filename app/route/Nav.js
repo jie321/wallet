@@ -6,6 +6,7 @@ import UColor from '../utils/Colors'
 import UImage from '../utils/Img'
 import Home from './Home'
 import Coins from './Coins'
+import Transaction from './Transaction'
 import Community from './Settings/Community'
 import News from './News'
 import Settings from './Settings'
@@ -73,6 +74,7 @@ import Button from '../components/Button'
 import ViewShot from "react-native-view-shot";
 import QRCode from 'react-native-qrcode-svg';
 import Constants from '../utils/Constants'
+import Warning from './Transaction/Warning'
 import { EasyLoading } from '../components/Loading';
 require('moment/locale/zh-cn');
 var ScreenWidth = Dimensions.get('window').width;
@@ -85,6 +87,7 @@ const TabContainer = TabNavigator(
   {
     Home: { screen: Home },
     Coins: { screen: Coins },
+    Transaction: { screen: Transaction },
     News: { screen: News },
     Settings: { screen: Settings }
   },
@@ -100,6 +103,9 @@ const TabContainer = TabNavigator(
           case 'Coins':
             iconName = focused ? UImage.tab_2_h : UImage.tab_2
             break;
+          case 'Transaction':
+            iconName = focused ? UImage.tab_2_h : UImage.tab_2
+            break;  
           case 'News':
             iconName = focused ? UImage.tab_3_h : UImage.tab_3
             break;
@@ -295,6 +301,9 @@ const Nav = StackNavigator(
     TurnOut: {
       screen: TurnOut
     },
+    Warning: {
+      screen: Warning
+    },
     TurnInAsset: {
       screen: TurnInAsset
     },
@@ -433,7 +442,7 @@ class Route extends React.Component {
       this.props.dispatch({
         type: 'common/upgrade', payload: { os: DeviceInfo.getSystemName() }, callback: (data) => {
           if (data.code == 0) {
-            if (DeviceInfo.getVersion() != data.data.version) {
+            if (DeviceInfo.getVersion() < data.data.version) {
               if (data.data.must == 1) {
                 EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
               } else {
@@ -720,6 +729,16 @@ class Route extends React.Component {
     this.timer && clearTimeout(this.timer);
   }
 
+  startTxTimer(){
+    this.txTimer = setInterval( ()  =>{
+      DeviceEventEmitter.emit('getRamInfoTimer', '');
+    },60000);
+  }
+
+  stopTxTimer(){
+    this.txTimer && clearTimeout(this.txTimer);
+  }
+
   switchRoute = (prevNav, nav, action) => {
     //切换到个人中心，更新用户信息
     if (action && action.routeName && action.routeName == "Settings") {
@@ -729,6 +748,7 @@ class Route extends React.Component {
     }
     //切换到钱包判断是否创建钱包
     if (action && action.routeName && action.routeName == "Home") {
+      this.stopTxTimer();
       if(this.props.walletList == null || this.props.walletList.length == 0){
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
           this.props.dispatch({ type: 'wallet/walletList', payload: {}, callback: (walletArr) => {
@@ -781,9 +801,14 @@ class Route extends React.Component {
           this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: true}});
         }
       }});
-    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
-      // this.timer && clearTimeout(this.timer);
+    }else if(action && action.routeName && action.routeName == "Transaction"){
       this.stopTimer();
+      this.startTxTimer();
+      DeviceEventEmitter.emit('changeTab', action.routeName);
+      routeLength = nav.routes.length;
+    }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
+      this.stopTimer();
+      this.stopTxTimer();
       if (action && action.routeName) {
         DeviceEventEmitter.emit('changeTab', action.routeName);
       }

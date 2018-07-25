@@ -8,6 +8,7 @@ import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import Item from '../../components/Item'
+import CountDownReact from '../../components/CountDownReact'
 import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
@@ -44,7 +45,7 @@ class Resources extends BaseComponent {
 
     recordMortgage = () =>{  
         const { navigate } = this.props.navigation;
-        navigate('MortgageRecord', {account_name: this.props.defaultWallet.account});
+        navigate('MortgageRecord', {account_name: this.props.navigation.state.params.account_name});
     }  
 
   // 构造函数  
@@ -71,9 +72,6 @@ class Resources extends BaseComponent {
         percentageOne: '占用（0%）',
         percentageTwo: '可用（0%）',
         percentageThree: '全网（0%）',
-        total: '0.00',
-        used: '0.00',
-        used_Percentage: '0',
         currency_surplus: '0.00',
         ram_available:'0',
         Currentprice: '0',
@@ -87,40 +85,29 @@ class Resources extends BaseComponent {
   }
 
   componentDidMount() {
-
+     
     try {
 
         EasyLoading.show();
-        this.props.dispatch({
-            type: 'wallet/getDefaultWallet',
-            callback: (data) => {
-                this.getAccountInfo();
-            }
-        });
-
-        this.props.dispatch({
-            type: 'vote/getGlobalInfo',
-            payload: {},
-            callback: (data) => {
-                this.setState({
-                    total: data.rows[0].max_ram_size ? (data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2) : "00.00GB",
-                    used: data.rows[0].total_ram_bytes_reserved ? (data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) : "00.00GB",
-                    used_Percentage: (((data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) / (data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2)) * 10000 / 100).toFixed()
-                });
-                EasyLoading.dismis();
-            }
-        });
+        this.props.dispatch({ type: 'vote/getGlobalInfo', payload: {},});
 
         this.props.dispatch({
             type: 'vote/getqueryRamPrice',
             payload: {},
             callback: (data) => {
                 this.setState({
-                    Currentprice: data.data ? data.data : '0.00000'
+                    Currentprice: data,
                 });
             }
         });
 
+        this.props.dispatch({
+            type: 'wallet/getDefaultWallet',
+            callback: (data) => {
+                this.getAccountInfo();
+            }
+        });
+       
         this.props.dispatch({
             type: 'wallet/info',
             payload: {
@@ -167,12 +154,13 @@ class Resources extends BaseComponent {
   }
 
   getAccountInfo(){
-    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
-      this.setState({ ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
+    this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.navigation.state.params.account_name},callback: (data) => {
+      this.setState({ 
+          ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
           this.getInitialization(); 
     } });
     this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: (data) => {
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.navigation.state.params.account_name , symbol: 'EOS' }, callback: (data) => {
             this.setState({ currency_surplus:data?data.data.replace('EOS', "") :'0',});
     }});
   } 
@@ -185,14 +173,14 @@ class Resources extends BaseComponent {
       }else if(this.state.isNetwork){
         this.goPage('isNetwork');
       }else{
-        this.goPage('isBuyForOther');
+        // this.goPage('isBuyForOther');
       }   
   }
 
   getBalance() { 
-    if (this.props.defaultWallet != null && this.props.defaultWallet.name != null) {
+    if (this.props.navigation.state.params != null && this.props.navigation.state.params.account_name != null) {
       this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.navigation.state.params.account_name, symbol: 'EOS' }, callback: (data) => {
             this.setEosBalance(data);
         }
       })
@@ -222,54 +210,55 @@ class Resources extends BaseComponent {
                 tetletext: '内存概况',
                 column_One: (100 - this.props.Resources.display_data.ram_usage_percent.replace("%", "")) + '%',
                 column_Two: (100 - this.props.Resources.display_data.ram_left_percent.replace("%", "")) + '%',
-                column_Three: (100 - this.state.used_Percentage) + '%',
+                column_Three: (100 - this.props.globaldata.used_Percentage) + '%',
                 ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
                 ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
-                ContrastThree: this.state.used + 'GB/' + this.state.total + 'GB',
+                ContrastThree: this.props.globaldata.used + 'GB/' + this.props.globaldata.total + 'GB',
                 percentageOne: '已用(' + this.props.Resources.display_data.ram_usage_percent + ')',
                 percentageTwo: '剩余(' + this.props.Resources.display_data.ram_left_percent + ')',
-                percentageThree: '全网(' + this.state.used_Percentage + '%)',
+                percentageThree: '全网(' + this.props.globaldata.used_Percentage + '%)',
             })
         }else if (current == 'isCalculation'){
             this.setState({ 
                 tetletext: '计算概况',
                 column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
                 column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
-                column_Three: (this.props.Resources.refund_request.cpu_amount!="0.0000 EOS"?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
+                column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.cpu_weight.replace("EOS", "")*100)/100,
-                ContrastThree: (this.props.Resources.refund_request.cpu_amount!="0.0000 EOS"?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
+                ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.cpu_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '剩余(ms)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.cpu_amount.replace("EOS", "")*100)/100 : '0.00 EOS') + ')',
+                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.cpu_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
             })
         }else if (current == 'isNetwork'){
             this.setState({ 
                 tetletext: '网络概况',
                 column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
                 column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
-                column_Three: (this.props.Resources.refund_request.net_amount!="0.0000 EOS"?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
+                column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
                 ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
                 ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
-                ContrastThree: (this.props.Resources.refund_request.net_amount!="0.0000 EOS"?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
+                ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.net_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
                 percentageOne: '剩余(kb)',
                 percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ (this.props.Resources.refund_request ?  Math.floor(this.props.Resources.refund_request.net_amount.replace("EOS", "")*100)/100 : '0.00 EOS') + ')',
+                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.net_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
             })
-        }else if (current == 'isBuyForOther'){
-            this.setState({ 
-                tetletext: '内存交易',
-                column_One: '0%',
-                column_Two: '0%',
-                column_Three: '0%',
-                ContrastOne: '0.00/0.00',
-                ContrastTwo: '0.00/0.00',
-                ContrastThree: '0.00/0.00',
-                percentageOne: '',
-                percentageTwo: '',
-                percentageThree: '',
-            })
-        } 
+        }
+        // else if (current == 'isBuyForOther'){
+        //     this.setState({ 
+        //         tetletext: '内存交易',
+        //         column_One: '0%',
+        //         column_Two: '0%',
+        //         column_Three: '0%',
+        //         ContrastOne: '0.00/0.00',
+        //         ContrastTwo: '0.00/0.00',
+        //         ContrastThree: '0.00/0.00',
+        //         percentageOne: '',
+        //         percentageTwo: '',
+        //         percentageThree: '',
+        //     })
+        // } 
         EasyLoading.dismis();
     }
 
@@ -305,7 +294,7 @@ class Resources extends BaseComponent {
 
     // 返回内存，计算，网络，内存交易  
     resourceButton(style, selectedSate, stateType, buttonTitle) {  
-        let BTN_SELECTED_STATE_ARRAY = ['isMemory', 'isCalculation','isNetwork', 'isBuyForOther',];  
+        let BTN_SELECTED_STATE_ARRAY = ['isMemory', 'isCalculation','isNetwork', ];  
         return(  
             <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
                 <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
@@ -404,33 +393,12 @@ class Resources extends BaseComponent {
 
     //转换时间
     transferTimeZone(date){
-        //转换时间
-        let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-        let regEx = new RegExp("\\-","gi");
-        let validDateStr=timezone.replace(regEx,"/");
-        let milliseconds=Date.parse(validDateStr);
-        let sendTime = new Date(milliseconds).getTime();
-        //当前时间
-        let nowTime = new Date().getTime();
-        //72小时
-        let ThreeTime = 259200000;
-        //差值
-        let Dvalue = nowTime - sendTime ;
-        let SurplusTime = ThreeTime - Dvalue
-        // 时 
-        const hours = Math.floor(SurplusTime / (3600 * 1000)); 
-        // 分 
-        const leave2 = SurplusTime % (3600 * 1000); 
-        const minutes = Math.floor(leave2 / (60 * 1000)); 
-        // 秒 
-        const leave3 = leave2 % (60 * 1000); 
-        const seconds = Math.round(leave3 / 1000); 
-        let Surplus = hours + ':' + minutes + ':' + seconds
-        return Surplus;
+        // //转换时间
+        let timezone = moment(date).add(72,'hours').format('YYYY-MM-DDTHH:mm:ss');
+        return  timezone;
     }
 
-    chkAmountIsZero(amount,errInfo)
-    {
+    chkAmountIsZero(amount,errInfo){
         var tmp;
         try {
              tmp = parseFloat(amount);
@@ -768,38 +736,47 @@ class Resources extends BaseComponent {
                 <ScrollView keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                         <View style={styles.tetleout}>
-                        <Text style={styles.tetletext}>{this.state.tetletext}</Text>
-                        <ImageBackground source={UImage.line_bg} resizeMode="cover" style={styles.linebgout}>
-                            <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
-                                <View style={styles.stripbg} height={this.state.column_One}/>
+                            <Text style={styles.tetletext}>{this.state.tetletext}</Text>
+                            <ImageBackground source={UImage.line_bg} resizeMode="cover" style={styles.linebgout}>
+                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                    <View style={styles.stripbg} height={this.state.column_One}/>
+                                </ImageBackground>
+                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                    <View style={styles.stripbg} height={this.state.column_Two}/>
+                                </ImageBackground>
+                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                    <View style={styles.stripbg} height={this.state.column_Three}/>
+                                </ImageBackground>
                             </ImageBackground>
-                            <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
-                                <View style={styles.stripbg} height={this.state.column_Two}/>
-                            </ImageBackground>
-                            <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
-                                <View style={styles.stripbg} height={this.state.column_Three}/>
-                            </ImageBackground>
-                        </ImageBackground>
-                        <View style={styles.record}>
-                            <View style={styles.recordout}>
-                                <Text style={styles.ratiotext}>{this.state.ContrastOne}</Text>
-                                <Text style={styles.recordtext}>{this.state.percentageOne}</Text>
+                            <View style={styles.record}>
+                                <View style={styles.recordout}>
+                                    <Text style={styles.ratiotext}>{this.state.ContrastOne}</Text>
+                                    <Text style={styles.recordtext}>{this.state.percentageOne}</Text>
+                                </View>
+                                <View style={styles.recordout}>
+                                    <Text  style={styles.ratiotext}>{this.state.ContrastTwo}</Text>
+                                    <Text style={styles.recordtext}>{this.state.percentageTwo}</Text>
+                                </View>
+                                <View style={styles.recordout}>
+                                {this.state.isCalculation||this.state.isNetwork?<CountDownReact
+                                    date= {this.state.ContrastThree}
+                                    hours=':'
+                                    mins=':'
+                                    hoursStyle={styles.ratiotext}
+                                    minsStyle={styles.ratiotext}
+                                    secsStyle={styles.ratiotext}
+                                    firstColonStyle={styles.ratiotext}
+                                    secondColonStyle={styles.ratiotext}
+                                />:<Text  style={styles.ratiotext}>{this.state.ContrastThree}</Text>}
+                                    <Text style={styles.recordtext}>{this.state.percentageThree}</Text>
+                                </View>
                             </View>
-                            <View style={styles.recordout}>
-                                <Text  style={styles.ratiotext}>{this.state.ContrastTwo}</Text>
-                                <Text style={styles.recordtext}>{this.state.percentageTwo}</Text>
-                            </View>
-                            <View style={styles.recordout}>
-                                <Text  style={styles.ratiotext}>{this.state.ContrastThree}</Text>
-                                <Text style={styles.recordtext}>{this.state.percentageThree}</Text>
-                            </View>
-                        </View>
                         </View>
                         <View style={styles.tablayout}>  
                             {this.resourceButton(styles.buttontab, this.state.isMemory, 'isMemory', '内存资源')}  
                             {this.resourceButton(styles.buttontab, this.state.isCalculation, 'isCalculation', '计算资源')}  
                             {this.resourceButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
-                            {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}  
+                            {/* {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}   */}
                         </View> 
                         {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>请稍候 ，程序猿玩命加班中...</Text></View>:
                         <View style={styles.nhaaout}>
