@@ -44,7 +44,7 @@ class Helpcenter extends BaseComponent {
       //{ name: "什么是助记词？", onPress: this.goPage.bind(this, "mw") },
       { name: "如何导入EOS钱包？", onPress: this.goPage.bind(this, "iw") },
       { name: "如何添加钱包？", onPress: this.goPage.bind(this, "atw") },
-      //{ name: "如何备份钱包？", onPress: this.goPage.bind(this, "bw") },
+      //{ name: "如何备份私钥？", onPress: this.goPage.bind(this, "bw") },
       { name: "如何转账？", onPress: this.goPage.bind(this, "ta") },
       //{ name: "EOS超级代理投票说明", onPress: this.goPage.bind(this, "vote") },
     ];
