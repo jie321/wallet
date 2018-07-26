@@ -47,7 +47,7 @@ static propTypes = {
   segs: PropTypes.string,
   onEnd: PropTypes.func,
 
-  containerStyle: View.propTypes.style,
+  // containerStyle:View.propTypes.style,
   daysStyle: Text.propTypes.style,
   hoursStyle: Text.propTypes.style,
   minsStyle: Text.propTypes.style,
@@ -67,7 +67,7 @@ static defaultProps = {
   segs: ':',
   onEnd: () => {},
 
-  containerStyle: styles.container,//container 的style
+  // containerStyle: styles.container,//container 的style
   daysStyle: styles.defaultTime,//天数 字体的style
   hoursStyle: styles.defaultTime,//小时 字体的style
   minsStyle: styles.defaultTime,//分钟 字体的style
@@ -158,7 +158,7 @@ render() {
   //
       <View>
         {/* { (countDown.days>0) ? <Text style={this.props.daysStyle}>{ this.leadingZeros(countDown.days)+days}</Text> : null} */}
-        {this.props.date == "00:00:00" ? <Text style={this.props.secsStyle}>{this.props.date}</Text> : <View style={this.props.containerStyle}>
+        {this.props.date == "00:00:00" ? <Text style={this.props.secsStyle}>{this.props.date}</Text> : <View style={styles.container}>
         <Text style={this.props.hoursStyle}>{parseInt(this.leadingZeros(countDown.days)*24) + parseInt(this.leadingZeros(countDown.hours))}</Text>
         <Text style={ this.props.firstColonStyle}>{this.props.hours}</Text>
         <Text style={this.props.minsStyle}>{this.leadingZeros(countDown.min)}</Text>
