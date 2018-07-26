@@ -135,13 +135,13 @@ class Setting extends React.Component {
           <Button style={styles.eosbtn}>
             <View style={styles.eosbtnout}>
               <View style={styles.eosout}>
-                <Text style={styles.eosbtntext}>EOS奖励</Text>
+                <Text style={styles.eosbtntext}>活动奖励</Text>
                 <Text style={styles.eostext}>{(this.props.loginUser) ? this.props.loginUser.eost : "0"} EOS</Text>
               </View>
               <View style={styles.Withdrawout}>
                 {
                   this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
-                    <Text style={styles.Withdrawtext}>领取奖励</Text>
+                    <Text style={styles.Withdrawtext}>领取</Text>
                   </Button>
                 }
               </View>

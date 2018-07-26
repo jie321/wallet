@@ -635,19 +635,17 @@ class Transaction extends BaseComponent {
         </View> 
          {this.state.isBuy?<View>
               <Text style={styles.inptTitle}>余额:{this.state.balance==""? "0.0000" :this.state.balance.replace("EOS", "")}EOS</Text>
-              <View style={styles.inptoutsource}>
+              <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                   <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                   selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                   placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
                   onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount), eosToBytes: this.eosToBytes(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
                   />
-                <Text style={{marginLeft: 10, borderRadius: 3, 
-                      justifyContent: 'center', alignItems: 'center' }}>EOS</Text>
+                <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
               </View>
-              <View style={styles.inptoutsource}>
-                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{this.state.eosToBytes}</Text>
-                  <Text style={{ fontSize: 15, height: 30, paddingLeft: 10, 
-                        justifyContent: 'center', alignItems: 'center' }}>byte</Text>
+              <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
+                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10, }}>≈{this.state.eosToBytes}</Text>
+                  <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
               </View>
               <View style={styles.inptoutsource}>
                 <View style={styles.outsource}>
@@ -679,19 +677,17 @@ class Transaction extends BaseComponent {
                <View>{this.state.isSell?
                   <View>
                   <Text style={styles.inptTitle}>可卖:{this.state.myRamAvailable}byte</Text>
-                  <View style={styles.inptoutsource}>
+                  <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                       <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
                       selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                       placeholder="输入出售数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
                       onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes), bytesToEos: this.bytesToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
                       />
-                      <Text style={{marginLeft: 10, borderRadius: 3, 
-                          justifyContent: 'center', alignItems: 'center' }}>byte</Text>
+                      <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
                   </View>
-                  <View style={styles.inptoutsource}>
-                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{this.state.bytesToEos}</Text>
-                      <Text style={{ fontSize: 15, height: 30, paddingLeft: 10, 
-                            justifyContent: 'center', alignItems: 'center' }}>EOS</Text>
+                  <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
+                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{this.state.bytesToEos}</Text>
+                      <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
                   </View>
                   <View style={styles.inptoutsource}>
                         <View style={styles.outsource}>
@@ -722,9 +718,8 @@ class Transaction extends BaseComponent {
                 </View>
             </View>:
                 <View>{this.state.isTxRecord ? <View >
-                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, 
-                                  borderBottomWidth: 0.5,}}>
-                    <View style={{   flex: 1,paddingHorizontal: 20,justifyContent: 'center', }} >
+                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginBottom: 10, }}>
+                    <View style={{flex: 1, height: 30, marginHorizontal: 18, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                       <TextInput ref={(ref) => this._account = ref} value={this.state.queryaccount} returnKeyType="go"
                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
                             placeholder="请输入账户名称" underlineColorAndroid="transparent" keyboardType="default" 
@@ -747,8 +742,8 @@ class Transaction extends BaseComponent {
                                       borderRadius: 5,margin: 5,}}>
                             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={styles.timetext}>{rowData.payer}</Text>
-                                    <Text style={styles.quantity}>{rowData.record_date}</Text>
+                                    <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
+                                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{rowData.record_date}</Text>
                                 </View>
                                 <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                     {rowData.action_name == 'sellram' ? 
@@ -790,8 +785,8 @@ class Transaction extends BaseComponent {
                                         borderRadius: 5,margin: 5,}}>
                               <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                   <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                      <Text style={styles.timetext}>{rowData.payer}</Text>
-                                      <Text style={styles.quantity}>{rowData.record_date}</Text>
+                                      <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
+                                      <Text style={{fontSize: 15,color: UColor.arrow,}}>{rowData.record_date}</Text>
                                   </View>
                                   <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                       {rowData.action_name == 'sellram' ? 
@@ -821,8 +816,8 @@ class Transaction extends BaseComponent {
                                           borderRadius: 5,margin: 5,}}>
                                 <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                     <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                        <Text style={styles.timetext}>{rowData.payer}</Text>
-                                        <Text style={styles.quantity}>{rowData.record_date}</Text>
+                                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
+                                        <Text style={{fontSize: 15,color: UColor.arrow,}}>{rowData.record_date}</Text>
                                     </View>
                                     <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                         {rowData.action_name == 'sellram' ? 
@@ -995,10 +990,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
   },   
   inptoutsource: {
+      marginTop: 10,
     paddingHorizontal: 20,
     paddingBottom: 5,
     justifyContent: 'center',
-
     flexDirection: 'row',  
     alignItems: 'center',
     borderBottomColor: UColor.secdColor, 
