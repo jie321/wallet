@@ -10,6 +10,7 @@ export default {
         assetsData:{},
         newsRefresh:false,
         updateTime:"",
+        tradeLog:{},
     },
     effects: {
       *list({payload, callback},{call,put}) {
@@ -200,22 +201,28 @@ export default {
         if(callback) callback(myAssets);
         DeviceEventEmitter.emit('updateMyAssets', payload);
      },
+     *clearTradeDetails({payload, callback},{call,put}) {
+        try{
+            yield put({ type: 'clearDetails', payload: { data:null, ...payload } });
+        } catch (error) {
+
+        }
+     },
      *getTradeDetails({payload, callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getActions, "post", payload);
             if(resp.code=='0'){               
-                yield put({ type: 'updateDetails', payload: { DetailsData:resp.data } });
+                yield put({ type: 'updateDetails', payload: { data:resp.data, ...payload } });
             }else{
                 EasyToast.show(resp.msg);
             }
+            if (callback) callback(resp);
+            
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
+            if (callback) callback({ code: 500, msg: "网络异常" });            
         }
-        try {
-            if (callback) callback(resp);
-        } catch (error) {
-            if (callback) callback({ code: 500, msg: "网络异常" });
-        }
+
      },
       *changeReveal({ payload,callback }, { call, put }) {
         var reveal = yield call(store.get, 'reveal');  
@@ -249,7 +256,18 @@ export default {
             return { ...state, ...action.payload };
         },
         updateDetails(state, action) {
-            return {...state,...action.payload};
+            let tradeLog = state.tradeLog;
+            if(action.payload.data == null || action.payload.page==1 || tradeLog == null){
+                tradeLog=action.payload.data;
+            }else{
+                tradeLog = tradeLog.concat(action.payload.data);
+            }
+            return {...state,tradeLog};
+        },
+        clearDetails(state, action) {
+            let tradeLog = null;
+            state.tradeLog = null;
+            return { ...state, tradeLog };
         },
     }
   }
