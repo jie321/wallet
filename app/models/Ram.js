@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {getRamInfo, getRamPriceLine, getRamTradeLog, getRamBigTradeLog} from '../utils/Api';
+import {getRamInfo, getRamPriceLine, getRamTradeLog, getRamBigTradeLog, getRamTradeLogByAccount} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 let newarr = new Array();
@@ -10,81 +10,99 @@ export default {
 
     },
     effects: {
-    *getRamInfo({payload,callback},{call,put}) {
-        try{
-            const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + getRamInfo, 'post', payload);
-            if(resp.code=='0'){               
-                yield put({ type: 'updateInfo', payload: { ramInfo:resp.data } });
-            }else{
-                EasyToast.show(resp.msg);
+        *getRamInfo({payload,callback},{call,put}) {
+            try{
+                const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + getRamInfo, 'post', payload);
+                if(resp.code=='0'){               
+                    yield put({ type: 'updateInfo', payload: { ramInfo:resp.data } });
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+            } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
             }
-        } catch (error) {
-            EasyToast.show('网络繁忙,请稍后!');
-        }
-        try {
-            if (callback) callback(resp);
-        } catch (error) {
-            if (callback) callback({ code: 500, msg: "网络异常" });
-        }
+            try {
+                if (callback) callback(resp);
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
 
-     },
-    *getRamPriceLine({payload,callback},{call,put}) {
-        try{
-            const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + getRamPriceLine + payload.type, 'post', payload);
-            // alert("getRamPriceLine : " + JSON.stringify(resp));
-            if(resp.code=='0'){               
-                yield put({ type: 'updateRamPriceLine', payload: { data: resp.data, ...payload } });
-            }else{
-                EasyToast.show(resp.msg);
+        },
+        *getRamPriceLine({payload,callback},{call,put}) {
+            try{
+                const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + getRamPriceLine + payload.type, 'post', payload);
+                // alert("getRamPriceLine : " + JSON.stringify(resp));
+                if(resp.code=='0'){               
+                    yield put({ type: 'updateRamPriceLine', payload: { data: resp.data, ...payload } });
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+                if (callback) callback(resp);
+            } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
             }
-            if (callback) callback(resp);
-        } catch (error) {
-            EasyToast.show('网络繁忙,请稍后!');
-        }
-     },
-    *clearRamPriceLine({ payload }, { call, put }) {
-        try {
-            yield put({ type: 'clearRamPriceLine', payload: { data: null } });
-        } catch (error) {
-            EasyToast.show('网络繁忙,请稍后!');
-        }
-    },
-    *getRamTradeLog({ payload, callback }, { call, put }) {
-        try{
-            const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamTradeLog, 'post', payload);
-            // alert('getRamTradeLog: '+JSON.stringify(resp));
-            if(resp.code=='0'){               
-                yield put({ type: 'updateTradeLog', payload: { ramTradeLog:resp.data } });
-            }else{
-                EasyToast.show(resp.msg);
+        },
+        *clearRamPriceLine({ payload }, { call, put }) {
+            try {
+                yield put({ type: 'clearRamPriceLine', payload: { data: null } });
+            } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
             }
-        } catch (error) {
-            EasyToast.show('网络繁忙,请稍后!');
-        }
-        try {
-            if (callback) callback(resp);
-        } catch (error) {
-            if (callback) callback({ code: 500, msg: "网络异常" });
-        }
-    },
-    *getRamBigTradeLog({ payload, callback }, { call, put }) {
-        try{
-            const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamBigTradeLog, 'post', payload);
-            // alert('getRamBigTradeLog: '+JSON.stringify(resp));
-            if(resp.code=='0'){               
-                yield put({ type: 'updateBigTradeLog', payload: { ramBigTradeLog:resp.data } });
-            }else{
-                EasyToast.show(resp.msg);
+        },
+        *getRamTradeLog({ payload, callback }, { call, put }) {
+            try{
+                const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamTradeLog, 'post', payload);
+                // alert('getRamTradeLog: '+JSON.stringify(resp));
+                if(resp.code=='0'){               
+                    yield put({ type: 'updateTradeLog', payload: { ramTradeLog:resp.data } });
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+            } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
             }
-        } catch (error) {
-            EasyToast.show('网络繁忙,请稍后!');
-        }
-        try {
-            if (callback) callback(resp);
-        } catch (error) {
-            if (callback) callback({ code: 500, msg: "网络异常" });
-        }
-    },
+            try {
+                if (callback) callback(resp);
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
+        },
+        *getRamBigTradeLog({ payload, callback }, { call, put }) {
+            try{
+                const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamBigTradeLog, 'post', payload);
+                // alert('getRamBigTradeLog: '+JSON.stringify(resp));
+                if(resp.code=='0'){               
+                    yield put({ type: 'updateBigTradeLog', payload: { ramBigTradeLog:resp.data } });
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+            } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
+            }
+            try {
+                if (callback) callback(resp);
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
+        },
+        *getRamTradeLogByAccount({ payload, callback }, { call, put }) {
+            try{
+                const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamTradeLogByAccount, 'post', payload);
+                // alert('getRamTradeLogByAccount: '+JSON.stringify(resp));
+                if(resp.code=='0'){               
+                    yield put({ type: 'updateTradeLog', payload: { ramTradeLog:resp.data } });
+                }else{
+                    EasyToast.show(resp.msg);
+                }
+            } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
+            }
+            try {
+                if (callback) callback(resp);
+            } catch (error) {
+                if (callback) callback({ code: 500, msg: "网络异常" });
+            }
+        },
     },
 
     reducers : {

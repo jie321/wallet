@@ -108,8 +108,10 @@ class Transaction extends BaseComponent {
     DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
         this.getRamInfo();
         this.getBalance();
-        if(this.state.isTxRecord){
+        if(this.state.isTxRecord && this.state.queryaccount != null && this.state.queryaccount != ''){
             this.getRamTradeLog();
+        }else{
+            this.getRamTradeLogByAccount(this.state.queryaccount);
         }
         if(this.state.selectedTrackSegment == trackOption[0]) {
             this.getRamBigTradeLog();
@@ -132,6 +134,10 @@ class Transaction extends BaseComponent {
 
   getRamTradeLog(){
     this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}});    
+  }
+
+  getRamTradeLogByAccount(accountName){
+    this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: accountName}});    
   }
 
   getRamBigTradeLog(){
@@ -346,18 +352,24 @@ class Transaction extends BaseComponent {
       return false;
   }
   
-  //寻找
-  serach = (rowData) =>{
-    // this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-    this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.state.queryaccount, contract_account : "eosio.token",  code : "eos", start_account_action_seq: "-1"}, callback: (resp) => {
-        if(resp.code != '0'){
-            EasyToast.show("暂未找到交易哟~");
-        }else if((resp.code == '0') && (this.props.DetailsData.length == 0)){
-            EasyToast.show("您还没有交易哟~");
-        }
+  // 根据账号查找交易记录
+  getRamLogByAccout = (rowData) =>{
+    if(this.state.queryaccount == null|| this.state.queryaccount == ''){
+        EasyLoading.show();
+        this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
+            EasyLoading.dismis();
+        }});  
+        return;
+    }
+    EasyLoading.show();
+    this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.state.queryaccount}, callback: (resp) => {
         EasyLoading.dismis();
-    }});  
+        if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
+            EasyToast.show("未找到交易哟~");
+        }
+    }});    
   }
+
   // 购买内存
   buyram = (rowData) => { 
     if(!this.props.defaultWallet){
@@ -726,7 +738,7 @@ class Transaction extends BaseComponent {
                             onChangeText={(queryaccount) => this.setState({ queryaccount: this.chkAccount(queryaccount)})}
                         />
                     </View>     
-                    <TouchableOpacity onPress={this.serach.bind()}>  
+                    <TouchableOpacity onPress={this.getRamLogByAccout.bind()}>  
                         <View style={{justifyContent: 'flex-end',paddingRight: 15}} >
                             <Image source={UImage.Magnifier} style={{ width: 30,height: 30}}></Image>
                         </View>
