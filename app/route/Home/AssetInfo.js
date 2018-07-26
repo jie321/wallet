@@ -55,11 +55,11 @@ class AssetInfo extends BaseComponent {
         //加载地址数据
         EasyLoading.show();
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, start_account_action_seq: "-1"}, callback: (resp) => {
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: 1, countPerPage: 10}, callback: (resp) => {
             if(resp.code != '0'){
-                this.setState({detailInfo: "暂未找到交易哟~"});
+                // this.setState({detailInfo: "暂未找到交易哟~"});
             }else if((resp.code == '0') && (this.props.DetailsData.length == 0)){
-                this.setState({detailInfo: "您还没有交易哟~"});
+                // this.setState({detailInfo: "您还没有交易哟~"});
             }
             EasyLoading.dismis();
         }});     
@@ -139,7 +139,7 @@ class AssetInfo extends BaseComponent {
                     <Text style={styles.latelytext}>最近交易记录</Text>
                     {(this.props.DetailsData == null || this.props.DetailsData.length == 0) && <View style={styles.nothave}><Text style={styles.copytext}>{this.state.detailInfo}</Text></View>}
                     <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.filterTradeRecord(this.props.DetailsData))} 
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.props.DetailsData)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
                         <Button onPress={this._openDetails.bind(this,rowData)}> 

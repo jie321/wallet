@@ -208,9 +208,13 @@ export default {
             }else{
                 EasyToast.show(resp.msg);
             }
-            if (callback) callback(resp);
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
+        }
+        try {
+            if (callback) callback(resp);
+        } catch (error) {
+            if (callback) callback({ code: 500, msg: "网络异常" });
         }
      },
       *changeReveal({ payload,callback }, { call, put }) {
@@ -245,7 +249,7 @@ export default {
             return { ...state, ...action.payload };
         },
         updateDetails(state, action) {
-            return {...state,DetailsData:action.payload.DetailsData.actions};
+            return {...state,...action.payload};
         },
     }
   }
