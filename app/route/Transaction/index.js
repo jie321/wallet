@@ -82,7 +82,7 @@ class Transaction extends BaseComponent {
 
     super.componentWillMount();
 
-    this.props.dispatch({type: 'clearRamPriceLine/clear',payload:{}});
+    this.props.dispatch({type: 'ram/clearRamPriceLine',payload:{}});
   }
 
   componentDidMount(){

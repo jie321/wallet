@@ -18,15 +18,11 @@ export default {
                 }else{
                     EasyToast.show(resp.msg);
                 }
-            } catch (error) {
-                EasyToast.show('网络繁忙,请稍后!');
-            }
-            try {
                 if (callback) callback(resp);
             } catch (error) {
+                EasyToast.show('网络繁忙,请稍后!');
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
-
         },
         *getRamPriceLine({payload,callback},{call,put}) {
             try{
@@ -58,13 +54,10 @@ export default {
                 }else{
                     EasyToast.show(resp.msg);
                 }
+                if (callback) callback(resp);                
             } catch (error) {
                 EasyToast.show('网络繁忙,请稍后!');
-            }
-            try {
-                if (callback) callback(resp);
-            } catch (error) {
-                if (callback) callback({ code: 500, msg: "网络异常" });
+                if (callback) callback({ code: 500, msg: "网络异常" });                
             }
         },
         *getRamBigTradeLog({ payload, callback }, { call, put }) {
@@ -76,13 +69,10 @@ export default {
                 }else{
                     EasyToast.show(resp.msg);
                 }
+                if (callback) callback(resp);                
             } catch (error) {
                 EasyToast.show('网络繁忙,请稍后!');
-            }
-            try {
-                if (callback) callback(resp);
-            } catch (error) {
-                if (callback) callback({ code: 500, msg: "网络异常" });
+                if (callback) callback({ code: 500, msg: "网络异常" });                
             }
         },
         *getRamTradeLogByAccount({ payload, callback }, { call, put }) {
@@ -94,13 +84,10 @@ export default {
                 }else{
                     EasyToast.show(resp.msg);
                 }
+                if (callback) callback(resp);                
             } catch (error) {
                 EasyToast.show('网络繁忙,请稍后!');
-            }
-            try {
-                if (callback) callback(resp);
-            } catch (error) {
-                if (callback) callback({ code: 500, msg: "网络异常" });
+                if (callback) callback({ code: 500, msg: "网络异常" });                
             }
         },
     },
