@@ -463,12 +463,13 @@ class WalletDetail extends BaseComponent {
 
   render() {
     const c = this.props.navigation.state.params.data
+    const balance = this.props.navigation.state.params.balance
     return <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.walletout}>
             <View style={styles.accountout} >
-              <Text style={styles.accounttext}>{c.isactived && c.balance != null && c.balance != ""? c.balance : '0.0000'}</Text>
+              <Text style={styles.accounttext}>{c.isactived && c.balance != null && c.balance != ""? c.balance : balance}</Text>
                <Text style={styles.company}> EOS</Text>
             </View>
             <Button onPress={this.copyname.bind(this,c)}>

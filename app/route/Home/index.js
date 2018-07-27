@@ -394,7 +394,7 @@ class Home extends React.Component {
 
   WalletDetail(data) {
     const { navigate } = this.props.navigation;
-    navigate('WalletDetail', { data});
+    navigate('WalletDetail', { data,balance:this.props.myAssets[0].balance,});
     this.setState({
       modal: false
     });
