@@ -605,7 +605,7 @@ class Transaction extends BaseComponent {
           <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
             <View style={{flexDirection:"column",flexGrow:1}}>
               <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
-                <Text style={{color:'#8696B0',fontSize:11,textAlign:'center', marginLeft:10}}>开盘   </Text>
+                <Text style={{color:'#8696B0',fontSize:11,textAlign:'left', marginLeft:10}}>开盘   </Text>
                 <Text style={{color:'#fff',fontSize:11,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.open : '0'} EOS/KB</Text>
               </View>
               <View style={{flexDirection:"row",flexGrow:1}}>
@@ -633,7 +633,7 @@ class Transaction extends BaseComponent {
         <View style={{padding:10,paddingTop:5}}>
           <SegmentedControls 
           tint= {'#586888'}
-          selectedTint= {'#43536D'}
+          selectedTint= {'#ffffff'}
           onSelection={this.setSelectedOption.bind(this) }
           selectedOption={ this.state.selectedSegment }
           backTint= {'#43536D'} options={['2小时','6小时','24小时','48小时']} />
@@ -672,7 +672,7 @@ class Transaction extends BaseComponent {
               <View style={styles.inptoutsource}>
             
                 <View style={styles.outsource}>
-                    <View style={{flex: 1,}}>
+                    <View style={{flex: 1, paddingRight: 20,}}>
                         <Slider 
                         maximumValue={this.state.balance*1}
                         minimumValue={0}
@@ -720,7 +720,7 @@ class Transaction extends BaseComponent {
                   </View>
                   <View style={styles.inptoutsource}>
                         <View style={styles.outsource}>
-                            <View style={{flex: 1,}}>
+                            <View style={{flex: 1, paddingRight: 20,}}>
                                 <Slider 
                                     maximumValue={this.state.myRamAvailable*1}
                                     minimumValue={0}
@@ -802,7 +802,7 @@ class Transaction extends BaseComponent {
                  <View style={{padding:10,paddingTop:5}}>
                   <SegmentedControls 
                   tint= {'#586888'}
-                  selectedTint= {'#43536D'}
+                  selectedTint= {'#ffffff'}
                   onSelection={this.setSelectedTrackOption.bind(this) }
                   selectedOption={ this.state.selectedTrackSegment }
                   backTint= {'#43536D'} options={trackOption} />
@@ -1037,7 +1037,7 @@ const styles = StyleSheet.create({
   },
   inpt: {
     flex: 1, 
-    color: UColor.arrow, 
+    color: UColor.fontColor, 
     fontSize: 15, 
     height: 45, 
     paddingLeft: 10, 
