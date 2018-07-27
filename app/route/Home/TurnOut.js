@@ -136,7 +136,7 @@ class TurnOut extends BaseComponent {
     constructor(props) {
         super(props);
         this.state = {
-            show: true,
+            show: false,
             toAccount: '',
             amount: '',
             memo: '',
