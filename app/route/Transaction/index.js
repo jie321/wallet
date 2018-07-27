@@ -671,7 +671,6 @@ class Transaction extends BaseComponent {
                 <View style={styles.outsource}>
                     <View style={{flex: 1,}}>
                         <Slider 
-                        style={{height: 15,}}
                         maximumValue={this.state.balance*1}
                         minimumValue={0}
                         step={0.0001}
@@ -682,11 +681,11 @@ class Transaction extends BaseComponent {
                         //android
                         thumbTintColor={UColor.tintColor}
                         //ios
-                        trackImage={UImage.progressbar_a}
-                        minimumTrackImage={UImage.progressbar_a}
-                        maximumTrackImage={UImage.progressbar_b}
+                        // trackImage={UImage.progressbar_a}
+                        // minimumTrackImage={UImage.progressbar_a}
+                        // maximumTrackImage={UImage.progressbar_b}
                         />
-                        <View style={{height: 30, paddingHorizontal: 15, flexDirection: 'row', justifyContent:'space-between',alignItems: 'center', }}>
+                        <View style={{height: 30, flexDirection: 'row', paddingHorizontal: Platform.OS == 'ios' ? 0:15, justifyContent:'space-between',alignItems: 'center', }}>
                             <Text style={{fontSize: 12, color:UColor.arrow }}>0</Text>
                             <Text style={{fontSize: 12, color:UColor.arrow }}>1/3</Text>     
                             <Text style={{fontSize: 12, color:UColor.arrow }}>2/3</Text>
@@ -730,11 +729,11 @@ class Transaction extends BaseComponent {
                                     //android
                                     thumbTintColor={UColor.tintColor}
                                     //ios
-                                    trackImage={UImage.progressbar_a}
-                                    minimumTrackImage={UImage.progressbar_a}
-                                    maximumTrackImage={UImage.progressbar_b}
+                                    // trackImage={UImage.progressbar_a}
+                                    // minimumTrackImage={UImage.progressbar_a}
+                                    // maximumTrackImage={UImage.progressbar_b}
                                     />
-                                <View style={{height: 30,  paddingHorizontal: 15, flexDirection: 'row', justifyContent:'space-between',alignItems: 'center', }}>
+                                <View style={{height: 30, flexDirection: 'row', paddingHorizontal: Platform.OS == 'ios' ? 0:15, justifyContent:'space-between',alignItems: 'center', }}>
                                     <Text style={{fontSize: 12, color:UColor.arrow }}>0</Text>
                                     <Text style={{fontSize: 12, color:UColor.arrow }}>1/3</Text>     
                                     <Text style={{fontSize: 12, color:UColor.arrow }}>2/3</Text>
