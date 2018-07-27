@@ -12,7 +12,7 @@ export default {
     effects: {
         *getRamInfo({payload,callback},{call,put}) {
             try{
-                const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + getRamInfo, 'post', payload);
+                const resp = yield call(Request.request, getRamInfo, 'post', payload);
                 if(resp.code=='0'){               
                     yield put({ type: 'updateInfo', payload: { ramInfo:resp.data } });
                 }else{
@@ -26,7 +26,7 @@ export default {
         },
         *getRamPriceLine({payload,callback},{call,put}) {
             try{
-                const resp = yield call(Request.request, "http://192.168.1.11:8088/api" + getRamPriceLine + payload.type, 'post', payload);
+                const resp = yield call(Request.request, getRamPriceLine + payload.type, 'post', payload);
                 // alert("getRamPriceLine : " + JSON.stringify(resp));
                 if(resp.code=='0'){               
                     yield put({ type: 'updateRamPriceLine', payload: { data: resp.data, ...payload } });
@@ -47,7 +47,7 @@ export default {
         },
         *getRamTradeLog({ payload, callback }, { call, put }) {
             try{
-                const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamTradeLog, 'post', payload);
+                const resp = yield call(Request.request, getRamTradeLog, 'post', payload);
                 // alert('getRamTradeLog: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     yield put({ type: 'updateTradeLog', payload: { ramTradeLog:resp.data } });
@@ -62,7 +62,7 @@ export default {
         },
         *getRamBigTradeLog({ payload, callback }, { call, put }) {
             try{
-                const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamBigTradeLog, 'post', payload);
+                const resp = yield call(Request.request, getRamBigTradeLog, 'post', payload);
                 // alert('getRamBigTradeLog: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     yield put({ type: 'updateBigTradeLog', payload: { ramBigTradeLog:resp.data } });
@@ -77,7 +77,7 @@ export default {
         },
         *getRamTradeLogByAccount({ payload, callback }, { call, put }) {
             try{
-                const resp = yield call(Request.request, "http://192.168.1.66:8088/api" + getRamTradeLogByAccount, 'post', payload);
+                const resp = yield call(Request.request, getRamTradeLogByAccount, 'post', payload);
                 // alert('getRamTradeLogByAccount: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     yield put({ type: 'updateTradeLog', payload: { ramTradeLog:resp.data } });

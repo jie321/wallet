@@ -27,7 +27,6 @@ export default {
     *existRegisteredUser({ payload, callback }, { call, put }) {
       try {
         const resp = yield call(Request.request, existRegisteredUser, 'post', payload);
-        // const resp = yield call(Request.requestO, "http://192.168.1.19:8088/api" + existRegisteredUser, 'post', payload);
         if (callback) callback(resp);
       } catch (error) {
         if (callback) callback({ code: 500, msg: "网络异常" });
