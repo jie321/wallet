@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { DeviceEventEmitter, ListView, StyleSheet, Image, View, Text, Platform, Modal, Animated, TouchableOpacity, Easing, Clipboard, ImageBackground, ScrollView } from 'react-native';
+import { DeviceEventEmitter, ListView, StyleSheet, Image, View, Text, Platform, Modal, Animated, TouchableOpacity, Easing, Clipboard, ImageBackground, ScrollView, RefreshControl } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter' 
 import store from 'react-native-simple-store';
@@ -49,6 +49,7 @@ class Home extends React.Component {
       arr1: 0,
       isChecked: true,
       isEye: false,
+      assetRefreshing: false,
     };
   }
 
@@ -433,6 +434,19 @@ class Home extends React.Component {
     }});
   }
 
+  onRefresh(){
+    if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
+      return;
+    }
+
+    this.setState({assetRefreshing: true});
+    this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
+      this.setState({assetRefreshing: false});
+    }});
+
+    this.getDefaultWalletEosBalance(); // 默认钱包余额
+  }
+
   render() {
   if(this.props.guide){
     return (
@@ -520,6 +534,15 @@ class Home extends React.Component {
           </View>
         </View>   
         <ListView initialListSize={1} enableEmptySections={true} 
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.assetRefreshing}
+              onRefresh={() => this.onRefresh()}
+              tintColor="#fff"
+              colors={['#ddd', UColor.tintColor]}
+              progressBackgroundColor="#ffffff"
+            />
+          }
           dataSource={this.state.dataSource.cloneWithRows(this.props.myAssets == null ? [] : this.props.myAssets)} 
           renderRow={(rowData, sectionID, rowID) => (      
             <View style={styles.listItem}>

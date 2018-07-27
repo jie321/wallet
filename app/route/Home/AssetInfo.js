@@ -18,6 +18,7 @@ import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import moment from 'moment';
 
+var logPage = 1;
 @connect(({ wallet, assets}) => ({ ...wallet, ...assets }))
 class AssetInfo extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
@@ -40,7 +41,8 @@ class AssetInfo extends BaseComponent {
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             type: '',
             asset: this.props.navigation.state.params.asset,
-            detailInfo: "请稍候...",
+            // detailInfo: "请稍候...",
+            logRefreshing: false,
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
             try {
@@ -51,17 +53,26 @@ class AssetInfo extends BaseComponent {
         });
     }
 
+    componentWillMount() {
+
+        super.componentWillMount();
+    
+        this.props.dispatch({type: 'assets/clearTradeDetails',payload:{}});
+    }
+
     componentDidMount() {
         //加载地址数据
-        EasyLoading.show();
+        // EasyLoading.show();
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
-        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, start_account_action_seq: "-1"}, callback: (resp) => {
+
+        logPage = 1;
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: logPage, countPerPage: 10}, callback: (resp) => {
             if(resp.code != '0'){
-                this.setState({detailInfo: "暂未找到交易哟~"});
-            }else if((resp.code == '0') && (this.props.DetailsData.length == 0)){
-                this.setState({detailInfo: "您还没有交易哟~"});
+                // this.setState({detailInfo: "暂未找到交易哟~"});
+            }else if((resp.code == '0') && (this.props.tradeLog.length == 0)){
+                // this.setState({detailInfo: "您还没有交易哟~"});
             }
-            EasyLoading.dismis();
+            // EasyLoading.dismis();
         }});     
     }
 
@@ -111,22 +122,42 @@ class AssetInfo extends BaseComponent {
         }
         return timezone;
     }
-    filterTradeRecord(DetailsData){
-        var record = [];
-        try {
-            var j = 0;
-            var name = this.props.navigation.state.params.asset.asset.name;
-            for(var i = 0; i < DetailsData.length;i++){
-                if(DetailsData[i].quantity.indexOf(name) > 0){
-                    record[j++] =  DetailsData[i];   
+
+    onEndReached(){
+        if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
+          return;
+        }
+    
+        if(this.state.logRefreshing){
+            return;
+        }
+        logPage += 1;
+        this.setState({logRefreshing: true});
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: logPage, countPerPage: 10}, callback: (resp) => {
+            if(resp.code != '0' || (resp.code == '0' && resp.data && resp.data.length == 0)){
+                if(logPage > 1){
+                    logPage -= 1;
                 }
             }
-        } catch (error) {
-            record = [];
-        }
-        return record;
-
+            this.setState({logRefreshing: false});
+        }}); 
     }
+
+    onRefresh(){
+        if(this.props.defaultWallet == null || this.props.defaultWallet.name == null || this.props.myAssets == null){
+          return;
+        }
+    
+        if(this.state.logRefreshing){
+            return;
+        }
+        logPage = 1;
+        this.setState({logRefreshing: true});
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: logPage, countPerPage: 10}, callback: (resp) => {
+            this.setState({logRefreshing: false});
+        }}); 
+    }
+
     render() {
         const c = this.props.navigation.state.params.asset;
         return (
@@ -137,9 +168,19 @@ class AssetInfo extends BaseComponent {
                 </View>
                 <View style={styles.btn}>
                     <Text style={styles.latelytext}>最近交易记录</Text>
-                    {(this.props.DetailsData == null || this.props.DetailsData.length == 0) && <View style={styles.nothave}><Text style={styles.copytext}>{this.state.detailInfo}</Text></View>}
-                    <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.DetailsData == null ? [] : this.filterTradeRecord(this.props.DetailsData))} 
+                    {/* {(this.props.tradeLog == null || this.props.tradeLog.length == 0) && <View style={styles.nothave}><Text style={styles.copytext}>{this.state.detailInfo}</Text></View>} */}
+                    <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} onEndReachedThreshold = {50}
+                    onEndReached={() => this.onEndReached()}
+                    refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.logRefreshing}
+                        onRefresh={() => this.onRefresh()}
+                        tintColor="#fff"
+                        colors={['#ddd', UColor.tintColor]}
+                        progressBackgroundColor="#ffffff"
+                    />
+                    }
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.tradeLog == null ? [] : this.props.tradeLog)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <View>
                         <Button onPress={this._openDetails.bind(this,rowData)}> 

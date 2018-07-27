@@ -48,13 +48,13 @@ class TradeDetails extends BaseComponent {
   prot(key, data = {}) {
     const { navigate } = this.props.navigation;
     if (key == 'transactionId') {
-    navigate('Web', { title: "交易查询", url:'https://eosmonitor.io/txn/' + this.props.navigation.state.params.trade.transactionId});
+    navigate('Web', { title: "交易查询", url:'https://eospark.com/MainNet/tx/' + this.props.navigation.state.params.trade.transactionId});
     }else  if (key == 'from') {
-    navigate('Web', { title: "发送方", url:'https://eosmonitor.io/account/' + this.props.navigation.state.params.trade.from});
+    navigate('Web', { title: "发送方", url:'https://eospark.com/MainNet/account/' + this.props.navigation.state.params.trade.from});
     }else  if (key == 'to') {
-    navigate('Web', { title: "接受方", url:'https://eosmonitor.io/account/' + this.props.navigation.state.params.trade.to});
+    navigate('Web', { title: "接受方", url:'https://eospark.com/MainNet/account/' + this.props.navigation.state.params.trade.to});
     }else  if (key == 'blockNum') {
-    navigate('Web', { title: "区块高度", url:'https://eosmonitor.io/blocks/' + this.props.navigation.state.params.trade.blockNum});
+    navigate('Web', { title: "区块高度", url:'https://eospark.com/MainNet/block/' + this.props.navigation.state.params.trade.blockNum});
     }
   }
   
@@ -99,7 +99,7 @@ class TradeDetails extends BaseComponent {
         <Text style={styles.blocktime}>{this.transferTimeZone(c.blockTime)}</Text>
         <View style={styles.codeout}>
             <View style={styles.qrcode}>
-               <QRCode size={105} value={'https://eosmonitor.io/txn/' + c.transactionId } />
+               <QRCode size={105} value={'https://eospark.com/MainNet/tx/' + c.transactionId } />
             </View>
         </View>
         <Text style={styles.tradehint}>交易号：<Text style={{color: UColor.tintColor,}} onPress={this.prot.bind(this, 'transactionId')}>{c.transactionId.substring(0, 15) +"..."+ c.transactionId.substr(c.transactionId.length-15) }</Text></Text>
