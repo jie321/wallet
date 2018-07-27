@@ -37,7 +37,7 @@ const init = (navigation) => {
     JPushModule.addReceiveNotificationListener(map => {
 
         let extras = JSON.parse(map.extras);
-        if (extras.url.startsWith("transfer://")) {
+        if (extras && extras.url && extras.url.startsWith("transfer://")) {
             DeviceEventEmitter.emit('wallet_info')
         }
     });
