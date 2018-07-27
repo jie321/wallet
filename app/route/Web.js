@@ -20,11 +20,12 @@ import QRCode from 'react-native-qrcode-svg';
 import { redirect } from '../utils/Api'
 import Constants from '../utils/Constants'
 import AnalyticsUtil from '../utils/AnalyticsUtil';
+import BaseComponent from "../components/BaseComponent";
 
 var WeChat = require('react-native-wechat');
 
 @connect(({ news }) => ({ ...news }))
-export default class Web extends Component {
+export default class Web extends BaseComponent {
 
   static navigationOptions = ({ navigation, navigationOptions }) => {
     return {
