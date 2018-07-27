@@ -11,12 +11,18 @@ import { SegmentedControls } from 'react-native-radio-buttons'
 import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
+import { EasyDialog } from "../../components/Dialog"
 import BaseComponent from "../../components/BaseComponent";
 import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { Eos } from "react-native-eosjs";
+import Constants from '../../utils/Constants';
+var AES = require("crypto-js/aes");
+var CryptoJS = require("crypto-js");
+var dismissKeyboard = require('dismissKeyboard');
 
 const trackOption = ['最近交易','持量大户'];
 
@@ -103,12 +109,11 @@ class Transaction extends BaseComponent {
             return;
           }
         this.getAccountInfo();
-        this.getBalance();
     }});
     
     DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
         this.getRamInfo();
-        this.getBalance();
+        this.getAccountInfo();
         if(this.state.isTxRecord && this.state.queryaccount != null && this.state.queryaccount != ''){
             this.getRamTradeLog();
         }else{
@@ -150,6 +155,9 @@ class Transaction extends BaseComponent {
       this.setState({ myRamAvailable:((data.total_resources.ram_bytes - data.ram_usage)).toFixed(0)});
           this.getInitialization(); 
     } });
+
+    this.getBalance();
+
   } 
 
   getInitialization() {
@@ -412,10 +420,7 @@ class Transaction extends BaseComponent {
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 EasyLoading.show();
-                if(this.state.isOwn){
-                    this.state.receiver = this.props.defaultWallet.account;
-                }
-                Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.buyRamAmount + " EOS", (r) => {
+                Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.props.defaultWallet.account, this.state.buyRamAmount + " EOS", (r) => {
                     EasyLoading.dismis();
                     if(r.isSuccess){
                         this.getAccountInfo();
@@ -598,7 +603,7 @@ class Transaction extends BaseComponent {
   }
   render() {
     return <View style={styles.container}>
-            <Toast ref="toast"/>
+            
 
      <ScrollView style={styles.scrollView}>
       <View>
@@ -695,7 +700,7 @@ class Transaction extends BaseComponent {
                             <Text style={{fontSize: 12, color:UColor.arrow }}>ALL</Text>                                
                         </View>    
                     </View>
-                    <Button onPress={this.buyram.bind()}>
+                    <Button onPress={this.buyram.bind(this)}>
                         <View style={styles.botn}>
                             <Text style={styles.botText}>买入</Text>
                         </View>
@@ -743,7 +748,7 @@ class Transaction extends BaseComponent {
                                     <Text style={{fontSize: 12, color:UColor.arrow }}>ALL</Text>                                
                                 </View> 
                             </View>
-                            <Button onPress={this.sellram.bind()}>
+                            <Button onPress={this.sellram.bind(this)}>
                                 <View style={styles.botn}>
                                     <Text style={styles.botText}>卖出</Text>
                                 </View>
