@@ -31,6 +31,7 @@ export default {
                                 item.isDown=true;
                             }
                          }
+                         item.row = 3;
                          dts.push(item);
                     }
                     yield put({type:'update',payload:{data:dts,...payload}});
