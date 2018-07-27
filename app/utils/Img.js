@@ -51,6 +51,8 @@ export default {
   point_empty:require('../img/point_empty.png'),
   point_full:require('../img/point_full.png'),
   privatekey:require('../img/privatekey.png'),
+  progressbar_a:require('../img/progressbar_a.png'),
+  progressbar_b:require('../img/progressbar_b.png'),
   publickey:require('../img/publickey.png'),
   qr: require('../img/qr.png'),
   qrcode:require('../img/qrcode.png'),

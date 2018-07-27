@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {ProgressBarAndroid,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,StatusBar} from 'react-native';
+import {ProgressBarAndroid,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,Slider,} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -56,7 +56,7 @@ class Transaction extends BaseComponent {
       isTrackRecord: false,
 
       balance: '0.0000',   
-
+      slideCompletionValue: 0,
       buyRamAmount: "0.00",    //输入购买的额度
       eosToBytes: '0',
       bytesToEos: '0.00',
@@ -195,9 +195,9 @@ class Transaction extends BaseComponent {
 
   setEosBalance(balance){
     if (balance == null || balance == "") {
-        this.setState({balance: '0.0000 EOS'});
+        this.setState({balance: '0.0000'});
       } else {
-          this.setState({ balance: balance });
+          this.setState({ balance: balance.replace("EOS", "") });
       }
   }
 
@@ -256,11 +256,21 @@ class Transaction extends BaseComponent {
   funcButton(style, selectedSate, stateType, buttonTitle) {  
     let BTN_SELECTED_STATE_ARRAY = ['isBuy', 'isSell','isTxRecord', 'isTrackRecord'];  
     return(  
-        <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+        <TouchableOpacity style={[style, selectedSate ? {backgroundColor:this.transformColor(stateType)} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
             <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
         </TouchableOpacity>  
     );  
   } 
+  transformColor(currentPressed) {
+      if(currentPressed == 'isBuy'){
+        return '#42B324';
+      }else if(currentPressed == 'isSell'){
+        return UColor.showy;
+      }else{
+        return UColor.tintColor;
+      }
+  }
+
 
   chkAccount(obj) {
       var charmap = '.12345abcdefghijklmnopqrstuvwxyz';
@@ -284,10 +294,7 @@ class Transaction extends BaseComponent {
       obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
       obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
       obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
-      obj = obj
-      .replace(".", "$#$")
-      .replace(/\./g, "")
-      .replace("$#$", ".");
+      obj = obj.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
       obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
       var max = 9999999999.9999;  // 100亿 -1
       var min = 0.0000;
@@ -497,37 +504,37 @@ class Transaction extends BaseComponent {
   }
 
   //输入购买数量占总余额的比例
-  getBuyRamRadio()
+  getBuyRamRadio(balance)
   {
-     var balance = this.state.balance == ""? "0.0000" :this.state.balance.replace("EOS", "");
-     var ratio = 0;             //进度条比例值
-     try {
-        if(this.state.buyRamAmount){
-            if(balance){
-                //余额存在且大于0
-                var tmpbuyRamAmount = 0;
-                var tmpbalance = 0; 
-                try {
-                    tmpbuyRamAmount = parseFloat(this.state.buyRamAmount);
-                    tmpbalance = parseFloat(balance);
-                  } catch (error) {
-                    tmpbuyRamAmount = 0;
-                    tmpbalance = 0;
-                }
-                if(tmpbuyRamAmount > tmpbalance)
-                {
-                    //余额不足
-                    this.setState({buyRamAmount:""});         
-                    EasyToast.show("您的余额不足,请重输");           
-                }else if(tmpbalance > 0){
-                    ratio = tmpbuyRamAmount / tmpbalance;
-                }
-            }
-        }
-     } catch (error) {
-        ratio = 0;
-     }
-     return ratio;
+    //  var balance = this.state.balance == ""? "0.0000" :this.state.balance;
+    //  var ratio = 0;             //进度条比例值
+    //  try {
+    //     if(this.state.buyRamAmount){
+    //         if(balance){
+    //             //余额存在且大于0
+    //             var tmpbuyRamAmount = 0;
+    //             var tmpbalance = 0; 
+    //             try {
+    //                 tmpbuyRamAmount = parseFloat(this.state.buyRamAmount);
+    //                 tmpbalance = parseFloat(balance);
+    //               } catch (error) {
+    //                 tmpbuyRamAmount = 0;
+    //                 tmpbalance = 0;
+    //             }
+    //             if(tmpbuyRamAmount > tmpbalance)
+    //             {
+    //                 //余额不足
+    //                 this.setState({buyRamAmount:""});         
+    //                 EasyToast.show("您的余额不足,请重输");           
+    //             }else if(tmpbalance > 0){
+    //                 ratio = tmpbuyRamAmount / tmpbalance;
+    //             }
+    //         }
+    //     }
+    //  } catch (error) {
+    //     ratio = 0;
+    //  }
+    //  return ratio;
   }
   //输入卖掉的字节数占总字节的比例
   getSellRamRadio()
@@ -634,9 +641,9 @@ class Transaction extends BaseComponent {
             {this.funcButton(styles.buttontab, this.state.isTrackRecord, 'isTrackRecord', '大单追踪')}  
         </View> 
          {this.state.isBuy?<View>
-              <Text style={styles.inptTitle}>余额:{this.state.balance==""? "0.0000" :this.state.balance.replace("EOS", "")}EOS</Text>
+              <Text style={styles.inptTitle}>余额:{this.state.balance==""? "0.0000" :this.state.balance}EOS</Text>
               <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                  <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
+                  <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount + ''} returnKeyType="go" 
                   selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                   placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
                   onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount), eosToBytes: this.eosToBytes(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
@@ -648,37 +655,45 @@ class Transaction extends BaseComponent {
                   <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
               </View>
               <View style={styles.inptoutsource}>
+            
                 <View style={styles.outsource}>
-                        <View style={{flex: 1, paddingLeft: 10, marginRight:18}}>
-                          <ProgressBarAndroid color={UColor.tintColor} styleAttr='Horizontal' progress={this.getBuyRamRadio()}
-                                        indeterminate={false} />
-                          <View style={{flex: 1,  flexDirection: 'row',  padding: 0,margin:0,marginTop:0  }}>
-                            <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                              borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>0</Text>
-
-                            <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                              borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>1/3</Text>     
-
-                            <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                              borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>2/3</Text>
-
-                            <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                              borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>ALL</Text>                                
+                    <View style={{flex: 1,}}>
+                        <Slider 
+                        style={{height: 15,}}
+                        maximumValue={this.state.balance*1}
+                        minimumValue={0}
+                        step={0.0001}
+                        value={this.state.buyRamAmount*1}
+                        onSlidingComplete={(value)=>this.setState({buyRamAmount:value})}
+                        maximumTrackTintColor={UColor.tintColor}
+                        minimumTrackTintColor={UColor.tintColor}
+                        //android
+                        thumbTintColor={UColor.tintColor}
+                        //ios
+                        trackImage={UImage.progressbar_a}
+                        minimumTrackImage={UImage.progressbar_a}
+                        maximumTrackImage={UImage.progressbar_b}
+                        />
+                        <View style={{height: 30, paddingHorizontal: 15, flexDirection: 'row', justifyContent:'space-between',alignItems: 'center', }}>
+                            <Text style={{fontSize: 12, color:UColor.arrow }}>0</Text>
+                            <Text style={{fontSize: 12, color:UColor.arrow }}>1/3</Text>     
+                            <Text style={{fontSize: 12, color:UColor.arrow }}>2/3</Text>
+                            <Text style={{fontSize: 12, color:UColor.arrow }}>ALL</Text>                                
                         </View>    
+                    </View>
+                    <Button onPress={this.buyram.bind()}>
+                        <View style={styles.botn}>
+                            <Text style={styles.botText}>买入</Text>
                         </View>
-                            <Button onPress={this.buyram.bind()}>
-                                <View style={styles.botn}>
-                                    <Text style={styles.botText}>买入</Text>
-                                </View>
-                            </Button> 
-                        </View>
+                    </Button> 
                 </View>
+              </View>
           </View>:  
                <View>{this.state.isSell?
                   <View>
                   <Text style={styles.inptTitle}>可卖:{this.state.myRamAvailable}byte</Text>
                   <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                      <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes} returnKeyType="go" 
+                      <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes + ''} returnKeyType="go" 
                       selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                       placeholder="输入出售数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
                       onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes), bytesToEos: this.bytesToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
@@ -691,23 +706,28 @@ class Transaction extends BaseComponent {
                   </View>
                   <View style={styles.inptoutsource}>
                         <View style={styles.outsource}>
-                           <View style={{flex: 1, paddingLeft: 10, marginRight:18}}>
-                             <ProgressBarAndroid clolor={UColor.tintColor} styleAttr='Horizontal' progress={this.getSellRamRadio()}
-                                            indeterminate={false} />
-                             <View style={{flex: 1,  flexDirection: 'row',  
-                                        padding: 0,margin:0,marginTop:0  }}>
-                                <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                                  borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>0</Text>
-
-                                <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                                  borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>1/3</Text>     
-
-                                <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                                  borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>2/3</Text>
-
-                                <Text style={{  margin: 0, width: (ScreenWidth-130)/4, height: 33,
-                                                  borderRadius: 10,alignItems: 'center',justifyContent: 'center',color:UColor.fontColor }}>ALL</Text>                                
-                            </View>    
+                            <View style={{flex: 1,}}>
+                                <Slider 
+                                    maximumValue={this.state.myRamAvailable*1}
+                                    minimumValue={0}
+                                    step={1}
+                                    value={this.state.sellRamBytes*1}
+                                    onSlidingComplete={(value)=>this.setState({sellRamBytes:value})}
+                                    maximumTrackTintColor={UColor.tintColor}
+                                    minimumTrackTintColor={UColor.tintColor}
+                                    //android
+                                    thumbTintColor={UColor.tintColor}
+                                    //ios
+                                    trackImage={UImage.progressbar_a}
+                                    minimumTrackImage={UImage.progressbar_a}
+                                    maximumTrackImage={UImage.progressbar_b}
+                                    />
+                                <View style={{height: 30,  paddingHorizontal: 15, flexDirection: 'row', justifyContent:'space-between',alignItems: 'center', }}>
+                                    <Text style={{fontSize: 12, color:UColor.arrow }}>0</Text>
+                                    <Text style={{fontSize: 12, color:UColor.arrow }}>1/3</Text>     
+                                    <Text style={{fontSize: 12, color:UColor.arrow }}>2/3</Text>
+                                    <Text style={{fontSize: 12, color:UColor.arrow }}>ALL</Text>                                
+                                </View> 
                             </View>
                             <Button onPress={this.sellram.bind()}>
                                 <View style={styles.botn}>
@@ -960,7 +980,7 @@ const styles = StyleSheet.create({
         margin: 5,
         width: (ScreenWidth-50)/4,
         height: 33,
-        borderRadius: 10,
+        borderRadius: 5,
         alignItems: 'center',   
         justifyContent: 'center', 
     }, 
@@ -991,19 +1011,15 @@ const styles = StyleSheet.create({
   },   
   inptoutsource: {
       marginTop: 10,
-    paddingHorizontal: 20,
-    paddingBottom: 5,
-    justifyContent: 'center',
-    flexDirection: 'row',  
-    alignItems: 'center',
-    borderBottomColor: UColor.secdColor, 
-    borderBottomWidth: 0.5,
+      paddingHorizontal: 20,
+      paddingBottom: 5,
+      justifyContent: 'center',
+      flexDirection: 'row',  
+      alignItems: 'center',
   },
   outsource: {
       flexDirection: 'row',  
       alignItems: 'center',
-      borderBottomColor: UColor.secdColor, 
-      borderBottomWidth: 0.5,
   },
   inpt: {
     flex: 1, 
@@ -1034,7 +1050,7 @@ const styles = StyleSheet.create({
   },
     botn: {
       marginLeft: 10, 
-      width: 86, 
+      width: 80, 
       height: 38,  
       borderRadius: 3, 
       backgroundColor: UColor.tintColor, 
