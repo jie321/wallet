@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {ProgressBarAndroid,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,Slider,} from 'react-native';
+import {ProgressBarAndroid,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,Slider,KeyboardAvoidingView} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -601,12 +601,16 @@ class Transaction extends BaseComponent {
     }
     return ((bytes * currentPrice) / 1024).toFixed(2);
   }
+
+  dismissKeyboardClick() {
+    dismissKeyboard();
+  }
+  
   render() {
     return <View style={styles.container}>
-            
-
-     <ScrollView style={styles.scrollView}>
-      <View>
+        <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+            <ScrollView keyboardShouldPersistTaps="always">
+                <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
           <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
             <View style={{flexDirection:"column",flexGrow:1}}>
               <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
@@ -944,8 +948,10 @@ class Transaction extends BaseComponent {
                </View>}
             </View>
           }   
-      </View>
-    </ScrollView>
+     
+            </TouchableOpacity>
+        </ScrollView>  
+    </KeyboardAvoidingView> 
   </View>
   }
 }
