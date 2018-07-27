@@ -13,7 +13,6 @@ const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
-import { Toast } from '../../components/Toast';
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
 class Add_assets extends BaseComponent {

@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import Barcode from 'react-native-smart-barcode'
 
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 
 import PropTypes from 'prop-types'
 
@@ -239,7 +239,7 @@ export default class App extends BaseComponent {
                         onBarCodeRead={this._onBarCodeRead} />
                     : null
                 }
-                        <Toast ref="toast"/>
+                        
 
             </View>
         )

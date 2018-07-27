@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import BaseComponent from "../../components/BaseComponent";
 var DeviceInfo = require('react-native-device-info');
@@ -100,7 +100,7 @@ class Helpcenter extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
-            <Toast ref="toast"/>
+            
 
       <ScrollView>
           <View style={styles.touchableout}>

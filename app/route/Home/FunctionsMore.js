@@ -6,7 +6,7 @@ import Button from '../../components/Button'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 
-import { EasyToast, Toast } from "../../components/Toast"
+import { EasyToast } from "../../components/Toast"
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 var Dimensions = require('Dimensions')
@@ -53,7 +53,7 @@ class FunctionsMore extends React.Component {
 
   render() {
     return (<View style={styles.container}>
-        <Toast ref="toast"/>
+        
         <View style={styles.head}>
             <Button onPress={this.onPress.bind(this, 'Receivables')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>

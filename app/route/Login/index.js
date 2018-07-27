@@ -10,7 +10,7 @@ import moment from 'moment';
 import UImage from '../../utils/Img';
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { kapimg } from '../../utils/Api'
 import { EasyDialog } from '../../components/Dialog'
 import Constants from '../../utils/Constants'
@@ -391,7 +391,7 @@ class Login extends BaseComponent {
   render() {
     return (
       <View style={styles.container}>
-        <Toast ref="toast"/>
+        
         <View style={{ backgroundColor: '#586888', height: 0 }}></View>
         <TabViewAnimated
           lazy={true}

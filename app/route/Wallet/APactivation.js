@@ -9,7 +9,7 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
 import { EasyDialog } from "../../components/Dialog";
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
 import BaseComponent from "../../components/BaseComponent";
@@ -155,7 +155,7 @@ class APactivation extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
-            <Toast ref="toast"/>
+            
 
     <ScrollView  keyboardShouldPersistTaps="always">
       <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

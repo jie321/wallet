@@ -11,7 +11,7 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({assets}) => ({...assets}))
@@ -147,7 +147,7 @@ class Coin_search extends BaseComponent {
     render() {
         return (
             <View style={styles.container}>
-                <Toast ref="toast"/>
+                
                   <View style={styles.header}>  
                     <TouchableOpacity onPress={this._leftTopClick.bind()}>  
                         <View style={styles.leftout} >

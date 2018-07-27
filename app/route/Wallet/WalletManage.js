@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import store from 'react-native-simple-store';
 import BaseComponent from "../../components/BaseComponent";
@@ -96,7 +96,7 @@ class WalletManage extends BaseComponent {
 
   render() {
     return (<View style={styles.container}>  
-        <Toast ref="toast"/>
+        
 
       <View style={{paddingBottom: 60}}>
         <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor, }} enableEmptySections={true}

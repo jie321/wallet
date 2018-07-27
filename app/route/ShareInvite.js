@@ -9,7 +9,7 @@ import AnalyticsUtil from '../utils/AnalyticsUtil';
 import Button from '../components/Button'
 const maxHeight = Dimensions.get('window').height;
 const maxWidth = Dimensions.get('window').width;
-import { EasyToast, Toast } from '../components/Toast';
+import { EasyToast } from '../components/Toast';
 import { EasyDialog } from '../components/Dialog'
 import { EasyLoading } from '../components/Loading'
 import QRCode from 'react-native-qrcode-svg';
@@ -101,7 +101,7 @@ class ShareInvite extends React.Component {
   render() {
     return (
       <View style={styles.container}>     
-          <Toast ref="toast"/>
+          
 
         <ImageBackground style={{flex:1, justifyContent: "center" }} source={UImage.shareBg} resizeMode="cover">
           <View style={{justifyContent: 'center', alignItems: 'center',width: '100%', height: 20,}}>

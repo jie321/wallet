@@ -10,7 +10,7 @@ import AnalyticsUtil from '../../utils/AnalyticsUtil';
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
@@ -265,7 +265,7 @@ class TurnOutAsset extends BaseComponent {
         const c = this.props.navigation.state.params.coins;
         return (
         <View style={styles.container}>
-                <Toast ref="toast"/>
+                
             <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                 <ScrollView  keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

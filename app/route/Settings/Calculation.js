@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
@@ -371,7 +371,7 @@ class Calculation extends BaseComponent {
     render() {
         return (
             <View style={styles.container}> 
-                    <Toast ref="toast"/>
+                    
 
                 <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                     <ScrollView keyboardShouldPersistTaps="always">

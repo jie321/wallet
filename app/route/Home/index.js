@@ -13,7 +13,7 @@ import QRCode from 'react-native-qrcode-svg';
 var Dimensions = require('Dimensions')
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
-import { EasyToast, Toast } from "../../components/Toast"
+import { EasyToast } from "../../components/Toast"
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
@@ -451,7 +451,7 @@ class Home extends React.Component {
   if(this.props.guide){
     return (
       <View style={styles.container}>
-        <Toast ref="toast"/>
+        
         <ScrollView>
             <Image source={UImage.guide} style={styles.imgTop} resizeMode="contain"/>
             <Button onPress={() => this.Establish()}>
@@ -470,7 +470,7 @@ class Home extends React.Component {
   }else{
     return (
       <View style={styles.container}>
-        <Toast ref="toast"/>
+        
         <View>
           <View style={styles.topbtn}>
             <Button onPress={() => this.scan()}>

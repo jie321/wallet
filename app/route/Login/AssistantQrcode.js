@@ -6,7 +6,7 @@ import Button from  '../../components/Button'
 import QRCode from "react-native-qrcode-svg";
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 
 
@@ -41,7 +41,7 @@ class AssistantQrcode extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
-            <Toast ref="toast"/>
+            
 
         <View style={styles.outsource}>
             <Text style={styles.accountText}>微信号：{this.state.WeChat}</Text>

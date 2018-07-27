@@ -7,7 +7,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 
@@ -144,7 +144,7 @@ class ModifyPassword extends BaseComponent {
 
     render() {
         return <View style={styles.container}>
-            <Toast ref="toast"/>
+            
 
           <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

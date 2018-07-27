@@ -12,7 +12,7 @@ require('moment/locale/zh-cn');
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
 const { width } = Dimensions.get('window')
-import { EasyToast, Toast } from "../components/Toast"
+import { EasyToast } from "../components/Toast"
 import { EasyDialog } from "../components/Dialog"
 import UImage from '../utils/Img'
 import UColor from '../utils/Colors'
@@ -91,7 +91,7 @@ export default class Web extends BaseComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: UColor.mainColor }}>
-          <Toast ref="toast"/>
+          
 
         <WebView
           source={{ uri: this.props.navigation.state.params.url }}

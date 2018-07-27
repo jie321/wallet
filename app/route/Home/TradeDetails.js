@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 import moment from 'moment';
 let {width, height} = Dimensions.get('window');
@@ -71,7 +71,7 @@ class TradeDetails extends BaseComponent {
   render() {
     const c = this.props.navigation.state.params.trade;
     return <View style={styles.container}>
-            <Toast ref="toast"/>
+            
         <View style={styles.header}>
             <View style={styles.headout}>
                 <Text style={styles.quantitytext}>{c.quantity}</Text>

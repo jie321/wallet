@@ -12,7 +12,7 @@ import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
@@ -162,7 +162,7 @@ class AssetInfo extends BaseComponent {
         const c = this.props.navigation.state.params.asset;
         return (
             <View style={styles.container}>
-                <Toast ref="toast"/>
+                
                 <View style={styles.header}>
                     <Text style={styles.headbalance}>{this.state.balance==""? "0.0000" :this.state.balance.replace(c.asset.name, "")} {c.asset.name}</Text>
                     <Text style={styles.headmarket}>≈ {(this.state.balance == null || c.asset.value == null) ? "0.00" : (this.state.balance.replace(c.asset.name, "") * c.asset.value).toFixed(2)} ￥</Text>

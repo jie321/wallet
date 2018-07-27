@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
@@ -273,7 +273,7 @@ class ActivationAt extends BaseComponent {
 
     render() {
         return (<View style={styles.container}>
-                <Toast ref="toast"/>
+                
 
         <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

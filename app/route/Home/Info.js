@@ -12,7 +12,7 @@ import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast, Toast } from '../../components/Toast';
+import { EasyToast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
@@ -109,7 +109,7 @@ class Info extends BaseComponent {
         const c = this.props.navigation.state.params.coinType;
         return (
             <View style={styles.container}>
-                <Toast ref="toast"/>
+                
                 <View style={styles.header}>
                     <Text style={styles.headbalance}>{this.state.balance.replace("EOS", "")} EOS</Text>
                     <Text style={styles.headmarket}>≈ {(this.state.balance==null || this.state.balance == "")? '0.00' : (this.state.balance.replace("EOS", "")*c.value).toFixed(2)} ￥</Text>
