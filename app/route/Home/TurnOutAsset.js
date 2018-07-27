@@ -266,15 +266,13 @@ class TurnOutAsset extends BaseComponent {
         return (
         <View style={styles.container}>
                 <Toast ref="toast"/>
-
             <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                 <ScrollView  keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                         <View style={styles.header}>
                             <Text style={styles.headertext}>{this.state.balance==""? "0.0000" :this.state.balance.replace(c.asset.name, "")} {c.asset.name}</Text>
-                            {/* <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>≈ {c.value} ￥</Text> */}
+                            {/* <Text style={styles.rowtext}>≈ {c.value} ￥</Text> */}
                         </View>
-
                         <View style={styles.taboutsource}>
                             <View style={styles.outsource}>
                                 <View style={styles.inptoutsource}>
@@ -320,47 +318,32 @@ class TurnOutAsset extends BaseComponent {
             </KeyboardAvoidingView>
                 <View style={styles.pupuo}>
                     <Modal animationType={'slide'} transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
-                        <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', }} activeOpacity={1.0}>
-                        <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
-                        
-                                <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
-                                    <Text style={{flex: 1,paddingVertical: 5,marginLeft: 135,fontSize: 18,fontWeight: 'bold',color:'#4d4d4d'}}>订单详情</Text>
-                                    <Button  onPress={this._setModalVisible.bind(this)}>
+                        <TouchableOpacity style={styles.modalStyle} activeOpacity={1.0}>
+                        <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,paddingHorizontal: 10}}>
+                                <View style={styles.subView}>
+                                    <Text style={styles.buttontext}/>
+                                    <Text style={styles.titleText}>订单详情</Text>
+                                    <Button  onPress={this._setModalVisible.bind(this)} style={styles.buttonView}>
                                         <Text style={styles.buttontext}>×</Text>
                                     </Button>
                                 </View>
-
                                 <View style={styles.separationline} >
-                                    <View style={{flexDirection: "row",padding: 15,justifyContent: "center",}}>
-                                    {/* <View style={styles.rowInfo}> */}
-                                        <Text style={{fontSize: 26,paddingVertical: 15, lineHeight: 10,color:'#000000',textAlign: 'center',}}>{this.state.amount} </Text>
-                                        <Text style={{fontSize: 13,paddingVertical: 10, lineHeight: 10,color:'#000000',textAlign: 'center',}}> {c.asset.name}</Text>
-                                    </View>
+                                    <Text style={{fontSize: 26,paddingVertical: 15, lineHeight: 10,color:'#000000',textAlign: 'center',}}>{this.state.amount} </Text>
+                                    <Text style={{fontSize: 13,paddingVertical: 10, lineHeight: 10,color:'#000000',textAlign: 'center',}}> {c.asset.name}</Text>
                                 </View>
-
-                                <View style={{flex: 1, paddingLeft: 10, paddingRight:10,paddingHorizontal: 20}}>
-
+                                <View style={{flex: 1,}}>
                                     <View style={styles.separationline} >
-                                        <View style={styles.rowInfo}>
-                                            <Text style={styles.contentText}>收款账户：</Text>
-                                            <Text style={styles.contentText}>{this.state.toAccount}</Text>
-                                        </View>
+                                        <Text style={styles.explainText}>收款账户：</Text>
+                                        <Text style={styles.contentText}>{this.state.toAccount}</Text>
                                     </View>
-
                                     <View style={styles.separationline} >
-                                        <View style={styles.rowInfo}>
-                                            <Text style={styles.contentText}>转出账户：</Text>
-                                            <Text style={styles.contentText}>{this.props.defaultWallet.account}</Text>
-                                        </View>
+                                        <Text style={styles.explainText}>转出账户：</Text>
+                                        <Text style={styles.contentText}>{this.props.defaultWallet.account}</Text>
                                     </View>
-
                                     <View style={styles.separationline} >
-                                        <View style={styles.rowInfo}>
-                                            <Text style={styles.contentText}>备注：</Text> 
-                                            <Text style={styles.contentText}>{this.state.memo}</Text> 
-                                        </View>
+                                        <Text style={styles.explainText}>备注：</Text> 
+                                        <Text style={styles.contentText} numberOfLines={1}>{this.state.memo}</Text> 
                                     </View>
-
                                     <Button onPress={() => { this.inputPwd() }}>
                                         <View style={styles.btnoutsource}>
                                             <Text style={styles.btntext}>确认</Text>
@@ -409,104 +392,73 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: UColor.fontColor
     },
-    row: {
-        height: 90,
-        backgroundColor: UColor.mainColor,
-        flexDirection: "column",
-        padding: 10,
-        justifyContent: "space-between",
-        borderRadius: 5,
-        margin: 5,
+    rowtext: {
+        fontSize: 14, 
+        color: '#8696B0', 
+        marginTop: 5
     },
-    top: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: 'center',
-    },
-    footer: {
-        height: 50,
-        flexDirection: 'row',
-        position: 'absolute',
-        backgroundColor: UColor.secdColor,
-        bottom: 0,
-        left: 0,
-        right: 0,
-    },
-
-
-
+   
     pupuo: {
         backgroundColor: '#ECECF0',
     },
     // modal的样式  
     modalStyle: {
-        backgroundColor: UColor.mask,  
+        flex: 1, 
+        justifyContent: 'flex-end', 
         alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
     },
     // modal上子View的样式  
     subView: {
-        marginLeft: 10,
-        marginRight: 10,
-        backgroundColor: UColor.fontColor,
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        borderRadius: 10,
-        borderWidth: 0.5,
-        borderColor: UColor.baseline,
+        flexDirection: "row", 
+        height: 50, 
+        alignItems: 'center'
     },
     buttonView: {
-        alignItems: 'flex-end',
+        justifyContent: 'center', 
+        alignItems: 'center',
     },
     buttontext: {
-        // width: 30,
-        // height: 30,
-        // marginTop:1,
-        // marginRight: 1,
-        // paddingVertical: 12, 
-        lineHeight: 25,
+        width: 50,
         color: '#CBCBCB',
-        marginBottom: 0,
         fontSize: 28,
+        textAlign: 'center',
     },
     // 标题  
     titleText: {
-        marginBottom: 10,
+        flex: 1,
         fontSize: 18,
         fontWeight: 'bold',
-        textAlign: 'center',
+        color:'#4d4d4d', 
+        textAlign:'center'
     },
     // 内容  
-    contentText: {
-        marginLeft: 10,
-        marginRight: 10,
-        lineHeight: 10,
-        paddingVertical: 15,
+    explainText: {
         fontSize: 18,
         textAlign: 'left',
         color: '#4D4D4D',
     },
-
-    rowInfo: {
-        flexDirection: "row",
-        padding: 15,
-        justifyContent: "space-between",
-      },
+    contentText: {
+        flex: 1,
+        fontSize: 18,
+        textAlign: 'right',
+        color: '#4D4D4D',
+    },
 
     //转帐信息提示分隔线
     separationline: {
-        paddingLeft: 10,
         height: 50,
-        marginBottom: 10,
+        paddingHorizontal: 20,
+        flexDirection: "row",
         borderBottomWidth: 0.5,
         borderBottomColor: '#e5e5e5',
         justifyContent: 'center',
+        alignItems: 'center'
     },
 
     // 按钮  
     btnoutsource: {
-        margin: 15,
+        marginTop: 30,
+        marginHorizontal: 15,
         height: 45,
         borderRadius: 6,
         backgroundColor: UColor.tintColor,
@@ -517,7 +469,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: UColor.fontColor
     },
-
    
     taboutsource: {
         flex: 1,
@@ -599,7 +550,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: UColor.fontColor
     }
-
-
 })
 export default TurnOutAsset;
