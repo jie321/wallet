@@ -73,20 +73,14 @@ class FunctionsMore extends React.Component {
                     <Text style={styles.headbtntext}>资源管理</Text>
                 </View>
             </Button>
-            <Button onPress={this.onPress.bind(this, 'Cputrend')} style={styles.headbtn}>
-                <View style={styles.headbtnout}>
-                    <Image source={UImage.trend_cpu} style={styles.imgBtn} />
-                    <Text style={styles.headbtntext}>内存走势</Text>
-                </View>                      
-            </Button>
-        </View>
-        <View style={styles.head}>
             <Button onPress={this.onPress.bind(this, 'Bvote')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>
                     <Image source={UImage.vote_node} style={styles.imgBtn} />
                     <Text style={styles.headbtntext}>节点投票</Text>
                 </View>                      
             </Button>
+        </View>
+        <View style={styles.head}>
             <Button onPress={this.onPress.bind(this, 'candy')} style={styles.headbtn}>
                 <View style={styles.headbtnout}>
                     <Image source={UImage.candy} style={styles.imgBtn} />
