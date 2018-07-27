@@ -11,7 +11,7 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
 import JPushModule from 'jpush-react-native';
 import BaseComponent from "../../components/BaseComponent";
@@ -78,6 +78,8 @@ class Set extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
+            <Toast ref="toast"/>
+
       <View style={styles.scrollView}>
           <Button onPress={() => this.gesturepass()}>
             <View style={styles.listItem}>

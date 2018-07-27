@@ -10,7 +10,7 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 
@@ -84,6 +84,8 @@ class AddressQr extends BaseComponent {
     render() {
         return (
             <View style={styles.container}>
+                    <Toast ref="toast"/>
+
                 <View style={styles.header}>
                     <Text style={{ fontSize: 20, color: '#fff' }}></Text>
                     <Text style={{ fontSize: 14, color: '#8696B0', marginTop: 5 }}>ds2f1gdsg1321gd3sf1d3sf1ds3f1d32sf1ds3f1d25s</Text>

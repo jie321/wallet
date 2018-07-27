@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import Constants from '../../utils/Constants'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import JPushModule from 'jpush-react-native';
 import BaseComponent from "../../components/BaseComponent";
@@ -465,6 +465,8 @@ class WalletDetail extends BaseComponent {
     const c = this.props.navigation.state.params.data
     const balance = this.props.navigation.state.params.balance
     return <View style={styles.container}>
+        <Toast ref="toast"/>
+
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.walletout}>

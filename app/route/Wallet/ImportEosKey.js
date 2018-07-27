@@ -8,7 +8,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
@@ -339,6 +339,8 @@ class ImportEosKey extends BaseComponent {
     let {feedBackText, selection} = this.state;
     return (
       <View style={styles.container}>
+          <Toast ref="toast"/>
+
        <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
             <View style={styles.header}>

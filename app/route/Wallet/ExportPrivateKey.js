@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 @connect(({login}) => ({...login}))
 class Set extends BaseComponent {
@@ -39,6 +39,8 @@ class Set extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
+        <Toast ref="toast"/>
+
     <KeyboardAvoidingView behavior='position'>
       <ScrollView keyboardShouldPersistTaps="always">
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

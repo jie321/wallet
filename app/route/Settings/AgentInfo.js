@@ -7,7 +7,7 @@ import Button from  '../../components/Button'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
@@ -57,6 +57,8 @@ class AgentInfo extends BaseComponent {
         const agent = this.props.navigation.state.params.coins;
         return (
             <View style={styles.container}> 
+                    <Toast ref="toast"/>
+
                 <ScrollView>
                     <View style={styles.outsource}>
                         <ImageBackground style={styles.AgentInfo} source={UImage.AgentInfo_bg} resizeMode="stretch">                  

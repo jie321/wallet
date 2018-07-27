@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
@@ -83,6 +83,8 @@ class Community extends BaseComponent {
   
   render() {
     return <View style={styles.container}>    
+            <Toast ref="toast"/>
+
           <Image source={UImage.cmyhead} style={{width:maxWidth, height:90, marginTop: 5,}} />
           <View style={{padding: 4,}} >
             <View style={{flexDirection:'row', height: 118,}}>

@@ -15,7 +15,7 @@ import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
@@ -732,6 +732,8 @@ class Resources extends BaseComponent {
         const c = this.props.navigation.state.params.coinType;
         return (
         <View style={styles.container}>
+                <Toast ref="toast"/>
+
           <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                 <ScrollView keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

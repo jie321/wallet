@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 let {width, height} = Dimensions.get('window');
 
@@ -59,6 +59,8 @@ class ProblemFeedback extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
+            <Toast ref="toast"/>
+
      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="always">
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
             <View style={{paddingHorizontal: 10, paddingTop: 20,}}>

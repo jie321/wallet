@@ -4,7 +4,7 @@ import {ListView,StyleSheet,Image,ScrollView,View,Text, TextInput,Platform,Touch
 import UColor from '../../utils/Colors'
 import UImage from '../../utils/Img'
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 import {NavigationActions} from 'react-navigation'
 var dismissKeyboard = require('dismissKeyboard');
@@ -77,6 +77,8 @@ class MortgageInquiry extends BaseComponent {
 
   render() {
     return (<View style={styles.container}>
+            <Toast ref="toast"/>
+
       <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
         <ScrollView keyboardShouldPersistTaps="always">
           <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>

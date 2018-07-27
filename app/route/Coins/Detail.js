@@ -11,7 +11,7 @@ import { SegmentedControls } from 'react-native-radio-buttons'
 import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 
 const type = 1;
@@ -114,6 +114,7 @@ class CoinDetail extends BaseComponent {
     const c = this.props.navigation.state.params.coins;
 
     return <View style={styles.container}>
+    <Toast ref="toast"/>
      <ScrollView style={styles.scrollView}>
       <View>
         {

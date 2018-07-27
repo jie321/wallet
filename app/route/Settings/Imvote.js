@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import {EasyDialog} from '../../components/Dialog'
 const maxWidth = Dimensions.get('window').width;
 import { Eos } from "react-native-eosjs";
@@ -178,6 +178,8 @@ class Imvote extends BaseComponent {
     render() {
         return (
             <View style={styles.container}>
+                    <Toast ref="toast"/>
+
                 <View style={styles.headout}>         
                     <Text style={styles.nodename}>节点名称</Text>           
                     <Text style={styles.rankingticket}>排名/票数</Text>           

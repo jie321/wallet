@@ -13,7 +13,7 @@ import UImage from '../../utils/Img'
 const maxHeight = Dimensions.get('window').height;
 const {width, height} = Dimensions.get('window');
 import { EasyDialog } from "../../components/Dialog";
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({contracts}) => ({...contracts}))
@@ -119,6 +119,7 @@ class Thin extends BaseComponent {
         console.log(temp, '......')
         return (
             <View style={styles.container}>
+                <Toast ref="toast"/>
                 <ListView renderRow={this.renderRow}  enableEmptySections = {true}  dataSource={this.state.dataSource.cloneWithRows((this.props.contracts == null ? [] : this.props.contracts))}></ListView> 
                 { this.state.isShowBottom == false ? 
                 <View style={styles.replace}>

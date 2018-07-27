@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({login}) => ({...login}))
@@ -59,6 +59,8 @@ class ExportPublicKey extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
+        <Toast ref="toast"/>
+
       <ScrollView keyboardShouldPersistTaps="always">
         <View style={styles.header}>
             <View style={styles.inptoutbg}>

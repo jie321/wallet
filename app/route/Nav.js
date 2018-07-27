@@ -48,7 +48,7 @@ import ExportPrivateKey from './Wallet/ExportPrivateKey'
 import ExportPublicKey from './Wallet/ExportPublicKey'
 import BarCode from './Wallet/BarcodeTest'
 // import AddressQr from './Wallet/AddressQr'
-import { EasyToast } from "../components/Toast"
+import { EasyToast, Toast } from "../components/Toast"
 import { EasyDialog } from "../components/Dialog"
 import { EasyAdress } from "../components/Address"
 import Upgrade from 'react-native-upgrade-android';
@@ -830,6 +830,8 @@ class Route extends React.Component {
   render() {
 
     return (<View style={{ flex: 1 }}>
+        <Toast ref="toast"/>
+
       <Nav ref="nav" onNavigationStateChange={(prevNav, nav, action) => { this.switchRoute(prevNav, nav, action) }} />
       {this.state.showShare ? (
         <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>

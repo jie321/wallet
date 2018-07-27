@@ -11,7 +11,7 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import { EasyLoading } from '../../components/Loading';
 import ViewShot from "react-native-view-shot";
@@ -254,6 +254,8 @@ class BackupsAOkey extends BaseComponent {
 
     render() {
         return (<View style={styles.container}>
+                <Toast ref="toast"/>
+
         <ScrollView keyboardShouldPersistTaps="always">
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
                 <View style={styles.header}>

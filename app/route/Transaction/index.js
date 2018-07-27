@@ -11,7 +11,7 @@ import { SegmentedControls } from 'react-native-radio-buttons'
 import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 import ProgressBar from '../../components/ProgressBar';
@@ -597,6 +597,8 @@ class Transaction extends BaseComponent {
   }
   render() {
     return <View style={styles.container}>
+            <Toast ref="toast"/>
+
      <ScrollView style={styles.scrollView}>
       <View>
           <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>

@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
-import { EasyToast } from '../../components/Toast';
+import { EasyToast, Toast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 var DeviceInfo = require('react-native-device-info');
 
@@ -115,6 +115,8 @@ class Setting extends React.Component {
 
   render() {
     return <View style={styles.container}>
+            <Toast ref="toast"/>
+
       <ScrollView style={styles.scrollView}>
         <View>
           <Button onPress={this.goProfile.bind(this)}>
