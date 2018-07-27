@@ -104,7 +104,7 @@ const TabContainer = TabNavigator(
             iconName = focused ? UImage.tab_2_h : UImage.tab_2
             break;
           case 'Transaction':
-            iconName = focused ? UImage.tab_2_h : UImage.tab_2
+            iconName = focused ? UImage.tab_5_h : UImage.tab_5
             break;  
           case 'News':
             iconName = focused ? UImage.tab_3_h : UImage.tab_3

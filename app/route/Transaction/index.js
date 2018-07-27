@@ -33,10 +33,11 @@ class Transaction extends BaseComponent {
             backgroundColor: UColor.mainColor,
             borderBottomWidth:0,
           },
+         //铃铛small_bell/small_bell_h
         //   headerRight: (
         //     // <Button name="share" onPress={() => this._rightTopClick()} >
         //       <View style={{ padding: 15 }}>
-        //       <Image source={UImage.share_i} style={{ width: 22, height: 22 }}></Image>
+        //       <Image source={UImage.small_bell} style={{ width: 22, height: 22 }}></Image>
         //       </View>
         //     // </Button>
         //   )
