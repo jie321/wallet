@@ -52,16 +52,13 @@ class Transaction extends BaseComponent {
 
   constructor(props) {
     super(props);
-
     this.state = {
       selectedSegment:"2小时",
       selectedTrackSegment: trackOption[0],
-
       isBuy: true,
       isSell: false,
       isTxRecord: false,
       isTrackRecord: false,
-
       balance: '0.0000',   
       slideCompletionValue: 0,
       buyRamAmount: "0.00",    //输入购买的额度
@@ -240,7 +237,8 @@ class Transaction extends BaseComponent {
         this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
             EasyLoading.dismis();
         }});    
-
+        //当点击交易记录按钮清空输入框
+        this.setState({queryaccount:'' });
     }
     else if (current == 'isTrackRecord'){
         EasyLoading.show();
@@ -369,8 +367,8 @@ class Transaction extends BaseComponent {
   }
   
   // 根据账号查找交易记录
-  getRamLogByAccout = (rowData) =>{
-    if(this.state.queryaccount == null|| this.state.queryaccount == ''){
+  getRamLogByAccout = (queryaccount) =>{
+    if(queryaccount == null|| queryaccount == ''){
         EasyLoading.show();
         this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
             EasyLoading.dismis();
@@ -378,7 +376,7 @@ class Transaction extends BaseComponent {
         return;
     }
     EasyLoading.show();
-    this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.state.queryaccount}, callback: (resp) => {
+    this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: queryaccount}, callback: (resp) => {
         EasyLoading.dismis();
         if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
             EasyToast.show("未找到交易哟~");
@@ -602,6 +600,17 @@ class Transaction extends BaseComponent {
     return ((bytes * currentPrice) / 1024).toFixed(2);
   }
 
+  openQuery(payer) {
+    this.setState({
+        isBuy: false, 
+        isSell: false,
+        isTxRecord: true,
+        isTrackRecord:false, 
+        queryaccount:payer
+    });
+    this.getRamLogByAccout(payer);
+  }
+
   dismissKeyboardClick() {
     dismissKeyboard();
   }
@@ -769,20 +778,22 @@ class Transaction extends BaseComponent {
                             onChangeText={(queryaccount) => this.setState({ queryaccount: this.chkAccount(queryaccount)})}
                         />
                     </View>     
-                    <TouchableOpacity onPress={this.getRamLogByAccout.bind()}>  
-                        <View style={{justifyContent: 'flex-end',paddingRight: 15}} >
+                    <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.state.queryaccount)}>  
+                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10}} >
                             <Image source={UImage.Magnifier} style={{ width: 30,height: 30}}></Image>
+                        </View>
+                    </TouchableOpacity> 
+                    <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.props.defaultWallet.account)}>  
+                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10}} >
+                            <Image source={UImage.Magnifier_me} style={{ width: 30,height: 30}}></Image>
                         </View>
                     </TouchableOpacity> 
                  </View>
                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.ramTradeLog == null ? [] : this.props.ramTradeLog)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
-                    <View>
-                        <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
-                                       backgroundColor: UColor.mainColor,
-                                      flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
-                                      borderRadius: 5,margin: 5,}}>
+                    <Button onPress={this.openQuery.bind(this,rowData.payer)}>
+                        <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
                             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                     <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
@@ -801,31 +812,26 @@ class Transaction extends BaseComponent {
                                 <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
                             </View>
                         </View>
-                    </View>         
+                    </Button>         
                      )}                
                  /> 
-                 
             </View>: 
-                 <View>
-
-                 <View style={{padding:10,paddingTop:5}}>
-                  <SegmentedControls 
-                  tint= {'#586888'}
-                  selectedTint= {'#ffffff'}
-                  onSelection={this.setSelectedTrackOption.bind(this) }
-                  selectedOption={ this.state.selectedTrackSegment }
-                  backTint= {'#43536D'} options={trackOption} />
+            <View>
+                <View style={{padding:10,paddingTop:5}}>
+                    <SegmentedControls 
+                    tint= {'#586888'}
+                    selectedTint= {'#ffffff'}
+                    onSelection={this.setSelectedTrackOption.bind(this) }
+                    selectedOption={ this.state.selectedTrackSegment }
+                    backTint= {'#43536D'} options={trackOption} />
                 </View>
                 {this.state.selectedTrackSegment == trackOption[0] ? 
                   <View>
                     <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
                       dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                       renderRow={(rowData, sectionID, rowID) => (                 
-                      <View>
-                          <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
-                                        backgroundColor: UColor.mainColor,
-                                        flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
-                                        borderRadius: 5,margin: 5,}}>
+                        <Button onPress={this.openQuery.bind(this,rowData.payer)}>
+                            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
                               <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                   <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                       <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
@@ -843,8 +849,8 @@ class Transaction extends BaseComponent {
                               <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
                                   <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
                               </View>
-                          </View>
-                      </View>         
+                            </View>   
+                        </Button>      
                       )}                
                   /> 
                   </View> :
@@ -853,10 +859,7 @@ class Transaction extends BaseComponent {
                         dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                         renderRow={(rowData, sectionID, rowID) => (                 
                         <View>
-                            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65,
-                                          backgroundColor: UColor.mainColor,
-                                          flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between",
-                                          borderRadius: 5,margin: 5,}}>
+                            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
                                 <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                     <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                         <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
@@ -875,7 +878,7 @@ class Transaction extends BaseComponent {
                                     <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
                                 </View>
                             </View>
-                        </View>         
+                        </View>          
                         )}                
                     /> 
                   </View>

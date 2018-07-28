@@ -37,6 +37,7 @@ export default {
   lock:require('../img/lock.png'),
   logo:require('../img/logo1.png'),
   Magnifier:require('../img/Magnifier.png'),
+  Magnifier_me:require('../img/Magnifier_me.png'),
   Memory:require('../img/Memory.png'),
   more:require('../img/more.png'),
   my_community:require('../img/my_community.png'),
