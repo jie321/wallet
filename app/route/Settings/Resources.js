@@ -732,8 +732,6 @@ class Resources extends BaseComponent {
         const c = this.props.navigation.state.params.coinType;
         return (
         <View style={styles.container}>
-                
-
           <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
                 <ScrollView keyboardShouldPersistTaps="always">
                     <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
@@ -818,7 +816,7 @@ class Resources extends BaseComponent {
                                 <View style={styles.inptoutsource}>
                                     <View style={{flexDirection: 'row', alignItems: 'center',}}>
                                         <Text style={styles.inptTitle}>购买内存（{this.state.currency_surplus}EOS）</Text>
-                                        <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.currency_surplus/this.state.Currentprice).toFixed(3)}kb</Text>
+                                        <Text style={{fontSize:12, color: '#7787A3',}}>≈{(this.state.currency_surplus == null || this.state.Currentprice == null || this.state.currency_surplus == '' || this.state.currency_surplus == '' || this.state.Currentprice == '0') ? '0.000' : (this.state.currency_surplus/this.state.Currentprice).toFixed(3)}kb</Text>
                                     </View>
                                     <View style={styles.outsource}>
                                         <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
@@ -1003,8 +1001,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
     },  
     tablayout: {   
-        justifyContent: 'space-around',
-        alignItems: 'center',
         flexDirection: 'row',  
         padding: 5,
     },  
