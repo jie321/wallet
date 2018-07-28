@@ -55,9 +55,9 @@ class Transaction extends BaseComponent {
     this.state = {
       selectedSegment:"2小时",
       selectedTrackSegment: trackOption[0],
-      isBuy: true,
+      isBuy: false,
       isSell: false,
-      isTxRecord: false,
+      isTxRecord: true,
       isTrackRecord: false,
       balance: '0.0000',   
       slideCompletionValue: 0,
@@ -104,6 +104,8 @@ class Transaction extends BaseComponent {
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
         this.getAccountInfo();
     }});
+    
+    this.getRamTradeLog();
     
     DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
         this.getRamInfo();
@@ -792,12 +794,12 @@ class Transaction extends BaseComponent {
                         />
                     </View>     
                     <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.state.queryaccount)}>  
-                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginHorizontal: 5,}} >
+                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginLeft: 5,}} >
                             <Image source={UImage.Magnifier} style={{ width: 25,height: 25}}></Image>
                         </View>
                     </TouchableOpacity> 
                     <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.props.defaultWallet ? this.props.defaultWallet.account : '')}>  
-                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginHorizontal: 5,}} >
+                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginRight: 5,}} >
                             <Image source={UImage.Magnifier_me} style={{ width: 25,height: 25}}></Image>
                         </View>
                     </TouchableOpacity> 
