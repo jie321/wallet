@@ -140,6 +140,9 @@ class Transaction extends BaseComponent {
   }
 
   getRamTradeLogByAccount(accountName){
+    if(accountName == null|| accountName == ''){
+        return;
+    }
     this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: accountName}});    
   }
 
