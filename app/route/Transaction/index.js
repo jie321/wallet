@@ -606,6 +606,16 @@ class Transaction extends BaseComponent {
     dismissKeyboard();
   }
   
+  transferTimeZone(time){
+    var timezone;
+    try {
+        timezone = moment(time).add(8,'hours').format('YYYY-MM-DD HH:mm');
+    } catch (error) {
+        timezone = time;
+    }
+    return timezone;
+  }
+
   render() {
     return <View style={styles.container}>
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
@@ -786,7 +796,7 @@ class Transaction extends BaseComponent {
                             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                     <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{rowData.record_date}</Text>
+                                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{this.transferTimeZone(rowData.record_date)}</Text>
                                 </View>
                                 <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                     {rowData.action_name == 'sellram' ? 
@@ -829,7 +839,7 @@ class Transaction extends BaseComponent {
                               <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                   <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                       <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                      <Text style={{fontSize: 15,color: UColor.arrow,}}>{rowData.record_date}</Text>
+                                      <Text style={{fontSize: 15,color: UColor.arrow,}}>{this.transferTimeZone(rowData.record_date)}</Text>
                                   </View>
                                   <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                       {rowData.action_name == 'sellram' ? 
@@ -860,7 +870,7 @@ class Transaction extends BaseComponent {
                                 <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                     <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                         <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                        <Text style={{fontSize: 15,color: UColor.arrow,}}>{rowData.record_date}</Text>
+                                        <Text style={{fontSize: 15,color: UColor.arrow,}}>{this.transferTimeZone(rowData.record_date)}</Text>
                                     </View>
                                     <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                         {rowData.action_name == 'sellram' ? 
