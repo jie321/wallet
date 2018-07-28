@@ -96,8 +96,6 @@ class WalletManage extends BaseComponent {
 
   render() {
     return (<View style={styles.container}>  
-        
-
       <View style={{paddingBottom: 60}}>
         <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor, }} enableEmptySections={true}
           renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
@@ -106,13 +104,16 @@ class WalletManage extends BaseComponent {
           renderRow={(rowData, sectionID, rowID) => (
             <Button onPress={this.onPress.bind(this, rowData, sectionID, rowID)}>
               <View style={styles.row} >  
-                <Button onPress={this.copyname.bind(this,rowData)}>
                   <View style={styles.topout}>
-                      <Text style={styles.outname}>{rowData.name}</Text>
-                      <Image source={UImage.copy} style={styles.imgBtn} />
+                      <Button onPress={this.copyname.bind(this,rowData)} underlayColor={UColor.mainColor}>
+                        <View style={{flexDirection: "row",}}>
+                          <Text style={styles.outname}>{rowData.name}</Text>
+                          <Image source={UImage.copy} style={styles.imgBtn} />
+                        </View>
+                      </Button>
                       {(!rowData.isactived|| !rowData.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(rowData.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
                   </View>
-                </Button>
+                
                 <View style={styles.topout}> 
                     <Ionicons style={styles.outIon} name="ios-arrow-forward-outline" size={20} />     
                 </View>    

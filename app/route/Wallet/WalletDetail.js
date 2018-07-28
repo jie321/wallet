@@ -474,19 +474,18 @@ class WalletDetail extends BaseComponent {
               <Text style={styles.accounttext}>{c.isactived && c.balance != null && c.balance != ""? c.balance : balance}</Text>
                <Text style={styles.company}> EOS</Text>
             </View>
-            <Button onPress={this.copyname.bind(this,c)}>
-              <View style={styles.topout}>
-                <Text style={styles.category}>账户名称：<Text style={styles.outname}>{c.name}</Text></Text>
-                <Image source={UImage.copy} style={styles.imgBtn} />
-                {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
-              </View>
-            </Button>
+            <View style={styles.topout}>
+              <Text style={styles.category}>账户名称：</Text>
+                <Button onPress={this.copyname.bind(this,c)} underlayColor={UColor.mainColor}>
+                  <View style={{flexDirection: "row",}}>
+                    <Text style={styles.outname}>{c.name}</Text>
+                    <Image source={UImage.copy} style={styles.imgBtn} />
+                  </View>
+                </Button>
+              {(!c.isactived || !c.hasOwnProperty('isactived')) ? <View style={styles.notactivedout}><Text style={styles.notactived}>未激活</Text></View>:(c.isBackups ? null : <View style={styles.stopoutBackupsout}><Text style={styles.stopoutBackups}>未备份</Text></View>) }   
+            </View>
           </View>
-          
-          <View style={{ marginBottom: 50 }}>
-            {this._renderListItem()}
-          </View>
-
+          <View style={{ marginBottom: 50 }}>{this._renderListItem()}</View>
           {/* <Button onPress={() => this.backupWords()} style={{ flex: 1 }}>
             <View style={{ height: 45, backgroundColor: '#65CAFF', justifyContent: 'center', alignItems: 'center', margin: 20, borderRadius: 5 }}>
               <Text style={{ fontSize: 15, color: '#fff' }}>备份助记词</Text>b
