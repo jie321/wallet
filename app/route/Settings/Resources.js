@@ -296,8 +296,8 @@ class Resources extends BaseComponent {
     resourceButton(style, selectedSate, stateType, buttonTitle) {  
         let BTN_SELECTED_STATE_ARRAY = ['isMemory', 'isCalculation','isNetwork', ];  
         return(  
-            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
-                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
+            <TouchableOpacity style={[style, selectedSate ? {backgroundColor: UColor.tintColor} : {backgroundColor: '#4f617d'}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+                <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: UColor.tintColor}]}>{buttonTitle}</Text>  
             </TouchableOpacity>  
         );  
     }  
@@ -775,9 +775,9 @@ class Resources extends BaseComponent {
                             </View>
                         </View>
                         <View style={styles.tablayout}>  
-                            {this.resourceButton(styles.buttontab, this.state.isMemory, 'isMemory', '内存资源')}  
-                            {this.resourceButton(styles.buttontab, this.state.isCalculation, 'isCalculation', '计算资源')}  
-                            {this.resourceButton(styles.buttontab, this.state.isNetwork, 'isNetwork', '网络资源')}  
+                            {this.resourceButton(styles.memorytab, this.state.isMemory, 'isMemory', '内存资源')}  
+                            {this.resourceButton(styles.calculationtab, this.state.isCalculation, 'isCalculation', '计算资源')}  
+                            {this.resourceButton(styles.networktab, this.state.isNetwork, 'isNetwork', '网络资源')}  
                             {/* {this.resourceButton(styles.buttontab, this.state.isBuyForOther, 'isBuyForOther', '内存交易')}   */}
                         </View> 
                         {this.state.isBuyForOther?<View style={styles.nothave}><Text style={styles.copytext}>请稍候 ，程序猿玩命加班中...</Text></View>:
@@ -823,7 +823,7 @@ class Resources extends BaseComponent {
                                     <View style={styles.outsource}>
                                         <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount} returnKeyType="go" 
                                         selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
-                                        placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
+                                        placeholder="输入购买的额度(EOS)" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
                                         onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount)})}
                                         />
                                         <Button onPress={this.buyram.bind(this)}>
@@ -1003,21 +1003,46 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
     },  
     tablayout: {   
-        justifyContent: 'space-around',
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',  
-        padding: 5,
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        backgroundColor: '#4f617d',
     },  
-    buttontab: {  
-        margin: 5,
-        width: (ScreenWidth-50)/4,
+    memorytab: {
+        flex: 1,
         height: 33,
-        borderRadius: 10,
+        borderTopLeftRadius: 5,
+        borderBottomLeftRadius: 5,
+        borderColor: UColor.tintColor,
+        borderWidth: 1,
         alignItems: 'center',   
         justifyContent: 'center', 
-    },  
+    },
+    calculationtab: {
+        flex: 1,
+        height: 33,
+        borderTopColor: UColor.tintColor,
+        borderBottomColor: UColor.tintColor,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },
+    networktab: {
+        flex: 1,
+        height: 33,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
+        borderColor: UColor.tintColor,
+        borderWidth: 1,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },
     tabText: {  
-        fontSize: 12,
+        fontSize: 14,
     }, 
 
     container: {
