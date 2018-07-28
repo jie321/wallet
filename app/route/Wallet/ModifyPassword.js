@@ -32,6 +32,10 @@ class ModifyPassword extends BaseComponent {
             password: "",
             newPassword: "",
             newRePassword: "",
+            weak: UColor.arrow,
+            medium: UColor.arrow,
+            strong: UColor.arrow,
+            CreateButton:  UColor.mainColor,
         }
     }
     componentWillUnmount(){
@@ -142,6 +146,44 @@ class ModifyPassword extends BaseComponent {
         navigate('ImportEosKey');
     }
 
+    intensity() {
+        let string = this.state.newPassword;
+        if(string.length >=8) {
+          if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+            this.state.strong = UColor.tintColor;
+            this.state.medium = UColor.arrow;
+            this.state.weak = UColor.arrow;
+          }else if(/[a-zA-Z]+/.test(string) || /[0-9]+/.test(string) || /\W+\D+/.test(string)) {
+            if(/[a-zA-Z]+/.test(string) && /[0-9]+/.test(string)) {
+              this.state.strong = UColor.arrow;
+              this.state.medium = UColor.tintColor;
+              this.state.weak = UColor.arrow;
+            }else if(/\[a-zA-Z]+/.test(string) && /\W+\D+/.test(string)) {
+              this.state.strong = UColor.arrow;
+              this.state.medium = UColor.tintColor;
+              this.state.weak = UColor.arrow;
+            }else if(/[0-9]+/.test(string) && /\W+\D+/.test(string)) {
+              this.state.strong = UColor.arrow;
+              this.state.medium = UColor.tintColor;
+              this.state.weak = UColor.arrow;
+            }else{
+              this.state.strong = UColor.arrow;
+              this.state.medium = UColor.arrow;
+              this.state.weak = UColor.tintColor;
+            }
+          }
+         }else{
+          this.state.strong = UColor.arrow;
+          this.state.medium = UColor.arrow;
+          this.state.weak = UColor.arrow;
+         }
+        if(this.state.password != "" && this.state.newPassword != "" && this.state.newRePassword != ""){
+          this.state.CreateButton = UColor.tintColor;
+        }else{
+          this.state.CreateButton =  UColor.mainColor;
+        }
+      }
+
     render() {
         return <View style={styles.container}>
             
@@ -154,36 +196,41 @@ class ModifyPassword extends BaseComponent {
                             <TextInput ref={(ref) => this._lphone = ref} value={this.state.password} returnKeyType="next"
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
                                 secureTextEntry={true} placeholder="当前密码"  underlineColorAndroid="transparent" autoFocus={false} maxLength = {20}
-                                editable={true} onChangeText={(password) => this.setState({ password })}  
+                                editable={true} onChangeText={(password) => this.setState({ password })}   onChange={this.intensity()} 
                             />
                         </View>
                         <View  style={styles.inptoutsource} >
                             <TextInput ref={(ref) => this._lpass = ref} value={this.state.newPassword} returnKeyType="next"
                                 selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                                 secureTextEntry={true}  placeholder="新密码" underlineColorAndroid="transparent"  autoFocus={false}  maxLength= {Constants.PWD_MAX_LENGTH}
-                                editable={true} onChangeText={(newPassword) => this.setState({ newPassword })} 
+                                editable={true} onChangeText={(newPassword) => this.setState({ newPassword })}  onChange={this.intensity()} 
                             />
+                            <View style={{flexDirection: 'row', height: 50, alignItems: 'center', }}>
+                                <Text style={{color:this.state.weak, fontSize: 15, padding: 5,}}>弱</Text>
+                                <Text style={{color:this.state.medium, fontSize: 15, padding: 5,}}>中</Text>
+                                <Text style={{color:this.state.strong, fontSize: 15, padding: 5,}}>强</Text>
+                            </View>
                         </View>
                         <View  style={styles.inptoutsource} >
                             <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next"
                                 value={this.state.newRePassword} onChangeText={(newRePassword) => this.setState({ newRePassword })}
-                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}
+                                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow}  onChange={this.intensity()} 
                                 placeholder="重复密码" underlineColorAndroid="transparent" secureTextEntry={true}  maxLength = {Constants.PWD_MAX_LENGTH}
                             />
                         </View>
                         <View style={styles.inptoutsource} >
-                            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" style={styles.inpt} placeholderTextColor={UColor.arrow}
+                            <TextInput ref={(ref) => this._lpass = ref} autoFocus={false} editable={true} returnKeyType="next" 
+                                style={styles.inpt} placeholderTextColor={UColor.arrow}   onChange={this.intensity()} 
                                 placeholder="密码提示(可不填)" underlineColorAndroid="transparent" 
                             />
                         </View>
                     </View>
-                    <View style={{paddingTop: 10, paddingHorizontal: 20, flexDirection: 'row'}}>
-                        <Text style={{fontSize: 14, color: UColor.arrow}} >忘记密码? 导入助记词或私钥可重置密码。</Text>
+                    <View style={{paddingTop: 10, paddingHorizontal: 20,}}>
+                        <Text style={{fontSize: 14, color: UColor.arrow, textAlign: 'left',marginVertical: 10,}} >忘记密码? 导入助记词或私钥可重置密码。</Text>
                         <Text onPress={() => this.importEosKey()} style={styles.servicetext}>马上导入</Text>
                     </View>
-                    {/* <Text style={styles.welcome}>忘记密码？导入助记词或私钥可重置密码。马上导入</Text> */}
                     <Button onPress={() => this.updatePassword()}>
-                        <View style={styles.btnout}>
+                        <View style={styles.btnout} backgroundColor = {this.state.CreateButton}>
                             <Text style={styles.buttext}>确认</Text>
                         </View>
                     </Button>
@@ -204,15 +251,16 @@ const styles = StyleSheet.create({
     outsource: {
         backgroundColor: UColor.mainColor, 
         marginTop: 30, 
-        paddingBottom: 5,
     },
     inptoutsource: {
-        paddingTop: 10, 
+        flexDirection: 'row',
+        // paddingTop: 10, 
         paddingHorizontal: 20, 
         borderBottomColor: UColor.secdColor, 
         borderBottomWidth: 1,
     },
     inpt: {
+        flex: 1,
         color: UColor.arrow, 
         fontSize: 15, 
         height: 50,
@@ -226,7 +274,6 @@ const styles = StyleSheet.create({
 
     btnout: {
         height: 45, 
-        backgroundColor: UColor.tintColor, 
         justifyContent: 'center', 
         alignItems: 'center', 
         margin: 40, 
@@ -240,7 +287,7 @@ const styles = StyleSheet.create({
     servicetext: {
         fontSize: 14, 
         color: UColor.tintColor,  
-        paddingLeft: 5,
+        textAlign: 'right',
     },
 });
 
