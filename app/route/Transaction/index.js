@@ -710,7 +710,7 @@ class Transaction extends BaseComponent {
                         minimumValue={0}
                         step={0.0001}
                         value={this.state.buyRamAmount*1}
-                        onSlidingComplete={(value)=>this.setState({buyRamAmount:value})}
+                        onSlidingComplete={(value)=>this.setState({ buyRamAmount: value, eosToBytes: this.eosToBytes(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
                         maximumTrackTintColor={UColor.tintColor}
                         minimumTrackTintColor={UColor.tintColor}
                         //android
@@ -758,7 +758,7 @@ class Transaction extends BaseComponent {
                                     minimumValue={0}
                                     step={1}
                                     value={this.state.sellRamBytes*1}
-                                    onSlidingComplete={(value)=>this.setState({sellRamBytes:value})}
+                                    onSlidingComplete={(value)=>this.setState({ sellRamBytes: value, bytesToEos: this.bytesToEos(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
                                     maximumTrackTintColor={UColor.tintColor}
                                     minimumTrackTintColor={UColor.tintColor}
                                     //android
