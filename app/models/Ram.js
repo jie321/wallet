@@ -167,7 +167,13 @@ export default {
                 },
                 axisLabel: {
                     show: true,
-                    formatter: '{value}',
+                    // formatter: '{value}',
+                    formatter: function(value, index) {
+                        if(value == null || value == ''){
+                            return '0.000';
+                        }
+                        return value.toFixed(3);
+                    },
                     color: "#93B5EE",
                     // interval: '0'
                 },
