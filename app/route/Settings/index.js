@@ -299,7 +299,6 @@ const styles = StyleSheet.create({
   },
 
   listItem: {
-    marginTop: 15,
     backgroundColor: UColor.mainColor,
     flexDirection: "row",
     justifyContent: "center",
