@@ -24,7 +24,7 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 
-const trackOption = ['最近交易','持量大户'];
+const trackOption = ['最近交易','持仓大户'];
 
 @connect(({ram,sticker,wallet}) => ({...ram, ...sticker, ...wallet}))
 class Transaction extends BaseComponent {
@@ -196,7 +196,7 @@ class Transaction extends BaseComponent {
             EasyLoading.dismis();
         }});    
     }else{
-        EasyToast.show('开发中，查询区块持量大户前10名记录');   
+        EasyToast.show('开发中，查询区块持仓大户前10名记录');   
     }
   }
 
@@ -632,9 +632,9 @@ class Transaction extends BaseComponent {
 
   render() {
     return <View style={styles.container}>
-        <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
-            <ScrollView keyboardShouldPersistTaps="always">
-                <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
+      <ScrollView keyboardShouldPersistTaps="always">
+        <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
           <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
             <View style={{flexDirection:"column",flexGrow:1}}>
               <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
@@ -662,7 +662,6 @@ class Transaction extends BaseComponent {
                 </View>
             </View>
           </View>
-        
         <View style={{padding:10,paddingTop:5}}>
           <SegmentedControls 
           tint= {'#586888'}
@@ -784,8 +783,8 @@ class Transaction extends BaseComponent {
                 </View>
             </View>:
                 <View>{this.state.isTxRecord ? <View >
-                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginBottom: 10, }}>
-                    <View style={{flex: 1, height: 30, marginHorizontal: 5, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
+                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginBottom: 10, marginHorizontal: 5, }}>
+                    <View style={{flex: 1, height: 30, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                       <TextInput ref={(ref) => this._account = ref} value={this.state.queryaccount} returnKeyType="go"
                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
                             placeholder="请输入账户名称" underlineColorAndroid="transparent" keyboardType="default" 
@@ -965,9 +964,8 @@ class Transaction extends BaseComponent {
                </View>}
             </View>
           }   
-     
-            </TouchableOpacity>
-        </ScrollView>  
+        </TouchableOpacity>
+      </ScrollView>  
     </KeyboardAvoidingView> 
   </View>
   }
