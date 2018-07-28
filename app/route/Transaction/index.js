@@ -746,7 +746,7 @@ class Transaction extends BaseComponent {
                       <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
                   </View>
                   <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10,}}>≈{this.state.bytesToEos}</Text>
+                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10,}}>≈{(this.state.bytesToEos == null || this.state.bytesToEos == '') ? '0' : this.state.bytesToEos}</Text>
                       <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
                   </View>
                   <View style={styles.inptoutsource}>
