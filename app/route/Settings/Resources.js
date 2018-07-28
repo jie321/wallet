@@ -1003,6 +1003,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
     },  
     tablayout: {   
+        justifyContent: 'space-around',
+        alignItems: 'center',
         flexDirection: 'row',  
         padding: 5,
     },  
