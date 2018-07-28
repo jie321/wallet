@@ -3,8 +3,9 @@ import { connect } from 'react-redux'
 import {ListView,StyleSheet,Image,ScrollView,View,Text, TextInput,Platform,TouchableOpacity,KeyboardAvoidingView  } from 'react-native';
 import UColor from '../../utils/Colors'
 import UImage from '../../utils/Img'
+import { EasyToast } from "../../components/Toast"
 import { EasyDialog } from "../../components/Dialog"
-import { EasyToast } from '../../components/Toast';
+import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 import {NavigationActions} from 'react-navigation'
 var dismissKeyboard = require('dismissKeyboard');
@@ -23,19 +24,13 @@ class MortgageInquiry extends BaseComponent {
     this.state = {
         dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         labelname: '',
-        Mortgagelist: [],
-        newMortgagelist: [],
+        show: false,
+        delegateLoglist: [],
     };
   }
 
   componentDidMount() {
-    this.props.dispatch({ type: 'vote/getMortgagelist', payload: {account_name: this.props.navigation.state.params.account_name},
-    callback: (Mortgage) => {
-        this.setState({
-            Mortgagelist: Mortgage.data.rows,
-        })
-      }
-    });
+    
   }
 
   _rightTopClick =() => {
@@ -50,19 +45,22 @@ class MortgageInquiry extends BaseComponent {
     this.props.navigation.dispatch(action);
   }
 
-  _leftTopClick =() => {
-    if (this.state.labelname == "") {
+  _leftTopClick =(labelname) => {
+    if (labelname == "") {
       EasyToast.show('请输入Eos账号');
       return;
     }else{
-      let NumberArr = this.state.Mortgagelist
-      for (var i = 0; i < NumberArr.length; i++) {
-        if (NumberArr[i].to == this.state.labelname) {
-          this.setState({
-            newMortgagelist:[NumberArr[i]],
-          });
+      EasyLoading.show();
+      this.props.dispatch({ type: 'vote/getDelegateLoglist', payload: {account_name: labelname},
+        callback: (resp) => {
+          EasyLoading.dismis();
+          if(resp == null || resp.data == null ||  resp.data.rows == null || resp.data.rows.length == 0){
+            this.setState({show: true, delegateLoglist: []});
+          }else{
+            this.setState({show: false, delegateLoglist: resp.data.rows});
+          }
         }
-      }
+      });
     }
   }
 
@@ -77,13 +75,11 @@ class MortgageInquiry extends BaseComponent {
 
   render() {
     return (<View style={styles.container}>
-            
-
       <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
         <ScrollView keyboardShouldPersistTaps="always">
           <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
               <View style={styles.header}>  
-                  <TouchableOpacity onPress={this._leftTopClick.bind()}>  
+                  <TouchableOpacity onPress={this._leftTopClick.bind(this,this.state.labelname)}>  
                       <View style={styles.headleftout} >
                           <Image source={UImage.Magnifier} style={styles.headleftimg}></Image>
                       </View>
@@ -99,8 +95,9 @@ class MortgageInquiry extends BaseComponent {
                       <Text style={styles.canceltext}>取消</Text>
                   </TouchableOpacity>  
               </View> 
+              {this.props.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>} 
               <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
-                  dataSource={this.state.dataSource.cloneWithRows(this.state.newMortgagelist == null ? [] : this.state.newMortgagelist)} 
+                  dataSource={this.state.dataSource.cloneWithRows(this.state.delegateLoglist == null ? [] : this.state.delegateLoglist)} 
                   renderRow={(rowData, sectionID, rowID) => (                 
                   <View style={styles.outsource}>
                       <View style={styles.leftout}>
@@ -167,6 +164,20 @@ const styles = StyleSheet.create({
   },
   btn: {
     flex: 1,
+  },
+  nothave: {
+    height: Platform.OS == 'ios' ? 84.5 : 65,
+    backgroundColor: UColor.mainColor,
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    margin: 5,
+  },
+  copytext: {
+    fontSize: 16, 
+    color: UColor.fontColor
   },
   outsource: {
     margin: 5,

@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice, listMortgage} from '../utils/Api';
+import {listProducers, getAccountInfo, getUndelegatebwInfo, listAgent, getGlobalInfo, queryRamPrice, listDelegateLoglist} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 let newarr = new Array();
@@ -17,7 +17,7 @@ export default {
             const resp = yield call(Request.request, listAgent,"post");
             //  alert('listAgent ：'+JSON.stringify(resp));
             // const resp = yield call(Request.request,listAgent,"get");
-            if(resp.code=='0'){               
+            if(resp && resp.code=='0'){               
                 yield put({ type: 'updateVote', payload: { voteData:resp.data } });
                 // yield put({ type: 'updateVote', payload: { AgentData:resp.data } });
                 if (callback) callback(resp.data);
@@ -42,7 +42,7 @@ export default {
      *getaccountinfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getAccountInfo, 'post', payload);
-            if(resp.code=='0'){ 
+            if(resp && resp.code=='0'){ 
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
                 yield put({ type: 'updateResources', payload: { Resources:resp.data}  });
                 if (callback) callback(resp.data);
@@ -60,7 +60,7 @@ export default {
      *getundelegatebwInfo({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getUndelegatebwInfo, 'post', payload);
-            if(resp.code=='0'){               
+            if(resp && resp.code=='0'){               
                 // yield put({ type: 'updateAccountInfo', payload: { accountInfo:resp.data } });
             }else{
                 EasyToast.show(resp.msg);
@@ -76,7 +76,7 @@ export default {
             let total = (resp.data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2);
             let used = (resp.data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2);
             let used_Percentage= (((resp.data.rows[0].total_ram_bytes_reserved / 1024 / 1024 / 1024).toFixed(2) / (resp.data.rows[0].max_ram_size / 1024 / 1024 / 1024).toFixed(2)) * 10000 / 100).toFixed()
-            if(resp.code=='0'){    
+            if(resp && resp.code=='0'){    
                 yield put({ type: 'updateGlobal', payload: { total:total,used:used,used_Percentage:used_Percentage } });
             }else{
                 EasyToast.show(resp.msg);
@@ -89,7 +89,7 @@ export default {
      *getqueryRamPrice({payload,callback},{call,put}) {
         try{
             const resp = yield call(Request.request, queryRamPrice, 'post', payload);
-            if(resp.code=='0'){               
+            if(resp && resp.code=='0'){               
                 // yield put({ type: 'updatequeryRamPrice', payload: { Currentprice:resp.data } });
             }else{
                 EasyToast.show(resp.msg);
@@ -99,11 +99,10 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
      },
-     *getMortgagelist({payload,callback},{call,put}) {
+     *getDelegateLoglist({payload,callback},{call,put}) {
         try{
-            const resp = yield call(Request.request, listMortgage, 'post', payload);
-            if(resp.code=='0'){               
-                yield put({ type: 'updateMortgage', payload: { Mortgagelist:resp.data } });
+            const resp = yield call(Request.request, listDelegateLoglist, 'post', payload);
+            if(resp && resp.code=='0' && resp.data){    
             }else{
                 EasyToast.show(resp.msg);
             }
@@ -117,9 +116,6 @@ export default {
     reducers : {
         updateVote(state, action) {      
             return {...state,voteData:action.payload.voteData};  
-        },
-        updateMortgage(state, action) {  
-            return {...state,Mortgagelist:action.payload.Mortgagelist.rows};  
         },
         updateSelect(state, action) {
             let dts = state.voteData;

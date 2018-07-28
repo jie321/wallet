@@ -10,14 +10,13 @@ import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
-var Dimensions = require('Dimensions')
-const maxWidth = Dimensions.get('window').width;
-const maxHeight = Dimensions.get('window').height;
 import { EasyToast } from "../../components/Toast"
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import { Eos } from "react-native-eosjs";
-
+var Dimensions = require('Dimensions')
+const maxWidth = Dimensions.get('window').width;
+const maxHeight = Dimensions.get('window').height;
 @connect(({ vote }) => ({ ...vote}))
 class MortgageRecord extends React.Component {
 
@@ -55,9 +54,9 @@ class MortgageRecord extends React.Component {
   componentDidMount() {
     EasyLoading.show();
       this.props.dispatch({
-        type: 'vote/getMortgagelist',
+        type: 'vote/getDelegateLoglist',
         payload: {account_name: this.props.navigation.state.params.account_name},
-        callback: (Mortgage) => {
+        callback: (delegateLoglist) => {
           EasyLoading.dismis();
         }
     });
@@ -65,27 +64,26 @@ class MortgageRecord extends React.Component {
 
   render() {
     return (<View style={styles.container}>
-            
-
+      {(this.props.delegateLoglist == null || this.props.delegateLoglist.length == 0) && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>}      
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
-        dataSource={this.state.dataSource.cloneWithRows(this.props.Mortgagelist == null ? [] : this.props.Mortgagelist)} 
-        renderRow={(rowData, sectionID, rowID) => (                 
-          <View style={styles.outsource}>
-            <View style={styles.leftout}>
-                <Text style={styles.fromtotext}>{rowData.from}</Text>
-                <Text style={styles.payernet}>Payer</Text>
-                <Text style={styles.fromtotext}>{rowData.to}</Text>
-                <Text style={styles.Receivercpu}>Receiver</Text>
-            </View>
-            <View style={styles.rightout}>
-                <Text style={styles.fromtotext}>{rowData.net_weight}</Text>
-                <Text style={styles.payernet}>Net bandwidth</Text>
-                <Text style={styles.fromtotext}>{rowData.cpu_weight}</Text>
-                <Text style={styles.Receivercpu}>CPU bandwidth</Text>
-            </View>
-          </View>
-       )}                   
-       />   
+        dataSource={this.state.dataSource.cloneWithRows(this.props.delegateLoglist == null ? [] : this.props.delegateLoglist)} 
+        renderRow={(rowData, sectionID, rowID) => (   
+              <View style={styles.outsource}>
+                <View style={styles.leftout}>
+                    <Text style={styles.fromtotext}>{rowData.from}</Text>
+                    <Text style={styles.payernet}>Payer</Text>
+                    <Text style={styles.fromtotext}>{rowData.to}</Text>
+                    <Text style={styles.Receivercpu}>Receiver</Text>
+                </View>
+                <View style={styles.rightout}>
+                    <Text style={styles.fromtotext}>{rowData.net_weight}</Text>
+                    <Text style={styles.payernet}>Net bandwidth</Text>
+                    <Text style={styles.fromtotext}>{rowData.cpu_weight}</Text>
+                    <Text style={styles.Receivercpu}>CPU bandwidth</Text>
+                </View>
+              </View>
+        )}                   
+      />   
     </View>
     );
   }
@@ -100,6 +98,20 @@ const styles = StyleSheet.create({
     },
     btn: {
       flex: 1,
+    },
+    nothave: {
+      height: Platform.OS == 'ios' ? 84.5 : 65,
+      backgroundColor: UColor.mainColor,
+      flexDirection: "row",
+      alignItems: 'center',
+      justifyContent: "center",
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      margin: 5,
+    },
+    copytext: {
+      fontSize: 16, 
+      color: UColor.fontColor
     },
     outsource: {
       margin: 5,
