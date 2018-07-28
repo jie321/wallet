@@ -368,6 +368,7 @@ class Transaction extends BaseComponent {
   
   // 根据账号查找交易记录
   getRamLogByAccout = (queryaccount) =>{
+    this.setState({queryaccount:queryaccount});
     if(queryaccount == null|| queryaccount == ''){
         EasyLoading.show();
         this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
