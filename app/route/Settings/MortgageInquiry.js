@@ -95,7 +95,7 @@ class MortgageInquiry extends BaseComponent {
                       <Text style={styles.canceltext}>取消</Text>
                   </TouchableOpacity>  
               </View> 
-              {this.props.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>} 
+              {this.state.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>} 
               <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
                   dataSource={this.state.dataSource.cloneWithRows(this.state.delegateLoglist == null ? [] : this.state.delegateLoglist)} 
                   renderRow={(rowData, sectionID, rowID) => (                 
