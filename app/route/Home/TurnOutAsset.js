@@ -301,7 +301,7 @@ class TurnOutAsset extends BaseComponent {
                                 <View style={styles.textinptoue} >
                                     <TextInput  ref={(ref) => this._rnote = ref}  value={this.state.memo} returnKeyType="next"
                                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow}
-                                        placeholder="备注(MEMO)" underlineColorAndroid="transparent" keyboardType="default" maxLength={20} 
+                                        placeholder="备注(MEMO)" underlineColorAndroid="transparent" keyboardType="default"  
                                         onChangeText={(memo) => this.setState({ memo })}
                                         />
                                 </View>
