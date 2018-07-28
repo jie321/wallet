@@ -703,7 +703,6 @@ class Transaction extends BaseComponent {
                   <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
               </View>
               <View style={styles.inptoutsource}>
-            
                 <View style={styles.outsource}>
                     <View style={{flex: 1, paddingRight: 20,}}>
                         <Slider 
@@ -748,7 +747,7 @@ class Transaction extends BaseComponent {
                       <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
                   </View>
                   <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, height: 30, paddingLeft: 10, }}>≈{this.state.bytesToEos}</Text>
+                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10,}}>≈{this.state.bytesToEos}</Text>
                       <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
                   </View>
                   <View style={styles.inptoutsource}>
@@ -786,7 +785,7 @@ class Transaction extends BaseComponent {
             </View>:
                 <View>{this.state.isTxRecord ? <View >
                    <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginBottom: 10, }}>
-                    <View style={{flex: 1, height: 30, marginHorizontal: 18, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
+                    <View style={{flex: 1, height: 30, marginHorizontal: 5, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                       <TextInput ref={(ref) => this._account = ref} value={this.state.queryaccount} returnKeyType="go"
                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
                             placeholder="请输入账户名称" underlineColorAndroid="transparent" keyboardType="default" 
@@ -794,13 +793,13 @@ class Transaction extends BaseComponent {
                         />
                     </View>     
                     <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.state.queryaccount)}>  
-                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10}} >
-                            <Image source={UImage.Magnifier} style={{ width: 30,height: 30}}></Image>
+                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginHorizontal: 5,}} >
+                            <Image source={UImage.Magnifier} style={{ width: 25,height: 25}}></Image>
                         </View>
                     </TouchableOpacity> 
                     <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.props.defaultWallet ? this.props.defaultWallet.account : '')}>  
-                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10}} >
-                            <Image source={UImage.Magnifier_me} style={{ width: 30,height: 30}}></Image>
+                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginHorizontal: 5,}} >
+                            <Image source={UImage.Magnifier_me} style={{ width: 25,height: 25}}></Image>
                         </View>
                     </TouchableOpacity> 
                  </View>
