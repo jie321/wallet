@@ -164,7 +164,7 @@ class TurnOutAsset extends BaseComponent {
                     Eos.transfer(this.props.navigation.state.params.coins.asset.contractAccount, this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " " + this.props.navigation.state.params.coins.asset.name, this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
-                            type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
+                            type: 'wallet/pushTransaction', payload: { from: this.props.defaultWallet.account, to: this.state.toAccount, amount: this.state.amount + " " + this.props.navigation.state.params.coins.asset.name, memo: this.state.memo, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
                                 EasyLoading.dismis();
                                 if (result.code == '0') {
                                     AnalyticsUtil.onEvent('Turn_out');
