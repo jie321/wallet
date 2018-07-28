@@ -57,29 +57,13 @@ class Set extends BaseComponent {
     } 
   }
 
-  changeJpush(state){
-    const {dispatch}=this.props;
-    dispatch({type:'login/changeJpush',callback:(jpush)=>{
-      this.setState({
-        value:jpush,
-      });
-    }});
-    if(state){
-      JPushModule.addTags(['newsmorningbook'], map => {
-      })
-    }else{
-      JPushModule.deleteTags(['newsmorningbook'], map => {
-      });
-    }
-  }
+ 
   gesturepass(){
     EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
   }
 
   render() {
     return <View style={styles.container}>
-            
-
       <View style={styles.scrollView}>
           <Button onPress={() => this.gesturepass()}>
             <View style={styles.listItem}>
@@ -105,22 +89,6 @@ class Set extends BaseComponent {
                         gesture:gesture,
                       });
                       this.gesturepass(gesture);
-                  }}/>
-                </View>
-              </View>
-          </View>
-          <View style={styles.listItem}>
-              <View style={styles.listInfo}>
-                <View style={styles.scrollView}>
-                  <Text style={styles.listInfoTitle}>消息推送</Text>
-                </View>
-                <View style={styles.listInfoRight}>
-                  <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
-                      value={this.state.value} onValueChange={(value)=>{
-                      this.setState({
-                          value:value,
-                      });
-                      this.changeJpush(value);
                   }}/>
                 </View>
               </View>

@@ -39,6 +39,7 @@ export default {
   Magnifier:require('../img/Magnifier.png'),
   Magnifier_me:require('../img/Magnifier_me.png'),
   Memory:require('../img/Memory.png'),
+  MessagePush:require('../img/MessagePush.png'),
   more:require('../img/more.png'),
   my_community:require('../img/my_community.png'),
   my_help:require('../img/my_help.png'),
