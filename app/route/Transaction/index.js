@@ -102,9 +102,6 @@ class Transaction extends BaseComponent {
    
     // 获取钱包信息和余额
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-        if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
-            return;
-          }
         this.getAccountInfo();
     }});
     
@@ -151,6 +148,9 @@ class Transaction extends BaseComponent {
   }
 
   getAccountInfo(){
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+        return;
+      }
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account},callback: (data) => {
       this.setState({ myRamAvailable:((data.total_resources.ram_bytes - data.ram_usage)).toFixed(0)});
           this.getInitialization(); 
@@ -217,11 +217,11 @@ class Transaction extends BaseComponent {
   }
 
   getBalance() {
-    if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
     }
     this.props.dispatch({
-        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name, symbol: 'EOS' }, callback: (data) => {
+        type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.account, symbol: 'EOS' }, callback: (data) => {
           if (data.code == '0') {
             this.setEosBalance(data.data);
           }
@@ -390,10 +390,11 @@ class Transaction extends BaseComponent {
 
   // 购买内存
   buyram = (rowData) => { 
-    if(!this.props.defaultWallet){
-        EasyToast.show('请先创建钱包');
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+        EasyToast.show('请先创建并激活钱包');
         return;
     }
+
     if(this.state.buyRamAmount == ""){
         EasyToast.show('请输入购买金额');
         return;
@@ -452,8 +453,8 @@ class Transaction extends BaseComponent {
 };
   // 出售内存
   sellram = (rowData) => {
-    if(!this.props.defaultWallet){
-        EasyToast.show('请先创建钱包');
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+        EasyToast.show('请先创建并激活钱包');
         return;
     }
     if(this.state.sellRamBytes == ""){
@@ -797,7 +798,7 @@ class Transaction extends BaseComponent {
                             <Image source={UImage.Magnifier} style={{ width: 30,height: 30}}></Image>
                         </View>
                     </TouchableOpacity> 
-                    <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.props.defaultWallet.account)}>  
+                    <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.props.defaultWallet ? this.props.defaultWallet.account : '')}>  
                         <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10}} >
                             <Image source={UImage.Magnifier_me} style={{ width: 30,height: 30}}></Image>
                         </View>
