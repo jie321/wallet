@@ -47,6 +47,8 @@ class MortgageRecord extends React.Component {
     this.props.navigation.setParams({ onPress: this.inquiryMortgage});
     this.state = {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      delegateLoglist: [],
+      show: false,
     }
   }
 
@@ -56,7 +58,12 @@ class MortgageRecord extends React.Component {
       this.props.dispatch({
         type: 'vote/getDelegateLoglist',
         payload: {account_name: this.props.navigation.state.params.account_name},
-        callback: (delegateLoglist) => {
+        callback: (resp) => {
+          if(resp == null || resp.data == null ||  resp.data.rows == null || resp.data.rows.length == 0){
+            this.setState({show: true, delegateLoglist: []});
+          }else{
+            this.setState({show: false, delegateLoglist: resp.data.rows});
+          }
           EasyLoading.dismis();
         }
     });
@@ -64,9 +71,9 @@ class MortgageRecord extends React.Component {
 
   render() {
     return (<View style={styles.container}>
-      {(this.props.delegateLoglist == null || this.props.delegateLoglist.length == 0) && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>}      
+       {this.props.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>}       
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
-        dataSource={this.state.dataSource.cloneWithRows(this.props.delegateLoglist == null ? [] : this.props.delegateLoglist)} 
+        dataSource={this.state.dataSource.cloneWithRows(this.state.delegateLoglist == null ? [] : this.state.delegateLoglist)} 
         renderRow={(rowData, sectionID, rowID) => (   
               <View style={styles.outsource}>
                 <View style={styles.leftout}>
