@@ -30,8 +30,8 @@ class Setting extends React.Component {
     
     this.config = [
       { avatar:UImage.my_wallet, first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
-      { avatar:UImage.my_share,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
-      { avatar:UImage.my_recovery, name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
+      // { avatar:UImage.my_share,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
+      // { avatar:UImage.my_recovery, name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
       { avatar:UImage.my_community, name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
       { avatar:UImage.my_help, name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
       { avatar:UImage.my_system, name: "系统设置", onPress: this.goPage.bind(this, "set") },
