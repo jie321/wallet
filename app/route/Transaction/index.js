@@ -272,8 +272,8 @@ class Transaction extends BaseComponent {
   funcButton(style, selectedSate, stateType, buttonTitle) {  
     let BTN_SELECTED_STATE_ARRAY = ['isBuy', 'isSell','isTxRecord', 'isTrackRecord'];  
     return(  
-        <TouchableOpacity style={[style, selectedSate ? {backgroundColor:this.transformColor(stateType)} : {backgroundColor: UColor.mainColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
-            <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: '#7787A3'}]}>{buttonTitle}</Text>  
+        <TouchableOpacity style={[style, selectedSate ? {backgroundColor:UColor.tintColor} : {backgroundColor: UColor.secdColor}]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
+            <Text style={[styles.tabText, selectedSate ? {color: UColor.fontColor} : {color: UColor.tintColor}]}>{buttonTitle}</Text>  
         </TouchableOpacity>  
     );  
   } 
@@ -682,10 +682,10 @@ class Transaction extends BaseComponent {
             <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>交易量</Text>
         </View> */}
         <View style={styles.tablayout}>  
-            {this.funcButton(styles.buttontab, this.state.isBuy, 'isBuy', '买')}  
-            {this.funcButton(styles.buttontab, this.state.isSell, 'isSell', '卖')}  
-            {this.funcButton(styles.buttontab, this.state.isTxRecord, 'isTxRecord', '交易记录')}  
-            {this.funcButton(styles.buttontab, this.state.isTrackRecord, 'isTrackRecord', '大单追踪')}  
+            {this.funcButton(styles.buytab, this.state.isBuy, 'isBuy', '买')}  
+            {this.funcButton(styles.selltab, this.state.isSell, 'isSell', '卖')}  
+            {this.funcButton(styles.txRecordtab, this.state.isTxRecord, 'isTxRecord', '交易记录')}  
+            {this.funcButton(styles.trackRecordtab, this.state.isTrackRecord, 'isTrackRecord', '大单追踪')}  
         </View> 
          {this.state.isBuy?<View>
               <Text style={styles.inptTitle}>余额:{this.state.balance==""? "0.0000" :this.state.balance}EOS</Text>
@@ -727,7 +727,7 @@ class Transaction extends BaseComponent {
                         </View>    
                     </View>
                     <Button onPress={this.buyram.bind(this)}>
-                        <View style={styles.botn}>
+                        <View style={styles.botn} backgroundColor={'#42B324'}>
                             <Text style={styles.botText}>买入</Text>
                         </View>
                     </Button> 
@@ -775,7 +775,7 @@ class Transaction extends BaseComponent {
                                 </View> 
                             </View>
                             <Button onPress={this.sellram.bind(this)}>
-                                <View style={styles.botn}>
+                                <View style={styles.botn} backgroundColor={UColor.showy}>
                                     <Text style={styles.botText}>卖出</Text>
                                 </View>
                             </Button> 
@@ -783,7 +783,7 @@ class Transaction extends BaseComponent {
                 </View>
             </View>:
                 <View>{this.state.isTxRecord ? <View >
-                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginBottom: 10, marginHorizontal: 5, }}>
+                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginVertical: 10, marginHorizontal: 5, }}>
                     <View style={{flex: 1, height: 30, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                       <TextInput ref={(ref) => this._account = ref} value={this.state.queryaccount} returnKeyType="go"
                             selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
@@ -1012,18 +1012,58 @@ const styles = StyleSheet.create({
     marginTop:2,
   },
    tablayout: {   
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         flexDirection: 'row',  
-        padding: 2,
-        margin:2,marginTop:1
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        backgroundColor: UColor.secdColor,
     },
-    buttontab: {  
-        margin: 5,
-        width: (ScreenWidth-50)/4,
+    buytab: {
+        flex: 1,
         height: 33,
-        borderRadius: 5,
+        borderTopLeftRadius: 5,
+        borderBottomLeftRadius: 5,
+        borderColor: UColor.tintColor,
+        borderWidth: 1,
         alignItems: 'center',   
         justifyContent: 'center', 
-    }, 
+    },
+    selltab: {
+        flex: 1,
+        height: 33,
+        borderTopColor: UColor.tintColor,
+        borderRightColor: UColor.tintColor,
+        borderBottomColor: UColor.tintColor,
+        borderTopWidth: 1,
+        borderRightWidth: 0.5,
+        borderBottomWidth: 1,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },
+    txRecordtab: {
+        flex: 1,
+        height: 33,
+        borderTopColor: UColor.tintColor,
+        borderLeftColor: UColor.tintColor,
+        borderBottomColor: UColor.tintColor,
+        borderTopWidth: 1,
+        borderLeftWidth: 0.5,
+        borderBottomWidth: 1,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },
+    trackRecordtab: {
+        flex: 1,
+        height: 33,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
+        borderColor: UColor.tintColor,
+        borderWidth: 1,
+        alignItems: 'center',   
+        justifyContent: 'center', 
+    },
     nothave: {
       height: Platform.OS == 'ios' ? 84.5 : 65,
       backgroundColor: UColor.mainColor,
@@ -1090,10 +1130,9 @@ const styles = StyleSheet.create({
   },
     botn: {
       marginLeft: 10, 
-      width: 80, 
-      height: 38,  
+      width: 70, 
+      height: 30,  
       borderRadius: 3, 
-      backgroundColor: UColor.tintColor, 
       justifyContent: 'center', 
       alignItems: 'center' 
   },
