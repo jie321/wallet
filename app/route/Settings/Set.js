@@ -28,7 +28,8 @@ class Set extends BaseComponent {
     super(props);
     this.state = {
       value: false,
-      gesture: false
+      gesture: false,
+      simplyFlag:true
     }
   }
 
@@ -79,7 +80,7 @@ class Set extends BaseComponent {
   render() {
     return <View style={styles.container}>
             
-
+{this.state.simplyFlag!=true &&
       <View style={styles.scrollView}>
           <Button onPress={() => this.gesturepass()}>
             <View style={styles.listItem}>
@@ -126,6 +127,7 @@ class Set extends BaseComponent {
               </View>
           </View>
       </View>
+      }
       <View style={styles.btnout}>
         <Button onPress={() => this.logout()}>
           <View style={styles.btnloginUser}>

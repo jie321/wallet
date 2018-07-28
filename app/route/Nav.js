@@ -85,9 +85,9 @@ var WeChat = require('react-native-wechat');
 
 const TabContainer = TabNavigator(
   {
-    Home: { screen: Home },
+    // Home: { screen: Home },
     Coins: { screen: Coins },
-    Transaction: { screen: Transaction },
+    // Transaction: { screen: Transaction },
     News: { screen: News },
     Settings: { screen: Settings }
   },

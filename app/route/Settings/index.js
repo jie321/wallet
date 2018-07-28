@@ -24,6 +24,7 @@ class Setting extends React.Component {
     super(props);
     this.state = {
       value: false,
+      simplyFlag:true,
     }
     
     this.config = [
@@ -90,6 +91,9 @@ class Setting extends React.Component {
   }
 
   _renderListItem() {
+    if(this.state.simplyFlag==true){
+      return;
+    }
     return this.config.map((item, i) => {
       return (<Item key={i} {...item} />)
     })
@@ -113,6 +117,19 @@ class Setting extends React.Component {
     }
   }
 
+  logout = () =>{
+    if(this.props.loginUser){
+      this.props.dispatch({type:'login/logout',payload:{},callback:()=>{
+        // this.props.navigation.goBack();
+        AnalyticsUtil.onEvent('Sign_out');
+      }});
+    }else{
+      const { navigate } = this.props.navigation;
+      navigate('Login', {});
+    } 
+  }
+
+
   render() {
     return <View style={styles.container}>
             
@@ -125,16 +142,16 @@ class Setting extends React.Component {
                 <Image source={UImage.logo} style={styles.headimg} />
                 <Text style={styles.headtext}>{(this.props.loginUser) ? this.props.loginUser.nickname : "登陆"}</Text>
               </View>
-              <View style={styles.signedout}>
+    {     this.state.simplyFlag!=true &&     <View style={styles.signedout}>
                 {
                   <Button onPress={this.signIn.bind(this)} style={styles.signedbtn}>
                     <Image source={UImage.signed} style={styles.signedimg} />
                   </Button>
                 }
-              </View>
+              </View>}
             </View>
           </Button>
-          <Button style={styles.eosbtn}>
+  {  this.state.simplyFlag!=true &&      <Button style={styles.eosbtn}>
             <View style={styles.eosbtnout}>
               <View style={styles.eosout}>
                 <Text style={styles.eosbtntext}>活动奖励</Text>
@@ -148,13 +165,21 @@ class Setting extends React.Component {
                 }
               </View>
             </View>
-          </Button>
+          </Button>}
           <View>
-            {this._renderListItem()}
+
+          <View style={styles.btnout}>
+                <Button onPress={() => this.logout()}>
+                  <View style={styles.btnloginUser}>
+                    <Text style={styles.btntext}>{this.props.loginUser?"退出登陆":"登陆"}</Text>
+                  </View>
+                </Button>
+              </View>
+            {this.state.simplyFlag!=true && this._renderListItem()}
           </View>
           <View style={styles.footer}>
             <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
-            <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text>
+            <Text style={styles.foottext}>eostoken V{DeviceInfo.getVersion()}</Text>
             {/* <Text style={styles.foottext}>EOS专业版钱包 V2.1.8</Text> */}
           </View>
         </View>
@@ -304,6 +329,24 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     marginTop: 5
+  },
+
+  btnout: {
+    marginTop:180,
+    height: 80, 
+    marginBottom: 30,
+  },
+  btnloginUser: {
+    height: 45,
+    backgroundColor: UColor.tintColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    borderRadius: 5
+  },
+  btntext: {
+    fontSize:15,
+    color: UColor.fontColor,
   },
 });
 
