@@ -159,13 +159,13 @@ class News extends React.Component {
   //   }
   // }
     bannerPress = () => {
-      if (banner && banner.url && banner.url != "") {
+      // if (banner && banner.url && banner.url != "") {
       const { navigate } = this.props.navigation;
       // let url = banner.url.replace(/^\s+|\s+$/g, "");
       // navigate('Web', { title: banner.title, url: url });
       let url = "https://github.com/eostoken/wallet".replace(/^\s+|\s+$/g, "");
       navigate('Web', { title: "EosToken开源", url: url });
-      }
+      // }
   }
   //切换tab
   _handleIndexChange = index => {
