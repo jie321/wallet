@@ -381,6 +381,7 @@ class Route extends React.Component {
     APtransformY1: new Animated.Value(-1000),
     rAPtransformY: new Animated.Value(200),
     rAPtransformY1: new Animated.Value(-1000),
+    simpleFlag:true,
   }
 
   constructor(props) {
@@ -442,11 +443,13 @@ class Route extends React.Component {
       this.props.dispatch({
         type: 'common/upgrade', payload: { os: DeviceInfo.getSystemName() }, callback: (data) => {
           if (data.code == 0) {
-            if (DeviceInfo.getVersion() < data.data.version) {
-              if (data.data.must == 1) {
-                EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
-              } else {
-                EasyDialog.show("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
+            if(this.state.simpleFlag==false){
+              if (DeviceInfo.getVersion() < data.data.version) {
+                if (data.data.must == 1) {
+                  EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
+                } else {
+                  EasyDialog.show("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
+                }
               }
             }
           }
