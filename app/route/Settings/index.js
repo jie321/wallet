@@ -186,8 +186,8 @@ class Setting extends React.Component {
           </View>
           <View style={styles.footer}>
             <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
-            <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text>
-            {/* <Text style={styles.foottext}>EOS专业版钱包 V2.1.8</Text> */}
+            {/* <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text> */}
+            <Text style={styles.foottext}>EOS专业版钱包 V2.1.9.1</Text>
           </View>
         </View>
       </ScrollView>
