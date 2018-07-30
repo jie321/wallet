@@ -110,7 +110,7 @@ class Transaction extends BaseComponent {
     DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
         this.getRamInfo();
         this.getAccountInfo();
-        if(this.state.isTxRecord && this.state.queryaccount != null && this.state.queryaccount != ''){
+        if(this.state.isTxRecord && (this.state.queryaccount == null || this.state.queryaccount == '')){
             this.getRamTradeLog();
         }else{
             this.getRamTradeLogByAccount(this.state.queryaccount);
@@ -816,16 +816,16 @@ class Transaction extends BaseComponent {
                                 </View>
                                 <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                     {rowData.action_name == 'sellram' ? 
-                                    <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {rowData.eos_qty}</Text>
+                                    <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
                                     :
                                     <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
                                     }
-                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.price} EOS/KB</Text>
+                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
                                 </View>
                             </View>
-                            <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
+                            {/* <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
                                 <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                            </View>
+                            </View> */}
                         </View>
                     </Button>         
                      )}                
@@ -854,16 +854,16 @@ class Transaction extends BaseComponent {
                                   </View>
                                   <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                       {rowData.action_name == 'sellram' ? 
-                                      <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {rowData.eos_qty}</Text>
+                                      <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
                                       :
                                       <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
                                       }
-                                      <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.price} EOS/KB</Text>
+                                      <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
                                   </View>
                               </View>
-                              <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
+                              {/* <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
                                   <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                              </View>
+                              </View> */}
                             </View>   
                         </Button>      
                       )}                
@@ -882,16 +882,16 @@ class Transaction extends BaseComponent {
                                     </View>
                                     <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                         {rowData.action_name == 'sellram' ? 
-                                        <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>卖 {rowData.eos_qty}</Text>
+                                        <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
                                         :
                                         <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
                                         }
-                                        <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{rowData.price} EOS/KB</Text>
+                                        <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
                                     </View>
                                 </View>
-                                <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
+                                {/* <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
                                     <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                                </View>
+                                </View> */}
                             </View>
                         </View>          
                         )}                
