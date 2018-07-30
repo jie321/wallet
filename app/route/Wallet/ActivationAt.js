@@ -251,6 +251,8 @@ class ActivationAt extends BaseComponent {
                     }else if(result.code == 521){
                         //msg:账号不存在,data:null,code:521
                         EasyToast.show("账户还未成功激活！请确认支付后再次尝试！");
+                    }else if(result.code == 515) {
+                        EasyToast.show("抱歉，该账户已经被抢注，请删除该账户，重新换个账户激活吧!");
                     }else {
                         // 未知异
                         EasyToast.show("网络异常, 暂不能检测到账号是否已经激活, 请重试！");

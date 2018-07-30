@@ -99,7 +99,7 @@ const request = (url,method,body, timeout = 30000)=>{
       return requestO(okUrl, method, body, timeout)
    }).catch(e=>{
     console.log(e);
-    return { code: 500, msg: '网络繁忙，请稍后' };
+    return { code: 500, msg: '网络繁忙，请稍后再试' };
    
    })
 };

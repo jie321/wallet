@@ -313,8 +313,8 @@ class WalletDetail extends BaseComponent {
       //检测账号是否已经激活
       this.props.dispatch({
         type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
+          EasyLoading.dismis();
             if(result.code == 0 && result.data == true){
-                EasyLoading.dismis();
                 wallet.isactived = true
                 this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
                 //msg:success,data:true, code:0 账号已存在
@@ -322,8 +322,11 @@ class WalletDetail extends BaseComponent {
                     <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
                     {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
                 </View>), "知道了", null,  () => { EasyDialog.dismis() });
-            }else {
-              EasyLoading.dismis();
+            }else if(result.code == 500){ // 网络异常
+              EasyToast.show(result.msg);
+            }else if(result.code == 515){
+              EasyToast.show("账号已被别人占用，请换个账号吧！");
+            }else{
               navigate('ActivationAt', {parameter:wallet, entry: "activeWallet"});
 
               // this.props.dispatch({

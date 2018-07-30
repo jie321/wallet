@@ -115,10 +115,12 @@ class createWallet extends BaseComponent {
       // 检测账号是否已经在EOS主网上存在
       EasyLoading.show();
       this.props.dispatch({type: 'wallet/isExistAccountName', payload: {account_name: this.state.walletName}, callback: (resp) => {
+        EasyLoading.dismis();
         if(resp.code == '0'){ 
           // 账户已被注册, 异常处理
-          EasyLoading.dismis();
           EasyToast.show("账号已被别人占用，请换个账号吧！");
+        }else if(resp.code == 500){
+          EasyToast.show(resp.msg);
         }else{
           // 创建未激活钱包，并进入备份私钥流程
           var arr_owner = [];
