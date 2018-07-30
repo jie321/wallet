@@ -671,9 +671,10 @@ class Route extends React.Component {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
   }
 
-  onBackAndroid = () => {
+  onBackAndroid = (navigator) => {
     if (routeLength == 1) {
       if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
+        BackHandler.exitApp();
         return false;
       }
       this.lastBackPressed = Date.now();
@@ -740,6 +741,8 @@ class Route extends React.Component {
   }
 
   switchRoute = (prevNav, nav, action) => {
+    routeLength = nav.routes.length;
+    
     //切换到个人中心，更新用户信息
     if (action && action.routeName && action.routeName == "Settings") {
       if (this.props.loginUser) {
@@ -757,7 +760,6 @@ class Route extends React.Component {
                 if (action && action.routeName) {
                   DeviceEventEmitter.emit('changeTab', action.routeName);
                 }
-                routeLength = nav.routes.length;
               }
               });
               // this.timer && clearTimeout(this.timer);
@@ -774,7 +776,6 @@ class Route extends React.Component {
                 if (action && action.routeName) {
                   DeviceEventEmitter.emit('changeTab', action.routeName);
                 }
-                routeLength = nav.routes.length;
               }});
             }
           }
@@ -791,7 +792,6 @@ class Route extends React.Component {
           if (action && action.routeName) {
             DeviceEventEmitter.emit('changeTab', action.routeName);
           }
-          routeLength = nav.routes.length;
         }});
       }
       this.props.dispatch({ type: 'wallet/scanInvalidWallet', callback: (invalidWalletArr) => {
@@ -805,14 +805,12 @@ class Route extends React.Component {
       this.stopTimer();
       this.startTxTimer();
       DeviceEventEmitter.emit('changeTab', action.routeName);
-      routeLength = nav.routes.length;
     }else if (action && action.routeName && (action.routeName == "Coins" || action.routeName == "News" || action.routeName == "Settings")) {
       this.stopTimer();
       this.stopTxTimer();
       if (action && action.routeName) {
         DeviceEventEmitter.emit('changeTab', action.routeName);
       }
-      routeLength = nav.routes.length;
     }
   }
   createWallet() {
