@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { BackHandler, NavigationActions, Dimensions, Image, ScrollView, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, WebView, FlatList, Platform } from 'react-native';
+import { BackHandler, NavigationActions, Dimensions, Image, ScrollView, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, WebView, FlatList, Platform, Clipboard } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import Swiper from 'react-native-swiper';
 import store from 'react-native-simple-store';
@@ -8,6 +8,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import moment from 'moment';
 import UImage from '../../utils/Img'
+import { EasyToast } from '../../components/Toast';
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import NavigationUtil from '../../utils/NavigationUtil'
 require('moment/locale/zh-cn');
@@ -71,6 +72,7 @@ class News extends React.Component {
       }
     });
     BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
+   
   }
 
   onBackAndroid = () => {
@@ -125,6 +127,7 @@ class News extends React.Component {
     let route = this.getCurrentRoute();
     if (route.type == 2) {
       this.props.dispatch({ type: 'news/openView', payload: { key: route.key, nid: news.id } });
+
     } else {
       const { navigate } = this.props.navigation;
       this.props.dispatch({ type: 'news/view', payload: { news: news } });
@@ -134,6 +137,17 @@ class News extends React.Component {
       }
     }
   };
+
+  //长按复制新闻内容
+  copy = (news) => {
+    
+    // let route = this.getCurrentRoute();
+    // alert(route.type);
+    // if (route.type == 2) {
+    //   Clipboard.setString(news.title + news.content);
+    //   EasyToast.show("复制成功");
+    // }
+  }
 
   onDown = (news) => {
     this.props.dispatch({ type: 'news/down', payload: { news: news } });
@@ -232,17 +246,16 @@ class News extends React.Component {
         }
         dataSource={this.state.dataSource.cloneWithRows(this.props.newsData[route.key] == null ? [] : this.props.newsData[route.key])}
         renderRow={(rowData) => (
-          <Button onPress={() => { this.onPress(rowData) }}>
+          <Button onPress={() => { this.onPress(rowData) }} >
             <View style={styles.row}>
               <Text style={{ fontSize: 16, color: UColor.fontColor, marginTop: 5, }}>{rowData.title}</Text>
               {
-                route.type == 2 && <Text numberOfLines={rowData.row} style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }}>{rowData.content}</Text>
+                route.type == 2 && <Text numberOfLines={rowData.row} style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }} onPress={this.onShare.bind(this, rowData)}>{rowData.content}</Text>
               }
               {route.type == 2 && rowData.row == 3 && <Text style={{ fontSize: 13, color: '#65caff', lineHeight: 20, textAlign: "right", }}>展开更多</Text>}
               {
-                route.type != 2 && <Text style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }}>{rowData.content}</Text>
+                route.type != 2 && <Text style={{ fontSize: 15, color: '#8696B0', marginTop: 10, lineHeight: 25 }} >{rowData.content}</Text>
               }
-
               <View style={styles.rowFooter}>
                 <Text style={{ fontSize: 13, color: '#8696B0', paddingBottom: 10, marginTop: 10 }}>{moment(rowData.createdate).fromNow()}</Text>
 
@@ -257,7 +270,6 @@ class News extends React.Component {
                     <View style={{ flex: 1, flexDirection: "row", padding: 10 }}><Image style={{ width: 18, height: 18 }} source={UImage.share} /></View>
                   </Button>
                 </View>
-
               </View>
             </View>
           </Button>
