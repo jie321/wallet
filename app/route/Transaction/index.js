@@ -308,7 +308,7 @@ class Transaction extends BaseComponent {
       return obj;
   }
 
-  chkPrice(obj) {
+  chkBuyEosQuantity(obj) {
       obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"和 "."以外的字符
       obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
       obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
@@ -317,17 +317,51 @@ class Transaction extends BaseComponent {
       var max = 9999999999.9999;  // 100亿 -1
       var min = 0.0000;
       var value = 0.0000;
+      var floatbalance;
       try {
-      value = parseFloat(obj);
+        value = parseFloat(obj);
+        floatbalance = parseFloat(this.state.balance);
       } catch (error) {
-      value = 0.0000;
+        value = 0.0000;
+        floatbalance = 0.0000;
       }
       if(value < min|| value > max){
-      EasyToast.show("输入错误");
-      obj = "";
+        EasyToast.show("输入错误");
+        obj = "";
       }
+      if (value > floatbalance) {
+        EasyToast.show('账户余额不足,请重输');
+        obj = "";
+    }
       return obj;
   }
+  chkInputSellRamBytes(obj) {
+    obj = obj.replace(/[^\d]/g, "");  //清除 "数字"以外的字符
+    obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
+    // obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
+    // obj = obj.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+    // obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
+    var max = 9999999999;  // 100亿 -1
+    var min = 1;
+    var value = 0;
+    var ram_bytes = 0;
+    try {
+      value = parseFloat(obj);
+      ram_bytes = parseFloat(this.state.myRamAvailable);
+    } catch (error) {
+      value = 0;
+      ram_bytes = 0;
+    }
+    if(value < min|| value > max){
+      EasyToast.show("输入错误");
+      obj = "";
+    }
+    if (value > ram_bytes) {
+      EasyToast.show('可卖byte不足,请重输');
+      obj = "";
+  }
+    return obj;
+}
 
   //转换时间
   transferTimeZone(date){
@@ -695,7 +729,7 @@ class Transaction extends BaseComponent {
                   <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount + ''} returnKeyType="go" 
                   selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                   placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                  onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkPrice(buyRamAmount), eosToBytes: this.eosToBytes(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                  onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkBuyEosQuantity(buyRamAmount), eosToBytes: this.eosToBytes(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
                   />
                 <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
               </View>
@@ -743,7 +777,7 @@ class Transaction extends BaseComponent {
                       <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes + ''} returnKeyType="go" 
                       selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                       placeholder="输入出售数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                      onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkPrice(sellRamBytes), bytesToEos: this.bytesToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                      onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkInputSellRamBytes(sellRamBytes), bytesToEos: this.bytesToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
                       />
                       <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
                   </View>
