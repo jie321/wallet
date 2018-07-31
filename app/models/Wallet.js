@@ -479,6 +479,25 @@ export default {
             yield put({ type: 'updateInvalidWalletArr', payload: { invalidWalletArr: invalidWalletArr} });
             yield call(store.save, 'invalidWalletArr', invalidWalletArr);
          },
+         *changeRevealWallet({ payload,callback }, { call, put }) {
+            var reveal = yield call(store.get, 'reveal_wallet');  
+            // alert(JSON.stringify(reveal) );      
+            if (reveal == null) {
+                reveal = false;              
+            }else{
+                reveal = !reveal;
+            }
+            if (callback) callback({ reveal: reveal });
+            yield call(store.save, 'reveal_wallet', reveal);
+          },
+          *getRevealWallet({ payload,callback }, { call, put }) {
+            var reveal = yield call(store.get, 'reveal_wallet');
+            if (reveal == null) {
+                reveal = false;              
+            }
+            if (callback) callback({ reveal: reveal });
+          },
+
          *isExistAccountNameAndPublicKey({payload, callback},{call,put}) {
             // alert('22' + JSON.stringify(payload) )
             try{

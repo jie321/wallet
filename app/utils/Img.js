@@ -64,6 +64,8 @@ export default {
   resources:require('../img/resources.png'),
   reveal_h:require('../img/reveal_h.png'),
   reveal:require('../img/reveal.png'),
+  reveal_h_wallet:require('../img/reveal_h_wallet.png'),
+  reveal_wallet:require('../img/reveal_wallet.png'),
   scan: require('../img/scan.png'),
   share_banner:require('../img/share_banner.png'),
   shareBg:require('../img/share_bg.png'),
