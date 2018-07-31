@@ -10,8 +10,7 @@ import UImage from '../../utils/Img'
 import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
-import JPush from 'jpush-react-native';
-import JPushModule from 'jpush-react-native';
+
 var DeviceInfo = require('react-native-device-info');
 
 @connect(({ login}) => ({ ...login}))
@@ -24,9 +23,6 @@ class Setting extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      value: false,
-    }
     
     this.config = [
       { avatar:UImage.my_wallet, first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
@@ -115,21 +111,6 @@ class Setting extends React.Component {
     }
   }
 
-  changeJpush(state){
-    const {dispatch}=this.props;
-    dispatch({type:'login/changeJpush',callback:(jpush)=>{
-      this.setState({
-        value:jpush,
-      });
-    }});
-    if(state){
-      JPushModule.addTags(['newsmorningbook'], map => {
-      })
-    }else{
-      JPushModule.deleteTags(['newsmorningbook'], map => {
-      });
-    }
-  }
 
   render() {
     return <View style={styles.container}>
@@ -170,20 +151,7 @@ class Setting extends React.Component {
           <View>
             {this._renderListItem()}
           </View>
-          <View style={styles.listItem}>
-              <View style={styles.listInfo}>
-                <Image source={UImage.MessagePush} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden",marginRight:10,}}/>
-                <View style={styles.scrollView}>
-                  <Text style={styles.listInfoTitle}>消息推送</Text>
-                </View>
-                <View style={styles.listInfoRight}>
-                  <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
-                      value={this.state.value} onValueChange={(value)=>{ this.setState({ value:value, });
-                      this.changeJpush(value);
-                  }}/>
-                </View>
-              </View>
-          </View>
+          
           <View style={styles.footer}>
             <Text style={styles.foottext}>© 2018 eostoken all rights reserved </Text>
             {/* <Text style={styles.foottext}>EOS专业版钱包 V{DeviceInfo.getVersion()}</Text> */}
@@ -326,7 +294,7 @@ const styles = StyleSheet.create({
 
   footer: {
     flex: 1,
-    marginTop: 10,
+    marginTop: 30,
     flexDirection: 'column'
   },
   foottext: {
