@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, ScrollView, Image, Platform, StatusBar, TextInput, Clipboard } from 'react-native';
+import { Dimensions, DeviceEventEmitter, InteractionManager, ListView, StyleSheet, View, RefreshControl, Text, TouchableOpacity, Image, Platform, StatusBar, TextInput, Clipboard } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
@@ -13,35 +13,43 @@ import { EasyDialog } from '../../components/Dialog';
 import store from 'react-native-simple-store';
 import BaseComponent from "../../components/BaseComponent";
 
-let timer;
-
 @connect(({ wallet }) => ({ ...wallet }))
 class WalletManage extends BaseComponent {
 
   static navigationOptions = {
-    headerTitle:'钱包管理',
-    headerStyle:{
-            paddingTop:Platform.OS == 'ios' ? 30 : 20,
-            backgroundColor: UColor.mainColor,
-            borderBottomWidth:0,
-    },  
+    header:null,  //隐藏顶部导航栏
   };
 
   constructor(props) {
     super(props);
+    this.props.navigation.setParams({ onPress: this._rightTopClick });
     this.state = {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      isEye: false,
     }
     DeviceEventEmitter.addListener('modify_password', () => {
         this.props.dispatch({ type: 'wallet/walletList' });
     });
   }
+  _leftTopClick =() => {
+    const {goBack} = this.props.navigation;
+    goBack();
+  }
+
+  _rightTopClick = () => {
+    this.props.dispatch({type:'wallet/changeRevealWallet',callback:(reveal)=>{
+      this.setState({
+        isEye:reveal.reveal,
+      });
+    }});
+  };
 
   //组件加载完成
   componentDidMount() {
     // alert(JSON.stringify(this.props.walletList));
     const { dispatch } = this.props;
     var th = this;
+    this.props.dispatch({type:'wallet/getRevealWallet',callback:(reveal)=>{ this.setState({isEye:reveal.reveal,});}});
     this.props.dispatch({ type: 'wallet/walletList' });
     DeviceEventEmitter.addListener('updateDefaultWallet', (tab) => {
         this.props.dispatch({ type: 'wallet/walletList' });
@@ -93,9 +101,33 @@ class WalletManage extends BaseComponent {
     Clipboard.setString(data.name);
     EasyToast.show('账号复制成功');
   }
+  getAssertDisp(rowData)
+  {
+     if(!this.state.isEye){
+       return "****";
+     }
+     var disp = rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000';
+     return disp;
+  }
 
   render() {
     return (<View style={styles.container}>  
+
+      <View style={styles.header}>  
+        <View style={styles.leftout} >
+        {Platform.OS === 'ios' && <Ionicons style={{ color: UColor.fontColor,   }} name="ios-arrow-back" size={40} onPress={this._leftTopClick.bind()}/>}
+        {Platform.OS === 'android' && <Ionicons style={{ color: UColor.fontColor,   }} name="ios-arrow-round-back-outline" size={40} onPress={this._leftTopClick.bind()}/> }
+        </View>
+          <View style={styles.inptout} >
+              <Text style={{ fontSize: 18,color: UColor.fontColor, justifyContent: 'center',alignItems: 'center',}} numberOfLines={1} ellipsizeMode='middle'>钱包管理</Text>
+          </View>     
+          <TouchableOpacity onPress={this._rightTopClick.bind()}>
+            <View style={styles.Rightout} >
+              <Image source={this.state.isEye ? UImage.reveal_wallet : UImage.reveal_h_wallet} style={styles.imgTeOy}/>
+            </View>
+          </TouchableOpacity>
+      </View> 
+
       <View style={{paddingBottom: 60}}>
         <ListView initialListSize={10} style={{ backgroundColor: UColor.secdColor, }} enableEmptySections={true}
           renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor }} />}
@@ -118,7 +150,7 @@ class WalletManage extends BaseComponent {
                     <Ionicons style={styles.outIon} name="ios-arrow-forward-outline" size={20} />     
                 </View>    
                 <View style={styles.topout}>               
-                    <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000'}<Text style={styles.topouttext}> EOS</Text></Text>
+                    <Text style={styles.outaccount} numberOfLines={1} ellipsizeMode='middle'>{this.getAssertDisp(rowData)}<Text style={styles.topouttext}> EOS</Text></Text>
                 </View>
               </View>
             </Button>          
@@ -149,6 +181,34 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: UColor.secdColor,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop:Platform.OS == 'ios' ? 30 : 20,
+    paddingBottom: 5,
+    backgroundColor: UColor.mainColor,
+  },
+  leftout: {
+    paddingLeft: 15
+  },
+  Rightout: {
+    paddingRight: 15
+  },
+
+  inptout: {
+    flex: 1,
+    paddingLeft: 30,
+    paddingHorizontal: 20,
+    justifyContent: 'center', 
+  },
+
+  imgTeOy: {
+    width: 25,
+    height: 15,
+    marginHorizontal:5,
+  },
+
   row:{
     height: 110,
     backgroundColor:UColor.mainColor,
