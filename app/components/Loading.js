@@ -23,6 +23,19 @@ export class EasyLoading {
         this.map[key] && this.map[key].setState({ "isShow": true, "text": text, "timeout": timeout });
     }
 
+    //切换页面时,如果有loading显示,立刻关闭
+    static switchRoute(key = 'default'){
+        if(this.map[key] && this.map[key].state.isShow)
+        {
+            // this.dismis();
+            var th = this;  //立刻关闭显示
+            this.tm=setTimeout(function(){
+                th.map[key] && th.map[key].setState({ "isShow": false });
+                clearTimeout(this.tm);
+            },5);
+        }
+    }
+
     static dismis(key = 'default') {
         var th = this;
         this.tm=setTimeout(function(){

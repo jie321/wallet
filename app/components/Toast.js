@@ -23,6 +23,14 @@ export class EasyToast {
         this.map["toast"].show(text);
     }
 
+    //切换页面时,如果有显示,立刻关闭
+    static switchRoute(){
+        if(this.map["toast"] && this.map["toast"].state.isShow)
+        {
+            this.dismis();
+        }
+    }
+
     static dismis() {
         this.map["toast"].close();
     }

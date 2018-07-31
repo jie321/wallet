@@ -741,6 +741,9 @@ class Route extends React.Component {
   }
 
   switchRoute = (prevNav, nav, action) => {
+    //关闭loading显示,防止进入下一页面，上一个页面的loading显示还在
+    EasyLoading.switchRoute();    
+    EasyToast.switchRoute();
     routeLength = nav.routes.length;
     
     //切换到个人中心，更新用户信息
