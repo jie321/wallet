@@ -104,7 +104,7 @@ class WalletManage extends BaseComponent {
   getAssertDisp(rowData)
   {
      if(!this.state.isEye){
-       return "****";
+       return "******";
      }
      var disp = rowData.isactived && rowData.balance != null && rowData.balance != ""? rowData.balance : '0.0000';
      return disp;
