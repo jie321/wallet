@@ -12,6 +12,7 @@ import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
 import { EasyDialog } from '../../components/Dialog';
 import JPushModule from 'jpush-react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import BaseComponent from "../../components/BaseComponent";
 const maxWidth = Dimensions.get('window').width;
 var AES = require("crypto-js/aes");
@@ -127,29 +128,7 @@ class WalletDetail extends BaseComponent {
       navigate('Resources', {account_name:this.props.navigation.state.params.data.name});
     } else if(key == 'SeeBlockBrowser'){
       if(this.props.navigation.state.params.data.isactived){
-        EasyDialog.show("",  (<View >
-            <View style={{position: 'absolute', top: -35, right: -30,}}>
-              <Button style={styles.buttonView} onPress={() => { this.closeDialog() }} >
-                  <Text style={styles.butclose}>×</Text>
-              </Button>
-            </View> 
-          <View style={{paddingHorizontal: 11, paddingVertical: 15,  marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5,}}>
-            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eospark.com</Text>
-            <Button onPress={() => { this.eospark() }}>
-              <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={styles.buttonText}>查看</Text>
-              </View>
-            </Button>
-          </View>
-          <View style={{paddingHorizontal: 11, paddingVertical: 15, marginBottom: 10, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5, }}>
-            <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eoseco.com</Text>
-            <Button onPress={() => { this.eoseco() }}>
-              <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={styles.buttonText}>查看</Text>
-              </View>
-            </Button>
-          </View>
-        </View>),null, null,);
+        this.setState({ show: true,})
       }else{
         EasyToast.show("该账号还没激活，激活之后才能查看详细信息")
       }
@@ -157,10 +136,7 @@ class WalletDetail extends BaseComponent {
 
     }
   }
-  closeDialog() {
-    EasyDialog.dismis();
-  }
-
+ 
   eospark() {
     EasyDialog.dismis()
     const { navigate } = this.props.navigation;
@@ -511,22 +487,27 @@ class WalletDetail extends BaseComponent {
         <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
           <View style={styles.modalStyle}>
             <View style={styles.subView} >
-              <Button style={{ alignItems: 'flex-end', }} onPress={this._setModalVisible.bind(this)}>
-                <Text style={styles.closeText}>×</Text>
-              </Button>
-              <Text style={styles.titleText}>备份账户</Text>
-              {/* <Text style={styles.noticeText}>安全警告：私钥未经加密，导出存在风险，建议使用助记词和Keystore进行备份。</Text> */}
-              <View style={styles.contentText}>
-                <Text style={styles.textContent}>OwnerPrivateKey: {this.state.txt_owner}</Text>
-              </View>
-              <View style={styles.contentText}>
-                <Text style={styles.textContent}>ActivePrivateKey: {this.state.txt_active}</Text>
-              </View>
-              <Button onPress={() => { this.copy() }}>
-                <View style={styles.buttonView}>
-                  <Text style={styles.buttonText}>复制</Text>
+              <Button style={{ alignItems: 'flex-end',}} onPress={this._setModalVisible.bind(this)}>
+                <View style={styles.closeText}>
+                    <Ionicons style={{ color: '#CBCBCB'}} name="ios-close-outline" size={28} />
                 </View>
               </Button>
+              <View style={{paddingHorizontal: 11, paddingVertical: 15,  marginBottom: 18, marginHorizontal: 40, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5,}}>
+                <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eospark.com</Text>
+                <Button onPress={() => { this.eospark() }}>
+                  <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={styles.buttonText}>查看</Text>
+                  </View>
+                </Button>
+              </View>
+              <View style={{paddingHorizontal: 11, paddingVertical: 15, marginBottom: 34, marginHorizontal: 40, flexDirection: "row",borderColor: UColor.tintColor, borderWidth: 1,borderRadius: 5, }}>
+                <Text style={{flex: 1, fontSize: 20, color: UColor.mainColor}}>eoseco.com</Text>
+                <Button onPress={() => { this.eoseco() }}>
+                  <View style={{ width: 64, height: 30, borderRadius: 5, backgroundColor:  UColor.tintColor, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={styles.buttonText}>查看</Text>
+                  </View>
+                </Button>
+              </View>
             </View>
           </View>
         </Modal>
@@ -694,8 +675,7 @@ const styles = StyleSheet.create({
   },
   // modal上子View的样式  
   subView: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 30,
     backgroundColor:  UColor.fontColor,
     alignSelf: 'stretch',
     justifyContent: 'center',
@@ -704,11 +684,10 @@ const styles = StyleSheet.create({
     borderColor: UColor.baseline,
   },
   closeText: {
-    width: 30,
-    height: 30,
-    marginBottom: 0,
-    color: '#CBCBCB',
-    fontSize: 28,
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // 标题  
   titleText: {
