@@ -19,8 +19,8 @@ import Forget from './Login/Forget'
 import Helpcenter from './Login/Helpcenter'
 import ProblemFeedback from './Login/ProblemFeedback'
 import SignIn from './Login/SignIn'
-import Add_assets from './Home/Add_assets'
-import Coin_search from './Home/Coin_search'
+import AddAssets from './Home/AddAssets'
+import AssetSearch from './Home/AssetSearch'
 import FunctionsMore from './Home/FunctionsMore'
 import AssetInfo from './Home/AssetInfo'
 import Thin from './Home/Thin'
@@ -277,11 +277,11 @@ const Nav = StackNavigator(
     Nodevoting: {
       screen: Nodevoting
     },
-    Add_assets: {
-      screen: Add_assets
+    AddAssets: {
+      screen: AddAssets
     },
-    Coin_search: {
-      screen: Coin_search
+    AssetSearch: {
+      screen: AssetSearch
     },
     FunctionsMore: {
       screen:FunctionsMore
@@ -654,8 +654,12 @@ class Route extends React.Component {
           .then((isInstalled) => {
             th.setState({ showShare: false });
             if (isInstalled) {
-              WeChat.shareToTimeline({ type: 'imageFile', imageUrl: uri })
-                .catch((error) => {
+              WeChat.shareToTimeline({ type: 'imageFile', imageUrl: uri }).then((resp) => {
+                // EasyToast.show(JSON.stringify(resp));
+                if(resp && resp.errCode == 0){ // 分享成功
+                  th.shareSuccess();
+                }
+              }).catch((error) => {
                   EasyToast.show(error.message);
                 });
             } else {
@@ -665,6 +669,12 @@ class Route extends React.Component {
       });
     }
 
+  }
+
+  shareSuccess(){
+    // this.props.dispatch({ type: 'sticker/listincrease', payload: { uid: Constants.uid }, callback: (data) => { 
+    //   EasyToast.show("恭喜获得分享积分哦！");
+    // }});
   }
 
   componentWillUnmount() {
