@@ -15,7 +15,7 @@ import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
-class Add_assets extends BaseComponent {
+class AddAssets extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
        
         return {                       
@@ -65,7 +65,7 @@ class Add_assets extends BaseComponent {
 
   _rightTopClick = () =>{
     const { navigate } = this.props.navigation;
-    navigate('Coin_search', {});
+    navigate('AssetSearch', {});
   }
 
   componentWillUnmount(){
@@ -73,43 +73,6 @@ class Add_assets extends BaseComponent {
     //结束页面前，资源释放操作
     super.componentWillUnmount();
   }
-
-  //获得typeid坐标
-  getRouteIndex(typeId) {
-    for (let i = 0; i < this.props.types.length; i++) {
-      if (this.props.types[i].key == typeId) {
-        return i;
-      }
-    }
-  }
-
-  getCurrentRoute() {
-    return this.props.types[this.state.index];
-  }
-
-  //加载更多
-  onEndReached(typeId) {
-    pages[index] += 1;
-    currentLoadMoreTypeId = typeId;
-    const time = Date.parse(new Date()) / 1000;
-    const index = this.getRouteIndex(typeId);
-    if (time - loadMoreTime > 1) {
-      pages[index] += 1;
-      this.props.dispatch({ type: 'news/list', payload: { type: typeId, page: pages[index] } });
-      loadMoreTime = Date.parse(new Date()) / 1000;
-    }
-  };
-
-  //下拉刷新
-  onRefresh = (typeId, refresh) => {
-    this.props.dispatch({ type: 'news/list', payload: { type: typeId, page: 1, newsRefresh: refresh } });
-    const index = this.getRouteIndex(typeId);
-    if (index >= 0) {
-      pages[index] = 1;
-    }
-  };
-
-    
 
   onPress(action){
     EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待!","知道了",null,()=>{EasyDialog.dismis()});
@@ -322,4 +285,4 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
     } 
 })
-export default Add_assets;
+export default AddAssets;
