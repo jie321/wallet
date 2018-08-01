@@ -134,6 +134,7 @@ class AddAssets extends BaseComponent {
                         <Image source={rowData.icon==null ? UImage.eos : { uri: rowData.icon }} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden", borderRadius: 10, marginRight:10,}}/>
                         <View style={styles.scrollView}>
                           <Text style={styles.listInfoTitle}>{rowData.name}</Text>
+                          <Text style={styles.quantity}>合约账户 : {rowData.contractAccount == null ? "" : rowData.contractAccount}</Text>
                         </View>
                         <View style={styles.listInfoRight}>
                           <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
@@ -143,7 +144,7 @@ class AddAssets extends BaseComponent {
                           }}/>
                         </View>
                       </View>
-                      <Text style={styles.quantity}>合约账户 : {rowData.contractAccount == null ? "" : rowData.contractAccount}</Text>
+                      
                   </View>
                   )}                
                 /> 
@@ -167,18 +168,21 @@ const styles = StyleSheet.create({
     },
    
     listInfo: {
-      height: 45,
+      height: 60,
       flex: 1,
       paddingLeft: 16,
       paddingRight: 16,
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
+      
       borderTopWidth:1,
       borderTopColor: UColor.secdColor
     },
     scrollView: {
       flex: 1,
+      paddingLeft: 10,
+      // alignItems: "center",
+      justifyContent: "center",
     },
     listInfoTitle: {
       color:UColor.fontColor, 
@@ -190,11 +194,8 @@ const styles = StyleSheet.create({
     },
 
     quantity: {
-      paddingLeft: 16,
       fontSize: 14,
       color: UColor.arrow,
-      textAlign: 'left',
-      marginTop: 0,
     },
    
 })
