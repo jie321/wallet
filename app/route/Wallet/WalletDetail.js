@@ -214,6 +214,24 @@ class WalletDetail extends BaseComponent {
     }, () => { EasyDialog.dismis() });
   }
 
+  deleteAccount(c,data){
+    if(!c.isactived || !c.hasOwnProperty('isactived'))
+    {
+      //未激活
+      this.deleteWarning(c,data);
+    }
+    else{
+      //msg:success,data:true, code:0 账号已存在
+      EasyDialog.show("免责声明",  (<View>
+       <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
+     </View>),"执意删除","返回钱包",  () => {
+         this.deleteWallet();
+         EasyDialog.dismis()
+     }, () => { EasyDialog.dismis() });
+    }
+  
+  }
+
   //未激活账号直接删除
   deletionDirect() {
     EasyDialog.dismis();
@@ -478,7 +496,7 @@ class WalletDetail extends BaseComponent {
           </Button>
           :null
           }
-          <Button onPress={this.deleteWarning.bind(this, c)} style={{ flex: 1 }}>
+          <Button onPress={this.deleteAccount.bind(this, c)} style={{ flex: 1 }}>
             <View style={styles.deleteout}>
               <Text style={styles.delete}>删除账户</Text>
             </View>

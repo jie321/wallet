@@ -298,7 +298,7 @@ class Home extends React.Component {
         }, () => { EasyDialog.dismis() });  
         return;
       }
-      navigate('Add_assets', {});
+      navigate('AddAssets', {});
     } else{
       EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }

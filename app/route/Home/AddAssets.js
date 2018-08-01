@@ -1,21 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch} from 'react-native';
-import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
-import store from 'react-native-simple-store';
+import {DeviceEventEmitter,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch} from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
-import Item from '../../components/Item'
-import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
-import QRCode from 'react-native-qrcode-svg';
-const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
-class Add_assets extends BaseComponent {
+class AddAssets extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
        
         return {                       
@@ -65,7 +59,7 @@ class Add_assets extends BaseComponent {
 
   _rightTopClick = () =>{
     const { navigate } = this.props.navigation;
-    navigate('Coin_search', {});
+    navigate('AssetSearch', {});
   }
 
   componentWillUnmount(){
@@ -73,43 +67,6 @@ class Add_assets extends BaseComponent {
     //结束页面前，资源释放操作
     super.componentWillUnmount();
   }
-
-  //获得typeid坐标
-  getRouteIndex(typeId) {
-    for (let i = 0; i < this.props.types.length; i++) {
-      if (this.props.types[i].key == typeId) {
-        return i;
-      }
-    }
-  }
-
-  getCurrentRoute() {
-    return this.props.types[this.state.index];
-  }
-
-  //加载更多
-  onEndReached(typeId) {
-    pages[index] += 1;
-    currentLoadMoreTypeId = typeId;
-    const time = Date.parse(new Date()) / 1000;
-    const index = this.getRouteIndex(typeId);
-    if (time - loadMoreTime > 1) {
-      pages[index] += 1;
-      this.props.dispatch({ type: 'news/list', payload: { type: typeId, page: pages[index] } });
-      loadMoreTime = Date.parse(new Date()) / 1000;
-    }
-  };
-
-  //下拉刷新
-  onRefresh = (typeId, refresh) => {
-    this.props.dispatch({ type: 'news/list', payload: { type: typeId, page: 1, newsRefresh: refresh } });
-    const index = this.getRouteIndex(typeId);
-    if (index >= 0) {
-      pages[index] = 1;
-    }
-  };
-
-    
 
   onPress(action){
     EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待!","知道了",null,()=>{EasyDialog.dismis()});
@@ -177,6 +134,7 @@ class Add_assets extends BaseComponent {
                         <Image source={rowData.icon==null ? UImage.eos : { uri: rowData.icon }} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden", borderRadius: 10, marginRight:10,}}/>
                         <View style={styles.scrollView}>
                           <Text style={styles.listInfoTitle}>{rowData.name}</Text>
+                          <Text style={styles.quantity}>合约账户 : {rowData.contractAccount == null ? "" : rowData.contractAccount}</Text>
                         </View>
                         <View style={styles.listInfoRight}>
                           <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
@@ -186,6 +144,7 @@ class Add_assets extends BaseComponent {
                           }}/>
                         </View>
                       </View>
+                      
                   </View>
                   )}                
                 /> 
@@ -203,24 +162,27 @@ const styles = StyleSheet.create({
 
     listItem: {
       backgroundColor: UColor.mainColor,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
     },
    
     listInfo: {
-      height: 65,
+      height: 60,
       flex: 1,
       paddingLeft: 16,
       paddingRight: 16,
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
+      
       borderTopWidth:1,
       borderTopColor: UColor.secdColor
     },
     scrollView: {
       flex: 1,
+      paddingLeft: 10,
+      // alignItems: "center",
+      justifyContent: "center",
     },
     listInfoTitle: {
       color:UColor.fontColor, 
@@ -231,95 +193,10 @@ const styles = StyleSheet.create({
       alignItems: "center"
     },
 
-
-
-
-
-
-
-
-
-
-
-
-
-    row: {
-      height:80,
-      backgroundColor: UColor.mainColor,
-      flexDirection: "row",
-      padding: 15,
-      justifyContent: "space-between",
+    quantity: {
+      fontSize: 14,
+      color: UColor.arrow,
     },
-    left: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: 'center',
-    },
-    right: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: 'center',
-      justifyContent: "flex-end"
-    },
-    top:{
-      flex:2,
-      flexDirection:"column",
-    },
-    footer:{
-      paddingTop:5,
-      height:60,    
-      flexDirection:'row',  
-      position:'absolute',
-      backgroundColor: UColor.secdColor,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-
-    pupuo:{  
-      backgroundColor: '#ECECF0',  
-    },  
-    // modal的样式  
-    modalStyle: {  
-      backgroundColor: UColor.mask,  
-      alignItems: 'center',  
-      justifyContent:'center',  
-      flex:1,  
-    },  
-    // modal上子View的样式  
-    subView:{  
-      marginLeft:10,  
-      marginRight:10,  
-      backgroundColor:  UColor.fontColor,  
-      alignSelf: 'stretch',  
-      justifyContent:'center',  
-      borderRadius: 10,  
-      borderWidth: 0.5,  
-      borderColor: UColor.mask,  
-    },  
-    // 标题  
-    titleText:{   
-      marginBottom:5,  
-      fontSize:18,  
-      fontWeight:'bold',  
-      textAlign:'center',  
-    },  
-    // 内容  
-    contentText:{  
-      marginLeft:15,  
-      fontSize:12,  
-      textAlign:'left',  
-    },  
-    // 按钮  
-    buttonView:{  
-      alignItems: 'flex-end', 
-    },  
-    tab1:{
-      flex:1,
-    },
-    tab2:{
-      flex:1,
-      flexDirection: 'column',
-    } 
+   
 })
-export default Add_assets;
+export default AddAssets;

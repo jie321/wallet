@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,StatusBar,Switch} from 'react-native';
+import {Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,Image,Platform,Linking,Switch} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
+import Upgrade from 'react-native-upgrade-android';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import Item from '../../components/Item'
@@ -15,6 +16,9 @@ import { EasyToast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
 import JPushModule from 'jpush-react-native';
 import BaseComponent from "../../components/BaseComponent";
+
+var DeviceInfo = require('react-native-device-info');
+
 const Font = { Ionicons }
 @connect(({login,jPush}) => ({...login,...JPush}))
 class Set extends BaseComponent {
@@ -39,6 +43,20 @@ class Set extends BaseComponent {
         value:jpush.jpush,
       });
     }});
+
+    //APK更新
+    if (Platform.OS !== 'ios') {
+      Upgrade.init();
+      DeviceEventEmitter.addListener('progress', (e) => {
+        if (e.code === '0000') { // 开始下载
+          EasyDialog.startProgress();
+        } else if (e.code === '0001') {
+          EasyDialog.progress(e.fileSize, e.downSize);
+        } else if (e.code === '0002') {
+          EasyDialog.endProgress();
+        }
+      });
+    }
   }
   componentWillUnmount(){
     //结束页面前，资源释放操作
@@ -60,6 +78,50 @@ class Set extends BaseComponent {
  
   gesturepass(){
     EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+  }
+
+
+  changeJpush(state){
+    const {dispatch}=this.props;
+    dispatch({type:'login/changeJpush',callback:(jpush)=>{
+      this.setState({
+        value:jpush,
+      });
+    }});
+    if(state){
+      JPushModule.addTags(['newsmorningbook'], map => {
+      })
+    }else{
+      JPushModule.deleteTags(['newsmorningbook'], map => {
+      });
+    }
+  }
+  doUpgrade = (url, version) => {
+    if (Platform.OS !== 'ios') {
+      this.setState({ visable: false });
+      Upgrade.startDownLoad(url, version, "eostoken");
+    } else {
+      Linking.openURL(url);
+    }
+  }
+
+  checkVersion(){
+    //升级
+    this.props.dispatch({
+      type: 'common/upgrade', payload: { os: DeviceInfo.getSystemName() }, callback: (data) => {
+        if (data.code == 0) {
+          if (DeviceInfo.getVersion() < data.data.version) {
+            if (data.data.must == 1) {
+              EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
+            } else {
+              EasyDialog.show("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
+            }
+          }else{
+            EasyToast.show("当前已是最新版本");
+          }
+        }
+      }
+    });
   }
 
   render() {
@@ -93,6 +155,31 @@ class Set extends BaseComponent {
                 </View>
               </View>
           </View>
+          <View style={styles.listItem}>
+              <View style={styles.listInfo}>
+                <View style={styles.scrollView}>
+                  <Text style={styles.listInfoTitle}>消息推送</Text>
+                </View>
+                <View style={styles.listInfoRight}>
+                  <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
+                      value={this.state.value} onValueChange={(value)=>{ this.setState({ value:value, });
+                      this.changeJpush(value);
+                  }}/>
+                </View>
+              </View>
+          </View>
+          <Button onPress={() => this.checkVersion()}>
+            <View style={styles.listItem}>
+                <View style={styles.listInfo}>
+                  <View style={styles.scrollView}>
+                    <Text style={styles.listInfoTitle}>检查新版本</Text>
+                  </View>
+                  {/* <View style={styles.listInfoRight}>            
+                    <Font.Ionicons name="ios-arrow-forward-outline" size={16} color={UColor.arrow} />
+                  </View> */}
+                </View>
+              </View>
+          </Button>
       </View>
       <View style={styles.btnout}>
         <Button onPress={() => this.logout()}>

@@ -61,9 +61,9 @@ class Transaction extends BaseComponent {
       isTrackRecord: false,
       balance: '0.0000',   
       slideCompletionValue: 0,
-      buyRamAmount: "0.00",    //输入购买的额度
-      eosToBytes: '0',
-      bytesToEos: '0.00',
+      buyRamAmount: "0",    //输入购买的额度
+      eosToKB: '0.0000',
+      kbToEos: '0.0000',
       sellRamBytes: "0",    //输入出售的字节数
       queryaccount:"",     //查询账户 
       myRamAvailable: '0', // 我的可用字节
@@ -341,28 +341,28 @@ class Transaction extends BaseComponent {
       return obj;
   }
   chkInputSellRamBytes(obj) {
-    obj = obj.replace(/[^\d]/g, "");  //清除 "数字"以外的字符
+    obj = obj.replace(/[^\d.]/g, "");  //清除 "数字"以外的字符
     obj = obj.replace(/^\./g, "");  //验证第一个字符是否为数字
-    // obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
-    // obj = obj.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
-    // obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
-    var max = 9999999999;  // 100亿 -1
-    var min = 1;
-    var value = 0;
+    obj = obj.replace(/\.{2,}/g, "."); //只保留第一个小数点，清除多余的
+    obj = obj.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+    obj = obj.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3'); //只能输入四个小数
+    var max = 9999999999.9999;  // 100亿 -1
+    var min = 0.0000;
+    var value = 0.0000;
     var ram_bytes = 0;
     try {
       value = parseFloat(obj);
       ram_bytes = parseFloat(this.state.myRamAvailable);
     } catch (error) {
-      value = 0;
-      ram_bytes = 0;
+      value = 0.0000;
+      ram_bytes = 0.0000;
     }
     if(value < min|| value > max){
       EasyToast.show("输入错误");
       obj = "";
     }
-    if (value > ram_bytes) {
-      EasyToast.show('可卖byte不足,请重输');
+    if (value * 1024 > ram_bytes) {
+      EasyToast.show('可卖KB不足,请重输');
       obj = "";
   }
     return obj;
@@ -499,10 +499,10 @@ class Transaction extends BaseComponent {
         return;
     }
     if(this.state.sellRamBytes == ""){
-        EasyToast.show('请输入出售内存字节数量');
+        EasyToast.show('请输入出售内存KB数量');
         return;
     }
-    if(this.chkAmountIsZero(this.state.sellRamBytes,'请输入出售内存kb数量')){
+    if(this.chkAmountIsZero(this.state.sellRamBytes,'请输入出售内存KB数量')){
         this.setState({ sellRamBytes: "" })
         return ;
     }
@@ -526,7 +526,7 @@ class Transaction extends BaseComponent {
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 EasyLoading.show();
-                Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes, (r) => {
+                Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
                     EasyLoading.dismis();
                     if(r.isSuccess){
                         this.getAccountInfo();
@@ -632,18 +632,18 @@ class Transaction extends BaseComponent {
      return ratio;
   }
 
-  eosToBytes(eos, currentPrice) {
+  eosToKB(eos, currentPrice) {
     if(eos == null || eos == '' || currentPrice == null || currentPrice == ''){
         return '0';
     }
-    return ((eos/currentPrice) * 1024).toFixed(0); 
+    return (eos/currentPrice).toFixed(4); 
   }
 
-  bytesToEos(bytes, currentPrice){
-    if(bytes == null || bytes == '' || currentPrice == null || currentPrice == ''){
-        return '0.00';
+  kbToEos(kb, currentPrice){
+    if(kb == null || kb == '' || currentPrice == null || currentPrice == ''){
+        return '0.0000';
     }
-    return ((bytes * currentPrice) / 1024).toFixed(2);
+    return (kb * currentPrice).toFixed(4);
   }
 
   openQuery(payer) {
@@ -709,7 +709,7 @@ class Transaction extends BaseComponent {
                 </View>
                 <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
                     <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>当前价格</Text>
-                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price : '0.00'}</Text>
+                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price : '0.0000'}</Text>
                 </View>
             </View>
           </View>
@@ -739,18 +739,21 @@ class Transaction extends BaseComponent {
             {this.funcButton(styles.trackRecordtab, this.state.isTrackRecord, 'isTrackRecord', '大单追踪')}  
         </View> 
          {this.state.isBuy?<View>
-              <Text style={styles.inptTitle}>余额:{this.state.balance==""? "0.0000" :this.state.balance}EOS</Text>
+                <View style={{flex:1,flexDirection:'row',alignItems:'center', paddingHorizontal: 20, }}>
+                    <Text style={styles.greenText}>单价: {this.props.ramInfo ? this.props.ramInfo.price.toFixed(4) : '0.0000'} EOS/KB</Text>
+                    <Text style={styles.inptTitle}>余额: {this.state.balance==""? "0.0000" :this.state.balance} EOS</Text>
+                </View>
               <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                   <TextInput ref={(ref) => this._rrpass = ref} value={this.state.buyRamAmount + ''} returnKeyType="go" 
                   selectionColor={UColor.tintColor} style={styles.inpt}  placeholderTextColor={UColor.arrow} 
                   placeholder="输入购买的额度" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                  onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkBuyEosQuantity(buyRamAmount), eosToBytes: this.eosToBytes(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                  onChangeText={(buyRamAmount) => this.setState({ buyRamAmount: this.chkBuyEosQuantity(buyRamAmount), eosToKB: this.eosToKB(buyRamAmount, this.props.ramInfo?this.props.ramInfo.price:'')})}
                   />
                 <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
               </View>
               <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10, }}>≈{this.state.eosToBytes}</Text>
-                  <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
+                  <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10, }}>≈{this.state.eosToKB}</Text>
+                  <Text style={{ fontSize: 15, color:UColor.fontColor, }}>KB</Text>
               </View>
               <View style={styles.inptoutsource}>
                 <View style={styles.outsource}>
@@ -760,7 +763,7 @@ class Transaction extends BaseComponent {
                         minimumValue={0}
                         step={0.0001}
                         value={this.state.buyRamAmount*1}
-                        onSlidingComplete={(value)=>this.setState({ buyRamAmount: value, eosToBytes: this.eosToBytes(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                        onSlidingComplete={(value)=>this.setState({ buyRamAmount: value, eosToKB: this.eosToKB(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
                         maximumTrackTintColor={UColor.tintColor}
                         minimumTrackTintColor={UColor.tintColor}
                         //android
@@ -787,17 +790,20 @@ class Transaction extends BaseComponent {
           </View>:  
                <View>{this.state.isSell?
                   <View>
-                  <Text style={styles.inptTitle}>可卖:{this.state.myRamAvailable}byte</Text>
+                    <View style={{flex:1,flexDirection:'row',alignItems:'center',paddingHorizontal: 20, }}>
+                        <Text style={styles.redText}>单价: {this.props.ramInfo ? this.props.ramInfo.price.toFixed(4) : '0.0000'} EOS/KB</Text>
+                        <Text style={styles.inptTitle}>可卖: {(this.state.myRamAvailable == null || this.state.myRamAvailable == '') ? '0' : (this.state.myRamAvailable/1024).toFixed(4)} KB</Text>
+                    </View>
                   <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
                       <TextInput ref={(ref) => this._rrpass = ref} value={this.state.sellRamBytes + ''} returnKeyType="go" 
                       selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
                       placeholder="输入出售数量" underlineColorAndroid="transparent" keyboardType="numeric"  maxLength = {15}
-                      onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkInputSellRamBytes(sellRamBytes), bytesToEos: this.bytesToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                      onChangeText={(sellRamBytes) => this.setState({ sellRamBytes: this.chkInputSellRamBytes(sellRamBytes), kbToEos: this.kbToEos(sellRamBytes, this.props.ramInfo?this.props.ramInfo.price:'')})}
                       />
-                      <Text style={{ fontSize: 15, color:UColor.fontColor, }}>byte</Text>
+                      <Text style={{ fontSize: 15, color:UColor.fontColor, }}>KB</Text>
                   </View>
                   <View style={{height: 30, marginHorizontal: 18, marginBottom: 10, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10,}}>≈{(this.state.bytesToEos == null || this.state.bytesToEos == '') ? '0' : this.state.bytesToEos}</Text>
+                      <Text style={{ flex: 1, color: UColor.arrow, fontSize: 15, paddingLeft: 10,}}>≈{(this.state.kbToEos == null || this.state.kbToEos == '') ? '0' : this.state.kbToEos}</Text>
                       <Text style={{ fontSize: 15, color:UColor.fontColor, }}>EOS</Text>
                   </View>
                   <View style={styles.inptoutsource}>
@@ -808,7 +814,7 @@ class Transaction extends BaseComponent {
                                     minimumValue={0}
                                     step={1}
                                     value={this.state.sellRamBytes*1}
-                                    onSlidingComplete={(value)=>this.setState({ sellRamBytes: value, bytesToEos: this.bytesToEos(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                                    onSlidingComplete={(value)=>this.setState({ sellRamBytes: value, kbToEos: this.kbToEos(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
                                     maximumTrackTintColor={UColor.tintColor}
                                     minimumTrackTintColor={UColor.tintColor}
                                     //android
@@ -1160,13 +1166,30 @@ const styles = StyleSheet.create({
     paddingLeft: 10, 
   },
 
+  greenText: {
+      flex:1,
+    fontSize: 14, 
+    color: "#42B324", 
+    lineHeight: 35,
+    textAlign: "left"
+  },
+
+  redText: {
+    flex:1,
+  fontSize: 14, 
+  color: UColor.showy, 
+  lineHeight: 35,
+  textAlign: "left"
+  },
+
   inptTitle: {
+      flex: 1,
     fontSize: 14, 
     color: UColor.fontColor, 
     lineHeight: 35,
-    paddingHorizontal: 25,
     textAlign: "right"
   },
+
   inptTitlered: {
     fontSize: 14, 
     color: UColor.showy, 
