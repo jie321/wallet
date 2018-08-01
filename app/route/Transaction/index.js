@@ -368,33 +368,7 @@ class Transaction extends BaseComponent {
     return obj;
 }
 
-  //转换时间
-  transferTimeZone(date){
-      //转换时间
-      let timezone = moment(date).add(8,'hours').format('YYYY-MM-DD HH:mm:ss');
-      let regEx = new RegExp("\\-","gi");
-      let validDateStr=timezone.replace(regEx,"/");
-      let milliseconds=Date.parse(validDateStr);
-      let sendTime = new Date(milliseconds).getTime();
-      //当前时间
-      let nowTime = new Date().getTime();
-      //72小时
-      let ThreeTime = 259200000;
-      //差值
-      let Dvalue = nowTime - sendTime ;
-      let SurplusTime = ThreeTime - Dvalue
-      // 时 
-      const hours = Math.floor(SurplusTime / (3600 * 1000)); 
-      // 分 
-      const leave2 = SurplusTime % (3600 * 1000); 
-      const minutes = Math.floor(leave2 / (60 * 1000)); 
-      // 秒 
-      const leave3 = leave2 % (60 * 1000); 
-      const seconds = Math.round(leave3 / 1000); 
-      let Surplus = hours + ':' + minutes + ':' + seconds
-      return Surplus;
-  }
-
+  
   chkAmountIsZero(amount,errInfo)
   {
       var tmp;
@@ -867,7 +841,7 @@ class Transaction extends BaseComponent {
                             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                     <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{this.transferTimeZone(rowData.record_date)}</Text>
+                                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                 </View>
                                 <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                     {rowData.action_name == 'sellram' ? 
@@ -905,7 +879,7 @@ class Transaction extends BaseComponent {
                               <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                   <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                       <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                      <Text style={{fontSize: 15,color: UColor.arrow,}}>{this.transferTimeZone(rowData.record_date)}</Text>
+                                      <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                   </View>
                                   <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                       {rowData.action_name == 'sellram' ? 
@@ -933,7 +907,7 @@ class Transaction extends BaseComponent {
                                 <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                                     <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                                         <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                        <Text style={{fontSize: 15,color: UColor.arrow,}}>{this.transferTimeZone(rowData.record_date)}</Text>
+                                        <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                     </View>
                                     <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
                                         {rowData.action_name == 'sellram' ? 
