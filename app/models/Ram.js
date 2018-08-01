@@ -45,6 +45,7 @@ export default {
                 EasyToast.show('网络繁忙,请稍后!');
             }
         },
+        //所有交易查询
         *getRamTradeLog({ payload, callback }, { call, put }) {
             try{
                 const resp = yield call(Request.request, getRamTradeLog, 'post', payload);
@@ -75,6 +76,7 @@ export default {
                 if (callback) callback({ code: 500, msg: "网络异常" });                
             }
         },
+        //个人交易记录查询
         *getRamTradeLogByAccount({ payload, callback }, { call, put }) {
             try{
                 const resp = yield call(Request.request, getRamTradeLogByAccount, 'post', payload);

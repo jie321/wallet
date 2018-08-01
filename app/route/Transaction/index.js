@@ -25,7 +25,7 @@ var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 
 const trackOption = ['最近交易','持仓大户'];
-
+const transactionOption = ['我的交易','大盘交易'];
 @connect(({ram,sticker,wallet}) => ({...ram, ...sticker, ...wallet}))
 class Transaction extends BaseComponent {
 
@@ -55,6 +55,7 @@ class Transaction extends BaseComponent {
     this.state = {
       selectedSegment:"2小时",
       selectedTrackSegment: trackOption[0],
+      selectedTransactionRecord: transactionOption[1],
       isBuy: false,
       isSell: false,
       isTxRecord: true,
@@ -140,7 +141,8 @@ class Transaction extends BaseComponent {
   }
 
   getRamTradeLog(){
-    this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}});    
+    this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}}); 
+    EasyLoading.dismis(); 
   }
 
   getRamTradeLogByAccount(accountName){
@@ -194,7 +196,14 @@ class Transaction extends BaseComponent {
       this.fetchLine(48,opt);
     }
   }
-
+  //最近交易，持仓大户
+  setSelectedTrackOption(opt){
+    if(opt== trackOption[0]){
+      this.fetchTrackLine(0,opt);
+    }else {
+      this.fetchTrackLine(1,opt);
+    }
+  }
   fetchTrackLine(type,opt){
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
@@ -206,12 +215,26 @@ class Transaction extends BaseComponent {
         EasyToast.show('开发中，查询区块持仓大户前10名记录');   
     }
   }
-
-  setSelectedTrackOption(opt){
-    if(opt== trackOption[0]){
-      this.fetchTrackLine(0,opt);
+  //我的交易，大盘交易
+  setSelectedTransactionRecord(opt){
+    if(opt== transactionOption[0]){
+      this.selectionTransaction(0,opt);
     }else {
-      this.fetchTrackLine(1,opt);
+      this.selectionTransaction(1,opt);
+    }
+  }
+  selectionTransaction(type,opt){
+    EasyLoading.show();
+    this.setState({selectedTransactionRecord:opt});
+    if(type == 0){
+        if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+            EasyToast.show('未检测到您的账号信息');
+        }else{
+            this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.props.defaultWallet.account}});
+        }
+        EasyLoading.dismis();
+    }else{
+        this.getRamTradeLog(); 
     }
   }
 
@@ -389,13 +412,19 @@ class Transaction extends BaseComponent {
     this.setState({queryaccount:queryaccount});
     if(queryaccount == null|| queryaccount == ''){
         EasyLoading.show();
-        this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
+        this.props.dispatch({type: 'ram/getRamTradeLog',payload: {account_name: ''}, callback: () => {
+            this.setState({
+                newramTradeLog: []
+            })
             EasyLoading.dismis();
         }});  
         return;
     }
     EasyLoading.show();
     this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: queryaccount}, callback: (resp) => {
+        this.setState({
+            newramTradeLog: resp.data
+        })
         EasyLoading.dismis();
         if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
             EasyToast.show("未找到交易哟~");
@@ -620,15 +649,17 @@ class Transaction extends BaseComponent {
     return (kb * currentPrice).toFixed(4);
   }
 
-  openQuery(payer) {
-    this.setState({
-        isBuy: false, 
-        isSell: false,
-        isTxRecord: true,
-        isTrackRecord:false, 
-        queryaccount:payer
-    });
-    this.getRamLogByAccout(payer);
+  openQuery =(payer) => {
+    const { navigate } = this.props.navigation;
+    navigate('RecordQuery', {record:payer});
+    // this.setState({
+    //     isBuy: false, 
+    //     isSell: false,
+    //     isTxRecord: true,
+    //     isTrackRecord:false, 
+    //     queryaccount:payer
+    // });
+    // this.getRamLogByAccout(payer);
   }
 
   dismissKeyboardClick() {
@@ -814,47 +845,32 @@ class Transaction extends BaseComponent {
                 </View>
             </View>:
                 <View>{this.state.isTxRecord ? <View >
-                   <View style={{flexDirection: 'row', alignItems: 'center',borderBottomColor: UColor.secdColor, marginVertical: 10, marginHorizontal: 5, }}>
-                    <View style={{flex: 1, height: 30, paddingHorizontal: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center',backgroundColor:'#38465C',borderRadius:5,}}>
-                      <TextInput ref={(ref) => this._account = ref} value={this.state.queryaccount} returnKeyType="go"
-                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} maxLength={12}
-                            placeholder="请输入账户名称" underlineColorAndroid="transparent" keyboardType="default" 
-                            onChangeText={(queryaccount) => this.setState({ queryaccount: this.chkAccount(queryaccount)})}
-                        />
-                    </View>     
-                    <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.state.queryaccount)}>  
-                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginLeft: 5,}} >
-                            <Image source={UImage.Magnifier} style={{ width: 25,height: 25}}></Image>
-                        </View>
-                    </TouchableOpacity> 
-                    <TouchableOpacity onPress={this.getRamLogByAccout.bind(this,this.props.defaultWallet ? this.props.defaultWallet.account : '')}>  
-                        <View style={{justifyContent: "center", alignItems: 'center', paddingHorizontal: 10, marginRight: 5,}} >
-                            <Image source={UImage.Magnifier_me} style={{ width: 25,height: 25}}></Image>
-                        </View>
-                    </TouchableOpacity> 
-                 </View>
+                 <View style={{padding:10,paddingTop:5}}>
+                    <SegmentedControls 
+                    tint= {'#586888'}
+                    selectedTint= {'#ffffff'}
+                    onSelection={this.setSelectedTransactionRecord.bind(this) }
+                    selectedOption={ this.state.selectedTransactionRecord }
+                    backTint= {'#43536D'} options={transactionOption} />
+                </View>
                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.ramTradeLog == null ? [] : this.props.ramTradeLog)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
                     <Button onPress={this.openQuery.bind(this,rowData.payer)}>
-                        <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
-                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                                <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                    <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
-                                </View>
-                                <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                    {rowData.action_name == 'sellram' ? 
-                                    <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                    :
-                                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
-                                    }
-                                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
-                                </View>
+                        <View style={{ height: Platform.OS == 'ios' ?  41 : 34, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,marginVertical: 2,marginHorizontal: 5,}}>
+                            {rowData.action_name == 'sellram' ? 
+                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "space-between",}}>
+                                <Text style={{flex: 2, fontSize: 12,color: UColor.fontColor,textAlign: 'left'}} numberOfLines={1}>{rowData.payer}</Text>
+                                <Text style={{flex: 5, fontSize: 15,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
+                                <Text style={{flex: 2,fontSize: 12,color: "#F25C49",textAlign: 'right'}} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                             </View>
-                            {/* <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
-                                <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                            </View> */}
+                            :
+                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "space-between",}}>
+                                <Text style={{flex: 2, fontSize: 12,color: UColor.fontColor,textAlign: 'left'}} numberOfLines={1}>{rowData.payer}</Text>
+                                <Text style={{flex: 5, fontSize: 15,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
+                                <Text style={{flex: 2,fontSize: 12,color: "#4ed694",textAlign: 'right'}} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                            </View>
+                            }
                         </View>
                     </Button>         
                      )}                
@@ -875,25 +891,21 @@ class Transaction extends BaseComponent {
                       dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                       renderRow={(rowData, sectionID, rowID) => (                 
                         <Button onPress={this.openQuery.bind(this,rowData.payer)}>
-                            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
-                              <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                                  <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                      <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                      <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
-                                  </View>
-                                  <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                      {rowData.action_name == 'sellram' ? 
-                                      <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                      :
-                                      <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
-                                      }
-                                      <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
-                                  </View>
-                              </View>
-                              {/* <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
-                                  <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                              </View> */}
-                            </View>   
+                            <View style={{ height: Platform.OS == 'ios' ?  41 : 34, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,marginVertical: 2,marginHorizontal: 5,}}>
+                                {rowData.action_name == 'sellram' ? 
+                                <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "space-between",}}>
+                                    <Text style={{flex: 2, fontSize: 12,color: UColor.fontColor,textAlign: 'left'}} numberOfLines={1}>{rowData.payer}</Text>
+                                    <Text style={{flex: 5, fontSize: 15,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
+                                    <Text style={{flex: 2,fontSize: 12,color: "#F25C49",textAlign: 'right'}} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                </View>
+                                :
+                                <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "space-between",}}>
+                                    <Text style={{flex: 2, fontSize: 12,color: UColor.fontColor,textAlign: 'left'}} numberOfLines={1}>{rowData.payer}</Text>
+                                    <Text style={{flex: 5, fontSize: 15,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
+                                    <Text style={{flex: 2,fontSize: 12,color: "#4ed694",textAlign: 'right'}} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                </View>
+                                }
+                            </View>
                         </Button>      
                       )}                
                   /> 
@@ -902,27 +914,21 @@ class Transaction extends BaseComponent {
                       <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
                         dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                         renderRow={(rowData, sectionID, rowID) => (                 
-                        <View>
-                            <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 20,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
-                                <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                                    <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                                        <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
-                                    </View>
-                                    <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                                        {rowData.action_name == 'sellram' ? 
-                                        <Text style={{fontSize: 14,color: UColor.tintColor,textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                        :
-                                        <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
-                                        }
-                                        <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
-                                    </View>
-                                </View>
-                                {/* <View style={{ width: 30,justifyContent: 'center',alignItems: 'flex-end'}}>
-                                    <Ionicons style={{ color: UColor.arrow,   }} name="ios-arrow-forward-outline" size={20} /> 
-                                </View> */}
+                            <View style={{ height: Platform.OS == 'ios' ?  41 : 34, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,marginVertical: 2,marginHorizontal: 5,}}>
+                            {rowData.action_name == 'sellram' ? 
+                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "space-between",}}>
+                                <Text style={{flex: 2, fontSize: 12,color: UColor.fontColor,textAlign: 'left'}} numberOfLines={1}>{rowData.payer}</Text>
+                                <Text style={{flex: 5, fontSize: 15,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
+                                <Text style={{flex: 2,fontSize: 12,color: "#F25C49",textAlign: 'right'}} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                             </View>
-                        </View>          
+                            :
+                            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "space-between",}}>
+                                <Text style={{flex: 2, fontSize: 12,color: UColor.fontColor,textAlign: 'left'}} numberOfLines={1}>{rowData.payer}</Text>
+                                <Text style={{flex: 5, fontSize: 15,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
+                                <Text style={{flex: 2,fontSize: 12,color: "#4ed694",textAlign: 'right'}} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                            </View>
+                            }
+                        </View>
                         )}                
                     /> 
                   </View>
