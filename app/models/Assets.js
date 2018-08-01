@@ -55,6 +55,7 @@ export default {
      *myAssetInfo({payload, callback},{call,put}){
         var isPriceChange = false; // 价格是否改变
         var myAssets = yield call(store.get, 'myAssets217');
+
         if(myAssets == null || myAssets.length == 0){ // 未有资产信息时默认取eos的
             var myAssets = [];
             // 单独获取eos信息
@@ -64,6 +65,9 @@ export default {
                 balance: '0.0000',
             }
             myAssets[0] = eosInfoDefault;
+            if(payload && payload.isInit){
+                yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+            }
             var resp;
             try {
                 resp = yield call(Request.request, listAssets, 'post', {code: 'EOS'});
@@ -81,6 +85,9 @@ export default {
 
             yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         }else{
+            if(payload && payload.isInit){
+                yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+            }
             try{
                 for(var i = 0; i < myAssets.length; i++){
                     const resp = yield call(Request.request, listAssets, 'post', {code: myAssets[i].asset.name});
@@ -177,7 +184,7 @@ export default {
                     // alert("delMyAsset" +JSON.stringify(myAssets));
                     yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
                     if(callback) callback(myAssets);
-                    DeviceEventEmitter.emit('updateMyAssets', payload);
+                    // DeviceEventEmitter.emit('updateMyAssets', payload);
                     return;
                 }
             }
@@ -199,7 +206,7 @@ export default {
         // alert("addMyAsset" +JSON.stringify(myAssets));
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         if(callback) callback(myAssets);
-        DeviceEventEmitter.emit('updateMyAssets', payload);
+        // DeviceEventEmitter.emit('updateMyAssets', payload);
      },
      *clearTradeDetails({payload, callback},{call,put}) {
         try{

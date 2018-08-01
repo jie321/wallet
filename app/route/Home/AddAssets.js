@@ -35,7 +35,8 @@ class AddAssets extends BaseComponent {
       show:false,
       value: false,
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-      selectasset: null
+      selectasset: null,
+      isAdding: false,
     };
   }
 
@@ -63,6 +64,7 @@ class AddAssets extends BaseComponent {
   }
 
   componentWillUnmount(){
+    DeviceEventEmitter.emit('updateMyAssets', '');
     DeviceEventEmitter.emit('startBalanceTimer', "");
     //结束页面前，资源释放操作
     super.componentWillUnmount();
@@ -95,9 +97,10 @@ class AddAssets extends BaseComponent {
       return;
     }
 
-    // EasyLoading.show();
+    EasyLoading.show();
     this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
-      // EasyLoading.dismis();
+      this.setState({isAdding: false});
+      EasyLoading.dismis();
     } });
   }
 
@@ -139,9 +142,13 @@ class AddAssets extends BaseComponent {
                         <View style={styles.listInfoRight}>
                           <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
                               value={this.isMyAsset(rowData)} onValueChange={(value)=>{
-                              this.setState({selectasset: rowData, value: value});
-                              this.addAsset(rowData, value);
-                          }}/>
+                                if(this.state.isAdding){
+                                  return;
+                                }
+                                this.setState({isAdding: true});
+                                this.setState({selectasset: rowData, value: value});
+                                this.addAsset(rowData, value);
+                              }}/>
                         </View>
                       </View>
                       
