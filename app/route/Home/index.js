@@ -447,6 +447,27 @@ class Home extends React.Component {
     this.getDefaultWalletEosBalance(); // 默认钱包余额
   }
 
+  isTipShow() {
+    if (Platform.OS == 'ios') {
+      if (this.props.defaultWallet != null && this.props.defaultWallet.isBackups==false) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+    // 显示/隐藏 tipIOS  
+    _disableTipVisible() {
+      this.props.dispatch({ type: 'wallet/updateTipState', payload: {tipFlagIOS: false}});
+    }
+  
+
+  WalletDetailBackup(data) {
+    const { navigate } = this.props.navigation;
+    navigate('WalletDetail', { data,balance:this.props.myAssets[0].balance,});
+    this._disableTipVisible();
+  }
+
   render() {
   if(this.props.guide){
     return (
@@ -567,6 +588,39 @@ class Home extends React.Component {
             </View>
           )}                
          />  
+
+     
+
+        <Modal style={styles.touchableouts} animationType={'none'} transparent={true}  visible={this.props.tipFlagIOS==false?false:this.isTipShow()  } onRequestClose={()=>{}}>
+            <TouchableOpacity style={styles.pupuoBackup} activeOpacity={1.0}>
+
+              <View style={{ width: maxWidth*11/12,  height: maxHeight*2/5,  backgroundColor: UColor.fontColor,paddingHorizontal: 10}}>
+
+                <View style={styles.subViewBackup}> 
+                  <Text style={styles.buttontext}/>
+                  <Text style={styles.contentText}>IOS用户重要提示</Text>
+                  <Button onPress={this._disableTipVisible.bind(this) } style={styles.buttonView2}>
+                    <Text style={styles.buttontext}>×</Text>
+                  </Button>
+                </View>
+
+                <View style={styles.warningout}>
+                    <Image source={UImage.warning} style={styles.imgBtn} />
+                    <Text style={styles.headtitle}>IOS版本可能存在企业证书授权过期！导致APP无法打开，数据丢失问题！当前系统检测到时您还没有备份钱包，请您及时备份，以免带来不必要的损失！</Text>
+                    {/* <Text style={styles.headtitle}>当前系统检测到时您还没有备份钱包，请您及时备份，以免带来不必要的损失！</Text> */}
+                </View>
+
+                
+                  <Button onPress={this.WalletDetailBackup.bind(this,this.props.defaultWallet)}>
+                      <View style={styles.deleteout}>
+                          <Text style={styles.deletetext}>立即备份</Text>
+                      </View>
+                  </Button>  
+                </View> 
+            </TouchableOpacity>
+        </Modal>
+
+
         <Modal style={styles.touchableouts} animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
           <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable} activeOpacity={1.0}>
             <TouchableOpacity style={styles.touchable} activeOpacity={1.0}>
@@ -1030,7 +1084,7 @@ tabimg: {
 deleteout: {
   height: 50,
   marginHorizontal: 28,
-  marginTop: 10,
+  marginTop: 30,
   marginBottom: 28,
   borderRadius: 6,
   backgroundColor: UColor.tintColor,
@@ -1041,6 +1095,71 @@ deletetext: {
   fontSize: 16,
   color: UColor.fontColor
 },
+
+pupuoBackup: {
+  flex: 1, 
+  justifyContent: 'center', 
+  alignItems: 'center',
+},
+
+headout: {
+  paddingTop: 20,
+  paddingBottom: 15,
+},
+warningout: {
+  width: maxWidth-50,
+  flexDirection: "row",
+  alignItems: 'center', 
+  // paddingHorizontal: 5,
+  // paddingVertical: 5,
+  borderColor: UColor.showy,
+  borderWidth: 1,
+  borderRadius: 5,
+},
+imgBtnBackup: {
+  width: 30,
+  height: 30,
+},
+
+inptitle: {
+  flex: 1,
+  fontSize: 15,
+  lineHeight: 30,
+  color: UColor.fontColor,
+},
+headtitle: {
+  flex: 1,
+  color: UColor.showy,
+  fontSize: 14,
+  lineHeight: 25,
+  paddingLeft: 10,
+},
+
+
+    // modal上子View的样式  
+subView: {
+      flexDirection: "row", 
+      height: 50, 
+      alignItems: 'center'
+  },
+  subViewBackup: {
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
+    marginVertical: 15,
+    // paddingHorizontal: 10,
+  },
+  buttonView2: {
+    alignItems: 'flex-end',
+},
+buttontext: {
+    width: 40,
+    color: '#CBCBCB',
+    fontSize: 28,
+    textAlign: 'right',
+  },
+
 });
 
 export default Home;
