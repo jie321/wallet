@@ -512,6 +512,12 @@ export default {
                 if (callback) callback({ code: 500, msg: "网络异常" });
             }
          },
+
+         *updateTipState({payload, callback},{call,put}) {
+            yield put({ type: 'updateTip', payload: { tipFlagIOS: payload.tipFlagIOS } });
+            if (callback) callback(payload);
+         },
+
     },
     reducers: {
         update(state, action) {
@@ -542,6 +548,10 @@ export default {
                 newarr.push(item);
             })
             return {...state,invalidWalletList:newarr}; 
+        },
+        updateTip(state, action){
+            // alert('11: ' + JSON.stringify(action.payload))
+            return { ...state, ...action.payload };
         },
     }
 }

@@ -814,6 +814,13 @@ class Route extends React.Component {
           this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: true}});
         }
       }});
+
+      if(Platform.OS == 'ios'){
+        this.props.dispatch({ type: 'wallet/updateTipState', payload: {tipFlagIOS: true}});
+      }else{
+        this.props.dispatch({ type: 'wallet/updateTipState', payload: {tipFlagIOS: false}});
+      }
+
     }else if(action && action.routeName && action.routeName == "Transaction"){
       this.stopTimer();
       this.startTxTimer();
