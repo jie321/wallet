@@ -63,7 +63,7 @@ class Home extends React.Component {
       this.getAssetBalance();    
       this.getIncrease();
     }});
-    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1}, callback: (myAssets) => {}});
+    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1, isInit: true}, callback: (myAssets) => {}});
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
       if(invalidWalletList != null){

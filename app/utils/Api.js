@@ -28,6 +28,7 @@ export const newsView = rootaddr + '/news/view/';
 export const newsShare = rootaddr + '/news/share/';
 export const redirect = rootaddr + '/news/redirect/';
 export const fetchPoint = rootaddr + '/user/point/fetch';
+export const shareAddPoint = rootaddr + '/user/shareAddPoint';
 
 export const createAccount = rootaddr + '/user/createEosAccount';
 export const pushTransaction = rootaddr + '/eosrpc/pushTransaction';
