@@ -357,7 +357,7 @@ const Nav = StackNavigator(
 
 let routeLength = 0;
 
-@connect(({ banner, newsType, common, login, wallet, assets }) => ({ ...banner, ...newsType, ...common, ...login,  ...wallet, ...assets }))
+@connect(({ banner, news, newsType, common, login, wallet, assets }) => ({ ...banner, ...news, ...newsType, ...common, ...login,  ...wallet, ...assets }))
 class Route extends React.Component {
 
   state = {
@@ -672,9 +672,8 @@ class Route extends React.Component {
   }
 
   shareSuccess(){
-    // this.props.dispatch({ type: 'sticker/listincrease', payload: { uid: Constants.uid }, callback: (data) => { 
-    //   EasyToast.show("恭喜获得分享积分哦！");
-    // }});
+    // 增加积分
+    this.props.dispatch({ type: 'news/shareAddPoint', payload: { }});
   }
 
   componentWillUnmount() {

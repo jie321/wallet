@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {newsList,newsDown,newsUp,newsShare,newsView} from '../utils/Api';
+import {newsList,newsDown,newsUp,newsShare,newsView,shareAddPoint} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 
@@ -108,6 +108,18 @@ export default {
             }
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
+        }
+      },
+      *shareAddPoint({payload},{call,put}){
+        try{
+            const resp = yield call(Request.request,shareAddPoint,'post');
+            if(resp.code==0){
+                EasyToast.show("恭喜您获得分享积分哟！");
+            }else{
+                // EasyToast.show(resp.msg);
+            }
+        } catch (error) {
+            // EasyToast.show('网络繁忙,请稍后!');
         }
       },
       *openView({payload},{call,put}) {
