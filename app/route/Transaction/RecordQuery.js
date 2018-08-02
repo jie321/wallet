@@ -124,9 +124,9 @@ class RecordQuery extends React.Component {
             </View>
             <View style={styles.rightout}>
               {rowData.action_name == 'sellram' ? 
-              <Text style={styles.business}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
+              <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
               :
-              <Text style={styles.business}>买 {rowData.eos_qty}</Text>
+              <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
               }
               <Text style={styles.presentprice}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
             </View>
@@ -208,13 +208,14 @@ const styles = StyleSheet.create({
       backgroundColor: UColor.mainColor,
       flexDirection: "row",
       paddingHorizontal: 10,
+      paddingVertical: 5,
       borderRadius: 5,
       marginHorizontal: 10,
       marginVertical: 5,
     },
     leftout: {
       flexDirection: "column",
-      justifyContent: "space-around",
+      justifyContent: "space-between",
     },
     payertext: {
       fontSize: 15,
@@ -228,11 +229,18 @@ const styles = StyleSheet.create({
     rightout: {
       flex: 1,
       flexDirection: "column",
-      justifyContent: "space-around",
+      justifyContent: "space-between",
     },
-    business: {
-      fontSize: 14,
+    selltext: {
+      flex: 5,
+      fontSize: 15,
       color: '#F25C49',
+      textAlign: 'right',
+    },
+    buytext: {
+      flex: 5,
+      fontSize: 15,
+      color: "#4ed694",
       textAlign: 'right',
     },
     presentprice: {
@@ -240,7 +248,5 @@ const styles = StyleSheet.create({
       color: UColor.arrow,
       textAlign: 'right',
     }
- 
-    
 });
 export default RecordQuery;
