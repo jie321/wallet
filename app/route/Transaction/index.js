@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {ProgressBarAndroid,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,Slider,KeyboardAvoidingView} from 'react-native';
+import {Modal,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,Slider,KeyboardAvoidingView} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
@@ -24,21 +24,25 @@ var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 var dismissKeyboard = require('dismissKeyboard');
 
+const maxWidth = Dimensions.get('window').width;
+const maxHeight = Dimensions.get('window').height;
+
 const trackOption = ['最近交易','持仓大户'];
 
-@connect(({ram,sticker,wallet}) => ({...ram, ...sticker, ...wallet}))
+@connect(({ram,sticker,wallet, assets}) => ({...ram, ...sticker, ...wallet, ...assets}))
 class Transaction extends BaseComponent {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
           title: '交易',
-          headerTitle: "内存交易",
-          headerStyle: {
-            paddingTop: Platform.OS == "ios" ? 30 : 20,
-            backgroundColor: UColor.mainColor,
-            borderBottomWidth:0,
-          },
+          header:null,  //隐藏顶部导航栏
+        //   headerTitle: "内存交易",
+        //   headerStyle: {
+        //     paddingTop: Platform.OS == "ios" ? 30 : 20,
+        //     backgroundColor: UColor.mainColor,
+        //     borderBottomWidth:0,
+        //   },
          //铃铛small_bell/small_bell_h
         //   headerRight: (
         //     // <Button name="share" onPress={() => this._rightTopClick()} >
@@ -69,19 +73,10 @@ class Transaction extends BaseComponent {
       myRamAvailable: '0', // 我的可用字节
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       logRefreshing: false,
+      modal: false,
+      tradename:"RAM",  //交易币种
    };
   }
-
-  _rightTopClick = () => {
-    // DeviceEventEmitter.emit(
-    //   "turninShare",
-    //   '{"toaccount":"' +
-    //     this.props.defaultWallet.account +
-    //     '","amount":"' +
-    //     this.state.amount +
-    //     '","symbol":"EOS"}'
-    // );
-  };
 
   componentWillMount() {
 
@@ -131,6 +126,27 @@ class Transaction extends BaseComponent {
     //结束页面前，资源释放操作
     super.componentWillUnmount();
   }
+
+    _leftTopClick = () => {
+        this.setState({ modal: !this.state.modal });
+        this.props.dispatch({type:'sticker/list',payload:{type:1}});
+        // this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1, isInit: true}, callback: (myAssets) => {}});
+    }
+//   _rightTopClick = () => {
+ 
+//   };
+    changeToRamTx(){
+        this.setState({
+            modal: false,
+            tradename:"RAM",
+          });
+    }
+    changeCoinType(rowData){
+        this.setState({
+            modal: false,
+            tradename:rowData.name,
+          });
+    }
 
   getRamInfo(){
     this.props.dispatch({type: 'ram/getRamInfo',payload: {}});
@@ -645,8 +661,38 @@ class Transaction extends BaseComponent {
     return timezone;
   }
 
+  fileterSlideEos(coinList){
+    if(coinList == null || coinList == []){
+        return [];
+    }
+   for(var i = 0; i < coinList.length; i++){
+       if(coinList[i].name && coinList[i].name == "EOS"){
+            coinList.splice(i,1);
+            break;
+       }
+   }
+   return coinList;
+  }
+
   render() {
     return <View style={styles.container}>
+    <View style={styles.header}>  
+        <TouchableOpacity onPress={this._leftTopClick.bind()}>
+            <View style={styles.leftout} >
+                <Image source={this.state.modal ? UImage.tx_slide0 : UImage.tx_slide1} style={styles.HeadImg}/>
+            </View>
+        </TouchableOpacity>
+          <View style={styles.HeadTitle} >
+              <Text style={{ fontSize: 18,color: UColor.fontColor, justifyContent: 'center',alignItems: 'center',}} 
+                       numberOfLines={1} ellipsizeMode='middle'>{this.state.tradename + "/EOS"}</Text>
+          </View>     
+          {/* <TouchableOpacity onPress={this._rightTopClick.bind()}>
+            <View style={styles.Rightout} >
+              <Image source={this.state.isEye ? UImage.reveal_wallet : UImage.reveal_h_wallet} style={styles.HeadImg}/>
+            </View>
+          </TouchableOpacity> */}
+      </View> 
+
     <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
       <ScrollView keyboardShouldPersistTaps="always"
             refreshControl={
@@ -664,7 +710,7 @@ class Transaction extends BaseComponent {
             <View style={{flexDirection:"column",flexGrow:1}}>
               <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
                 <Text style={{color:'#8696B0',fontSize:11,textAlign:'left', marginLeft:10}}>开盘   </Text>
-                <Text style={{color:'#fff',fontSize:11,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.open : '0'} EOS/KB</Text>
+                <Text style={{color:'#fff',fontSize:11,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.open.toFixed(4) : '0'} EOS/KB</Text>
               </View>
               <View style={{flexDirection:"row",flexGrow:1}}>
                 <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>内存占比</Text>
@@ -683,7 +729,7 @@ class Transaction extends BaseComponent {
                 </View>
                 <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
                     <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>当前价格</Text>
-                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price : '0.0000'}</Text>
+                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price.toFixed(4) : '0.0000'}</Text>
                 </View>
             </View>
           </View>
@@ -998,6 +1044,106 @@ class Transaction extends BaseComponent {
         </TouchableOpacity>
       </ScrollView>  
     </KeyboardAvoidingView> 
+
+    <Modal style={styles.touchableouts} animationType={'none'} transparent={true} onRequestClose={() => {this.setState({modal: false}); }} visible={this.state.modal}>
+          <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable} activeOpacity={1.0}>
+            <TouchableOpacity style={styles.touchable} activeOpacity={1.0}>
+
+              <View style={styles.touchableout}>
+               {/* <TouchableOpacity onPress={this._leftTopClick.bind()}> 
+                <View style={{ paddingRight: 0,alignItems: 'flex-end', }} >
+                    <Image source={UImage.tx_slide0} style={styles.HeadImg}/>
+                </View>
+                </TouchableOpacity> */}
+               <View style={styles.ebhbtnout}>
+                    <View style={{width:'37%'}}>
+                        <View style={{ flex:1,flexDirection:"row",alignItems: 'center', }}>
+                            <Text style={{marginLeft:20,fontSize:15,color:UColor.fontColor}}>内存</Text>
+                        </View>
+                    </View>
+                    <View style={{width:'28%'}}>
+                        <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-start", }}>
+                            <Text style={{fontSize:15,marginLeft:0,color:UColor.fontColor}}>涨幅</Text>
+                        </View>
+                    </View>
+                    <View style={{width:'35%'}}>
+                        <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-end", }}>
+                            <Text style={{ fontSize:15, color:UColor.fontColor, 
+                                textAlign:'center', marginRight:5}}>单价(EOS)</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={styles.ebhbtnout2}>
+                  <Button onPress={this.changeToRamTx.bind(this)}>
+                      <View style={styles.sliderow}>
+                        <View style={{width:'34%'}}>
+                            <View style={{ flex:1,flexDirection:"row",alignItems: 'center'}}>
+                                <Text style={{marginLeft:10,fontSize:15,color:UColor.fontColor}}>RAM</Text>
+                            </View>
+                        </View>
+                        <View style={{width:'31%'}}>
+                            <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-start"}}>
+                            <Text style={(this.props.ramInfo && this.props.ramInfo.increase>=0)?styles.greenincup:styles.redincdo}> {this.props.ramInfo ? (this.props.ramInfo.increase > 0 ? '+' + (this.props.ramInfo.increase * 100).toFixed(2) : (this.props.ramInfo.increase * 100).toFixed(2)): '0.00'}%</Text>
+                            </View>
+                        </View>
+                        <View style={{width:'35%'}}>
+                            <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-end"}}>
+                                <Text style={{ fontSize:15, color:UColor.fontColor, 
+                                    textAlign:'center', marginRight:5}}>{this.props.ramInfo ? this.props.ramInfo.price.toFixed(4) : '0.0000'}</Text>
+                            </View>
+                        </View>
+                      </View>
+                  </Button>
+                </View>
+                <View style={styles.ebhbtnout}>
+                    <View style={{width:'37%'}}>
+                        <View style={{ flex:1,flexDirection:"row",alignItems: 'center', }}>
+                            <Text style={{marginLeft:20,fontSize:15,color:UColor.fontColor}}>币种</Text>
+                        </View>
+                    </View>
+                    <View style={{width:'28%'}}>
+                        <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-start", }}>
+                            <Text style={{fontSize:15,marginLeft:0,color:UColor.fontColor}}>涨幅</Text>
+                        </View>
+                    </View>
+                    <View style={{width:'35%'}}>
+                        <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-end", }}>
+                            <Text style={{ fontSize:15, color:UColor.fontColor,textAlign:'center', marginRight:5}}>单价(￥)</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <ListView initialListSize={5} 
+                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: UColor.secdColor ,}} />}
+                  enableEmptySections={true} dataSource={this.state.dataSource.cloneWithRows(this.props.coinList[1]==null?[]:this.fileterSlideEos(this.props.coinList[1]))}
+                  renderRow={(rowData) => (
+                    <Button onPress={this.changeCoinType.bind(this, rowData)}>
+                      <View style={styles.sliderow}>
+                        <View style={{width:'35%'}}>
+                            <View style={{ flex:1,flexDirection:"row",alignItems: 'center'}}>
+                                <Text style={{marginLeft:10,fontSize:15,color:UColor.fontColor}}>{rowData.name == null ? "" : rowData.name}</Text>
+                            </View>
+                        </View>
+                        <View style={{width:'30%'}}>
+                            <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-start"}}>
+                                <Text style={rowData.increase>0?styles.greenincup:styles.redincdo}>{rowData.increase>0?'+'+rowData.increase:rowData.increase}%</Text>
+                            </View>
+                        </View>
+                        <View style={{width:'35%'}}>
+                            <View style={{flex:1,flexDirection:"row",alignItems: 'center',justifyContent:"flex-end"}}>
+                                <Text style={{ fontSize:15, color:UColor.fontColor, 
+                                    textAlign:'center', marginRight:5}}>{(rowData.price == null || rowData.price == "") ? "" : rowData.price.toFixed(2)}</Text>
+                            </View>
+                        </View>
+                      </View>
+                    </Button> 
+                  )}
+                />
+           </View>
+          </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
   </View>
   }
 }
@@ -1008,6 +1154,33 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     backgroundColor: UColor.secdColor,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop:Platform.OS == 'ios' ? 30 : 20,
+    paddingBottom: 5,
+    backgroundColor: UColor.mainColor,
+  },
+  leftout: {
+    paddingLeft: 15
+  },
+  Rightout: {
+    paddingRight: 0
+  },
+  HeadImg: {
+    width: 25,
+    height:15,
+    marginHorizontal:1,
+  },
+  HeadTitle: {
+    flex: 1,
+    paddingLeft: 60,
+    paddingHorizontal: 20,
+    justifyContent: 'center', 
+  },
+
+
   scrollView: {
    
   },
@@ -1188,12 +1361,85 @@ const styles = StyleSheet.create({
     fontSize: 17, 
     color: UColor.fontColor,
   },
-     scanningimg: {
-        width:30,
-        height:30,
-        justifyContent: 'center', 
-        alignItems: 'center'
-    }
+     
+  sliderow:{
+    flex:1,
+    // backgroundColor:UColor.mainColor,
+    flexDirection:"row",
+    padding: 10,
+    // borderBottomColor: UColor.secdColor,
+    borderBottomColor: '#4D607E',
+    borderBottomWidth: 0.6,
+    height: 30, 
+  },
+
+  touchableouts: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  touchable: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'flex-start', 
+    backgroundColor: UColor.mask,
+  },
+  touchableout: {
+    width: (maxWidth * 2)/ 3, 
+    height: maxHeight, 
+    backgroundColor: '#4D607E', 
+    alignItems: 'center', 
+    paddingTop: 40,
+  },
+  touchablelist: {
+    width: '100%', 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#4D607E', 
+  },
+
+  imgBtn: {
+    width: 30,
+    height: 30,
+    margin:5,
+  },
+  
+  ebhbtnout: {
+    width: '100%', 
+    height: 30, 
+    flexDirection: "row", 
+    alignItems: 'flex-start', 
+    borderTopWidth: 1, 
+    borderTopColor: UColor.mainColor, 
+    backgroundColor:'#586888',
+   },
+   ebhbtnout2: {
+    width: '100%', 
+    height: 30, 
+    flexDirection: "column", 
+    alignItems: 'flex-start', 
+    borderTopWidth: 1, 
+    borderTopColor: UColor.mainColor, 
+    backgroundColor:'#4D607E',
+   },
+    establishout: {
+      flex: 1, 
+      flexDirection: "row",
+      alignItems: 'center', 
+      height: 30, 
+    },
+    establishimg:{
+      width: 25, 
+      height: 25, 
+    },
+
+    greenincup:{
+        fontSize:15,
+        color:'#25B36B',
+      },
+    redincdo:{
+        fontSize:15,
+        color:'#F25C49',
+    },
+
 });
 
 export default Transaction;

@@ -118,4 +118,6 @@ export default {
   warning:require('../img/warning.png'),
   xin0:require('../img/xin0.png'),
   xin1:require('../img/xin1.png'),
+  tx_slide0:require('../img/tx_slide0.png'),
+  tx_slide1:require('../img/tx_slide1.png'),
 }
