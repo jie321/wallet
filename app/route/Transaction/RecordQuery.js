@@ -65,7 +65,7 @@ class RecordQuery extends React.Component {
       return;
     }else{
       EasyLoading.show();
-      this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: labelname}, callback: (resp) => {
+      this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: labelname.toLowerCase()}, callback: (resp) => {
           if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
             this.setState({
               newramTradeLog: [],
@@ -76,8 +76,8 @@ class RecordQuery extends React.Component {
                 newramTradeLog: resp.data,
                 show: false,
             })
-            EasyLoading.dismis();
           }
+          EasyLoading.dismis();
       }});  
     }  
   }
@@ -89,6 +89,10 @@ class RecordQuery extends React.Component {
       newramTradeLog: []
     });
     this.dismissKeyboardClick();
+  }
+
+  dismissKeyboardClick() {
+    dismissKeyboard();
   }
 
   render() {
@@ -113,7 +117,7 @@ class RecordQuery extends React.Component {
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
         dataSource={this.state.dataSource.cloneWithRows(this.state.newramTradeLog == null ? [] : this.state.newramTradeLog)} 
         renderRow={(rowData, sectionID, rowID) => (   
-          <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
+          <View style={{ height: 52, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
             <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
                 <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
                     <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
@@ -148,6 +152,7 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 7,
+      marginBottom: 5,
       backgroundColor: UColor.mainColor,
     },
     headleftout: {

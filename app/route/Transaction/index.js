@@ -691,30 +691,30 @@ class Transaction extends BaseComponent {
             }
         >
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
-          <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
-            <View style={{flexDirection:"column",flexGrow:1}}>
-              <View style={{flex:1,flexDirection:'row',alignItems:'center' }}>
-                <Text style={{color:'#8696B0',fontSize:11,textAlign:'left', marginLeft:10}}>开盘   </Text>
-                <Text style={{color:'#fff',fontSize:11,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.open : '0'} EOS/KB</Text>
+          <View style={{width: ScreenWidth, flexDirection:'row',alignItems:'center',paddingHorizontal: 6, }}>
+            <View style={{flexDirection:"row", flex: 6,  height: 50,}}>
+              <View style={{flexDirection:'column', justifyContent: 'space-around' }}>
+                <Text style={{color:'#8696B0',fontSize:10,}}>开盘</Text>
+                <Text style={{color:'#8696B0',fontSize:10,}}>内存占比</Text>
+                <Text style={{color:'#8696B0',fontSize:10,}}>总资金</Text>
               </View>
-              <View style={{flexDirection:"row",flexGrow:1}}>
-                <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>内存占比</Text>
-                <Text style={{color:'#fff',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.usage_ram : 0} GB/{this.props.ramInfo ? this.props.ramInfo.total_ram : 0} GB</Text>
-                <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center'}}> ({((this.props.ramInfo ? this.props.ramInfo.usage_ram_percent : '0') * 100).toFixed(2)}%)</Text>
-              </View>
-              <View style={{flexDirection:"row",flexGrow:1}}>
-                <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>总资金</Text>
-                <Text style={{color:'#fff',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.total_eos : '0'} EOS</Text>
+              <View style={{flex: 1, flexDirection:"column", justifyContent: 'space-around',paddingLeft: 5,}}>
+                <Text style={{color:'#fff',fontSize:11,}}>{this.props.ramInfo ? this.props.ramInfo.open : '0'} EOS/KB</Text>
+                <View style={{flexDirection:"row",}}>
+                    <Text style={{color:'#fff',fontSize:11,}}>{this.props.ramInfo ? this.props.ramInfo.usage_ram : 0} GB/{this.props.ramInfo ? this.props.ramInfo.total_ram : 0} GB</Text>
+                    <Text style={{color:'#8696B0',fontSize:11,}}> ({((this.props.ramInfo ? this.props.ramInfo.usage_ram_percent : '0') * 100).toFixed(2)}%)</Text>
+                </View>
+                <Text style={{color:'#fff',fontSize:11,}}>{this.props.ramInfo ? this.props.ramInfo.total_eos : '0'} EOS</Text>
               </View>
             </View>
-            <View style={{flexDirection:'column',flexGrow:1}}>
+            <View style={{flexDirection:'column',flex:3, justifyContent: 'space-between', height: 50,}}>
                 <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
-                    <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>涨幅 </Text>
+                    <Text style={{color:'#8696B0',fontSize:10,marginTop: 5,}}>涨幅</Text>
                     <Text style={(this.props.ramInfo && this.props.ramInfo.increase>=0)?styles.incdo:styles.incup}> {this.props.ramInfo ? (this.props.ramInfo.increase > 0 ? '+' + (this.props.ramInfo.increase * 100).toFixed(2) : (this.props.ramInfo.increase * 100).toFixed(2)): '0.00'}%</Text>
                 </View>
-                <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
-                    <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>当前价格</Text>
-                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price : '0.0000'}</Text>
+                <View style={{flex:1,flexDirection:'row', alignItems:'center',}}>
+                    <Text style={{color:'#8696B0',fontSize:10,marginTop: 5,}}>当前价格</Text>
+                    <Text style={{color:'#fff',fontSize:16,}}> {this.props.ramInfo ? this.props.ramInfo.price : '0.0000'}</Text>
                 </View>
             </View>
           </View>
@@ -1040,13 +1040,11 @@ const styles = StyleSheet.create({
     fontSize:20,
     color:'#F25C49',
     textAlign:'center',
-    marginTop:2,
   },
   incdo:{
     fontSize:20,
     color:'#25B36B',
     textAlign:'center',
-    marginTop:2,
   },
    tablayout: {   
         flex: 1,
