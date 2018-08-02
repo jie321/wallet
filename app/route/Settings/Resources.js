@@ -95,9 +95,10 @@ class Resources extends BaseComponent {
             type: 'vote/getqueryRamPrice',
             payload: {},
             callback: (data) => {
-                this.setState({
-                    Currentprice: data,
-                });
+                if(data == null || data == ''){
+                    return;
+                }
+                this.setState({Currentprice: data});
             }
         });
 
@@ -155,13 +156,18 @@ class Resources extends BaseComponent {
 
   getAccountInfo(){
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.navigation.state.params.account_name},callback: (data) => {
-      this.setState({ 
-          ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
-          this.getInitialization(); 
+      try {
+        this.setState({ 
+            ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
+            this.getInitialization(); 
+      } catch (error) {
+          
+      }
+
     } });
     this.props.dispatch({
         type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.navigation.state.params.account_name , symbol: 'EOS' }, callback: (data) => {
-            this.setState({ currency_surplus:data?data.data.replace('EOS', "") :'0',});
+            this.setState({ currency_surplus:data && data.data?data.data.replace('EOS', "") :'0',});
     }});
   } 
 
@@ -190,7 +196,7 @@ class Resources extends BaseComponent {
   }
   
   setEosBalance(data){
-    if (data.code == '0') {
+    if (data && data.code == '0') {
         if (data.data == "") {
           this.setState({
             balance: '0',
@@ -205,46 +211,51 @@ class Resources extends BaseComponent {
   }
 
     goPage(current) {
-        if (current == 'isMemory'){
-            this.setState({ 
-                tetletext: '内存概况',
-                column_One: (100 - this.props.Resources.display_data.ram_usage_percent.replace("%", "")) + '%',
-                column_Two: (100 - this.props.Resources.display_data.ram_left_percent.replace("%", "")) + '%',
-                column_Three: (100 - this.props.globaldata.used_Percentage) + '%',
-                ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
-                ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
-                ContrastThree: this.props.globaldata.used + 'GB/' + this.props.globaldata.total + 'GB',
-                percentageOne: '已用(' + this.props.Resources.display_data.ram_usage_percent + ')',
-                percentageTwo: '剩余(' + this.props.Resources.display_data.ram_left_percent + ')',
-                percentageThree: '全网(' + this.props.globaldata.used_Percentage + '%)',
-            })
-        }else if (current == 'isCalculation'){
-            this.setState({ 
-                tetletext: '计算概况',
-                column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
-                column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
-                column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
-                ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
-                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.cpu_weight.replace("EOS", "")*100)/100,
-                ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.cpu_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
-                percentageOne: '剩余(ms)',
-                percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.cpu_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
-            })
-        }else if (current == 'isNetwork'){
-            this.setState({ 
-                tetletext: '网络概况',
-                column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
-                column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
-                column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
-                ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
-                ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
-                ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.net_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
-                percentageOne: '剩余(kb)',
-                percentageTwo: '抵押(EOS)',
-                percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.net_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
-            })
+        try {
+            if (current == 'isMemory'){
+                this.setState({ 
+                    tetletext: '内存概况',
+                    column_One: (100 - this.props.Resources.display_data.ram_usage_percent.replace("%", "")) + '%',
+                    column_Two: (100 - this.props.Resources.display_data.ram_left_percent.replace("%", "")) + '%',
+                    column_Three: (100 - this.props.globaldata.used_Percentage) + '%',
+                    ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
+                    ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
+                    ContrastThree: this.props.globaldata.used + 'GB/' + this.props.globaldata.total + 'GB',
+                    percentageOne: '已用(' + this.props.Resources.display_data.ram_usage_percent + ')',
+                    percentageTwo: '剩余(' + this.props.Resources.display_data.ram_left_percent + ')',
+                    percentageThree: '全网(' + this.props.globaldata.used_Percentage + '%)',
+                })
+            }else if (current == 'isCalculation'){
+                this.setState({ 
+                    tetletext: '计算概况',
+                    column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
+                    column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
+                    column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
+                    ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
+                    ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.cpu_weight.replace("EOS", "")*100)/100,
+                    ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.cpu_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
+                    percentageOne: '剩余(ms)',
+                    percentageTwo: '抵押(EOS)',
+                    percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.cpu_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
+                })
+            }else if (current == 'isNetwork'){
+                this.setState({ 
+                    tetletext: '网络概况',
+                    column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
+                    column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
+                    column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
+                    ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
+                    ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
+                    ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.net_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
+                    percentageOne: '剩余(kb)',
+                    percentageTwo: '抵押(EOS)',
+                    percentageThree: '赎回中('+ (this.props.Resources.refund_request ? Math.floor(this.props.Resources.refund_request.net_amount.replace("EOS", "")*100)/100 + 'EOS' : '0.00 EOS') + ')',
+                })
+            }
+        } catch (error) {
+            
         }
+        
         // else if (current == 'isBuyForOther'){
         //     this.setState({ 
         //         tetletext: '内存交易',
