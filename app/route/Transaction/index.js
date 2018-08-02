@@ -276,6 +276,7 @@ class Transaction extends BaseComponent {
         }});    
         //当点击交易记录按钮清空输入框
         this.setState({queryaccount:'' });
+        this.setSelectedTransactionRecord('大盘交易');
     }
     else if (current == 'isTrackRecord'){
         EasyLoading.show();
