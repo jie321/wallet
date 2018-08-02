@@ -40,17 +40,26 @@ export default {
       *  获取eos账户信息 获取账户投票信息
       */
      *getaccountinfo({payload,callback},{call,put}) {
+        var accountInfo = yield call(store.get, 'accountInfo');
+
         try{
             const resp = yield call(Request.request, getAccountInfo, 'post', payload);
             if(resp && resp.code=='0'){ 
                 yield put({ type: 'updateAccountInfo', payload: { producers:(resp.data.voter_info ? resp.data.voter_info.producers : "") } });
                 yield put({ type: 'updateResources', payload: { Resources:resp.data}  });
+                yield call(store.save, 'accountInfo', resp.data);
                 if (callback) callback(resp.data);
             }else{
                 EasyToast.show(resp.msg);
+                yield put({ type: 'updateAccountInfo', payload: { producers:(accountInfo.voter_info ? accountInfo.voter_info.producers : "") } });
+                yield put({ type: 'updateResources', payload: { Resources:accountInfo}  });
+                if (callback) callback(accountInfo);
             }
         } catch (error) {
             EasyToast.show('网络繁忙,请稍后!');
+            yield put({ type: 'updateAccountInfo', payload: { producers:(accountInfo.voter_info ? accountInfo.voter_info.producers : "") } });
+            yield put({ type: 'updateResources', payload: { Resources:accountInfo}  });
+            if (callback) callback(accountInfo);
         }
      },
 
