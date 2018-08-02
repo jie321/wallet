@@ -12,13 +12,19 @@ import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyDialog } from "../../components/Dialog"
 import { EasyToast } from '../../components/Toast';
+import { EasyLoading } from '../../components/Loading';
 import BaseComponent from "../../components/BaseComponent";
-
-@connect(({assets}) => ({...assets}))
-class Coin_search extends BaseComponent {
+var dismissKeyboard = require('dismissKeyboard');
+@connect(({wallet, assets}) => ({...wallet, ...assets}))
+class AssetSearch extends BaseComponent {
 
   static navigationOptions = {
-    header:null,  //隐藏顶部导航栏
+    title: '资产搜索',
+    headerStyle:{
+        paddingTop:Platform.OS == 'ios' ? 30 : 20,
+        backgroundColor: UColor.mainColor,
+        borderBottomWidth:0,
+    }    
   };
 
   // 构造函数  
@@ -32,86 +38,73 @@ class Coin_search extends BaseComponent {
       tokenname: '',
       address: '',
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-    };
-  }
-
-
-  componentDidMount() {
-    this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
-  }
-
-  _rightTopClick = () => {
-    const {goBack} = this.props.navigation;
-    goBack();
-  }
-
-  _leftTopClick =() => {
-    if (this.state.labelname == "") {
-      EasyToast.show('请输入token名称或合约地址');
-      return;
+      selectasset: null,
+      newAssetsList: [],
+      reveal: true,
     }
   }
-  componentWillUnmount(){
-    //结束页面前，资源释放操作
-    super.componentWillUnmount();
-    
-  }
-  // onBackAndroid = () => {
-  //   if (cangoback) {
-  //     let type = this.state.routes[this.state.index]
-  //     let w = this.web[type.key];
-  //     if (w) {
-  //       w.goBack();
-  //       return true;
-  //     }
-  //   }
-  // }
 
-  //获得typeid坐标
-  getRouteIndex(typeId) {
-    for (let i = 0; i < this.props.types.length; i++) {
-      if (this.props.types[i].key == typeId) {
-        return i;
+  componentDidMount() {
+    try {
+      EasyLoading.show();
+      DeviceEventEmitter.emit('stopBalanceTimer', "");
+      this.props.dispatch({ type: 'assets/list', payload: { page: 1}, callback: () => {
+        EasyLoading.dismis();
+      } });
+      this.props.dispatch({ type: 'assets/myAssetInfo'});
+      DeviceEventEmitter.addListener('updateAssetList', (data) => {
+        this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
+      });
+    } catch (error) {
+      EasyLoading.dismis();
+    }
+
+  }
+
+  //清空
+  _empty = () => {
+    this.dismissKeyboardClick();
+    this.setState({
+      reveal: true,
+      labelname: '',
+      newAssetsList:[],
+    });
+  }
+  //查询
+  _query =(labelname) => {
+    this.dismissKeyboardClick();
+    if (labelname == "") {
+      EasyToast.show('请输入token名称或合约地址');
+      return;
+    }else{
+      let NumberArr = this.props.assetsList;
+      for (var i = 0; i < NumberArr.length; i++) {
+        if (NumberArr[i].name == labelname.toUpperCase() || NumberArr[i].contractAccount == labelname.toLowerCase()) {
+            this.setState({
+              newAssetsList:[NumberArr[i]],
+              reveal: false,
+            });
+            break;
+        }
+      }
+      if(i == NumberArr.length){
+        EasyToast.show('没有搜索到该token，请尝试手动添加');
+        this.setState({
+          reveal: true,
+        });
       }
     }
   }
 
-  getCurrentRoute() {
-    return this.props.types[this.state.index];
+  componentWillUnmount(){
+    //结束页面前，资源释放操作
+    super.componentWillUnmount();
   }
-
-  //加载更多
-  onEndReached(typeId) {
-    pages[index] += 1;
-    currentLoadMoreTypeId = typeId;
-    const time = Date.parse(new Date()) / 1000;
-    const index = this.getRouteIndex(typeId);
-    if (time - loadMoreTime > 1) {
-      pages[index] += 1;
-      this.props.dispatch({ type: 'news/list', payload: { type: typeId, page: pages[index] } });
-      loadMoreTime = Date.parse(new Date()) / 1000;
-    }
-  };
-
-  //下拉刷新
-  onRefresh = (typeId, refresh) => {
-    this.props.dispatch({ type: 'news/list', payload: { type: typeId, page: 1, newsRefresh: refresh } });
-    const index = this.getRouteIndex(typeId);
-    if (index >= 0) {
-      pages[index] = 1;
-    }
-  };
-
-    
-
-  onPress(action){
-    EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});
-  }
+  //手动添加
   logout() {
     this._setModalVisible();  
   }
 
-  
    // 显示/隐藏 modal  
    _setModalVisible() {  
     let isShow = this.state.show;  
@@ -129,7 +122,6 @@ class Coin_search extends BaseComponent {
       EasyToast.show('请输入合约账户');
       return;
     }
-
     // EasyDialog.show();
     this.props.dispatch({ type: 'assets/submitAssetInfoToServer', payload: { contractAccount: this.state.address, name: this.state.tokenname }, callback: (data) => {
       if(data && data.code=='0'){
@@ -142,39 +134,92 @@ class Coin_search extends BaseComponent {
     } });
   }
 
+  addAsset(asset, value) {
+    if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
+      //todo 创建钱包引导
+      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        // EasyToast.show('创建钱包');
+        this.createWallet();
+        EasyDialog.dismis()
+      }, () => { EasyDialog.dismis() });
+      return;
+    }
+    // EasyLoading.show();
+    this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
+      // EasyLoading.dismis();
+    } });
+  }
 
+  isMyAsset(rowData){
+    if(this.props.myAssets == null){
+        return false;
+    }
+    if(this.state.selectasset != null && this.state.selectasset.name == rowData.name){
+      if(this.state.value){
+        return true;
+      }else{
+        return false;
+      }
+    }
+    for(var i = 0; i < this.props.myAssets.length; i++){
+        if(this.props.myAssets[i].asset.name == rowData.name ){
+            return true;
+        } 
+    }
+    return false;
+  }
+
+  dismissKeyboardClick() {
+    dismissKeyboard();
+  }
 
     render() {
         return (
             <View style={styles.container}>
-                
                   <View style={styles.header}>  
-                    <TouchableOpacity onPress={this._leftTopClick.bind()}>  
-                        <View style={styles.leftout} >
-                            <Image source={UImage.Magnifier} style={styles.headleftimg}></Image>
-                        </View>
-                    </TouchableOpacity>  
                     <View style={styles.inptout} >
+                        <Image source={UImage.Magnifier_ash} style={styles.headleftimg}></Image>
                         <TextInput ref={(ref) => this._raccount = ref} value={this.state.labelname} returnKeyType="go"
-                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#b3b3b3" 
+                            selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor="#b3b3b3" autoCorrect={true}
                             placeholder="输入token名称或合约账户搜索" underlineColorAndroid="transparent" keyboardType="default"
-                            onChangeText={(labelname) => this.setState({ labelname })}
+                            onChangeText={(labelname) => this.setState({ labelname })} 
                             />      
-                    </View>     
-                    <TouchableOpacity   onPress={this._rightTopClick.bind()}>  
-                        <Text style={styles.canceltext}>取消</Text>
+                    </View>    
+                    <TouchableOpacity onPress={this._query.bind(this,this.state.labelname)}>  
+                        <Text style={styles.canceltext}>查询</Text>
+                    </TouchableOpacity>  
+                    <TouchableOpacity   onPress={this._empty.bind(this,this.state.labelname)}>  
+                        <Text style={styles.canceltext}>清空</Text>
                     </TouchableOpacity>  
                 </View> 
-
-                <Text style={styles.prompttext}>提示：如果您没有搜索到您要找的Token，可以使用手动添加。</Text>
-                <View style={styles.btnout}>
+                {this.state.reveal&&<View style={styles.btnout}>
+                    <Text style={styles.prompttext}>提示：如果您没有搜索到您要找的Token，可以使用手动添加。</Text>
                     <Button onPress={() => this.logout()}>
                         <View style={styles.btnloginUser}>
                             <Text style={styles.btntext}>手动添加</Text>
                         </View>
                     </Button>
-                </View>
-
+                </View>}
+                <ListView style={styles.tab} renderRow={this.renderRow} enableEmptySections={true} 
+                  dataSource={this.state.dataSource.cloneWithRows(this.state.newAssetsList == null ? [] : this.state.newAssetsList)} 
+                  renderRow={(rowData, sectionID, rowID) => (      
+                  <View style={styles.listItem}>
+                      <View style={styles.listInfo}>
+                        <Image source={rowData.icon==null ? UImage.eos : { uri: rowData.icon }} style={{width: 28, height: 28, resizeMode: "cover", overflow:"hidden", borderRadius: 10, marginRight:10,}}/>
+                        <View style={styles.scrollView}>
+                          <Text style={styles.listInfoTitle}>{rowData.name}</Text>
+                        </View>
+                        <View style={styles.listInfoRight}>
+                          <Switch  tintColor={UColor.secdColor} onTintColor={UColor.tintColor} thumbTintColor="#ffffff"
+                              value={this.isMyAsset(rowData)} onValueChange={(value)=>{
+                              this.setState({selectasset: rowData, value: value});
+                              this.addAsset(rowData, value);
+                          }}/>
+                        </View>
+                      </View>
+                  </View>
+                  )}                
+                /> 
                 <View style={styles.pupuo}>
                   <Modal animationType='slide' transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
                     <View style={styles.modalStyle}>
@@ -212,36 +257,70 @@ const styles = StyleSheet.create({
       flex: 1,
       flexDirection:'column',
       backgroundColor: UColor.secdColor,
-      paddingTop:5,
+      paddingTop: 1,
     },
     header: {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      paddingTop:Platform.OS == 'ios' ? 30 : 20,
-      paddingBottom: 5,
+      paddingVertical: 7,
       backgroundColor: UColor.mainColor,
     },
     leftout: {
       paddingLeft: 15
     },
     headleftimg: {
-      width: 30,
-      height: 30
+      width: 18,
+      height: 18,
+      marginRight: 15,
     },
     inptout: {
       flex: 1,
-      paddingHorizontal: 20,
-      justifyContent: 'center', 
+      height: 30,
+      borderRadius: 5,
+      marginHorizontal: 10,
+      paddingHorizontal: 10,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: 'center',
+      backgroundColor: UColor.fontColor,
     },
+
     inpt: {
-        color: '#999999',
-        fontSize: 14,
-        height: 30,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        backgroundColor: UColor.fontColor,
-        paddingVertical: 0,
+      flex: 1,
+      height: 45,
+      fontSize: 14,
+      color: '#999999',
+    },
+
+    listItem: {
+      backgroundColor: UColor.mainColor,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+   
+    listInfo: {
+      height: 65,
+      flex: 1,
+      paddingLeft: 16,
+      paddingRight: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderTopWidth:1,
+      borderTopColor: UColor.secdColor
+    },
+    scrollView: {
+      flex: 1,
+    },
+    listInfoTitle: {
+      color:UColor.fontColor, 
+      fontSize:16
+    },
+    listInfoRight: {
+      flexDirection: "row",
+      alignItems: "center"
     },
 
     pupuo: {
@@ -323,7 +402,7 @@ const styles = StyleSheet.create({
       color: UColor.arrow,
       fontSize: 18,
       justifyContent: 'flex-end',
-      paddingRight: 15
+      paddingRight: 10,
     },
     prompttext: {
       fontSize: 15,
@@ -348,4 +427,4 @@ const styles = StyleSheet.create({
       color: UColor.fontColor,
     },
 })
-export default Coin_search;
+export default AssetSearch;
