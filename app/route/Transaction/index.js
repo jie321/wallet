@@ -118,14 +118,20 @@ class Transaction extends BaseComponent {
   onRefreshing() {
     this.getRamInfo();
     this.getAccountInfo();
-    if(this.state.isTxRecord && (this.state.queryaccount == null || this.state.queryaccount == '')){
-        this.getRamTradeLog();
-    }else{
-        this.getRamTradeLogByAccount(this.state.queryaccount);
+    if(this.state.isTxRecord){
+        if((this.state.selectedTransactionRecord == transactionOption[1])){
+            this.getRamTradeLog();
+        }else{
+            this.getRamTradeLogByAccount(this.state.queryaccount);
+        }
+    }else if(this.state.isTrackRecord){
+        if(this.state.selectedTrackSegment == trackOption[0]) {
+            this.getRamBigTradeLog();
+        }else{
+            this.getBigRamRank();
+        }
     }
-    if(this.state.selectedTrackSegment == trackOption[0]) {
-        this.getRamBigTradeLog();
-    }
+
   }
 
   componentWillUnmount(){
@@ -154,6 +160,10 @@ class Transaction extends BaseComponent {
 
   getRamBigTradeLog(){
     this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}});    
+  }
+
+  getBigRamRank(){
+    this.props.dispatch({type: 'ram/getBigRamRank',payload: {}});    
   }
 
   getAccountInfo(){
@@ -815,11 +825,12 @@ class Transaction extends BaseComponent {
                         </View>
                 </View>
             </View>:
-                <View>{this.state.isTxRecord ? <View >
+                <View>{this.state.isTxRecord ? <View>
                  <View style={styles.toptabout}>
                     <SegmentedControls tint= {UColor.mainColor} selectedTint= {UColor.fontColor} onSelection={this.setSelectedTransactionRecord.bind(this) }
                         selectedOption={ this.state.selectedTransactionRecord } backTint= {UColor.secdColor} options={transactionOption} />
                 </View>
+                {(this.props.ramTradeLog != null &&  this.props.ramTradeLog.length == 0) ? <View style={{paddingTop: 50, justifyContent: 'center', alignItems: 'center'}}><Text style={{fontSize: 16, color: UColor.fontColor}}>还没有交易哟~</Text></View> :
                  <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
                     dataSource={this.state.dataSource.cloneWithRows(this.props.ramTradeLog == null ? [] : this.props.ramTradeLog)} 
                     renderRow={(rowData, sectionID, rowID) => (                 
@@ -842,6 +853,7 @@ class Transaction extends BaseComponent {
                     </Button>         
                      )}                
                  /> 
+                }
             </View>: 
             <View>
                 <View style={styles.toptabout}>
@@ -850,6 +862,7 @@ class Transaction extends BaseComponent {
                 </View>
                 {this.state.selectedTrackSegment == trackOption[0] ? 
                   <View>
+                    {(this.props.ramBigTradeLog != null &&  this.props.ramBigTradeLog.length == 0) ? <View style={{paddingTop: 50, justifyContent: 'center', alignItems: 'center'}}><Text style={{fontSize: 16, color: UColor.fontColor}}>还没有交易哟~</Text></View> :
                     <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
                       dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                       renderRow={(rowData, sectionID, rowID) => (                 
@@ -871,7 +884,8 @@ class Transaction extends BaseComponent {
                             </View>
                         </Button>      
                       )}                
-                  /> 
+                    /> 
+                    }
                   </View> :
                   <View>
                       <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
