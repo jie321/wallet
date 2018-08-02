@@ -58,7 +58,7 @@ class Setting extends React.Component {
     }else if (key == 'Helpcenter') {
       navigate('Helpcenter', {});
     } else{
-      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyDialog.show("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
     }
   }
 
