@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import {getBalance, listAssets, addAssetToServer, getActions} from '../utils/Api';
+import {getBalance, listAssets, addAssetToServer, getActions, fetchAssetsByAccount} from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import { DeviceEventEmitter } from 'react-native';
@@ -207,6 +207,43 @@ export default {
         yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
         if(callback) callback(myAssets);
         // DeviceEventEmitter.emit('updateMyAssets', payload);
+     },
+     *fetchMyAssetsFromNet({payload, callback},{call,put}) {
+        if(payload && payload.accountName){
+            var myAssets = yield call(store.get, 'myAssets217');
+
+            try{
+                // const resp = {"msg":"success","data":["EOS","MSP","ADD","EETH"], "code":"0"};
+                const resp = yield call(Request.request, fetchAssetsByAccount + payload.accountName, "get");
+                if(resp && resp.code == '0' && resp.data){
+                    for(var i = 0; i < resp.data.length; i++){
+                        for(var j = 0; j < myAssets.length; j++){
+                            if(myAssets[j].asset.name == resp.data[i]){ // 已经在资产列表中
+                                break;
+                            }
+                        }
+                        if(j == myAssets.length){ // 列表还没有该资产
+                            resp1 = yield call(Request.request, listAssets, 'post', {code: resp.data[i]});
+                            if(resp1.code == '0' && resp1.data && resp1.data.length == 1){
+                                var eosInfo = {
+                                    asset: resp1.data[0],
+                                    value: true,
+                                    balance: '0.0000',
+                                }
+                                myAssets[myAssets.length] = eosInfo;
+                            }                        
+                        }
+                    }
+                }
+                yield call(store.save, 'myAssets217', myAssets);
+                yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+                
+            } catch (error) {
+
+            }
+
+            if(callback) callback();
+        }
      },
      *clearTradeDetails({payload, callback},{call,put}) {
         try{

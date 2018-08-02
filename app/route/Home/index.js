@@ -60,10 +60,9 @@ class Home extends React.Component {
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
       this.getDefaultWalletEosBalance();
       this.getAllWalletEosBalance();
-      this.getAssetBalance();    
       this.getIncrease();
+      this.getMyAssetsInfo();
     }});
-    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1, isInit: true}, callback: (myAssets) => {}});
     this.props.dispatch({ type: 'wallet/walletList' });
     this.props.dispatch({ type: 'wallet/invalidWalletList',  callback: (invalidWalletList) => {
       if(invalidWalletList != null){
@@ -129,6 +128,17 @@ class Home extends React.Component {
 
   componentWillUnmount(){
     this.listener.remove();  
+  }
+
+  getMyAssetsInfo(){
+    if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
+      return;
+    }
+    this.props.dispatch({ type: 'assets/myAssetInfo', payload: { page: 1, isInit: true}, callback: (myAssets) => {
+      this.props.dispatch({ type: 'assets/fetchMyAssetsFromNet', payload: { accountName: this.props.defaultWallet.name}, callback: () => {
+        this.getAssetBalance();    
+      }});
+    }});
   }
 
   calTotalBalance(){
@@ -440,8 +450,10 @@ class Home extends React.Component {
     }
 
     this.setState({assetRefreshing: true});
-    this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
-      this.setState({assetRefreshing: false});
+    this.props.dispatch({ type: 'assets/fetchMyAssetsFromNet', payload: { accountName: this.props.defaultWallet.name}, callback: () => {
+      this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
+        this.setState({assetRefreshing: false});
+      }});
     }});
 
     this.getDefaultWalletEosBalance(); // 默认钱包余额
