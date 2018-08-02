@@ -103,6 +103,10 @@ class AssetSearch extends BaseComponent {
   //手动添加
   logout() {
     this._setModalVisible();  
+    this.setState({
+      tokenname: '',
+      address: '',
+    });
   }
 
    // 显示/隐藏 modal  
@@ -123,15 +127,20 @@ class AssetSearch extends BaseComponent {
       return;
     }
     // EasyDialog.show();
-    this.props.dispatch({ type: 'assets/submitAssetInfoToServer', payload: { contractAccount: this.state.address, name: this.state.tokenname }, callback: (data) => {
+    this.props.dispatch({ type: 'assets/submitAssetInfoToServer', payload: { contractAccount: this.state.address.toUpperCase(), name: this.state.tokenname.toLowerCase() }, callback: (data) => {
       if(data && data.code=='0'){
+        this.setState({
+          show: false,
+        });
         EasyToast.show('添加成功');
-        // this._setModalVisible();
       }else{
+        this.setState({
+          show: false,
+        });
         EasyToast.show(data.msg);
       }
-      // EasyDialog.dismis();
-    } });
+    }});
+
   }
 
   addAsset(asset, value) {
@@ -237,7 +246,7 @@ class AssetSearch extends BaseComponent {
                             <TextInput ref={(ref) => this._raccount = ref} value={this.state.address}   returnKeyType="go" 
                                 selectionColor={UColor.tintColor}  style={styles.inptpass} placeholderTextColor="#b3b3b3" 
                                 placeholder="输入合约账户" underlineColorAndroid="transparent"  keyboardType="default"  
-                                onChangeText={(address) => this.setState({ address })}/>
+                                onChangeText={(address) => this.setState({ address })} maxLength = {12}/>
                         </View>
                         <Button onPress={() => { this.submit() }}>
                           <View style={styles.copyout}>
