@@ -904,6 +904,7 @@ class Resources extends BaseComponent {
                                 <Text style={styles.basctext}>提示</Text>
                                 <Text style={styles.basctext}>获取资源需要抵押EOS </Text>
                                 <Text style={styles.basctext}>抵押的EOS可撤销抵押，并于3天后退回</Text>
+                                <Text style={styles.basctext}>租赁抵押出的EOS可自行赎回到自己的账号，过户的抵押EOS将无法赎回！</Text>
                             </View>}
                         </View>}
                 </TouchableOpacity>
