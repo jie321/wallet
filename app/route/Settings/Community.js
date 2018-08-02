@@ -83,45 +83,43 @@ class Community extends BaseComponent {
   
   render() {
     return <View style={styles.container}>    
-            
-
-          <Image source={UImage.cmyhead} style={{width:maxWidth, height:90, marginTop: 5,}} />
-          <View style={{padding: 4,}} >
-            <View style={{flexDirection:'row', height: 118,}}>
-              <TouchableHighlight onPress={this.prot.bind(this, 'wechat')} style={{flex: 1}} underlayColor={UColor.secdColor}>
-                <ImageBackground  style={{ justifyContent: "center", alignItems: 'flex-start', flex: 1, flexDirection:'row', marginRight: 2, paddingLeft: 5, paddingTop: 5,}} source={UImage.cmy_wx} resizeMode="stretch">                  
-                  <Text style={styles.textname}>官方微信：</Text>
-                  <Text style={styles.textlink}>{this.state.wechat}</Text>           
+          <Image source={UImage.cmyhead} style={styles.headimg} />
+          <View style={{padding: 5,}} >
+            <View style={{flexDirection:'row',}}>
+              <TouchableHighlight onPress={this.prot.bind(this, 'wechat')} style={{flex: 1, marginRight: 2.5, }} underlayColor={UColor.secdColor}>
+                <ImageBackground  style={styles.wechatqq} source={UImage.cmy_wx} resizeMode="stretch">                  
+                  <Text style={styles.textname}>官方微信</Text>
+                  <Text style={styles.textlinktwo} >{this.state.wechat}</Text>           
                 </ImageBackground>
               </TouchableHighlight>
-              <TouchableHighlight onPress={this.prot.bind(this, 'qq')} style={{flex: 1}} underlayColor={UColor.secdColor}>
-                <ImageBackground style={{ justifyContent: "center", alignItems: 'flex-start', flex: 1, flexDirection:'row', marginLeft: 2, paddingLeft: 5, paddingTop: 5,}} source={UImage.cmy_qq} resizeMode="stretch">          
-                  <Text style={styles.textname}>官方QQ：</Text>
-                  <Text style={styles.textlink}>{this.state.qq}</Text>           
+              <TouchableHighlight onPress={this.prot.bind(this, 'qq')} style={{flex: 1, marginLeft: 2.5,}} underlayColor={UColor.secdColor}>
+                <ImageBackground style={styles.wechatqq} source={UImage.cmy_qq} resizeMode="stretch">          
+                  <Text style={styles.textname}>官方QQ</Text>
+                  <Text style={styles.textlinktwo} >{this.state.qq}</Text>           
                 </ImageBackground>  
               </TouchableHighlight>      
             </View>
             <TouchableHighlight onPress={this.prot.bind(this, 'public')} underlayColor={UColor.secdColor}>
-              <ImageBackground style={{ justifyContent: "flex-start", alignItems: 'flex-start', flexDirection:'row', width: maxWidth-10, height: 135, marginTop: 4, paddingLeft: 10, paddingTop: 10,}} source={UImage.cmy_gzh} resizeMode="stretch">              
-                <Text style={styles.textname}>官方公众号：</Text>
-                <Text style={styles.textlink}>{this.state.public}</Text>     
+              <ImageBackground style={styles.publicout} source={UImage.cmy_gzh} resizeMode="stretch">              
+                <Text style={styles.textname}>官方公众号</Text>
+                <Text style={styles.textlinktwo}>{this.state.public}</Text>     
               </ImageBackground>
             </TouchableHighlight>
             <TouchableHighlight onPress={this.prot.bind(this, 'microblog')} underlayColor={UColor.secdColor}>
-              <ImageBackground style={{ justifyContent: "flex-start", alignItems: 'center',flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_wb} resizeMode="stretch">            
-                <Text style={styles.textname}>官方微博：</Text>
+              <ImageBackground style={styles.sourceout} source={UImage.cmy_wb} resizeMode="stretch">            
+                <Text style={styles.textname}>官方微博</Text>
                 <Text style={styles.textlink}>weibo.com/eostoken</Text>         
               </ImageBackground>    
             </TouchableHighlight>   
             <TouchableHighlight onPress={this.prot.bind(this, 'telegraph')} underlayColor={UColor.secdColor}>      
-              <ImageBackground style={{ justifyContent: "flex-start",  alignItems: 'center', flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_db} resizeMode="stretch">       
-                <Text style={styles.textname}>EosToken电报群：</Text>
+              <ImageBackground style={styles.sourceout} source={UImage.cmy_db} resizeMode="stretch">       
+                <Text style={styles.textname}>EosToken电报群</Text>
                 <Text style={styles.textlink}>{this.state.telegraph}</Text>
               </ImageBackground>   
             </TouchableHighlight>
             <TouchableHighlight onPress={this.prot.bind(this, 'source')} underlayColor={UColor.secdColor}>      
-              <ImageBackground style={{ justifyContent: "flex-start",  alignItems: 'center', flexDirection:'row', width: maxWidth-10, height: 55, marginTop: 4, paddingLeft: 10,}} source={UImage.cmy_kydz} resizeMode="stretch">       
-                <Text style={styles.textname}>代码开源地址：</Text>
+              <ImageBackground style={styles.sourceout} source={UImage.cmy_kydz} resizeMode="stretch">       
+                <Text style={styles.textname}>代码开源地址</Text>
                 <Text style={styles.textlink}>{this.state.source}</Text>
               </ImageBackground>   
             </TouchableHighlight>        
@@ -135,6 +133,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: UColor.secdColor,
   },
+  headimg: {
+    width: maxWidth,
+    height: maxWidth * 0.2213,
+    marginTop: 5,
+  },
   texts: {
     height:35, 
     paddingLeft:20, 
@@ -142,13 +145,43 @@ const styles = StyleSheet.create({
     alignItems:'center',  
     flexDirection:'row',
   },
+  wechatqq: {
+    width: (maxWidth - 15) / 2,
+    height: (maxWidth - 15) / 2 * 0.6572,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  publicout: {
+    justifyContent:'center',
+    width: maxWidth - 10,
+    height: (maxWidth - 10) * 0.3664,
+    marginTop: 5,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  sourceout: {
+    justifyContent: "space-between",
+    alignItems: 'flex-start',
+    width: maxWidth - 10,
+    height: (maxWidth - 10) * 0.1444,
+    marginTop: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
   textname: {
     fontSize:16,
-    color:'#FFFFFF'
+    color:'#FFFFFF',
+  },
+  textlinktwo: {
+    paddingTop: 5,
+    fontSize: 16, 
+    color: '#65CAFF',
+    textAlign: 'left',
   },
   textlink: {
     fontSize: 16, 
     color: '#65CAFF',
+    textAlign: 'left',
   }
 
 });
