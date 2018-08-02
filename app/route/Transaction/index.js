@@ -212,7 +212,11 @@ class Transaction extends BaseComponent {
             EasyLoading.dismis();
         }});    
     }else{
-        EasyToast.show('开发中，查询区块持仓大户前10名记录');   
+        // EasyToast.show('开发中，查询区块持仓大户前10名记录');   
+        EasyLoading.show();
+        this.props.dispatch({type: 'ram/getBigRamRank',payload: {}, callback: () => {
+            EasyLoading.dismis();
+        }});
     }
   }
   //我的交易，大盘交易
@@ -870,23 +874,20 @@ class Transaction extends BaseComponent {
                   </View> :
                   <View>
                       <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
-                        dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
+                        dataSource={this.state.dataSource.cloneWithRows(this.props.bigRamRank == null ? [] : this.props.bigRamRank)} 
                         renderRow={(rowData, sectionID, rowID) => (                 
-                            <View style={styles.businessout}>
-                            {rowData.action_name == 'sellram' ? 
-                            <View style={styles.liststrip}>
-                                <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                <Text style={styles.selltime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
-                            </View>
-                            :
-                            <View style={styles.liststrip}>
-                                <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
-                                <Text style={styles.buytime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
-                            </View>
-                            }
-                        </View>
+                            <Button onPress={this.openQuery.bind(this,rowData.account)}>
+                                <View style={styles.businessout}>
+                                    <View style={styles.liststrip}>
+                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.account}</Text>
+                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.per}</Text>
+                                    </View>
+                                    <View style={styles.liststrip}>
+                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.num}</Text>
+                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.ramQuota}</Text>
+                                    </View>
+                                </View>
+                            </Button>
                         )}                
                     /> 
                   </View>
