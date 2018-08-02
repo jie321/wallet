@@ -86,7 +86,6 @@ class RecordQuery extends React.Component {
     this.setState({
       show: false,
       labelname: '',
-      newramTradeLog: []
     });
     this.dismissKeyboardClick();
   }
