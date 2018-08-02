@@ -112,7 +112,7 @@ const TabContainer = TabNavigator(
           case 'Settings':
             iconName = focused ? UImage.tab_4_h : UImage.tab_4
         }
-        return (<Image source={iconName} style={{ width: 20, height: 20, padding: 0 }} />);
+        return (<Image source={iconName} style={{ width: 20, height: 20, padding: 0, }} />);
       },
     }),
     initialRouteName: "News",
@@ -132,7 +132,7 @@ const TabContainer = TabNavigator(
       },
       labelStyle: {
         fontSize: 10,
-        marginTop: 2
+        paddingBottom: 5,
       },
       indicatorStyle: {
         opacity: 0
