@@ -65,7 +65,6 @@ import Nodevoting from './Settings/Nodevoting'
 import Bvote from './Settings/Bvote'
 import Calculation from './Settings/Calculation'
 import Memory from './Settings/Memory'
-import MortgageInquiry from './Settings/MortgageInquiry'
 import MortgageRecord from './Settings/MortgageRecord'
 import Network from './Settings/Network'
 import Boot from './Boot'
@@ -220,9 +219,6 @@ const Nav = StackNavigator(
     },
     Memory: {
       screen: Memory
-    },
-    MortgageInquiry: {
-      screen: MortgageInquiry
     },
     MortgageRecord: {
       screen: MortgageRecord
