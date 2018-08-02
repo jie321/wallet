@@ -877,14 +877,14 @@ class Transaction extends BaseComponent {
                         dataSource={this.state.dataSource.cloneWithRows(this.props.bigRamRank == null ? [] : this.props.bigRamRank)} 
                         renderRow={(rowData, sectionID, rowID) => (                 
                             <Button onPress={this.openQuery.bind(this,rowData.account)}>
-                                <View style={styles.businessout}>
-                                    <View style={styles.liststrip}>
-                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.account}</Text>
-                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.per}</Text>
+                                <View style={styles.businessRan}>
+                                    <View style={styles.Rankleftout}>
+                                        <Text style={styles.accounttext}>{rowData.account}</Text>
+                                        <Text style={styles.numtext}>排名 {rowData.num}</Text>
                                     </View>
-                                    <View style={styles.liststrip}>
-                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.num}</Text>
-                                        <Text style={styles.payertext} numberOfLines={1}>{rowData.ramQuota}</Text>
+                                    <View style={styles.Rankrightout}>
+                                        <Text style={styles.pertext}>{rowData.per}</Text>
+                                        <Text style={styles.quotatext}>{rowData.ramQuota}</Text>
                                     </View>
                                 </View>
                             </Button>
@@ -1270,6 +1270,45 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#4ed694",
         textAlign: 'right'
+    },
+
+    businessRan: {
+        height: Platform.OS == 'ios' ? 52 : 45,
+        backgroundColor: UColor.mainColor,
+        flexDirection: "row",
+        paddingHorizontal: 15,
+       
+        borderRadius: 5,
+        marginVertical: 2,
+        marginHorizontal: 5,
+    },
+    Rankleftout: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-around",
+    },
+    accounttext: {
+        fontSize: 15,
+        color: UColor.fontColor,
+    },
+    numtext: {
+        fontSize: 15,
+        color: UColor.arrow,
+    },
+    Rankrightout: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-around",
+    },
+    pertext: {
+        fontSize: 15,
+        color: UColor.fontColor,
+        textAlign: 'right',
+    },
+    quotatext: {
+        fontSize: 14,
+        color: UColor.arrow,
+        textAlign: 'right',
     },
 });
 
