@@ -5,8 +5,8 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import UImage from '../../utils/Img'
 import { EasyToast } from "../../components/Toast"
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
 import { Eos } from "react-native-eosjs";
 var dismissKeyboard = require('dismissKeyboard');
 var Dimensions = require('Dimensions')
@@ -35,12 +35,12 @@ class MortgageRecord extends React.Component {
 
   //加载地址数据
   componentDidMount() {
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
       this.props.dispatch({
         type: 'vote/getDelegateLoglist',
         payload: {account_name: this.props.navigation.state.params.account_name},
         callback: (resp) => {
-          EasyLoading.dismis();
+          EasyShowLD.loadingClose();
           if(resp == null || resp.data == null ||  resp.data.rows == null || resp.data.rows.length == 0){
             this.setState({show: true, delegateLoglist: []});
           }else{
@@ -64,11 +64,11 @@ class MortgageRecord extends React.Component {
       EasyToast.show('请输入Eos账号');
       return;
     }else{
-      EasyLoading.show();
+      EasyShowLD.loadingShow();
       this.dismissKeyboardClick();
       this.props.dispatch({ type: 'vote/getDelegateLoglist', payload: {account_name: labelname},
         callback: (resp) => {
-          EasyLoading.dismis();
+          EasyShowLD.loadingClose();
           if(resp == null || resp.data == null ||  resp.data.rows == null || resp.data.rows.length == 0){
             this.setState({show: true, delegateLoglist: []});
           }else{

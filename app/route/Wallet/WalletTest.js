@@ -7,9 +7,9 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+
 import BaseComponent from "../../components/BaseComponent";
 var DeviceInfo = require('react-native-device-info');
 
@@ -74,7 +74,7 @@ class Setting extends BaseComponent {
     }else if(key=='BackupNote'){
       navigate('BackupNote', {});
     }else{
-      EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});
+      EasyShowLD.dialogShow("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyShowLD.dialogClose()});
     }
   }
 
@@ -119,7 +119,7 @@ class Setting extends BaseComponent {
               </View>
               <View style={{flex:1,flexDirection:"row",alignSelf:'center',justifyContent:"flex-end"}}>
                 {
-                  this.props.loginUser && <Button onPress={()=>{EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyDialog.dismis()});}} style={{backgroundColor:'#65CAFF',borderRadius:5,paddingVertical: 5,paddingHorizontal:15}}>
+                  this.props.loginUser && <Button onPress={()=>{EasyShowLD.dialogShow("温馨提示","该功能正在紧急开发中，敬请期待！","知道了",null,()=>{EasyShowLD.dialogClose()});}} style={{backgroundColor:'#65CAFF',borderRadius:5,paddingVertical: 5,paddingHorizontal:15}}>
                   <Text style={{fontSize:15,color:'#fff'}}>提币</Text>
                 </Button>
                 }

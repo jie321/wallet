@@ -49,7 +49,7 @@ import ExportPublicKey from './Wallet/ExportPublicKey'
 import BarCode from './Wallet/BarcodeTest'
 // import AddressQr from './Wallet/AddressQr'
 import { EasyToast } from "../components/Toast"
-import { EasyDialog } from "../components/Dialog"
+import { EasyShowLD } from "../components/EasyShow"
 import { EasyAdress } from "../components/Address"
 import Upgrade from 'react-native-upgrade-android';
 import codePush from 'react-native-code-push'
@@ -75,7 +75,7 @@ import QRCode from 'react-native-qrcode-svg';
 import Constants from '../utils/Constants'
 import RecordQuery from './Transaction/RecordQuery'
 import Warning from './Transaction/Warning'
-import { EasyLoading } from '../components/Loading';
+
 require('moment/locale/zh-cn');
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
@@ -430,11 +430,11 @@ class Route extends React.Component {
         Upgrade.init();
         DeviceEventEmitter.addListener('progress', (e) => {
           if (e.code === '0000') { // 开始下载
-            EasyDialog.startProgress();
+            EasyShowLD.startProgress();
           } else if (e.code === '0001') {
             EasyDialog.progress(e.fileSize, e.downSize);
           } else if (e.code === '0002') {
-            EasyDialog.endProgress();
+            EasyShowLD.endProgress();
           }
         });
       }
@@ -445,9 +445,9 @@ class Route extends React.Component {
           if (data.code == 0) {
             if (DeviceInfo.getVersion() < data.data.version) {
               if (data.data.must == 1) {
-                EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
+                EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
               } else {
-                EasyDialog.show("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
+                EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
               }
             }
           }
@@ -752,7 +752,7 @@ class Route extends React.Component {
 
   switchRoute = (prevNav, nav, action) => {
     //关闭loading显示,防止进入下一页面，上一个页面的loading显示还在
-    EasyLoading.switchRoute();    
+    EasyShowLD.switchRoute();    
     EasyToast.switchRoute();
     routeLength = nav.routes.length;
     

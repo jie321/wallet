@@ -4,8 +4,8 @@ import {DeviceEventEmitter,ListView,StyleSheet,Image,ScrollView,View,RefreshCont
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import UImage from '../../utils/Img'
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
@@ -43,17 +43,17 @@ class AddAssets extends BaseComponent {
 
   componentDidMount() {
     try {
-      EasyLoading.show();
+      EasyShowLD.loadingShow();
       DeviceEventEmitter.emit('stopBalanceTimer', "");
       this.props.dispatch({ type: 'assets/list', payload: { page: 1}, callback: () => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
       } });
       this.props.dispatch({ type: 'assets/myAssetInfo'});
       DeviceEventEmitter.addListener('updateAssetList', (data) => {
         this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
       });
     } catch (error) {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
     }
 
   }
@@ -71,7 +71,7 @@ class AddAssets extends BaseComponent {
   }
 
   onPress(action){
-    EasyDialog.show("温馨提示","该功能正在紧急开发中，敬请期待!","知道了",null,()=>{EasyDialog.dismis()});
+    EasyShowLD.dialogShow("温馨提示","该功能正在紧急开发中，敬请期待!","知道了",null,()=>{EasyShowLD.dialogClose()});
   }
 
   _rightButtonClick() {  
@@ -89,18 +89,18 @@ class AddAssets extends BaseComponent {
   addAsset(asset, value) {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
         // EasyToast.show('创建钱包');
         this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
       return;
     }
 
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
       this.setState({isAdding: false});
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
     } });
   }
 

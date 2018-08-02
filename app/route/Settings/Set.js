@@ -10,8 +10,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
 import { EasyToast } from '../../components/Toast';
 import JPush from 'jpush-react-native';
 import JPushModule from 'jpush-react-native';
@@ -48,11 +48,11 @@ class Set extends BaseComponent {
       Upgrade.init();
       DeviceEventEmitter.addListener('progress', (e) => {
         if (e.code === '0000') { // 开始下载
-          EasyDialog.startProgress();
+          EasyShowLD.startProgress();
         } else if (e.code === '0001') {
           EasyDialog.progress(e.fileSize, e.downSize);
         } else if (e.code === '0002') {
-          EasyDialog.endProgress();
+          EasyShowLD.endProgress();
         }
       });
     }
@@ -76,7 +76,7 @@ class Set extends BaseComponent {
 
  
   gesturepass(){
-    EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+    EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
   }
 
 
@@ -112,9 +112,9 @@ class Set extends BaseComponent {
         if (data.code == 0) {
           if (DeviceInfo.getVersion() < data.data.version) {
             if (data.data.must == 1) {
-              EasyDialog.show("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
+              EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", null, () => { this.doUpgrade(data.data.url, data.data.version) })
             } else {
-              EasyDialog.show("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
+              EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", "取消", () => { this.doUpgrade(data.data.url, data.data.version) })
             }
           }else{
             EasyToast.show("当前已是最新版本");

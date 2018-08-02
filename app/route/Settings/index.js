@@ -7,9 +7,9 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+
 
 var DeviceInfo = require('react-native-device-info');
 
@@ -57,7 +57,7 @@ class Setting extends React.Component {
     }else if (key == 'Helpcenter') {
       navigate('Helpcenter', {});
     } else{
-      EasyDialog.show("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogShow("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
   }
 
@@ -140,7 +140,7 @@ class Setting extends React.Component {
               </View>
               <View style={styles.Withdrawout}>
                 {
-                  this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
+                  this.props.loginUser && <Button onPress={() => { EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() }); }} style={styles.Withdrawbtn}>
                     <Text style={styles.Withdrawtext}>领取</Text>
                   </Button>
                 }

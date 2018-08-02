@@ -9,9 +9,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+
 import BaseComponent from "../../components/BaseComponent";
 var DeviceInfo = require('react-native-device-info');
 const Font = {
@@ -89,7 +89,7 @@ class Helpcenter extends BaseComponent {
     }else if (key == 'Troubleshooting') {
       navigate('Web', { title: "疑难解答", url: "http://static.eostoken.im/html/Troubleshooting.html" });
     }else{
-      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
   }
   _renderListItem() {

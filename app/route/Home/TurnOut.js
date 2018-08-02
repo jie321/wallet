@@ -9,9 +9,9 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
+
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
@@ -89,7 +89,7 @@ class TurnOut extends BaseComponent {
     }
 
     onPress(action) {
-        EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
 
     _rightButtonClick() {
@@ -160,7 +160,7 @@ class TurnOut extends BaseComponent {
                     selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass}  maxLength={Constants.PWD_MAX_LENGTH} 
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             </View>
-            EasyDialog.show("密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("密码", view, "确认", "取消", () => {
 
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
@@ -173,13 +173,13 @@ class TurnOut extends BaseComponent {
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     Eos.transfer("eosio.token", this.props.defaultWallet.account, this.state.toAccount, this.state.amount + " EOS", this.state.memo, plaintext_privateKey, false, (r) => {
                         this.props.dispatch({
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
                             type: 'wallet/pushTransaction', payload: { from: this.props.defaultWallet.account, to: this.state.toAccount, amount: this.state.amount + " EOS", memo: this.state.memo, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
-                                EasyLoading.dismis();
+                                EasyShowLD.loadingClose();
                                 // alert("++++ " + JSON.stringify(result));
                                 if (result.code == '0') {
                                     AnalyticsUtil.onEvent('Turn_out');
@@ -195,15 +195,15 @@ class TurnOut extends BaseComponent {
                     //     }
                     // });
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     }
 
     chkLast(obj) {

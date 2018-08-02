@@ -1,7 +1,7 @@
 import Request from '../utils/RequestUtil';
 import { address, getAccountsByPuk, isExistAccountName, getintegral, isExistAccountNameAndPublicKey } from '../utils/Api';
 import { EasyToast } from '../components/Toast';
-import { EasyLoading } from '../components/Loading';
+
 import store from 'react-native-simple-store';
 import * as CryptoJS from 'crypto-js';
 import { DeviceEventEmitter } from 'react-native';

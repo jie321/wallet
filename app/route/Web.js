@@ -13,7 +13,7 @@ var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
 const { width } = Dimensions.get('window')
 import { EasyToast } from "../components/Toast"
-import { EasyDialog } from "../components/Dialog"
+import { EasyShowLD } from "../components/EasyShow"
 import UImage from '../utils/Img'
 import UColor from '../utils/Colors'
 import QRCode from 'react-native-qrcode-svg';

@@ -10,8 +10,8 @@ import Button from '../components/Button'
 const maxHeight = Dimensions.get('window').height;
 const maxWidth = Dimensions.get('window').width;
 import { EasyToast } from '../components/Toast';
-import { EasyDialog } from '../components/Dialog'
-import { EasyLoading } from '../components/Loading'
+
+
 import QRCode from 'react-native-qrcode-svg';
 import Constants from '../utils/Constants'
 import ViewShot from "react-native-view-shot";
@@ -54,21 +54,21 @@ class ShareInvite extends React.Component {
         // if (data.code == "0") {
         //   if (data.data == "" || data.data == "null" || data.data == null) {
         //     const view = <TextInput autoFocus={true} onChangeText={(code) => th.setState({ code })} returnKeyType="go" selectionColor="#65CAFF" style={{ color: '#65CAFF', width: maxWidth - 100, fontSize: 15, backgroundColor: '#EFEFEF' }} placeholderTextColor="#8696B0" placeholder="输入邀请码" underlineColorAndroid="transparent" keyboardType="phone-pad" maxLength={8} />
-        //     EasyDialog.show("未绑定，补填邀请码", view, "绑定", "取消", () => {
+        //     EasyShowLD.dialogShow("未绑定，补填邀请码", view, "绑定", "取消", () => {
         //       th.setState({ focus: true })
-        //       EasyLoading.show("绑定中");
+        //       EasyShowLD.loadingShow("绑定中");
         //       th.props.dispatch({
         //         type: "invite/bind", payload: { uid: Constants.uid, code: th.state.code }, callback: function (dt) {
-        //           EasyLoading.dismis()
+        //           EasyShowLD.loadingClose()
         //           if (dt.code == "0") {
         //             EasyToast.show("绑定成功");
-        //             EasyDialog.dismis();
+        //             EasyShowLD.dialogClose();
         //           } else {
         //             EasyToast.show(dt.msg);
         //           }
         //         }
         //       });
-        //     }, () => { EasyDialog.dismis() });
+        //     }, () => { EasyShowLD.dialogClose() });
         //   }
         // }
     //   }
@@ -82,10 +82,10 @@ class ShareInvite extends React.Component {
       <Text selectable={true} style={{paddingVertical: 5,}}>{this.props.inviteInfo.inviteUrl}</Text>
       <Text >（请复制链接到手机浏览器打开）（如果微信无法打开，请复制链接到手机浏览器打开,苹果版本已上线）</Text>
     </View>
-    EasyDialog.show("复制成功", msg, "分享给微信好友", "取消", () => {
+    EasyShowLD.dialogShow("复制成功", msg, "分享给微信好友", "取消", () => {
     this.refs.viewShot.capture().then(uri => {
       WeChat.isWXAppInstalled().then((isInstalled) => {
-          EasyDialog.dismis();
+          EasyShowLD.dialogClose();
           if (isInstalled) {
             WeChat.shareToSession({ type: 'imageFile', imageUrl: uri })
               .catch((error) => {

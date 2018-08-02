@@ -11,7 +11,7 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import ViewShot from "react-native-view-shot";
 import BaseComponent from "../../components/BaseComponent";
 
@@ -57,7 +57,7 @@ class Bvote extends BaseComponent {
     }else if (key == 'Nodevoting') {
       navigate('Nodevoting', {});
     }else {
-      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
   }
   componentWillUnmount(){

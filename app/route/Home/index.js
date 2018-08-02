@@ -14,8 +14,9 @@ var Dimensions = require('Dimensions')
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 import { EasyToast } from "../../components/Toast"
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
+
 import { Eos } from "react-native-eosjs";
 
 @connect(({ wallet, assets }) => ({ ...wallet, ...assets }))
@@ -189,12 +190,12 @@ class Home extends React.Component {
 
     if(this.state.init){
       this.setState({init: false});
-      EasyLoading.show();
+      EasyShowLD.loadingShow();
     }
 
     this.props.dispatch({
       type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: () => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
       }
     });
   }
@@ -220,7 +221,7 @@ class Home extends React.Component {
     }
 
     this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
     }});
   }
 
@@ -254,10 +255,10 @@ class Home extends React.Component {
   onPress(key, data = {}) {
     const { navigate } = this.props.navigation;
     if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
-      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(this.props.defaultWallet);
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
 
       return;
     }
@@ -268,58 +269,58 @@ class Home extends React.Component {
         // this._setModalVisible();
         navigate('TurnIn', {});
       } else {
-        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });
+          EasyShowLD.dialogClose()
+        }, () => { EasyShowLD.dialogClose() });
       }
     }else if (key == 'functionsMore') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });  
+          EasyShowLD.dialogClose()
+        }, () => { EasyShowLD.dialogClose() });  
         return;
       }
       navigate('FunctionsMore', {data, balance: this.state.balance,account_name:(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name});
     }else if (key == 'transfer') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });  
+          EasyShowLD.dialogClose()
+        }, () => { EasyShowLD.dialogClose() });  
         return;
       }
       navigate('TurnOut', { coins:'EOS', balance: this.state.balance });
     }else if (key == 'Resources') {
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });  
+          EasyShowLD.dialogClose()
+        }, () => { EasyShowLD.dialogClose() });  
         return;
       }
       navigate('Resources', {account_name:(this.props.defaultWallet == null || this.props.defaultWallet.name == null) ? this.state.account : this.props.defaultWallet.name});
     }else if(key == 'addAssets'){
       if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))) {
-        EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+        EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           this.createWallet();
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });  
+          EasyShowLD.dialogClose()
+        }, () => { EasyShowLD.dialogClose() });  
         return;
       }
       navigate('AddAssets', {});
     } else{
-      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
   }
 
   scan() {
     if(this.props.defaultWallet != null && this.props.defaultWallet.name != null && (!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived'))){
-      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(this.props.defaultWallet);
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
 
       return;
     }
@@ -328,10 +329,10 @@ class Home extends React.Component {
       const { navigate } = this.props.navigation;
       navigate('BarCode', {});
     } else {
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
         this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
     }
   }
 
@@ -367,10 +368,10 @@ class Home extends React.Component {
       modal: false
     });
     if(!data.isactived || !data.hasOwnProperty('isactived')){
-      EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您的账号未激活", "激活", "取消", () => {
         this.WalletDetail(data);
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
     }else {
       const { dispatch } = this.props;
       this.props.dispatch({ type: 'wallet/changeWallet', payload: { data }, callback: () => {
@@ -384,17 +385,17 @@ class Home extends React.Component {
 
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
         this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
       return;
     }else {
       if(!this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')){
-        EasyDialog.show("温馨提示", "您的账号未激活", "激活", "取消", () => {
+        EasyShowLD.dialogShow("温馨提示", "您的账号未激活", "激活", "取消", () => {
           this.WalletDetail(this.props.defaultWallet);
-          EasyDialog.dismis()
-        }, () => { EasyDialog.dismis() });
+          EasyShowLD.dialogClose()
+        }, () => { EasyShowLD.dialogClose() });
         return;
       }
     }

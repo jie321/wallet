@@ -7,9 +7,9 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 import { kapimg } from '../../utils/Api'
 import Constants from '../../utils/Constants'
 import BaseComponent from "../../components/BaseComponent";
@@ -45,10 +45,10 @@ class SignIn extends BaseComponent {
   }
 
   componentDidMount() {
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.props.dispatch({
       type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
         if (data.code == 403) {
           this.props.dispatch({
             type: 'login/logout', payload: {}, callback: () => {
@@ -64,7 +64,7 @@ class SignIn extends BaseComponent {
       },
     });
     this.props.dispatch({ type: 'login/isSigned', payload:{name: this.state.phone},callback: (data) => { 
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       this.setState({Sign_in: data.data});
     } });
   }
@@ -95,7 +95,7 @@ class SignIn extends BaseComponent {
               Sign_in: false,
             })
         }
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
       }
     })
   }

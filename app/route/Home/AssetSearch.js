@@ -10,9 +10,9 @@ import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
+
 import BaseComponent from "../../components/BaseComponent";
 var dismissKeyboard = require('dismissKeyboard');
 @connect(({wallet, assets}) => ({...wallet, ...assets}))
@@ -46,17 +46,17 @@ class AssetSearch extends BaseComponent {
 
   componentDidMount() {
     try {
-      EasyLoading.show();
+      EasyShowLD.loadingShow();
       DeviceEventEmitter.emit('stopBalanceTimer', "");
       this.props.dispatch({ type: 'assets/list', payload: { page: 1}, callback: () => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
       } });
       this.props.dispatch({ type: 'assets/myAssetInfo'});
       DeviceEventEmitter.addListener('updateAssetList', (data) => {
         this.props.dispatch({ type: 'assets/list', payload: { page: 1} });
       });
     } catch (error) {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
     }
 
   }
@@ -126,7 +126,7 @@ class AssetSearch extends BaseComponent {
       EasyToast.show('请输入合约账户');
       return;
     }
-    // EasyDialog.show();
+    // EasyShowLD.dialogShow();
     this.props.dispatch({ type: 'assets/submitAssetInfoToServer', payload: { contractAccount: this.state.address.toUpperCase(), name: this.state.tokenname.toLowerCase() }, callback: (data) => {
       if(data && data.code=='0'){
         this.setState({
@@ -146,16 +146,16 @@ class AssetSearch extends BaseComponent {
   addAsset(asset, value) {
     if (this.props.defaultWallet == null || this.props.defaultWallet.account == null) {
       //todo 创建钱包引导
-      EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+      EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
         // EasyToast.show('创建钱包');
         this.createWallet();
-        EasyDialog.dismis()
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose()
+      }, () => { EasyShowLD.dialogClose() });
       return;
     }
-    // EasyLoading.show();
+    // EasyShowLD.loadingShow();
     this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
-      // EasyLoading.dismis();
+      // EasyShowLD.loadingClose();
     } });
   }
 

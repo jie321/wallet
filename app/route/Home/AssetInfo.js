@@ -11,9 +11,9 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
+
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import moment from 'moment';
@@ -62,7 +62,7 @@ class AssetInfo extends BaseComponent {
 
     componentDidMount() {
         //加载地址数据
-        // EasyLoading.show();
+        // EasyShowLD.loadingShow();
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
 
         this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, last_id: "-1", countPerPage: 10}, callback: (resp) => {
@@ -117,7 +117,7 @@ class AssetInfo extends BaseComponent {
               } else {
                 // EasyToast.show('获取余额失败：' + data.msg);
               }
-              EasyLoading.dismis();
+              EasyShowLD.loadingClose();
             }
           })
     }

@@ -12,8 +12,8 @@ import Echarts from 'native-echarts'
 var ScreenWidth = Dimensions.get('window').width;
 import {formatterNumber,formatterUnit} from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
-import { EasyDialog } from "../../components/Dialog"
+
+import { EasyShowLD } from '../../components/EasyShow'
 import BaseComponent from "../../components/BaseComponent";
 import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
@@ -94,9 +94,9 @@ class Transaction extends BaseComponent {
   componentDidMount(){
 
     // 获取内存市场相关信息
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.props.dispatch({type: 'ram/getRamInfo',payload: {}, callback: () => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
     }});
 
     // 默认获取2小时K线图
@@ -148,7 +148,7 @@ class Transaction extends BaseComponent {
 
   getRamTradeLog(){
     this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}}); 
-    EasyLoading.dismis(); 
+    EasyShowLD.loadingClose(); 
   }
 
   getRamTradeLogByAccount(accountName){
@@ -217,15 +217,15 @@ class Transaction extends BaseComponent {
   fetchTrackLine(type,opt){
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }});    
     }else{
         // EasyToast.show('开发中，查询区块持仓大户前10名记录');   
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({type: 'ram/getBigRamRank',payload: {}, callback: () => {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }});
     }
   }
@@ -238,7 +238,7 @@ class Transaction extends BaseComponent {
     }
   }
   selectionTransaction(type,opt){
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.setState({selectedTransactionRecord:opt});
     if(type == 0){
         if (this.props.defaultWallet == null || this.props.defaultWallet.account == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
@@ -246,7 +246,7 @@ class Transaction extends BaseComponent {
         }else{
             this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.props.defaultWallet.account}});
         }
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
     }else{
         this.getRamTradeLog(); 
     }
@@ -280,21 +280,21 @@ class Transaction extends BaseComponent {
         // EasyToast.show('卖');
     }else if (current == 'isTxRecord'){
         //  EasyToast.show('待实现,查询区块最近的20笔交易记录');
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }});    
         //当点击交易记录按钮清空输入框
         this.setState({queryaccount:'' });
         this.setSelectedTransactionRecord('大盘交易');
     }
     else if (current == 'isTrackRecord'){
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }});   
     } 
-    // EasyLoading.dismis(); 
+    // EasyShowLD.loadingClose(); 
  }
    // 更新"买，卖，交易记录，大单追踪"按钮的状态  
    _updateBtnState(currentPressed, array) { 
@@ -426,21 +426,21 @@ class Transaction extends BaseComponent {
   getRamLogByAccout = (queryaccount) =>{
     this.setState({queryaccount:queryaccount});
     if(queryaccount == null|| queryaccount == ''){
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({type: 'ram/getRamTradeLog',payload: {account_name: ''}, callback: () => {
             this.setState({
                 newramTradeLog: []
             })
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }});  
         return;
     }
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: queryaccount}, callback: (resp) => {
         this.setState({
             newramTradeLog: resp.data
         })
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
         if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
             EasyToast.show("未找到交易哟~");
         }
@@ -470,7 +470,7 @@ class Transaction extends BaseComponent {
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             <Text style={styles.inptpasstext}></Text>  
         </View>
-        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+        EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
         if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
             EasyToast.show('密码长度至少4位,请重输');
             return;
@@ -481,9 +481,9 @@ class Transaction extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                EasyLoading.show();
+                EasyShowLD.loadingShow();
                 Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.props.defaultWallet.account, this.state.buyRamAmount + " EOS", (r) => {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     if(r.isSuccess){
                         this.getAccountInfo();
                         EasyToast.show("购买成功");
@@ -500,15 +500,15 @@ class Transaction extends BaseComponent {
                     }
                 });
             } else {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
         } catch (e) {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
             EasyToast.show('未知异常');
         }
-        EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() });
 };
   // 出售内存
   sellram = (rowData) => {
@@ -532,7 +532,7 @@ class Transaction extends BaseComponent {
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             <Text style={styles.inptpasstext}></Text>  
         </View>
-        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+        EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
         if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
             EasyToast.show('密码长度至少4位,请重输');
             return;
@@ -543,9 +543,9 @@ class Transaction extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                EasyLoading.show();
+                EasyShowLD.loadingShow();
                 Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     if(r.isSuccess){
                         this.getAccountInfo();
                         EasyToast.show("出售成功");
@@ -563,15 +563,15 @@ class Transaction extends BaseComponent {
                 });
                 
             } else {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
         } catch (e) {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
             EasyToast.show('未知异常');
         }
-        EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() });
   };
 
     dismissKeyboardClick() {

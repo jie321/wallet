@@ -11,8 +11,8 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 import { EasyToast } from "../../components/Toast"
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
 import { Eos } from "react-native-eosjs";
 import moment from 'moment';
 var dismissKeyboard = require('dismissKeyboard');
@@ -41,9 +41,9 @@ class RecordQuery extends React.Component {
 
   //加载地址数据
   componentDidMount() {
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.props.navigation.state.params.record}, callback: (resp) => {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
         this.setState({
           newramTradeLog: [],
@@ -64,7 +64,7 @@ class RecordQuery extends React.Component {
       EasyToast.show('请输入Eos账号');
       return;
     }else{
-      EasyLoading.show();
+      EasyShowLD.loadingShow();
       this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: labelname.toLowerCase()}, callback: (resp) => {
           if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
             this.setState({
@@ -77,7 +77,7 @@ class RecordQuery extends React.Component {
                 show: false,
             })
           }
-          EasyLoading.dismis();
+          EasyShowLD.loadingClose();
       }});  
     }  
   }

@@ -7,8 +7,8 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-import { EasyLoading } from '../../components/Loading';
-import { EasyDialog } from "../../components/Dialog";
+
+
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import { english } from '../../utils/english';
@@ -87,7 +87,7 @@ class APactivation extends BaseComponent {
                 selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
         </View>
-        EasyDialog.show("密码", view, "确认", "取消", () => {
+        EasyShowLD.dialogShow("密码", view, "确认", "取消", () => {
 
         if (!this.state.password || this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
             EasyToast.show('密码长度至少4位,请重输');
@@ -100,21 +100,21 @@ class APactivation extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
-                EasyDialog.dismis();
-                EasyLoading.show();
+                EasyShowLD.dialogClose();
+                EasyShowLD.loadingShow();
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 Eos.createAndDelegateAccount(this.props.defaultWallet.account, plaintext_privateKey, this.state.accountName, this.state.ownerPuk, this.state.activePuk,
                 this.state.cpu + " EOS", this.state.net + " EOS", this.state.ram + " EOS", 1, (r)=>{
-                  EasyLoading.dismis();
+                  EasyShowLD.loadingClose();
                   if(r.isSuccess){
                     //   EasyToast.show("创建账号成功");
-                    EasyDialog.show("支付成功", (<View>
+                    EasyShowLD.dialogShow("支付成功", (<View>
                         <Text style={styles.Becarefultext}>{this.state.accountName}</Text>
                         <Text style={styles.inptpasstext}>该账号完成支付，请告知账号主人点击激活即可正常使用。</Text>
                         <View style={styles.linkout}>
                             <Text style={styles.linktext} onPress={() => this.onShareFriend()}>分享给你的朋友</Text>
                         </View>
-                    </View>), "知道了", null,  () => { EasyDialog.dismis() });
+                    </View>), "知道了", null,  () => { EasyShowLD.dialogClose() });
                   }else{
                       if(r.data){
                           if(r.data.msg){
@@ -128,15 +128,15 @@ class APactivation extends BaseComponent {
                   }
                 });
             } else {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
         } catch (e) {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
             EasyToast.show('密码错误');
         }
-        EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() });
   }
    // 显示/隐藏 modal  
    _setModalVisible() {

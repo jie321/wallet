@@ -7,9 +7,9 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+
 import store from 'react-native-simple-store';
 import BaseComponent from "../../components/BaseComponent";
 

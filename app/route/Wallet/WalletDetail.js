@@ -8,9 +8,9 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import Constants from '../../utils/Constants'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+import { EasyShowLD } from '../../components/EasyShow'//CGP TEST
 import JPushModule from 'jpush-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import BaseComponent from "../../components/BaseComponent";
@@ -89,7 +89,7 @@ class WalletDetail extends BaseComponent {
             selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
             placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
         </View>
-      EasyDialog.show("密码", view, "确定", "取消", () => {
+      EasyShowLD.dialogShow("密码", view, "确定", "取消", () => {
         if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
           EasyToast.show('密码长度至少4位,请重输');
           return;
@@ -118,8 +118,8 @@ class WalletDetail extends BaseComponent {
         } catch (error) {
           EasyToast.show('您输入的密码不正确');
         }
-        EasyDialog.dismis();
-      }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose();
+      }, () => { EasyShowLD.dialogClose() });
     } else if(key == 'ExportPublicKey') {
       navigate('ExportPublicKey', { ownerPublicKey: this.props.navigation.state.params.data.ownerPublic, activePublicKey:this.props.navigation.state.params.data.activePublic});
     } else if (key == 'ModifyPassword') {
@@ -138,25 +138,25 @@ class WalletDetail extends BaseComponent {
   }
  
   eospark() {
-    EasyDialog.dismis()
+    EasyShowLD.dialogClose()
     const { navigate } = this.props.navigation;
     navigate('Web', { title: "区块浏览器", url: "https://eospark.com/MainNet/account/" + this.props.navigation.state.params.data.name});
   }
 
   eoseco() {
-    EasyDialog.dismis()
+    EasyShowLD.dialogClose()
     const { navigate } = this.props.navigation;
     navigate('Web', { title: "区块浏览器", url: "https://eoseco.com/accounts/" + this.props.navigation.state.params.data.name});
   }
 
   eosmonitor() {
-    EasyDialog.dismis()
+    EasyShowLD.dialogClose()
     const { navigate } = this.props.navigation;
     navigate('Web', { title: "区块浏览器", url: "https://eosmonitor.io/accounts/" + this.props.navigation.state.params.data.name});
   }
 
   eostracker() {
-    EasyDialog.dismis()
+    EasyShowLD.dialogClose()
     const { navigate } = this.props.navigation;
     navigate('Web', { title: "区块浏览器", url: "https://eostracker.io/accounts/" + this.props.navigation.state.params.data.name});
   }
@@ -176,42 +176,47 @@ class WalletDetail extends BaseComponent {
   }
 
   deleteWarning(c,data){
-    EasyDialog.show("免责声明",  (<View>
+    // EasyShowLD.dialogShow("免责声明",  (<View>
+    EasyShowLD.dialogShow("免责声明",  (<View> 
+    
       <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中会检测您的账号是否已激活，如果您没有备份私钥，删除后将无法找回！请确保该账号不再使用后再删除！</Text>
     </View>),"下一步","返回钱包",  () => {
-      EasyDialog.dismis();
-      EasyLoading.show();
+      // EasyShowLD.dialogClose();
+      // EasyShowLD.loadingShow();
+      EasyShowLD.loadingShow();
        //检测账号是否已经激活
       this.props.dispatch({
           type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
-            EasyLoading.dismis();
+            // EasyShowLD.loadingClose();
+            EasyShowLD.loadingClose();
             if(result.code == 0 && result.data == true){
             //msg:success,data:true, code:0 账号已存在
-              EasyDialog.show("免责声明",  (<View>
+              // EasyShowLD.dialogShow("免责声明",  (<View>
+              EasyShowLD.dialogShow("免责声明",  (<View>
                 <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
               </View>),"执意删除","返回钱包",  () => {
                   this.deleteWallet();
-                  EasyDialog.dismis()
-              }, () => { EasyDialog.dismis() });
+                  EasyShowLD.dialogClose()
+              }, () => { EasyShowLD.dialogClose() });
             }else if(result.code == 521){
                 //msg:账号不存在,data:null,code:521
-              EasyDialog.show("免责声明",  (<View>
+                EasyShowLD.dialogShow("免责声明",  (<View>
                 <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，我们建议删除。</Text>
               </View>),"删除","取消",  () => {
                   this.deletionDirect();
-                  EasyDialog.dismis()
-              }, () => { EasyDialog.dismis() });
+                  EasyShowLD.dialogClose()
+              }, () => { EasyShowLD.dialogClose() });
             }else {
-              EasyDialog.show("免责声明",  (<View>
+              EasyShowLD.dialogShow("免责声明",  (<View>
                 <Text style={{color: UColor.arrow,fontSize: 14,}}>网络异常, 暂不能检测到账号是否已经激活, 建议暂不删除此账号, 如果执意删除请先导出私钥并保存好，否则删除后无法找回。</Text>
               </View>),"执意删除","取消",  () => {
                   this.deletionDirect();
-                  EasyDialog.dismis()
-              }, () => { EasyDialog.dismis() });
+                  EasyShowLD.dialogClose()
+              }, () => { EasyShowLD.dialogClose() });
             }
           }
       })
-    }, () => { EasyDialog.dismis() });
+    }, () => { EasyShowLD.dialogClose() });
   }
 
   deleteAccount(c,data){
@@ -222,19 +227,19 @@ class WalletDetail extends BaseComponent {
     }
     else{
       //msg:success,data:true, code:0 账号已存在
-      EasyDialog.show("免责声明",  (<View>
+      EasyShowLD.dialogShow("免责声明",  (<View>
        <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
      </View>),"执意删除","返回钱包",  () => {
          this.deleteWallet();
-         EasyDialog.dismis()
-     }, () => { EasyDialog.dismis() });
+         EasyShowLD.dialogClose()
+     }, () => { EasyShowLD.dialogClose() });
     }
   
   }
 
   //未激活账号直接删除
   deletionDirect() {
-    EasyDialog.dismis();
+    EasyShowLD.dialogClose();
     var data = this.props.navigation.state.params.data;
     this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
     //删除tags
@@ -253,14 +258,14 @@ class WalletDetail extends BaseComponent {
 
   //已激活账号需要验证密码
   deleteWallet() {
-    EasyDialog.dismis();
+    EasyShowLD.dialogClose();
     const view =
       <View style={styles.passoutsource}>
         <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
           selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
           placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
       </View>
-    EasyDialog.show("密码", view, "确定", "取消", () => {
+    EasyShowLD.dialogShow("密码", view, "确定", "取消", () => {
       if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
         EasyToast.show('密码长度至少4位,请重输');
         return;
@@ -292,8 +297,8 @@ class WalletDetail extends BaseComponent {
       } catch (error) {
         EasyToast.show('您输入的密码不正确');
       }
-      EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() });
   }
 
   activeWalletOnServer(){
@@ -303,19 +308,19 @@ class WalletDetail extends BaseComponent {
     let owner = wallet.ownerPublic;
     let active = wallet.activePublic;
     try {
-      EasyLoading.show('正在请求');
+      EasyShowLD.loadingShow('正在请求');
       //检测账号是否已经激活
       this.props.dispatch({
         type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
-          EasyLoading.dismis();
+          EasyShowLD.loadingClose();
             if(result.code == 0 && result.data == true){
                 wallet.isactived = true
                 this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
                 //msg:success,data:true, code:0 账号已存在
-                EasyDialog.show("恭喜激活成功", (<View>
+                EasyShowLD.dialogShow("恭喜激活成功", (<View>
                     <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
                     {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
-                </View>), "知道了", null,  () => { EasyDialog.dismis() });
+                </View>), "知道了", null,  () => { EasyShowLD.dialogClose() });
             }else if(result.code == 500){ // 网络异常
               EasyToast.show(result.msg);
             }else if(result.code == 515){
@@ -329,13 +334,13 @@ class WalletDetail extends BaseComponent {
               //       this.props.dispatch({
               //         type: 'login/logout', payload: {}, callback: () => {}
               //       });      
-              //       EasyLoading.dismis();
+              //       EasyShowLD.loadingClose();
               //       navigate('ActivationAt', {parameter:wallet});
               //       return false;   
               //     }else if(data.code == 0){
               //       this.props.dispatch({
               //         type: 'wallet/createAccountService', payload: { username: name, owner: owner, active: active, isact:true}, callback: (data) => {
-              //           EasyLoading.dismis();
+              //           EasyShowLD.loadingClose();
               //           if (data.code == '0') {
               //             wallet.isactived = true
               //             this.props.dispatch({
@@ -345,23 +350,23 @@ class WalletDetail extends BaseComponent {
               //                   navigate('ActivationAt', {parameter:wallet});
               //                   return false;
               //                 } else {
-              //                   EasyDialog.show("创建账号成功", (<View>
+              //                   EasyShowLD.dialogShow("创建账号成功", (<View>
               //                     <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
               //                     <Text style={{fontSize: 16, color: '#808080',}}>恭喜！您的EosToken账号积分获得免费创建账号权益，该账号已完成激活，建议您在使用转账功能时先小额尝试，成功后再正常使用钱包。</Text>
-              //                 </View>), "确认", null,  () => { EasyDialog.dismis() });
+              //                 </View>), "确认", null,  () => { EasyShowLD.dialogClose() });
               //                   return true;
               //                 }
               //               }
               //             });
               //           }else{
-              //             EasyLoading.dismis();
+              //             EasyShowLD.loadingClose();
               //             navigate('ActivationAt', {parameter:wallet});
               //             return false;
               //           }
               //         }
               //       });
               //     }else{
-              //       EasyLoading.dismis();
+              //       EasyShowLD.loadingClose();
               //       navigate('ActivationAt', {parameter:wallet});
               //       return false;   
               //     }
@@ -371,7 +376,7 @@ class WalletDetail extends BaseComponent {
         }
     });
     } catch (error) {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       navigate('ActivationAt', {parameter:wallet});
       return false;
     }
@@ -391,10 +396,10 @@ class WalletDetail extends BaseComponent {
   prot(data = {}, key){
     const { navigate } = this.props.navigation;
     if (key == 'Explain') {
-      EasyDialog.dismis()
+      EasyShowLD.dialogClose()
     navigate('Web', { title: "积分说明", url: "http://static.eostoken.im/html/20180703/1530587725565.html" });
     }else  if (key == 'EOS-TOKEN') {
-      EasyDialog.dismis()
+      EasyShowLD.dialogClose()
       navigate('AssistantQrcode', key);
     }
   }
@@ -407,7 +412,7 @@ class WalletDetail extends BaseComponent {
           placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent"/>
       </View>
 
-    EasyDialog.show("密码", view, "备份", "取消", () => {
+    EasyShowLD.dialogShow("密码", view, "备份", "取消", () => {
 
       if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
         EasyToast.show('密码长度至少4位,请重输');
@@ -437,8 +442,8 @@ class WalletDetail extends BaseComponent {
       } catch (error) {
         EasyToast.show('您输入的密码不正确');
       }
-      EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() });
   }
 
   toBackup = (words) => {

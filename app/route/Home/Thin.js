@@ -12,7 +12,7 @@ import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
 const maxHeight = Dimensions.get('window').height;
 const {width, height} = Dimensions.get('window');
-import { EasyDialog } from "../../components/Dialog";
+
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 

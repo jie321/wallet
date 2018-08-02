@@ -9,9 +9,9 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
+
 import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
@@ -58,7 +58,7 @@ class Warning extends BaseComponent {
 
    
     onPress(action) {
-        EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
 
     _rightButtonClick() {
