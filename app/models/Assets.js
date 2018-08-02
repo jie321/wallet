@@ -301,7 +301,7 @@ export default {
         },
         updateDetails(state, action) {
             let tradeLog = state.tradeLog;
-            if(action.payload.data == null || action.payload.page==1 || tradeLog == null){
+            if(action.payload.data == null || action.payload.last_id==-1 || tradeLog == null){
                 tradeLog=action.payload.data;
             }else{
                 tradeLog = tradeLog.concat(action.payload.data);
