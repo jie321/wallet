@@ -25,7 +25,6 @@ class Set extends BaseComponent {
 
   static navigationOptions = {
     title: '系统设置',
-   
   };
 
   constructor(props) {
@@ -35,10 +34,10 @@ class Set extends BaseComponent {
       gesture: false
     }
   }
-
   componentDidMount() {
     const {dispatch}=this.props;
     dispatch({type:'login/getJpush',callback:(jpush)=>{
+     
       this.setState({
         value:jpush.jpush,
       });
@@ -85,7 +84,7 @@ class Set extends BaseComponent {
     const {dispatch}=this.props;
     dispatch({type:'login/changeJpush',callback:(jpush)=>{
       this.setState({
-        value:jpush,
+        value:jpush.jpush,
       });
     }});
     if(state){
@@ -96,6 +95,7 @@ class Set extends BaseComponent {
       });
     }
   }
+
   doUpgrade = (url, version) => {
     if (Platform.OS !== 'ios') {
       this.setState({ visable: false });
