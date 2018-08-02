@@ -113,7 +113,7 @@ class RecordQuery extends React.Component {
               <Text style={styles.canceltext}>清空</Text>
           </TouchableOpacity> 
       </View>   
-      {this.state.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>}       
+      {this.state.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易记录哟~</Text></View>}       
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
         dataSource={this.state.dataSource.cloneWithRows(this.state.newramTradeLog == null ? [] : this.state.newramTradeLog)} 
         renderRow={(rowData, sectionID, rowID) => (   
