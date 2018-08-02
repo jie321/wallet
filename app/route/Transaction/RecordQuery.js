@@ -117,20 +117,18 @@ class RecordQuery extends React.Component {
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
         dataSource={this.state.dataSource.cloneWithRows(this.state.newramTradeLog == null ? [] : this.state.newramTradeLog)} 
         renderRow={(rowData, sectionID, rowID) => (   
-          <View style={{ height: 52, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
-            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                    <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').format('MM-DD HH:mm:ss')}</Text>
-                </View>
-                <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                    {rowData.action_name == 'sellram' ? 
-                    <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                    :
-                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
-                    }
-                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
-                </View>
+          <View style={styles.package}>
+            <View style={styles.leftout}>
+              <Text style={styles.payertext}>{rowData.payer}</Text>
+              <Text style={styles.timetext}>{moment(rowData.record_date).add(8,'hours').format('MM-DD HH:mm:ss')}</Text>
+            </View>
+            <View style={styles.rightout}>
+              {rowData.action_name == 'sellram' ? 
+              <Text style={styles.business}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
+              :
+              <Text style={styles.business}>买 {rowData.eos_qty}</Text>
+              }
+              <Text style={styles.presentprice}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
             </View>
           </View>
         )}                   
@@ -204,35 +202,45 @@ const styles = StyleSheet.create({
       fontSize: 16, 
       color: UColor.fontColor
     },
-    outsource: {
-      margin: 5,
-      height: 110,
-      borderRadius: 5,
-      paddingHorizontal: 20,
-      paddingVertical: 10,
-      flexDirection: "row",
+
+    package: {
+      height: 52,
       backgroundColor: UColor.mainColor,
+      flexDirection: "row",
+      paddingHorizontal: 10,
+      borderRadius: 5,
+      marginHorizontal: 10,
+      marginVertical: 5,
     },
-    leftout:{
-      flex: 1, alignItems: "flex-start",
+    leftout: {
+      flexDirection: "column",
+      justifyContent: "space-around",
     },
+    payertext: {
+      fontSize: 15,
+      color: UColor.fontColor,
+    },
+    timetext: {
+      fontSize: 15,
+      color: UColor.arrow,
+    },
+   
     rightout: {
-      flex: 1, alignItems: "flex-end", 
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: "space-around",
     },
-    fromtotext: {
-        fontSize: 12,
-        color: UColor.fontColor,
-        lineHeight: 20,
-      },
-      payernet: {
-        fontSize: 12,
-        color: UColor.arrow,
-        marginBottom: 10,
-      },
-      Receivercpu: {
-        fontSize: 12,
-        color: UColor.arrow,
-        lineHeight: 20,
-      },
+    business: {
+      fontSize: 14,
+      color: '#F25C49',
+      textAlign: 'right',
+    },
+    presentprice: {
+      fontSize: 14,
+      color: UColor.arrow,
+      textAlign: 'right',
+    }
+ 
+    
 });
 export default RecordQuery;
