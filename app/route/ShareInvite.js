@@ -10,12 +10,8 @@ import Button from '../components/Button'
 const maxHeight = Dimensions.get('window').height;
 const maxWidth = Dimensions.get('window').width;
 import { EasyToast } from '../components/Toast';
-<<<<<<< HEAD
-import { EasyShowLD } from '../components/EasyShow'
-=======
 import { EasyShowLD } from "../components/EasyShow"
 
->>>>>>> Fixed #320
 import QRCode from 'react-native-qrcode-svg';
 import Constants from '../utils/Constants'
 import ViewShot from "react-native-view-shot";
