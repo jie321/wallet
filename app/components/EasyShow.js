@@ -84,7 +84,7 @@ export class EasyShowLD {
 
 
     //以下是loading部分的
-    static loadingShow(text = 'Waiting...', timeout = 60000) {
+    static loadingShow(text = 'Loading...', timeout = 60000) {
       this.map["LoadingDialog"].setState({
         modalVisible: true,
         loadingDialogFlag: LoadingShow,
@@ -132,7 +132,7 @@ export class LoadingDialog extends React.Component {
       progress: 0,
 
       timeout: 60000,
-      text: "Waiting..."
+      text: "Loading..."
     };
 
     constructor(props) {
