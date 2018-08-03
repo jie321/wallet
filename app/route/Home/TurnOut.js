@@ -324,7 +324,7 @@ class TurnOut extends BaseComponent {
 
                         <View style={styles.warningout}>
                             <Image source={UImage.warning} style={styles.imgBtn} />
-                            <Text style={styles.headtitle}>温馨提示：如果您是向交易所转账，请务必填写相应的备注信息.</Text>
+                            <Text style={styles.headtitle}>温馨提示：如果您是向交易所转账，请务必填写相应的备注（MEMO）信息，否则可能无法到账。</Text>
                         </View>
                             
                                
@@ -343,7 +343,7 @@ class TurnOut extends BaseComponent {
                 <View style={styles.pupuo}>
                     <Modal animationType={'slide'} transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
                         <TouchableOpacity style={styles.modalStyle} activeOpacity={1.0}>  
-                            <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
+                            <View style={{ width: maxWidth,  height: maxHeight*4/6,  backgroundColor: UColor.fontColor,}}>
                                 <View style={styles.subView}>
                                     <Text style={styles.buttontext}/>
                                     <Text style={styles.titleText}>订单详情</Text>
@@ -372,7 +372,7 @@ class TurnOut extends BaseComponent {
                                     {this.state.memo== ""&&
                                     <View style={styles.warningoutShow}>
                                         <Image source={UImage.warning} style={styles.imgBtn} />
-                                        <Text style={styles.headtitle}>温馨提示：如果您是向交易所转账，请务必填写相应的备注信息.</Text>
+                                        <Text style={styles.headtitle}>温馨提示：如果您是向交易所转账，请务必填写相应的备注（MEMO）信息，否则可能无法到账。</Text>
                                     </View>}
                                     
                                     <Button onPress={() => { this.inputPwd() }}>
