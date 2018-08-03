@@ -68,4 +68,3 @@ onMessage={(e) => { this.onMessage(e) }}
 }
 ```
 微信：tao709308469<br>
-![image](https://github.com/eostoken/wallet/tree/master/picture/wx.png)
