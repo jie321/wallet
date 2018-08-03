@@ -96,6 +96,7 @@ export class EasyShowLD {
 
     //切换页面时,如果有loading显示,立刻关闭
     static switchRoute(key = 'LoadingDialog') {
+      var th = this;
       if (this.map[key] && this.map[key].state.modalVisible) {
           th.map[key] && th.map[key].setState({
             "modalVisible": false
