@@ -79,7 +79,8 @@ class Forget extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('操作过于频繁，为保障用户安全，请一小时后尝试');
+    // EasyToast.show('操作过于频繁，为保障用户安全，请一小时后尝试');
+    EasyToast.show('未能获取图形验证码，请检查网络！');
   }
 
   kcaptrue = () =>{
