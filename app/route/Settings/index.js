@@ -140,7 +140,7 @@ class Setting extends React.Component {
               </View>
               <View style={styles.Withdrawout}>
                 {
-                  this.props.loginUser && <Button onPress={() => { EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() }); }} style={styles.Withdrawbtn}>
+                  this.props.loginUser && <Button onPress={() => { EasyShowLD.dialogShow("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() }); }} style={styles.Withdrawbtn}>
                     <Text style={styles.Withdrawtext}>领取</Text>
                   </Button>
                 }
