@@ -166,7 +166,7 @@ class TurnOutAsset extends BaseComponent {
                             // type: 'wallet/pushTransaction', payload: { to: this.state.toAccount, amount: this.state.amount, from: this.props.defaultWallet.account, data: r.data.transaction }, callback: (data) => {
                             type: 'wallet/pushTransaction', payload: { from: this.props.defaultWallet.account, to: this.state.toAccount, amount: this.state.amount + " " + this.props.navigation.state.params.coins.asset.name, memo: this.state.memo, data: JSON.stringify(r.data.transaction) }, callback: (result) => {
                                 EasyShowLD.loadingClose();
-                                if (result.code == '0') {
+                                if (result && result.code == '0') {
                                     AnalyticsUtil.onEvent('Turn_out');
                                     EasyToast.show('交易成功');
                                     DeviceEventEmitter.emit('transaction_success');
