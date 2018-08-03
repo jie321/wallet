@@ -508,7 +508,7 @@ class Transaction extends BaseComponent {
             EasyShowLD.loadingClose();
             EasyToast.show('未知异常');
         }
-        EasyShowLD.dialogClose();
+        // EasyShowLD.dialogClose();
     }, () => { EasyShowLD.dialogClose() });
 };
   // 出售内存
@@ -571,7 +571,7 @@ class Transaction extends BaseComponent {
             EasyShowLD.loadingClose();
             EasyToast.show('未知异常');
         }
-        EasyShowLD.dialogClose();
+        // EasyShowLD.dialogClose();
     }, () => { EasyShowLD.dialogClose() });
   };
 

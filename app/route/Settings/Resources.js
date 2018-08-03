@@ -486,7 +486,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
     // 出售内存
@@ -549,7 +549,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
 
@@ -640,7 +640,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() }); 
     };
     //赎回
@@ -727,7 +727,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
 

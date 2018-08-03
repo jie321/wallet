@@ -215,7 +215,7 @@ class Nodevoting extends BaseComponent {
             EasyShowLD.loadingClose();
             EasyToast.show('密码错误');
         }
-        EasyShowLD.dialogClose();
+        // EasyShowLD.dialogClose();
     }, () => { EasyShowLD.dialogClose() }); 
     }
 
@@ -293,7 +293,7 @@ class Nodevoting extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
 
