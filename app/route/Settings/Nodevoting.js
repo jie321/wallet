@@ -7,10 +7,11 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import {EasyDialog} from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
@@ -60,7 +61,7 @@ class Nodevoting extends BaseComponent {
     }
 
     componentDidMount() {
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {     
                 this.props.dispatch({ type: 'vote/list', payload: { page:1}, callback: (data) => {
@@ -70,7 +71,7 @@ class Nodevoting extends BaseComponent {
                             producers : this.props.producers
                         });
                     } });
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                 }});
             }
         })
@@ -105,13 +106,13 @@ class Nodevoting extends BaseComponent {
             <Text style={styles.inptpasstext}>提示：为确保您的投票生效成功，EOS将进行锁仓三天，期间转账或撤票都可能导致投票失败。</Text>  
         </View>
 
-        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+        EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
             // if(Platform.OS == 'android' ){
-            //     EasyLoading.show();
+            //     EasyShowLD.loadingShow();
             // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
@@ -120,7 +121,7 @@ class Nodevoting extends BaseComponent {
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     //投票
                     Eos.transaction({
                         actions:[
@@ -139,7 +140,7 @@ class Nodevoting extends BaseComponent {
                             }
                         ]
                     }, plaintext_privateKey, (r) => {
-                        EasyLoading.dismis();
+                        EasyShowLD.loadingClose();
                         // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
                             AnalyticsUtil.onEvent('vote');
@@ -150,15 +151,15 @@ class Nodevoting extends BaseComponent {
                         }
                     }); 
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
 

@@ -29,10 +29,7 @@ import UImage from "../../utils/Img";
 import AnalyticsUtil from "../../utils/AnalyticsUtil";
 import QRCode from "react-native-qrcode-svg";
 const maxHeight = Dimensions.get("window").height;
-import { EasyDialog } from "../../components/Dialog";
 import { EasyToast } from "../../components/Toast";
-import { EasyLoading } from "../../components/Loading";
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");

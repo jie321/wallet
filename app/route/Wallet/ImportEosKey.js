@@ -6,10 +6,9 @@ import store from 'react-native-simple-store';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
-import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
-import { EasyLoading } from '../../components/Loading';
+import { formatterNumber, formatterUnit, formatEosQua } from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
 import BaseComponent from "../../components/BaseComponent";
@@ -201,7 +200,7 @@ class ImportEosKey extends BaseComponent {
     },500);
 }
   createWalletByPrivateKey(owner_privateKey, active_privatekey){
-    EasyLoading.show('正在请求');
+    EasyShowLD.loadingShow('正在请求');
     try {
       Eos.privateToPublic(active_privatekey, (r) => {
         var active_publicKey = r.data.publicKey;
@@ -213,7 +212,7 @@ class ImportEosKey extends BaseComponent {
             public_key: active_publicKey
           },
           callback: (data) => {
-              EasyLoading.dismis();
+              EasyShowLD.loadingClose();
               if (data == undefined || data.code != '0') {
                 pthis.opendelay(active_publicKey, data);
                 return;
@@ -251,7 +250,7 @@ class ImportEosKey extends BaseComponent {
                 type: 'wallet/saveWalletList',
                 walletList: walletList,
                 callback: (data) => {
-                  EasyLoading.dismis();
+                  EasyShowLD.loadingClose();
                   if (data.error != null) {
                     EasyToast.show('导入私钥失败：' + data.error);
                   } else {
@@ -274,7 +273,7 @@ class ImportEosKey extends BaseComponent {
         });
       });
     } catch (e) {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       EasyToast.show('privateToPublic err: ' + JSON.stringify(e));
     }
   }

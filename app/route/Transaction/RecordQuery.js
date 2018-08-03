@@ -11,9 +11,7 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 import { EasyToast } from "../../components/Toast"
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
-import { Eos } from "react-native-eosjs";
+import { EasyShowLD } from '../../components/EasyShow'
 import moment from 'moment';
 var dismissKeyboard = require('dismissKeyboard');
 var Dimensions = require('Dimensions')
@@ -41,9 +39,9 @@ class RecordQuery extends React.Component {
 
   //加载地址数据
   componentDidMount() {
-    EasyLoading.show();
+    EasyShowLD.loadingShow();
     this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.props.navigation.state.params.record}, callback: (resp) => {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
         this.setState({
           newramTradeLog: [],
@@ -64,8 +62,8 @@ class RecordQuery extends React.Component {
       EasyToast.show('请输入Eos账号');
       return;
     }else{
-      EasyLoading.show();
-      this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: labelname}, callback: (resp) => {
+      EasyShowLD.loadingShow();
+      this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: labelname.toLowerCase()}, callback: (resp) => {
           if(resp.code != '0' || ((resp.code == '0') && (this.props.ramTradeLog.length == 0))){
             this.setState({
               newramTradeLog: [],
@@ -76,8 +74,8 @@ class RecordQuery extends React.Component {
                 newramTradeLog: resp.data,
                 show: false,
             })
-            EasyLoading.dismis();
           }
+          EasyShowLD.loadingClose();
       }});  
     }  
   }
@@ -86,9 +84,12 @@ class RecordQuery extends React.Component {
     this.setState({
       show: false,
       labelname: '',
-      newramTradeLog: []
     });
     this.dismissKeyboardClick();
+  }
+
+  dismissKeyboardClick() {
+    dismissKeyboard();
   }
 
   render() {
@@ -109,24 +110,22 @@ class RecordQuery extends React.Component {
               <Text style={styles.canceltext}>清空</Text>
           </TouchableOpacity> 
       </View>   
-      {this.state.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有抵押记录哟~</Text></View>}       
+      {this.state.show && <View style={styles.nothave}><Text style={styles.copytext}>还没有交易记录哟~</Text></View>}       
       <ListView style={styles.btn} renderRow={this.renderRow} enableEmptySections={true} 
         dataSource={this.state.dataSource.cloneWithRows(this.state.newramTradeLog == null ? [] : this.state.newramTradeLog)} 
         renderRow={(rowData, sectionID, rowID) => (   
-          <View style={{ height: Platform.OS == 'ios' ? 84.5 : 65, backgroundColor: UColor.mainColor, flexDirection: "row",paddingHorizontal: 10,justifyContent: "space-between", borderRadius: 5,margin: 5,}}>
-            <View style={{ flex: 1,flexDirection: "row",alignItems: 'center',justifyContent: "center",}}>
-                <View style={{ flex: 1,flexDirection: "column",justifyContent: "flex-end",}}>
-                    <Text style={{fontSize: 15,color: UColor.fontColor,}}>{rowData.payer}</Text>
-                    <Text style={{fontSize: 15,color: UColor.arrow,}}>{moment(rowData.record_date).add(8,'hours').format('MM-DD HH:mm:ss')}</Text>
-                </View>
-                <View style={{flexDirection: "column",justifyContent: "flex-end",}}>
-                    {rowData.action_name == 'sellram' ? 
-                    <Text style={{fontSize: 14,color: '#F25C49',textAlign: 'center'}}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                    :
-                    <Text style={{fontSize: 14,color: "#4ed694",textAlign: 'center'}}>买 {rowData.eos_qty}</Text>
-                    }
-                    <Text style={{ fontSize: 14,color: UColor.arrow,textAlign: 'center',marginTop: 3}}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
-                </View>
+          <View style={styles.package}>
+            <View style={styles.leftout}>
+              <Text style={styles.payertext}>{rowData.payer}</Text>
+              <Text style={styles.timetext}>{moment(rowData.record_date).add(8,'hours').format('MM-DD HH:mm:ss')}</Text>
+            </View>
+            <View style={styles.rightout}>
+              {rowData.action_name == 'sellram' ? 
+              <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
+              :
+              <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
+              }
+              <Text style={styles.presentprice}>{(rowData.price == null || rowData.price == '0') ? '' : rowData.price}{(rowData.price == null || rowData.price == '0') ? '' :  ' EOS/KB'}</Text>
             </View>
           </View>
         )}                   
@@ -148,6 +147,7 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 7,
+      marginBottom: 5,
       backgroundColor: UColor.mainColor,
     },
     headleftout: {
@@ -199,35 +199,51 @@ const styles = StyleSheet.create({
       fontSize: 16, 
       color: UColor.fontColor
     },
-    outsource: {
-      margin: 5,
-      height: 110,
-      borderRadius: 5,
-      paddingHorizontal: 20,
-      paddingVertical: 10,
-      flexDirection: "row",
+
+    package: {
+      height: 52,
       backgroundColor: UColor.mainColor,
+      flexDirection: "row",
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 5,
+      marginHorizontal: 10,
+      marginVertical: 5,
     },
-    leftout:{
-      flex: 1, alignItems: "flex-start",
+    leftout: {
+      flexDirection: "column",
+      justifyContent: "space-between",
     },
+    payertext: {
+      fontSize: 15,
+      color: UColor.fontColor,
+    },
+    timetext: {
+      fontSize: 15,
+      color: UColor.arrow,
+    },
+   
     rightout: {
-      flex: 1, alignItems: "flex-end", 
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: "space-between",
     },
-    fromtotext: {
-        fontSize: 12,
-        color: UColor.fontColor,
-        lineHeight: 20,
-      },
-      payernet: {
-        fontSize: 12,
-        color: UColor.arrow,
-        marginBottom: 10,
-      },
-      Receivercpu: {
-        fontSize: 12,
-        color: UColor.arrow,
-        lineHeight: 20,
-      },
+    selltext: {
+      flex: 5,
+      fontSize: 15,
+      color: '#F25C49',
+      textAlign: 'right',
+    },
+    buytext: {
+      flex: 5,
+      fontSize: 15,
+      color: "#4ed694",
+      textAlign: 'right',
+    },
+    presentprice: {
+      fontSize: 14,
+      color: UColor.arrow,
+      textAlign: 'right',
+    }
 });
 export default RecordQuery;

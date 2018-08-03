@@ -11,14 +11,11 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import moment from 'moment';
 
-var logPage = 1;
 @connect(({ wallet, assets}) => ({ ...wallet, ...assets }))
 class AssetInfo extends BaseComponent {
     static navigationOptions = ({ navigation }) => {
@@ -43,6 +40,7 @@ class AssetInfo extends BaseComponent {
             asset: this.props.navigation.state.params.asset,
             // detailInfo: "请稍候...",
             logRefreshing: false,
+            logId: "-1",
         };
         DeviceEventEmitter.addListener('transaction_success', () => {
             try {
@@ -62,17 +60,11 @@ class AssetInfo extends BaseComponent {
 
     componentDidMount() {
         //加载地址数据
-        // EasyLoading.show();
+        // EasyShowLD.loadingShow();
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
 
-        logPage = 1;
-        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: logPage, countPerPage: 10}, callback: (resp) => {
-            if(resp.code != '0'){
-                // this.setState({detailInfo: "暂未找到交易哟~"});
-            }else if((resp.code == '0') && (this.props.tradeLog.length == 0)){
-                // this.setState({detailInfo: "您还没有交易哟~"});
-            }
-            // EasyLoading.dismis();
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, last_id: "-1", countPerPage: 10}, callback: (resp) => {
+            this.processResult();
         }});     
     }
 
@@ -80,7 +72,26 @@ class AssetInfo extends BaseComponent {
         //结束页面前，资源释放操作
         super.componentWillUnmount();
         
-      }
+    }
+
+    processResult(){
+        if(this.props.tradeLog && (this.props.tradeLog.length > 0)){
+            this.setState({logId: this.props.tradeLog[this.props.tradeLog.length - 1]._id});
+        }else{
+            this.setState({logId: "-1"});
+        }
+        // if(resp == null || resp.code == null){
+        //     return;
+        // }
+        // if(resp.code != '0'){
+        //     // this.setState({detailInfo: "暂未找到交易哟~"});
+        // }else if((resp.code == '0') && (this.props.tradeLog.length == 0)){
+        //     this.setState({logId: this.props.tradeLog[tradeLog.length - 1]._id});
+        // }else if((resp.code == '0') && (this.props.tradeLog.length > 0)){
+        //     this.setState({logId: this.props.tradeLog[tradeLog.length - 1]._id});
+        // }
+    }
+
     turnInAsset(coins) {
         const { navigate } = this.props.navigation;
         navigate('TurnInAsset', {coins, balance: this.state.balance });
@@ -104,7 +115,7 @@ class AssetInfo extends BaseComponent {
               } else {
                 // EasyToast.show('获取余额失败：' + data.msg);
               }
-              EasyLoading.dismis();
+              EasyShowLD.loadingClose();
             }
           })
     }
@@ -131,14 +142,9 @@ class AssetInfo extends BaseComponent {
         if(this.state.logRefreshing){
             return;
         }
-        logPage += 1;
         this.setState({logRefreshing: true});
-        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: logPage, countPerPage: 10}, callback: (resp) => {
-            if(resp.code != '0' || (resp.code == '0' && resp.data && resp.data.length == 0)){
-                if(logPage > 1){
-                    logPage -= 1;
-                }
-            }
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, last_id: this.state.logId, countPerPage: 10}, callback: (resp) => {
+            this.processResult();
             this.setState({logRefreshing: false});
         }}); 
     }
@@ -151,9 +157,9 @@ class AssetInfo extends BaseComponent {
         if(this.state.logRefreshing){
             return;
         }
-        logPage = 1;
         this.setState({logRefreshing: true});
-        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, page: logPage, countPerPage: 10}, callback: (resp) => {
+        this.props.dispatch({ type: 'assets/getTradeDetails', payload: { account_name : this.props.defaultWallet.name, contract_account : this.state.asset.asset.contractAccount,  code : this.state.asset.asset.name, last_id: "-1", countPerPage: 10}, callback: (resp) => {
+            this.processResult();
             this.setState({logRefreshing: false});
         }}); 
     }

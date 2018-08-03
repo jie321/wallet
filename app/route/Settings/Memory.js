@@ -7,10 +7,11 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import {EasyDialog} from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 const ScreenWidth = Dimensions.get('window').width;
@@ -90,10 +91,10 @@ class Memory extends BaseComponent {
     }
 
     componentDidMount() {
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({type: 'wallet/getDefaultWallet', callback: (data) => {  
             this.getAccountInfo();
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }});   
 
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
@@ -227,7 +228,7 @@ class Memory extends BaseComponent {
                 <Text style={styles.inptpasstext}></Text>  
             </View>
     
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
     
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
@@ -242,14 +243,14 @@ class Memory extends BaseComponent {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     if(this.state.isBuyOneself){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
                     // alert("isBuyOneself: " + this.state.isBuyOneself + " receiver: "+this.state.receiver+" amount: " + this.state.buyRamAmount + " account: "+this.props.defaultWallet.account);
 
-                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.buyRamAmount + " EOS", (r) => {
-                        EasyLoading.dismis();
+                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.buyRamAmount + " EOS"), (r) => {
+                        EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();
                             EasyToast.show("购买成功");
@@ -266,15 +267,15 @@ class Memory extends BaseComponent {
                     });
 
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
     sellram = (rowData) => { // 选中用户
@@ -308,7 +309,7 @@ class Memory extends BaseComponent {
                 <Text style={styles.inptpasstext}></Text>  
             </View>
     
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
     
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
@@ -322,10 +323,10 @@ class Memory extends BaseComponent {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     // alert("receiver: "+this.props.defaultWallet.account+" " + "sellBytes: " + this.state.sellRamBytes);
                     Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
-                        EasyLoading.dismis();
+                        EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();
                             EasyToast.show("出售成功");
@@ -342,15 +343,15 @@ class Memory extends BaseComponent {
                     });
                     
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
     dismissKeyboardClick() {

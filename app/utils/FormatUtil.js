@@ -55,3 +55,32 @@ export const formatterUnit = (number) =>{
     return number;
   }
 }
+
+export const formatEosQua = (amount, precision = 4) =>{
+  var e = amount.split(" ");
+  if(e.length > 1 && e[1] == "IQ"){
+    precision = 3;
+  }
+  r=e[0].split(".");
+  if(r.length>1){
+    if(r[1].length <= precision){
+      var n=precision-r[1].length;
+      amount=e[0];
+      for(var i=0;i<n;i++){
+        amount+="0";
+      }
+    }else{
+      r[1] = r[1].substr(0, precision);
+      amount = r[0] + "." + r[1];
+    }
+
+    amount=amount+" "+e[1];
+  }else{
+    var zeroSection = '';
+    for(var i = 0; i < precision; i++){
+      zeroSection += '0'; 
+    }
+    amount=e[0]+"."+ zeroSection + " " + e[1];
+  }
+  return amount;
+}

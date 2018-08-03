@@ -7,9 +7,9 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+import { EasyShowLD } from "../../components/EasyShow"
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
 import {NavigationActions} from 'react-navigation';
@@ -91,7 +91,7 @@ class BackupsPkey extends BaseComponent {
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent"/>
             </View>
 
-        EasyDialog.show("密码", view, "备份", "取消", () => {
+        EasyShowLD.dialogShow("密码", view, "备份", "取消", () => {
 
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
@@ -121,8 +121,8 @@ class BackupsPkey extends BaseComponent {
         }catch(e){
             EasyToast.show('密码错误');
         }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     }
 
     dismissKeyboardClick() {

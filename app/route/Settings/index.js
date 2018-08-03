@@ -7,9 +7,9 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+import { EasyShowLD } from '../../components/EasyShow'
 
 var DeviceInfo = require('react-native-device-info');
 
@@ -23,10 +23,9 @@ class Setting extends React.Component {
 
   constructor(props) {
     super(props);
-    
     this.config = [
       { avatar:UImage.my_wallet, first: true, name: "钱包管理", onPress: this.goPage.bind(this, "WalletManage") },
-      // { avatar:UImage.my_share,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
+      { avatar:UImage.my_share,  name: "邀请注册", onPress: this.goPage.bind(this, "share") },
       // { avatar:UImage.my_recovery, name: "密钥恢复", onPress: this.goPage.bind(this, "Test1") },
       { avatar:UImage.my_community, name: "EOS社区", onPress: this.goPage.bind(this, "Community") },
       { avatar:UImage.my_help, name: "帮助中心", onPress: this.goPage.bind(this, "Helpcenter") },
@@ -58,7 +57,7 @@ class Setting extends React.Component {
     }else if (key == 'Helpcenter') {
       navigate('Helpcenter', {});
     } else{
-      EasyDialog.show("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogShow("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
   }
 
@@ -141,7 +140,7 @@ class Setting extends React.Component {
               </View>
               <View style={styles.Withdrawout}>
                 {
-                  this.props.loginUser && <Button onPress={() => { EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() }); }} style={styles.Withdrawbtn}>
+                  this.props.loginUser && <Button onPress={() => { EasyShowLD.dialogShow("温馨提示", "暂未开放，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() }); }} style={styles.Withdrawbtn}>
                     <Text style={styles.Withdrawtext}>领取</Text>
                   </Button>
                 }

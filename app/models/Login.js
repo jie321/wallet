@@ -159,6 +159,7 @@ export default {
       }else{
         jpush = !jpush;
       }
+      if (callback) callback({ jpush: jpush });
       yield call(store.save, 'jpush', jpush);
     },
     *getJpush({ payload,callback }, { call, put }) {
@@ -184,21 +185,6 @@ export default {
     },
 
   },
-  // *fetchPoint({ payload }, { call, put }) {
-  //   alert('fetchPoint');
-  //   try {
-  //     const resp = yield call(Request.request, fetchPoint, 'post', payload);
-  //     if (resp.code == 0) {
-  //       const userpoint = resp.data;
-  //       alert(userpoint);
-  //       // yield put({ type: 'update', payload: { pointInfo: resp.data } });
-  //       // yield call(store.save, 'userpoint',userpoint);
-  //     }
-  //     // if (callback) callback(resp);
-  //   } catch (error) {
-  //     if (callback) callback({ code: 500, msg: "网络异常" });
-  //   }
-  // },
   reducers: {
     update(state, action) {
       return { ...state, ...action.payload };

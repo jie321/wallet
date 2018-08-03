@@ -12,8 +12,8 @@ import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from "../../components/EasyShow"
+
 import ViewShot from "react-native-view-shot";
 import BaseComponent from "../../components/BaseComponent";
 import {NavigationActions} from 'react-navigation';
@@ -101,21 +101,21 @@ class BackupsAOkey extends BaseComponent {
     let active = wallet.activePublic;
 
     try {
-    EasyLoading.show('正在请求');
+    EasyShowLD.loadingShow('正在请求');
     //检测账号是否已经激活
     this.props.dispatch({
         type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
             if(result.code == 0 && result.data == true){
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 wallet.isactived = true
                 this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
                 //msg:success,data:true, code:0 账号已存在
-                EasyDialog.show("恭喜激活成功", (<View>
+                EasyShowLD.dialogShow("恭喜激活成功", (<View>
                     <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
                     {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
-                </View>), "知道了", null,  () => {EasyDialog.dismis(), this.pop(3, true) });
+                </View>), "知道了", null,  () => {EasyShowLD.dialogClose(), this.pop(3, true) });
             }else {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 this.goToPayForActive({parameter:wallet, entry: entry});
             // this.props.dispatch({
             //     type: "login/fetchPoint", payload: { uid: Constants.uid }, callback:(data) =>{
@@ -123,13 +123,13 @@ class BackupsAOkey extends BaseComponent {
             //         this.props.dispatch({
             //           type: 'login/logout', payload: {}, callback: () => {}
             //         });      
-            //         EasyLoading.dismis();
+            //         EasyShowLD.loadingClose();
             //         this.goToPayForActive({parameter:wallet, entry: "backupWallet"})
             //         return false;   
             //       }else if(data.code == 0){
             //         this.props.dispatch({
             //           type: 'wallet/createAccountService', payload: { username:name, owner: owner, active: active, isact:true}, callback: (data) => {
-            //             EasyLoading.dismis();
+            //             EasyShowLD.loadingClose();
             //             if (data.code == '0') {
             //               wallet.isactived = true
             //               this.props.dispatch({
@@ -145,14 +145,14 @@ class BackupsAOkey extends BaseComponent {
             //                 }
             //               });
             //             }else{
-            //               EasyLoading.dismis();
+            //               EasyShowLD.loadingClose();
             //               this.goToPayForActive({parameter:wallet, entry: "backupWallet"})
             //               return false;
             //             }
             //           }
             //         });
             //       }else{
-            //         EasyLoading.dismis();
+            //         EasyShowLD.loadingClose();
             //         this.goToPayForActive({parameter:wallet, entry: "backupWallet"})
             //         return false;   
             //       }
@@ -162,7 +162,7 @@ class BackupsAOkey extends BaseComponent {
         }
     });
     } catch (error) {
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       this.goToPayForActive({parameter:wallet, entry: entry})
       return false;
     }

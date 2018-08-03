@@ -7,11 +7,12 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import {EasyDialog} from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 const maxWidth = Dimensions.get('window').width;
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 var AES = require("crypto-js/aes");
@@ -50,12 +51,12 @@ class Imvote extends BaseComponent {
     }
 
     componentDidMount() {
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {     
                 this.props.dispatch({ type: 'vote/list', payload: { page:1}, callback: (data) => {
                     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                 }});
             }
         })
@@ -106,14 +107,14 @@ class Imvote extends BaseComponent {
                 <Text style={styles.inptpasstext}></Text>  
             </View>
     
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
     
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
             // if(Platform.OS == 'android' ){
-            //     EasyLoading.show();
+            //     EasyShowLD.loadingShow();
             // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
@@ -123,7 +124,7 @@ class Imvote extends BaseComponent {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     //撤票
                     Eos.transaction({
                         actions:[
@@ -142,7 +143,7 @@ class Imvote extends BaseComponent {
                             }
                         ]
                     }, plaintext_privateKey, (r) => {
-                        EasyLoading.dismis();
+                        EasyShowLD.loadingClose();
                         // alert(JSON.stringify(r.data));
                         if(r.data && r.data.transaction_id){
                             this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.defaultWallet.account} });
@@ -153,15 +154,15 @@ class Imvote extends BaseComponent {
                         }
                     }); 
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
 

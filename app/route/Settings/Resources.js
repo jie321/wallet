@@ -14,13 +14,14 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { EasyLoading } from '../../components/Loading';
+
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 import ViewShot from "react-native-view-shot";
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import moment from 'moment';
 var dismissKeyboard = require('dismissKeyboard');
 const _index = 0;
@@ -88,7 +89,7 @@ class Resources extends BaseComponent {
      
     try {
 
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({ type: 'vote/getGlobalInfo', payload: {},});
 
         this.props.dispatch({
@@ -141,11 +142,11 @@ class Resources extends BaseComponent {
                     });
                 }
             } catch (error) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
             }
         });
     } catch (error) {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
     }
   }
 
@@ -270,7 +271,7 @@ class Resources extends BaseComponent {
         //         percentageThree: '',
         //     })
         // } 
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
     }
 
      // 更新"内存，计算，网络，内存交易"按钮的状态  
@@ -445,7 +446,7 @@ class Resources extends BaseComponent {
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}></Text>  
             </View>
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
@@ -456,12 +457,12 @@ class Resources extends BaseComponent {
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.buyRamAmount + " EOS", (r) => {
-                        EasyLoading.dismis();
+                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.buyRamAmount + " EOS"), (r) => {
+                        EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();
                             EasyToast.show("购买成功");
@@ -478,15 +479,15 @@ class Resources extends BaseComponent {
                         }
                     });
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
     // 出售内存
     sellram = (rowData) => {
@@ -510,7 +511,7 @@ class Resources extends BaseComponent {
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}></Text>  
             </View>
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
@@ -521,9 +522,9 @@ class Resources extends BaseComponent {
                 var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     Eos.sellram(plaintext_privateKey, this.props.defaultWallet.account, this.state.sellRamBytes * 1024, (r) => {
-                        EasyLoading.dismis();
+                        EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();
                             EasyToast.show("出售成功");
@@ -541,15 +542,15 @@ class Resources extends BaseComponent {
                     });
                     
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
     // 抵押
@@ -574,7 +575,7 @@ class Resources extends BaseComponent {
                 placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
                 <Text style={styles.inptpasstext}>提示：抵押 {this.state.delegateb} EOS</Text>
         </View>
-        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+        EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
@@ -591,11 +592,11 @@ class Resources extends BaseComponent {
                     if(this.state.isOthers && this.state.isTransfer){
                         this.state.LeaseTransfer = 1;
                     }
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     // 计算
                     if(this.state.isCalculation){
-                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegateb + " EOS", "0 EOS", this.state.LeaseTransfer, (r) =>{
-                            EasyLoading.dismis();
+                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.delegateb + " EOS"), formatEosQua("0 EOS"), this.state.LeaseTransfer, (r) =>{
+                            EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
                                 EasyToast.show("抵押成功");
@@ -613,8 +614,8 @@ class Resources extends BaseComponent {
                         });
                         // 网络
                     }else if(this.state.isNetwork){
-                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegateb + " EOS", this.state.LeaseTransfer,(r) =>{
-                            EasyLoading.dismis();
+                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  formatEosQua("0 EOS"), formatEosQua(this.state.delegateb + " EOS"), this.state.LeaseTransfer,(r) =>{
+                            EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
                                 EasyToast.show("抵押成功");
@@ -632,15 +633,15 @@ class Resources extends BaseComponent {
                         });
                     }
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() }); 
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() }); 
     };
     //赎回
     undelegateb = () => { 
@@ -665,7 +666,7 @@ class Resources extends BaseComponent {
                 <Text style={styles.inptpasstext}>提示：赎回 {this.state.undelegateb} EOS</Text>
             </View>
     
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
@@ -679,11 +680,11 @@ class Resources extends BaseComponent {
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     // 解除抵押
                     if(this.state.isCalculation){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegateb + " EOS", "0 EOS", (r) => {
-                            EasyLoading.dismis();
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.undelegateb + " EOS"), formatEosQua("0 EOS"), (r) => {
+                            EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
                                 EasyToast.show("赎回成功");
@@ -700,8 +701,8 @@ class Resources extends BaseComponent {
                             }
                         })
                     }else if(this.state.isNetwork){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegateb + " EOS", (r) => {
-                            EasyLoading.dismis();
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua("0 EOS"), formatEosQua(this.state.undelegateb + " EOS"), (r) => {
+                            EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
                                 EasyToast.show("赎回成功");
@@ -719,15 +720,15 @@ class Resources extends BaseComponent {
                         })
                     }
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
     dismissKeyboardClick() {
@@ -904,6 +905,7 @@ class Resources extends BaseComponent {
                                 <Text style={styles.basctext}>提示</Text>
                                 <Text style={styles.basctext}>获取资源需要抵押EOS </Text>
                                 <Text style={styles.basctext}>抵押的EOS可撤销抵押，并于3天后退回</Text>
+                                <Text style={styles.basctext}>租赁抵押出的EOS可自行赎回到自己的账号，过户的抵押EOS将无法赎回！</Text>
                             </View>}
                         </View>}
                 </TouchableOpacity>

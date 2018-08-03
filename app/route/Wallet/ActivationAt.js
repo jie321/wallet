@@ -9,9 +9,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+import { EasyShowLD } from "../../components/EasyShow"
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
 import {NavigationActions} from 'react-navigation';
@@ -95,47 +95,47 @@ class ActivationAt extends BaseComponent {
      //未激活账号直接删除
     checkDeleteWallet = () =>{
         const c = this.props.navigation.state.params.parameter;
-      EasyDialog.show("免责声明",  (<View>
+      EasyShowLD.dialogShow("免责声明",  (<View>
         <Text style={{color: UColor.arrow,fontSize: 14,}}>删除过程中会检测您的账号是否已激活，如果您没有备份私钥，删除后将无法找回！请确保该账号不再使用后再删除！</Text>
         </View>),"下一步","返回钱包",  () => {
-            EasyDialog.dismis();
-            EasyLoading.show();
+            EasyShowLD.dialogClose();
+            EasyShowLD.loadingShow();
                 //检测账号是否已经激活
             this.props.dispatch({
                 type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: c.name, owner: c.ownerPublic, active: c.activePublic}, callback:(result) =>{
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     if(result.code == 0 && result.data == true){
                         //msg:success,data:true, code:0 账号已存在
-                        EasyDialog.show("免责声明",  (<View>
+                        EasyShowLD.dialogShow("免责声明",  (<View>
                             <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
                         </View>),"执意删除","返回钱包",  () => {
                             this.deleteWallet();
-                            EasyDialog.dismis()
-                        }, () => { EasyDialog.dismis() });
+                            EasyShowLD.dialogClose()
+                        }, () => { EasyShowLD.dialogClose() });
                     }else if(result.code == 521){
                         //msg:账号不存在,data:null,code:521
-                        EasyDialog.show("免责声明",  (<View>
+                        EasyShowLD.dialogShow("免责声明",  (<View>
                             <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果您不打算激活此账号，建议删除。</Text>
                         </View>),"删除","取消",  () => {
                             this.deletionDirect();
-                            EasyDialog.dismis()
-                        }, () => { EasyDialog.dismis() });
+                            EasyShowLD.dialogClose()
+                        }, () => { EasyShowLD.dialogClose() });
                     }else {
-                        EasyDialog.show("免责声明",  (<View>
+                        EasyShowLD.dialogShow("免责声明",  (<View>
                             <Text style={{color: UColor.arrow,fontSize: 14,}}>网络异常, 暂不能检测到账号是否已经激活, 建议暂不删除此账号, 如果执意删除请先导出私钥并保存好，否则删除后无法找回。</Text>
                           </View>),"执意删除","取消",  () => {
                               this.deletionDirect();
-                              EasyDialog.dismis()
-                          }, () => { EasyDialog.dismis() });
+                              EasyShowLD.dialogClose()
+                          }, () => { EasyShowLD.dialogClose() });
                     }
                 }
             })
-        }, () => { EasyDialog.dismis() });
+        }, () => { EasyShowLD.dialogClose() });
     }
 
       //未激活账号直接删除
     deletionDirect() {
-        EasyDialog.dismis();
+        EasyShowLD.dialogClose();
         var data = this.props.navigation.state.params.parameter;
         this.props.dispatch({ type: 'wallet/delWallet', payload: { data } });
         //删除tags
@@ -156,14 +156,14 @@ class ActivationAt extends BaseComponent {
 
     //已激活账号需要验证密码
     deleteWallet() {
-        EasyDialog.dismis();
+        EasyShowLD.dialogClose();
         const view =
         <View style={styles.passoutsource}>
             <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go" 
             selectionColor={UColor.tintColor} secureTextEntry={true}  keyboardType="ascii-capable"  style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
             placeholderTextColor={UColor.arrow}  placeholder="请输入密码"  underlineColorAndroid="transparent" />
         </View>
-        EasyDialog.show("密码", view, "确定", "取消", () => {
+        EasyShowLD.dialogShow("密码", view, "确定", "取消", () => {
         if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
             EasyToast.show('密码长度至少4位,请重输');
             return;
@@ -200,8 +200,8 @@ class ActivationAt extends BaseComponent {
         } catch (error) {
             EasyToast.show('您输入的密码不正确');
         }
-        EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     }
         
     dismissKeyboardClick() {
@@ -235,19 +235,19 @@ class ActivationAt extends BaseComponent {
     
         try {
             //检测账号是否已经激活
-            EasyDialog.dismis();
-            EasyLoading.show();
+            EasyShowLD.dialogClose();
+            EasyShowLD.loadingShow();
             this.props.dispatch({
                 type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     if(result.code == 0 && result.data == true){
                         wallet.isactived = true
                         this.props.dispatch({type: 'wallet/activeWallet', wallet: wallet});
                         //msg:success,data:true, code:0 账号已存在
-                        EasyDialog.show("恭喜激活成功", (<View>
+                        EasyShowLD.dialogShow("恭喜激活成功", (<View>
                             <Text style={{fontSize: 20, color: UColor.showy, textAlign: 'center',}}>{name}</Text>
                             {/* <Text style={styles.inptpasstext}>您申请的账号已经被***激活成功</Text> */}
-                        </View>), "知道了", null,  () => { EasyDialog.dismis() });
+                        </View>), "知道了", null,  () => { EasyShowLD.dialogClose() });
                     }else if(result.code == 521){
                         //msg:账号不存在,data:null,code:521
                         EasyToast.show("账户还未成功激活！请确认支付后再次尝试！");
@@ -260,7 +260,7 @@ class ActivationAt extends BaseComponent {
                 }
             });
         } catch (error) {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
         }
     }
 

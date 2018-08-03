@@ -7,8 +7,8 @@ import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 
 import { EasyToast } from "../../components/Toast"
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
 var Dimensions = require('Dimensions')
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
@@ -47,7 +47,7 @@ class FunctionsMore extends React.Component {
     }else if(key == 'Bvote'){
       navigate('Bvote', {});
     } else{
-      EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+      EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
   }
 

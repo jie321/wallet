@@ -7,10 +7,10 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
 import { EasyToast } from '../../components/Toast';
-import {EasyDialog} from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 const maxWidth = Dimensions.get('window').width;
@@ -66,7 +66,7 @@ class Nodevoting extends BaseComponent {
     }
 
     componentDidMount() {
-        EasyLoading.show();
+        EasyShowLD.loadingShow();
         this.props.dispatch({
             type: 'wallet/getDefaultWallet', callback: (data) => {
                 this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: data.defaultWallet.account},callback: (data) => {
@@ -85,7 +85,7 @@ class Nodevoting extends BaseComponent {
                             undelegate_cpu:data.rows[0].cpu_amount.replace("EOS", ""),
                         });
                     }
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                 } });
 
             }
@@ -123,10 +123,10 @@ class Nodevoting extends BaseComponent {
         } else {
           this.setState({ balance: '0'})
           // this.props.defaultWallet.name = 'xxxx';
-          //   EasyDialog.show("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
+          //   EasyShowLD.dialogShow("温馨提示", "您还没有创建钱包", "创建一个", "取消", () => {
           //   this.createWallet();
-          //   EasyDialog.dismis()
-          // }, () => { EasyDialog.dismis() });
+          //   EasyShowLD.dialogClose()
+          // }, () => { EasyShowLD.dialogClose() });
         }
       }
 
@@ -159,14 +159,14 @@ class Nodevoting extends BaseComponent {
                 <Text style={styles.inptpasstext}>提示：抵押 {this.state.delegatebw} EOS</Text>
         </View>
 
-        EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+        EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
 
         if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
             EasyToast.show('密码长度至少4位,请重输');
             return;
         }
         // if(Platform.OS == 'android' ){
-        //     EasyLoading.show();
+        //     EasyShowLD.loadingShow();
         // }
 
         var privateKey = this.props.defaultWallet.activePrivate;
@@ -175,7 +175,7 @@ class Nodevoting extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
-                EasyLoading.show();
+                EasyShowLD.loadingShow();
                 // 抵押
                 Eos.transaction({
                     actions:[
@@ -189,14 +189,14 @@ class Nodevoting extends BaseComponent {
                             data:{
                                 from: this.props.defaultWallet.account,
                                 receiver: this.props.defaultWallet.account,
-                                stake_net_quantity: this.state.net,
-                                stake_cpu_quantity: this.state.cpu,
+                                stake_net_quantity: formatEosQua(this.state.net),
+                                stake_cpu_quantity: formatEosQua(this.state.cpu),
                                 transfer: 0
                             }
                         }
                     ]
                 }, plaintext_privateKey, (r) => {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     if(r.data && r.data.transaction_id){
                         EasyToast.show("抵押成功");
                     }else if(r.data && JSON.parse(r.data).code != 0){
@@ -208,15 +208,15 @@ class Nodevoting extends BaseComponent {
                     // alert(JSON.parse(r.data).code);
                 }); 
             } else {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
         } catch (e) {
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
             EasyToast.show('密码错误');
         }
-        EasyDialog.dismis();
-    }, () => { EasyDialog.dismis() }); 
+        EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() }); 
     }
 
     undelegatebw = () => { 
@@ -238,14 +238,14 @@ class Nodevoting extends BaseComponent {
                 <Text style={styles.inptpasstext}>提示：赎回 {this.state.delegatebw} EOS</Text>
             </View>
     
-            EasyDialog.show("请输入密码", view, "确认", "取消", () => {
+            EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
     
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
             }
             // if(Platform.OS == 'android' ){
-            //     EasyLoading.show();
+            //     EasyShowLD.loadingShow();
             // }
 
             var privateKey = this.props.defaultWallet.activePrivate;
@@ -255,7 +255,7 @@ class Nodevoting extends BaseComponent {
                 if (plaintext_privateKey.indexOf('eostoken') != -1) {
                     plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                     // alert("plaintext_privateKey "+plaintext_privateKey);
-                    EasyLoading.show();
+                    EasyShowLD.loadingShow();
                     // 解除抵押
                     Eos.transaction({
                         actions:[
@@ -269,13 +269,13 @@ class Nodevoting extends BaseComponent {
                                 data:{
                                     from: this.props.defaultWallet.account,
                                     receiver: this.props.defaultWallet.account,
-                                    unstake_net_quantity: this.state.net,
-                                    unstake_cpu_quantity: this.state.cpu,
+                                    unstake_net_quantity: formatEosQua(this.state.net),
+                                    unstake_cpu_quantity: formatEosQua(this.state.cpu),
                                 }
                             }
                         ]
                     }, plaintext_privateKey, (r) => {
-                        EasyLoading.dismis();
+                        EasyShowLD.loadingClose();
                         if(r.data && r.data.transaction_id){
                             EasyToast.show("解除抵押成功");
                         }else if(r.data && JSON.parse(r.data).code != 0){
@@ -286,15 +286,15 @@ class Nodevoting extends BaseComponent {
                     }); 
 
                 } else {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     EasyToast.show('密码错误');
                 }
             } catch (e) {
-                EasyLoading.dismis();
+                EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyDialog.dismis();
-        }, () => { EasyDialog.dismis() });
+            EasyShowLD.dialogClose();
+        }, () => { EasyShowLD.dialogClose() });
     };
 
 

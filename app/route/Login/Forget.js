@@ -7,9 +7,9 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 import {kapimg} from '../../utils/Api'
 import Constants from '../../utils/Constants'
 import BaseComponent from "../../components/BaseComponent";
@@ -60,9 +60,9 @@ class Forget extends BaseComponent {
       EasyToast.show('请输入11位手机号');
       return;
     }
-    EasyLoading.show('修改中...');
+    EasyShowLD.loadingShow('修改中...');
     this.props.dispatch({type:'login/changePwd',payload:{phone:this.state.phone,password:this.state.password,code:this.state.code},callback:(data)=>{
-      EasyLoading.dismis();
+      EasyShowLD.loadingClose();
       if(data.code==0){
         EasyToast.show("修改成功");
         this.props.navigation.goBack();
@@ -74,7 +74,7 @@ class Forget extends BaseComponent {
 
 
   refresh = () =>{
-    EasyDialog.dismis();
+    EasyShowLD.dialogClose();
     this.kcaptrue();
   }
 
@@ -107,7 +107,7 @@ class Forget extends BaseComponent {
           />
       </View>
   
-      EasyDialog.show("计算结果",view,"获取","取消",()=>{
+      EasyShowLD.dialogShow("计算结果",view,"获取","取消",()=>{
       
       if(this.state.kcode==""){
         EasyToast.show('请输入计算结果');
@@ -116,7 +116,7 @@ class Forget extends BaseComponent {
 
       this.getCapture();
 
-    },()=>{EasyDialog.dismis()});
+    },()=>{EasyShowLD.dialogClose()});
   }
 
   getCapture = () =>{
@@ -141,18 +141,18 @@ class Forget extends BaseComponent {
 
     var th = this;
 
-    EasyLoading.show('获取中...');
+    EasyShowLD.loadingShow('获取中...');
     this.props.dispatch({type:'login/getCapture',payload:{phone:this.state.phone,code:this.state.kcode},callback:(data)=>{
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
         if(data.code==0){
           EasyToast.show("验证码已发送，请注意查收");
           th.setState({capture:"60s", captureState: true});
           th.doTick();
-          EasyDialog.dismis();
+          EasyShowLD.dialogClose();
         }else{
           EasyToast.show(data.msg);
           if(data.code!=505){
-            EasyDialog.dismis();
+            EasyShowLD.dialogClose();
           }
         }
     }});

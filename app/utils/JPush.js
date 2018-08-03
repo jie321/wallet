@@ -1,6 +1,6 @@
 import {Platform,DeviceEventEmitter} from 'react-native';
 import JPushModule from 'jpush-react-native';
-import { EasyDialog } from '../components/Dialog';
+import { EasyShowLD } from "../components/EasyShow"
 const init = (navigation) => {
     
     if (Platform.OS === 'android') {
@@ -22,7 +22,7 @@ const init = (navigation) => {
                     let nav = extras.url.replace("eostoken://","")
                     navigation(nav,extras.params?extras.params:{});
                 }else if(extras.url.startsWith("alert://")){
-                    EasyDialog.show("温馨提示",map.alertContent,"知道了",null,()=>{EasyDialog.dismis()});
+                    EasyShowLD.dialogShow("温馨提示",map.alertContent,"知道了",null,()=>{EasyShowLD.dialogClose()});
                 }else{
 
                 }
@@ -51,7 +51,7 @@ const init = (navigation) => {
                 let nav = extras.url.replace("eostoken://", "")
                 navigation(nav, extras.params ? extras.params : {});
             } else if (extras.url.startsWith("alert://")) {
-                EasyDialog.show("温馨提示", map.alertContent, "知道了", null, () => { EasyDialog.dismis() });
+                EasyShowLD.dialogShow("温馨提示", map.alertContent, "知道了", null, () => { EasyShowLD.dialogClose() });
             } else if (extras.url.startsWith("transfer://")) {
 
             } else {

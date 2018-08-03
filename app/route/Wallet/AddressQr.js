@@ -9,9 +9,8 @@ import Echarts from 'native-echarts'
 import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
-import { EasyDialog } from "../../components/Dialog"
+import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({ wallet }) => ({ ...wallet }))
@@ -30,7 +29,7 @@ class AddressQr extends BaseComponent {
     };
 
     componentDidMount() {
-        // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        // EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
         //加载地址数据
         const { dispatch } = this.props;
         this.props.dispatch({ type: 'wallet/getDefaultWallet' });
@@ -51,11 +50,11 @@ class AddressQr extends BaseComponent {
         
       }
     onPress(action) {
-        EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyDialog.dismis() });
+        EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待！", "知道了", null, () => { EasyShowLD.dialogClose() });
     }
 
     _rightButtonClick() {
-        // EasyDialog.show("温馨提示", "该功能正在紧急开发中，敬请期待", "知道了", null, () => { EasyDialog.dismis() });
+        // EasyShowLD.dialogShow("温馨提示", "该功能正在紧急开发中，敬请期待", "知道了", null, () => { EasyShowLD.dialogClose() });
         this._setModalVisible();
     }
 

@@ -7,10 +7,11 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-import { EasyLoading } from '../../components/Loading';
-import { EasyDialog } from "../../components/Dialog";
+
+import { EasyShowLD } from "../../components/EasyShow"
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import { english } from '../../utils/english';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
@@ -113,9 +114,9 @@ class createWallet extends BaseComponent {
 
     try {
       // 检测账号是否已经在EOS主网上存在
-      EasyLoading.show();
+      EasyShowLD.loadingShow();
       this.props.dispatch({type: 'wallet/isExistAccountName', payload: {account_name: this.state.walletName}, callback: (resp) => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
         if(resp.code == '0'){ 
           // 账户已被注册, 异常处理
           EasyToast.show("账号已被别人占用，请换个账号吧！");
@@ -163,7 +164,7 @@ class createWallet extends BaseComponent {
                   type: 'wallet/saveWallet',
                   wallet: result,
                   callback: (wallet) => {
-                    EasyLoading.dismis();
+                    EasyShowLD.loadingClose();
                     this.backupWallet(wallet);
                   }
                 });
@@ -176,13 +177,13 @@ class createWallet extends BaseComponent {
 
   } catch (error) {
     EasyToast.show(error);
-    EasyLoading.dismis();
+    EasyShowLD.loadingClose();
   }
 
   }
 
   ExplainPopup(){
-  EasyDialog.show("EOS账号创建说明", (<View>
+  EasyShowLD.dialogShow("EOS账号创建说明", (<View>
      <View style={{flexDirection: 'column', marginBottom: 10,}}>
        <Text style={{textAlign: 'left', color: UColor.showy,}}>生成账号失败：{this.state.errormsg}</Text>
        <Text style={{textAlign: 'left', color: UColor.showy,}}>错误码：{this.state.errorcode}</Text>
@@ -192,9 +193,9 @@ class createWallet extends BaseComponent {
      <Text style={styles.inptpasstext}>3.活跃用户每天均可获得对应的积分（详情参考积分细则）</Text>
      <Text style={styles.Becarefultext}>注意：不要向未激活的钱包进行转账！</Text>
   </View>), "知道了", null, () => {
-    EasyDialog.dismis();
+    EasyShowLD.dialogClose();
     this.props.navigation.goBack();
-  }, () => { EasyDialog.dismis() });
+  }, () => { EasyShowLD.dialogClose() });
   }
 
   clearFoucs = () => {

@@ -4,8 +4,8 @@ import {StyleSheet, View, Text, Image,Platform, Clipboard,} from 'react-native';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import QRCode from "react-native-qrcode-svg";
-import { EasyDialog } from "../../components/Dialog"
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from '../../components/EasyShow'
+
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 

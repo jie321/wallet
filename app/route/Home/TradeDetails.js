@@ -9,7 +9,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 import moment from 'moment';
@@ -54,6 +54,9 @@ class TradeDetails extends BaseComponent {
     }else  if (key == 'to') {
     navigate('Web', { title: "接受方", url:'https://eospark.com/MainNet/account/' + this.props.navigation.state.params.trade.to});
     }else  if (key == 'blockNum') {
+    if(this.props.navigation.state.params.trade.blockNum == null || this.props.navigation.state.params.trade.blockNum == ""){
+      return;
+    }
     navigate('Web', { title: "区块高度", url:'https://eospark.com/MainNet/block/' + this.props.navigation.state.params.trade.blockNum});
     }
   }
@@ -90,7 +93,7 @@ class TradeDetails extends BaseComponent {
           </View>
           <View style={styles.conouttext}> 
             <Text style={styles.context}>区块高度：</Text>
-            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text>
+            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'blockNum')}>{(c.blockNum == null || c.blockNum == "") ? '未确认' : c.blockNum}</Text>
           </View>
           <View style={styles.conouttext}>
             <Text style={styles.context}> 备    注 ：</Text>

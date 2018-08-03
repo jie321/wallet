@@ -6,10 +6,9 @@ import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import {EasyDialog} from '../../components/Dialog'
-import { Eos } from "react-native-eosjs";
+import { EasyShowLD } from "../../components/EasyShow"
 import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");

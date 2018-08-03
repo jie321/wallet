@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-import { EasyLoading } from '../../components/Loading';
+import { EasyShowLD } from "../../components/EasyShow"
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 let {width, height} = Dimensions.get('window');
@@ -42,9 +42,9 @@ class ProblemFeedback extends BaseComponent {
         EasyToast.show('请输入问题反馈');
         return;
     }else{
-        EasyLoading.show('正在提交');
+        EasyShowLD.loadingShow('正在提交');
         setTimeout( ()  =>{
-            EasyLoading.dismis();
+            EasyShowLD.loadingClose();
             EasyToast.show("提交成功，非常感谢您对EosToken的支持！");
             this.setState({
                 delegatebw: '',

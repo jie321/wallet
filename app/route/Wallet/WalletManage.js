@@ -7,9 +7,9 @@ import Button from '../../components/Button'
 import Item from '../../components/Item'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
-import { EasyDialog } from '../../components/Dialog';
+import { EasyShowLD } from '../../components/EasyShow'
 import store from 'react-native-simple-store';
 import BaseComponent from "../../components/BaseComponent";
 
@@ -115,8 +115,8 @@ class WalletManage extends BaseComponent {
 
       <View style={styles.header}>  
         <View style={styles.leftout} >
-        {Platform.OS === 'ios' && <Ionicons style={{ color: UColor.fontColor,   }} name="ios-arrow-back" size={40} onPress={this._leftTopClick.bind()}/>}
-        {Platform.OS === 'android' && <Ionicons style={{ color: UColor.fontColor,   }} name="ios-arrow-round-back-outline" size={40} onPress={this._leftTopClick.bind()}/> }
+        {Platform.OS === 'ios' && <Ionicons style={{ color: UColor.fontColor,   }} name="ios-arrow-back" size={32} onPress={this._leftTopClick.bind()}/>}
+        {Platform.OS === 'android' && <Ionicons style={{ color: UColor.fontColor,   }} name="md-arrow-back" size={24} onPress={this._leftTopClick.bind()}/> }
         </View>
           <View style={styles.inptout} >
               <Text style={{ fontSize: 18,color: UColor.fontColor, justifyContent: 'center',alignItems: 'center',}} numberOfLines={1} ellipsizeMode='middle'>钱包管理</Text>

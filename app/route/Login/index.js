@@ -9,10 +9,10 @@ import Button from '../../components/Button'
 import moment from 'moment';
 import UImage from '../../utils/Img';
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-import { EasyLoading } from '../../components/Loading';
+
 import { EasyToast } from '../../components/Toast';
 import { kapimg } from '../../utils/Api'
-import { EasyDialog } from '../../components/Dialog'
+import { EasyShowLD } from "../../components/EasyShow"
 import Constants from '../../utils/Constants'
 import BaseComponent from "../../components/BaseComponent";
 
@@ -67,7 +67,7 @@ class Login extends BaseComponent {
 
 
   refreshLcode = () => {
-    EasyDialog.dismis();
+    EasyShowLD.dialogClose();
     this.loginKcaptrue();
   }
 
@@ -91,19 +91,19 @@ class Login extends BaseComponent {
         keyboardType="phone-pad" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} />
     </View>
 
-    EasyDialog.show("计算结果", view, "登陆", "取消", () => {
+    EasyShowLD.dialogShow("计算结果", view, "登陆", "取消", () => {
 
       if (this.state.lcode == "") {
         EasyToast.show('请输入计算结果');
         return;
       }
-      EasyDialog.dismis();
+      EasyShowLD.dialogClose();
 
       this.loginSubmit();
 
       AnalyticsUtil.onEvent('Sign_inok');
 
-    }, () => { EasyDialog.dismis() });
+    }, () => { EasyShowLD.dialogClose() });
   }
 
   clearFoucs = () => {
@@ -125,7 +125,7 @@ class Login extends BaseComponent {
       return;
     }
 
-    EasyLoading.show('登陆中...');
+    EasyShowLD.loadingShow('登陆中...');
 
     this.props.dispatch({
       type: 'login/login', payload: { phone: this.state.loginPhone, password: this.state.loginPwd, code: this.state.lcode }, callback: (data) => {
@@ -135,7 +135,7 @@ class Login extends BaseComponent {
         } else {
           EasyToast.show(data.msg);
         }
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
       }
     })
   }
@@ -158,10 +158,10 @@ class Login extends BaseComponent {
       return;
     }
 
-    EasyLoading.show('注册中...');
+    EasyShowLD.loadingShow('注册中...');
     this.props.dispatch({
       type: 'login/register', payload: { phone: this.state.phone, password: this.state.password, code: this.state.code, invite: this.state.invite }, callback: (data) => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
         if (data.code == 0) {
           EasyToast.show("注册成功");
           this.props.navigation.goBack();
@@ -174,7 +174,7 @@ class Login extends BaseComponent {
   }
 
   refresh = () => {
-    EasyDialog.dismis();
+    EasyShowLD.dialogClose();
     this.kcaptrue();
   }
 
@@ -205,14 +205,14 @@ class Login extends BaseComponent {
       keyboardType="phone-pad" placeholder="请输入计算结果" underlineColorAndroid="transparent" maxLength={8} />
     </View>
 
-    EasyDialog.show("计算结果", view, "获取", "取消", () => {
+    EasyShowLD.dialogShow("计算结果", view, "获取", "取消", () => {
       if (this.state.kcode == "") {
         EasyToast.show('请输入计算结果');
         return;
       }
-      EasyDialog.dismis();
+      EasyShowLD.dialogClose();
       this.getCapture();
-    }, () => { EasyDialog.dismis() });
+    }, () => { EasyShowLD.dialogClose() });
   }
 
   getCapture = () => {
@@ -233,24 +233,24 @@ class Login extends BaseComponent {
     
     var th = this;
 
-    EasyLoading.show('查询中...');
+    EasyShowLD.loadingShow('查询中...');
     this.props.dispatch({
       type: 'login/existRegisteredUser', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
-        EasyLoading.dismis();
+        EasyShowLD.loadingClose();
         if (data.code == '0' && data.data == false) {
-          EasyLoading.show('获取中...');
+          EasyShowLD.loadingShow('获取中...');
           this.props.dispatch({
             type: 'login/getCapture', payload: { phone: this.state.phone, code: this.state.kcode }, callback: (data) => {
-              EasyLoading.dismis();
+              EasyShowLD.loadingClose();
               if (data.code == 0) {
                 EasyToast.show("验证码已发送，请注意查收");
                 th.setState({ capture: "60s", captureState: true });
                 th.doTick();
-                EasyDialog.dismis();
+                EasyShowLD.dialogClose();
               } else {
                 EasyToast.show(data.msg);
                 if (data.code != 505) {
-                  EasyDialog.dismis();
+                  EasyShowLD.dialogClose();
                 }
               }
             }
