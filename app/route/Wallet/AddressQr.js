@@ -11,7 +11,6 @@ import QRCode from 'react-native-qrcode-svg';
 const maxHeight = Dimensions.get('window').height;
 import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 
 @connect(({ wallet }) => ({ ...wallet }))

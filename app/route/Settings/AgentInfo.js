@@ -9,7 +9,6 @@ import UImage from '../../utils/Img'
 
 import { EasyToast } from '../../components/Toast';
 import { EasyShowLD } from "../../components/EasyShow"
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 
 var AES = require("crypto-js/aes");

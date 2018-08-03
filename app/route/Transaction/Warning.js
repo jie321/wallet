@@ -11,8 +11,6 @@ const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-
-import { Eos } from "react-native-eosjs";
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 var dismissKeyboard = require('dismissKeyboard');

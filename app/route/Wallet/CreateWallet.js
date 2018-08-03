@@ -7,10 +7,9 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-
-
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import { english } from '../../utils/english';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'

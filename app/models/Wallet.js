@@ -5,7 +5,6 @@ import { EasyToast } from '../components/Toast';
 import store from 'react-native-simple-store';
 import * as CryptoJS from 'crypto-js';
 import { DeviceEventEmitter } from 'react-native';
-import { Eos } from "react-native-eosjs";
 import { createAccount, pushTransaction, getBalance, getInfo } from '../utils/Api';
 import { pay } from 'react-native-wechat';
 import JPushModule from 'jpush-react-native';

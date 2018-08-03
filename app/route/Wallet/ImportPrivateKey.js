@@ -5,7 +5,7 @@ import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import store from 'react-native-simple-store';
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
-import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
+import { formatterNumber, formatterUnit, formatEosQua } from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';

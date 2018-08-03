@@ -11,6 +11,7 @@ import UImage from '../../utils/Img'
 import { EasyToast } from '../../components/Toast';
 import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 const ScreenWidth = Dimensions.get('window').width;
@@ -223,7 +224,7 @@ class Network extends BaseComponent {
                 }
                 EasyShowLD.loadingShow();
                 // 抵押
-                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegatebw + " EOS", false, (r) =>{
+                Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  formatEosQua("0 EOS"), formatEosQua(this.state.delegatebw + " EOS"), false, (r) =>{
                     EasyShowLD.loadingClose();
                     if(r.isSuccess){
                         this.getAccountInfo();
@@ -305,7 +306,7 @@ class Network extends BaseComponent {
                     }
                     EasyShowLD.loadingShow();
                     // 解除抵押
-                    Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegatebw + " EOS", (r) => {
+                    Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua("0 EOS"), formatEosQua(this.state.undelegatebw + " EOS"), (r) => {
                         EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();

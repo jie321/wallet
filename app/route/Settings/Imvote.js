@@ -12,6 +12,7 @@ import { EasyToast } from '../../components/Toast';
 import { EasyShowLD } from "../../components/EasyShow"
 const maxWidth = Dimensions.get('window').width;
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 var AES = require("crypto-js/aes");

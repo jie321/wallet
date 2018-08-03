@@ -11,6 +11,7 @@ import UImage from '../../utils/Img'
 import { EasyToast } from '../../components/Toast';
 import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'

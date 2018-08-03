@@ -11,6 +11,7 @@ import UImage from '../../utils/Img'
 import { EasyToast } from '../../components/Toast';
 import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 const ScreenWidth = Dimensions.get('window').width;
@@ -248,7 +249,7 @@ class Memory extends BaseComponent {
                     }
                     // alert("isBuyOneself: " + this.state.isBuyOneself + " receiver: "+this.state.receiver+" amount: " + this.state.buyRamAmount + " account: "+this.props.defaultWallet.account);
 
-                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.buyRamAmount + " EOS", (r) => {
+                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.buyRamAmount + " EOS"), (r) => {
                         EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();

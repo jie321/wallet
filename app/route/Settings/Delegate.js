@@ -7,10 +7,10 @@ import Button from  '../../components/Button'
 import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
-
 import { EasyToast } from '../../components/Toast';
 import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 const maxWidth = Dimensions.get('window').width;
@@ -189,8 +189,8 @@ class Nodevoting extends BaseComponent {
                             data:{
                                 from: this.props.defaultWallet.account,
                                 receiver: this.props.defaultWallet.account,
-                                stake_net_quantity: this.state.net,
-                                stake_cpu_quantity: this.state.cpu,
+                                stake_net_quantity: formatEosQua(this.state.net),
+                                stake_cpu_quantity: formatEosQua(this.state.cpu),
                                 transfer: 0
                             }
                         }
@@ -269,8 +269,8 @@ class Nodevoting extends BaseComponent {
                                 data:{
                                     from: this.props.defaultWallet.account,
                                     receiver: this.props.defaultWallet.account,
-                                    unstake_net_quantity: this.state.net,
-                                    unstake_cpu_quantity: this.state.cpu,
+                                    unstake_net_quantity: formatEosQua(this.state.net),
+                                    unstake_cpu_quantity: formatEosQua(this.state.cpu),
                                 }
                             }
                         ]

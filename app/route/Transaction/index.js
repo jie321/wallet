@@ -19,6 +19,7 @@ import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import Constants from '../../utils/Constants';
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
@@ -482,7 +483,7 @@ class Transaction extends BaseComponent {
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 EasyShowLD.loadingShow();
-                Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.props.defaultWallet.account, this.state.buyRamAmount + " EOS", (r) => {
+                Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.props.defaultWallet.account, formatEosQua(this.state.buyRamAmount + " EOS"), (r) => {
                     EasyShowLD.loadingClose();
                     if(r.isSuccess){
                         this.getAccountInfo();

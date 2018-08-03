@@ -6,8 +6,6 @@ import Button from '../../components/Button'
 import UImage from '../../utils/Img'
 import { EasyToast } from "../../components/Toast"
 import { EasyShowLD } from '../../components/EasyShow'
-
-import { Eos } from "react-native-eosjs";
 var dismissKeyboard = require('dismissKeyboard');
 var Dimensions = require('Dimensions')
 const maxWidth = Dimensions.get('window').width;

@@ -12,8 +12,6 @@ import AnalyticsUtil from '../../utils/AnalyticsUtil';
 import QRCode from 'react-native-qrcode-svg';
 import { EasyToast } from "../../components/Toast"
 import { EasyShowLD } from '../../components/EasyShow'
-
-import { Eos } from "react-native-eosjs";
 import moment from 'moment';
 var dismissKeyboard = require('dismissKeyboard');
 var Dimensions = require('Dimensions')

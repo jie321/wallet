@@ -7,10 +7,9 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-
-
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import { english } from '../../utils/english';
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
@@ -104,7 +103,7 @@ class APactivation extends BaseComponent {
                 EasyShowLD.loadingShow();
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 Eos.createAndDelegateAccount(this.props.defaultWallet.account, plaintext_privateKey, this.state.accountName, this.state.ownerPuk, this.state.activePuk,
-                this.state.cpu + " EOS", this.state.net + " EOS", this.state.ram + " EOS", 1, (r)=>{
+                    formatEosQua(this.state.cpu + " EOS"), formatEosQua(this.state.net + " EOS"), formatEosQua(this.state.ram + " EOS"), 1, (r)=>{
                   EasyShowLD.loadingClose();
                   if(r.isSuccess){
                     //   EasyToast.show("创建账号成功");

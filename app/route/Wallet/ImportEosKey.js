@@ -6,10 +6,8 @@ import store from 'react-native-simple-store';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
-import { formatterNumber, formatterUnit } from '../../utils/FormatUtil'
-
+import { formatterNumber, formatterUnit, formatEosQua } from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
-
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
 import BaseComponent from "../../components/BaseComponent";

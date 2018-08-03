@@ -21,6 +21,7 @@ import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 import ViewShot from "react-native-view-shot";
 import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 import moment from 'moment';
 var dismissKeyboard = require('dismissKeyboard');
 const _index = 0;
@@ -460,7 +461,7 @@ class Resources extends BaseComponent {
                     if(this.state.isOwn){
                         this.state.receiver = this.props.defaultWallet.account;
                     }
-                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.buyRamAmount + " EOS", (r) => {
+                    Eos.buyram(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.buyRamAmount + " EOS"), (r) => {
                         EasyShowLD.loadingClose();
                         if(r.isSuccess){
                             this.getAccountInfo();
@@ -594,7 +595,7 @@ class Resources extends BaseComponent {
                     EasyShowLD.loadingShow();
                     // 计算
                     if(this.state.isCalculation){
-                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.delegateb + " EOS", "0 EOS", this.state.LeaseTransfer, (r) =>{
+                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.delegateb + " EOS"), formatEosQua("0 EOS"), this.state.LeaseTransfer, (r) =>{
                             EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -613,7 +614,7 @@ class Resources extends BaseComponent {
                         });
                         // 网络
                     }else if(this.state.isNetwork){
-                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  "0 EOS", this.state.delegateb + " EOS", this.state.LeaseTransfer,(r) =>{
+                        Eos.delegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver,  formatEosQua("0 EOS"), formatEosQua(this.state.delegateb + " EOS"), this.state.LeaseTransfer,(r) =>{
                             EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -682,7 +683,7 @@ class Resources extends BaseComponent {
                     EasyShowLD.loadingShow();
                     // 解除抵押
                     if(this.state.isCalculation){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, this.state.undelegateb + " EOS", "0 EOS", (r) => {
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua(this.state.undelegateb + " EOS"), formatEosQua("0 EOS"), (r) => {
                             EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
@@ -700,7 +701,7 @@ class Resources extends BaseComponent {
                             }
                         })
                     }else if(this.state.isNetwork){
-                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, "0 EOS", this.state.undelegateb + " EOS", (r) => {
+                        Eos.undelegate(plaintext_privateKey, this.props.defaultWallet.account, this.state.receiver, formatEosQua("0 EOS"), formatEosQua(this.state.undelegateb + " EOS"), (r) => {
                             EasyShowLD.loadingClose();
                             if(r.isSuccess){
                                 this.getAccountInfo();
