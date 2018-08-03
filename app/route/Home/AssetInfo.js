@@ -139,7 +139,7 @@ class AssetInfo extends BaseComponent {
           return;
         }
     
-        if(this.state.logRefreshing){
+        if(this.state.logRefreshing || this.state.logId == "-1"){
             return;
         }
         this.setState({logRefreshing: true});

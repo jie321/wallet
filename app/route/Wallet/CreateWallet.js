@@ -272,6 +272,18 @@ class createWallet extends BaseComponent {
     }
   }
 
+  random() {
+    var data=['1','2','3','4','5','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']         
+    for(var j=0;j<500;j++){
+      var result=""; 
+      for(var i=0;i<12;i++){  
+        r=Math.floor(Math.random()*31); 
+        result+=data[r];         
+      } 
+      this.setState({walletName:result})
+    }
+  }
+
   dismissKeyboardClick() {
     dismissKeyboard();
   }
@@ -284,18 +296,27 @@ class createWallet extends BaseComponent {
       <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)}>
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "position" : null}>
           <View style={styles.significantout}>
-            <Text style={styles.significanttext} >重要声明:</Text>
-            <Text style={styles.significanttext} >密码用于保护私钥和交易授权，建议设置高强度密码.</Text>
-            <Text style={styles.significanttext} >EosToken不存储密码，也无法帮您找回，请务必牢记.</Text>
+            <Image source={UImage.warning} style={styles.imgBtn} />
+            <View style={{flex: 1,paddingLeft: 5,}}>
+              <Text style={styles.significanttext} >重要声明:</Text>
+              <Text style={styles.significanttext} >密码用于保护私钥和交易授权，建议设置高强度密码；EosToken不存储密码，也无法帮您找回，请务必牢记。</Text>
+            </View>
           </View>
           <View style={styles.outsource}>
             <View style={styles.inptout} >
               <Text style={styles.inptitle}>账号名称</Text>
-              <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
-                selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
-                placeholder="账号名称(只能输入12位小写字母a-z及数字1-5)" underlineColorAndroid="transparent" onChange={this.intensity()} 
-                keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
-              />
+              <View style={{flexDirection: 'row',justifyContent: 'center',alignItems: 'center',}}>
+                <TextInput ref={(ref) => this._raccount = ref} value={this.state.walletName} returnKeyType="next" 
+                  selectionColor={UColor.tintColor} style={styles.inpt} placeholderTextColor={UColor.arrow} 
+                  placeholder="输入a-z小写字母和1-5数字组合字符" underlineColorAndroid="transparent" onChange={this.intensity()} 
+                  keyboardType="default" maxLength={12} onChangeText={(walletName) => this.setState({ walletName })} 
+                />
+                <Button onPress={() => this.random()}>
+                  <View style={{width: 60, height: 35,justifyContent: 'center',alignItems: 'center',borderRadius: 3, backgroundColor: UColor.tintColor,}}>
+                    <Text style={styles.createWallet}>随机</Text>
+                  </View>
+                </Button>
+              </View>
             </View>
             <View style={styles.inptout} >
                 <View style={{flexDirection: 'row',}}>
@@ -362,11 +383,23 @@ const styles = StyleSheet.create({
     backgroundColor: UColor.secdColor,
   },
   significantout: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    flexDirection: "row",
+    alignItems: 'center', 
+    marginHorizontal: 20,
+    marginVertical: 16,
+    padding: 5,
+    backgroundColor: UColor.mainColor,
+    borderColor: '#FF4F4F',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  imgBtn: {
+    width: 30,
+    height: 30,
+    margin:5,
   },
   significanttext: {
-    color: UColor.arrow,
+    color: '#FF4F4F',
     fontSize: 12, 
   },
 
@@ -388,6 +421,7 @@ const styles = StyleSheet.create({
     color: UColor.fontColor,
   },
   inpt: {
+    flex: 1,
     color: UColor.arrow,
     fontSize: 15,
     height: 50,

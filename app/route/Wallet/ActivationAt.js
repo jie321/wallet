@@ -200,7 +200,7 @@ class ActivationAt extends BaseComponent {
         } catch (error) {
             EasyToast.show('您输入的密码不正确');
         }
-        EasyShowLD.dialogClose();
+        // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     }
         
@@ -235,7 +235,7 @@ class ActivationAt extends BaseComponent {
     
         try {
             //检测账号是否已经激活
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
             EasyShowLD.loadingShow();
             this.props.dispatch({
                 type: "wallet/isExistAccountNameAndPublicKey", payload: {account_name: name, owner: owner, active: active}, callback:(result) =>{

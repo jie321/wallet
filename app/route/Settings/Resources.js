@@ -82,6 +82,7 @@ class Resources extends BaseComponent {
         receiver: "",
         delegateb: "",
         undelegateb: "",
+        init: true,
     };
   }
 
@@ -89,7 +90,7 @@ class Resources extends BaseComponent {
      
     try {
 
-        EasyShowLD.loadingShow();
+        // EasyShowLD.loadingShow();
         this.props.dispatch({ type: 'vote/getGlobalInfo', payload: {},});
 
         this.props.dispatch({
@@ -156,11 +157,19 @@ class Resources extends BaseComponent {
   }
 
   getAccountInfo(){
+
+    if(this.state.init){
+        this.setState({init: false});
+            EasyShowLD.loadingShow();
+        }
+
     this.props.dispatch({ type: 'vote/getaccountinfo', payload: { page:1,username: this.props.navigation.state.params.account_name},callback: (data) => {
       try {
+        EasyShowLD.loadingClose();
         this.setState({ 
             ram_available:((data.total_resources.ram_bytes - data.ram_usage) / 1024).toFixed(2)});
             this.getInitialization(); 
+
       } catch (error) {
           
       }
@@ -271,7 +280,7 @@ class Resources extends BaseComponent {
         //         percentageThree: '',
         //     })
         // } 
-        EasyShowLD.loadingClose();
+        // EasyShowLD.loadingClose();
     }
 
      // 更新"内存，计算，网络，内存交易"按钮的状态  
@@ -486,7 +495,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
     // 出售内存
@@ -549,7 +558,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
 
@@ -640,7 +649,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() }); 
     };
     //赎回
@@ -727,7 +736,7 @@ class Resources extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('未知异常');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     };
 

@@ -309,7 +309,7 @@ class TurnOut extends BaseComponent {
                                 <View style={styles.textinptoue} >
                                     <TextInput  ref={(ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
                                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
-                                        placeholder="转账金额"  underlineColorAndroid="transparent"   keyboardType="numeric"   maxLength = {15}
+                                        placeholder="转账数量"  underlineColorAndroid="transparent"   keyboardType="numeric"   maxLength = {15}
                                         onChangeText={(amount) => this.setState({ amount: this.chkPrice(amount) })}
                                         />
                                 </View>
@@ -321,6 +321,14 @@ class TurnOut extends BaseComponent {
                                         onChangeText={(memo) => this.setState({ memo })}
                                         />
                                 </View>
+
+                        <View style={styles.warningout}>
+                            <Image source={UImage.warning} style={styles.imgBtn} />
+                            <Text style={styles.headtitle}>温馨提示：如果您是向交易所转账，请务必填写相应的备注（MEMO）信息，否则可能无法到账。</Text>
+                        </View>
+                            
+                               
+
                                 <View style={styles.separate}></View>
                                 <Button onPress={this._rightButtonClick.bind(this)} style={styles.btnnextstep}>
                                     <View style={styles.nextstep}>
@@ -335,7 +343,7 @@ class TurnOut extends BaseComponent {
                 <View style={styles.pupuo}>
                     <Modal animationType={'slide'} transparent={true} visible={this.state.show} onShow={() => { }} onRequestClose={() => { }} >
                         <TouchableOpacity style={styles.modalStyle} activeOpacity={1.0}>  
-                            <View style={{ width: maxWidth,  height: maxHeight*3/5,  backgroundColor: UColor.fontColor,}}>
+                            <View style={{ width: maxWidth,  height: maxHeight*4/6,  backgroundColor: UColor.fontColor,}}>
                                 <View style={styles.subView}>
                                     <Text style={styles.buttontext}/>
                                     <Text style={styles.titleText}>订单详情</Text>
@@ -360,6 +368,13 @@ class TurnOut extends BaseComponent {
                                         <Text style={styles.explainText}>备注：</Text> 
                                         <Text style={styles.contentText} numberOfLines={1}>{this.state.memo}</Text> 
                                     </View>
+
+                                    {this.state.memo== ""&&
+                                    <View style={styles.warningoutShow}>
+                                        <Image source={UImage.warning} style={styles.imgBtn} />
+                                        <Text style={styles.headtitle}>温馨提示：如果您是向交易所转账，请务必填写相应的备注（MEMO）信息，否则可能无法到账。</Text>
+                                    </View>}
+                                    
                                     <Button onPress={() => { this.inputPwd() }}>
                                         <View style={styles.btnoutsource}>
                                             <Text style={styles.btntext}>确认</Text>
@@ -585,8 +600,44 @@ const styles = StyleSheet.create({
     nextsteptext: {
         fontSize: 15,
         color: UColor.fontColor
-    }
+    },
 
 
+    warningout: {
+        width: maxWidth-40,
+        marginTop: 20,
+        flexDirection: "row",
+        alignItems: 'center', 
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderColor: UColor.showy,
+        borderWidth: 1,
+        borderRadius: 5,
+    },
+
+    warningoutShow: {
+        marginHorizontal: 20,
+        width: maxWidth-40,
+        marginTop: 10,
+        flexDirection: "row",
+        alignItems: 'center', 
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderColor: UColor.showy,
+        borderWidth: 1,
+        borderRadius: 5,
+    },
+
+    imgBtn: {
+        width: 20,
+        height: 20,
+    },
+    headtitle: {
+        flex: 1,
+        color: UColor.showy,
+        fontSize: 14,
+        lineHeight: 25,
+        paddingLeft: 10,
+    },
 })
 export default TurnOut;

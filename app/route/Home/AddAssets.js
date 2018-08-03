@@ -97,11 +97,16 @@ class AddAssets extends BaseComponent {
       return;
     }
 
-    EasyShowLD.loadingShow();
-    this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
-      this.setState({isAdding: false});
+    try {
+      EasyShowLD.loadingShow();
+      this.props.dispatch({ type: 'assets/addMyAsset', payload: {asset: asset, value: value}, callback: (data) => {
+        this.setState({isAdding: false});
+        EasyShowLD.loadingClose();
+      } });
+    } catch (error) {
       EasyShowLD.loadingClose();
-    } });
+    }
+
   }
 
   isMyAsset(rowData){

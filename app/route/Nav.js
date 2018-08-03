@@ -846,10 +846,7 @@ class Route extends React.Component {
     return date;
   }
   render() {
-
     return (<View style={{ flex: 1 }}>
-        
-
       <Nav ref="nav" onNavigationStateChange={(prevNav, nav, action) => { this.switchRoute(prevNav, nav, action) }} />
       {this.state.showShare ? (
         <View style={{ position: 'absolute', zIndex: 100000, top: 0, left: 0, width: ScreenWidth, height: ScreenHeight, backgroundColor: 'rgba(0,0,0,0.8)' }}>
@@ -863,7 +860,7 @@ class Route extends React.Component {
               <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                 <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
                   <View style={{ backgroundColor: "#fff", flex: 1}}>
-                    <Image source={UImage.share_banner} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40) * 0.238 }} />
+                    <Image source={UImage.share_banner} resizeMode="stretch" style={{ width: ScreenWidth - 40, height: (ScreenWidth - 40) * 0.3386 }} />
                    <View style={{ backgroundColor: UColor.fontColor,flexDirection: "row",marginTop: 10,paddingHorizontal: 20,paddingVertical: 5, justifyContent: "flex-start",}}>
                       <Image source={UImage.share_time} style={{width: 25,height: 25}} />
                       <Text style={{marginLeft: 5,fontSize: 15,color: '#808080'}}> {this.getTime(this.state.news.createdate)}</Text>
@@ -876,9 +873,9 @@ class Route extends React.Component {
                   </View>
                   <View style={{ backgroundColor: '#FFFFFF', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
                       <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
-                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>EosToken</Text>
+                        <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>ET钱包</Text>
                         <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 3 }}>专注于柚子生态</Text>
-                        <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#47546e', margin: 15 }}>更多精彩下载APP</Text>
+                        <Text style={{ color: '#fff', fontSize: 13, textAlign: 'center', padding: 5, backgroundColor: '#47546e', margin: 15,}}>更多精彩 长按识别二维码</Text>
                       </View>
                       <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
                         <QRCode size={(ScreenWidth - 40) * 0.319 - 20} value={Constants.rootaddr+redirect + (Constants.loginUser ? Constants.loginUser.uid : "nuid") + "/" + (Constants.token ? Constants.token.substr(0, 4) : "ntk") + "/" + this.state.news.id} />
@@ -942,7 +939,6 @@ class Route extends React.Component {
                 <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                   <ViewShot ref="viewShot" style={{ left: 20, width: ScreenWidth - 40 }} options={{ format: "jpg", quality: 0.9 }}>
                     <View style={{ backgroundColor: "#fff", width: '100%', height: '100%' }}>
-                    
                       <View style={{ padding: 10 }}>
                         <Image source={UImage.Invitation_vote} resizeMode="cover" style={{ width: '100%', height:ScreenWidth-70 }} />
                         <View style={{ width: (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center',paddingBottom:20, }}>
@@ -952,9 +948,9 @@ class Route extends React.Component {
                       </View>
                       <View style={{ backgroundColor: '#F2F2F2', width: '100%', paddingVertical: 5, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center' }}>
                         <View style={{ width: ScreenWidth - 40 - (ScreenWidth - 40) * 0.319, justifyContent: 'center', alignSelf: 'center' }}>
-                          <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>EosToken</Text>
+                          <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>ET钱包</Text>
                           <Text style={{ color: '#85a7cd', fontSize: 16, textAlign: 'center', width: '100%', marginTop: 5 }}>专注于柚子生态</Text>
-                          <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#306eb1', margin: 10 }}>更多精彩 下载APP</Text>
+                          <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', padding: 5, backgroundColor: '#306eb1', margin: 10 }}>更多精彩 长按识别二维码</Text>
                         </View>                            
                       </View>
                     </View>

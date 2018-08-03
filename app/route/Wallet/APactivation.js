@@ -101,7 +101,7 @@ class APactivation extends BaseComponent {
             var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
 
             if (plaintext_privateKey.indexOf('eostoken') != -1) {
-                EasyShowLD.dialogClose();
+                // EasyShowLD.dialogClose();
                 EasyShowLD.loadingShow();
                 plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
                 Eos.createAndDelegateAccount(this.props.defaultWallet.account, plaintext_privateKey, this.state.accountName, this.state.ownerPuk, this.state.activePuk,
@@ -136,7 +136,7 @@ class APactivation extends BaseComponent {
             EasyShowLD.loadingClose();
             EasyToast.show('密码错误');
         }
-        EasyShowLD.dialogClose();
+        // EasyShowLD.dialogClose();
     }, () => { EasyShowLD.dialogClose() });
   }
    // 显示/隐藏 modal  
