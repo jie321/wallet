@@ -118,6 +118,7 @@ export default {
   wallet_1:require('../img/wallet_1.png'),
   wallet: require('../img/wallet.png'),
   warning:require('../img/warning.png'),
+  warning_h:require('../img/warning_h.png'),
   xin0:require('../img/xin0.png'),
   xin1:require('../img/xin1.png'),
 }

@@ -15,7 +15,7 @@ const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
 import { EasyToast } from "../../components/Toast"
 import { EasyShowLD } from '../../components/EasyShow'
-
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import { Eos } from "react-native-eosjs";
 
@@ -602,28 +602,20 @@ class Home extends React.Component {
           )}                
          />  
 
-     
-
         <Modal style={styles.touchableouts} animationType={'none'} transparent={true}  visible={this.props.tipFlagIOS==false?false:this.isTipShow()  } onRequestClose={()=>{}}>
             <TouchableOpacity style={styles.pupuoBackup} activeOpacity={1.0}>
-
-              <View style={{ width: maxWidth*11/12,  height: maxHeight*2/5,  backgroundColor: UColor.fontColor,paddingHorizontal: 10}}>
-
+              <View style={{ width: maxWidth-20, backgroundColor: UColor.fontColor, borderRadius: 5, position: 'absolute', }}>
                 <View style={styles.subViewBackup}> 
-                  <Text style={styles.buttontext}/>
-                  <Text style={styles.contentText}>IOS用户重要提示</Text>
                   <Button onPress={this._disableTipVisible.bind(this) } style={styles.buttonView2}>
-                    <Text style={styles.buttontext}>×</Text>
+                      <Ionicons style={{ color: '#CBCBCB'}} name="ios-close-outline" size={30} />
                   </Button>
                 </View>
-
+                <Text style={styles.contentText}>IOS用户重要提示</Text>
                 <View style={styles.warningout}>
-                    <Image source={UImage.warning} style={styles.imgBtn} />
+                    <Image source={UImage.warning_h} style={styles.imgBtn} />
                     <Text style={styles.headtitle}>IOS版本可能存在企业证书授权过期！导致APP无法打开，数据丢失问题！当前系统检测到时您还没有备份钱包，请您及时备份，以免带来不必要的损失！</Text>
                     {/* <Text style={styles.headtitle}>当前系统检测到时您还没有备份钱包，请您及时备份，以免带来不必要的损失！</Text> */}
                 </View>
-
-                
                   <Button onPress={this.WalletDetailBackup.bind(this,this.props.defaultWallet)}>
                       <View style={styles.deleteout}>
                           <Text style={styles.deletetext}>立即备份</Text>
@@ -632,7 +624,6 @@ class Home extends React.Component {
                 </View> 
             </TouchableOpacity>
         </Modal>
-
 
         <Modal style={styles.touchableouts} animationType={'none'} transparent={true} onRequestClose={() => { this.onRequestClose() }} visible={this.state.modal}>
           <TouchableOpacity onPress={() => this.setState({ modal: false })} style={styles.touchable} activeOpacity={1.0}>
@@ -971,10 +962,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   contentText: {
-    flex: 1,
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    paddingBottom: 20,
   },
   buttonView: {
     alignItems: 'flex-end',
@@ -1096,9 +1087,8 @@ tabimg: {
 
 deleteout: {
   height: 50,
-  marginHorizontal: 28,
-  marginTop: 30,
-  marginBottom: 28,
+  marginHorizontal: 60,
+  marginVertical: 15,
   borderRadius: 6,
   backgroundColor: UColor.tintColor,
   justifyContent: 'center',
@@ -1121,6 +1111,7 @@ headout: {
 },
 warningout: {
   width: maxWidth-50,
+  marginHorizontal: 15,
   flexDirection: "row",
   alignItems: 'center', 
   // paddingHorizontal: 5,
@@ -1156,15 +1147,17 @@ subView: {
       alignItems: 'center'
   },
   subViewBackup: {
-    flexDirection: "row",
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
-    height: 30,
-    marginVertical: 15,
-    // paddingHorizontal: 10,
+    width: maxWidth-20,
+    height: 20,
+    paddingHorizontal: 5,
   },
   buttonView2: {
-    alignItems: 'flex-end',
+    width: 30,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
 },
 buttontext: {
     width: 40,
