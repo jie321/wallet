@@ -1,6 +1,6 @@
 import {Platform,DeviceEventEmitter} from 'react-native';
 import JPushModule from 'jpush-react-native';
-import { EasyShowLD } from "../../components/EasyShow";
+import { EasyShowLD } from "../components/EasyShow"
 const init = (navigation) => {
     
     if (Platform.OS === 'android') {
