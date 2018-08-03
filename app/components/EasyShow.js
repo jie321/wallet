@@ -84,9 +84,8 @@ export class EasyShowLD {
 
 
     //以下是loading部分的
-    static loadingShow(text = 'Loading...', timeout = 60000, key = 'LoadingDialog') {
-
-      this.map[key].setState({
+    static loadingShow(text = 'Waiting...', timeout = 60000) {
+      this.map["LoadingDialog"].setState({
         modalVisible: true,
         loadingDialogFlag: LoadingShow,
         "text": text,
@@ -95,17 +94,17 @@ export class EasyShowLD {
     }
 
     //切换页面时,如果有loading显示,立刻关闭
-    static switchRoute(key = 'LoadingDialog') {
-      var th = this;
-      if (this.map[key] && this.map[key].state.modalVisible) {
-          th.map[key] && th.map[key].setState({
+    static switchRoute() {
+
+      if (this.map["LoadingDialog"] && this.map["LoadingDialog"].state.modalVisible) {
+        this.map["LoadingDialog"] && this.map["LoadingDialog"].setState({
             "modalVisible": false
           });
       }
     }
 
-    static loadingClose(key = 'LoadingDialog') {
-      this.map[key].setState({
+    static loadingClose() {
+      this.map["LoadingDialog"].setState({
         "modalVisible": false
       });
     }
@@ -133,7 +132,7 @@ export class LoadingDialog extends React.Component {
       progress: 0,
 
       timeout: 60000,
-      text: "Loading2..."
+      text: "Waiting..."
     };
 
     constructor(props) {

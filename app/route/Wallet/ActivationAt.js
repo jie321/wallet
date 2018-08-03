@@ -11,7 +11,7 @@ import UImage from '../../utils/Img'
 import QRCode from 'react-native-qrcode-svg';
 
 import { EasyToast } from '../../components/Toast';
-
+import { EasyShowLD } from "../../components/EasyShow"
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
 import {NavigationActions} from 'react-navigation';

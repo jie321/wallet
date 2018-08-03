@@ -8,6 +8,7 @@ import UColor from '../../utils/Colors'
 import Button from '../../components/Button'
 import { formatterNumber, formatterUnit, formatEosQua } from '../../utils/FormatUtil'
 import { EasyToast } from '../../components/Toast';
+import { EasyShowLD } from "../../components/EasyShow"
 import { Eos } from "react-native-eosjs";
 import UImage from '../../utils/Img';
 import BaseComponent from "../../components/BaseComponent";

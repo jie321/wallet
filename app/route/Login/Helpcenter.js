@@ -11,7 +11,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import UImage from '../../utils/Img'
 
 import { EasyToast } from '../../components/Toast';
-
+import { EasyShowLD } from "../../components/EasyShow"
 import BaseComponent from "../../components/BaseComponent";
 var DeviceInfo = require('react-native-device-info');
 const Font = {

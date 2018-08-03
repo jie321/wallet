@@ -7,6 +7,11 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
+<<<<<<< HEAD
+=======
+
+import { EasyShowLD } from "../../components/EasyShow"
+>>>>>>> Fixed #320
 import { EasyToast } from '../../components/Toast';
 import { Eos } from "react-native-eosjs";
 import {formatEosQua} from '../../utils/FormatUtil';

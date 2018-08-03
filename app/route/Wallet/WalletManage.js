@@ -9,7 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 
 import { EasyToast } from '../../components/Toast';
-
+import { EasyShowLD } from '../../components/EasyShow'
 import store from 'react-native-simple-store';
 import BaseComponent from "../../components/BaseComponent";
 

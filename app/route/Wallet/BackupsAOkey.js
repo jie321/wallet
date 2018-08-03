@@ -12,7 +12,7 @@ import QRCode from 'react-native-qrcode-svg';
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyToast } from '../../components/Toast';
-
+import { EasyShowLD } from "../../components/EasyShow"
 
 import ViewShot from "react-native-view-shot";
 import BaseComponent from "../../components/BaseComponent";

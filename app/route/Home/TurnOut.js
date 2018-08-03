@@ -161,7 +161,7 @@ class TurnOut extends BaseComponent {
                     placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
             </View>
             EasyShowLD.dialogShow("密码", view, "确认", "取消", () => {
-
+                
             if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
                 EasyToast.show('密码长度至少4位,请重输');
                 return;
@@ -202,7 +202,7 @@ class TurnOut extends BaseComponent {
                 EasyShowLD.loadingClose();
                 EasyToast.show('密码错误');
             }
-            EasyShowLD.dialogClose();
+            // EasyShowLD.dialogClose();
         }, () => { EasyShowLD.dialogClose() });
     }
 

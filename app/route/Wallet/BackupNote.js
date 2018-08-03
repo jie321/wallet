@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 
 import { EasyToast } from '../../components/Toast';
-
+import { EasyShowLD } from "../../components/EasyShow"
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants';
 const maxWidth = Dimensions.get('window').width;

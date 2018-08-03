@@ -8,7 +8,7 @@ import Item from '../../components/Item'
 import Icon from 'react-native-vector-icons/Ionicons'
 import UImage from '../../utils/Img'
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-
+import { EasyShowLD } from "../../components/EasyShow"
 import { EasyToast } from '../../components/Toast';
 import BaseComponent from "../../components/BaseComponent";
 let {width, height} = Dimensions.get('window');
