@@ -512,7 +512,7 @@ class Home extends React.Component {
             </Button>
             <Text style={styles.toptext}>EOS资产</Text>
             <Button onPress={() => this.setState({ modal: !this.state.modal })}>
-              <Image source={UImage.wallet} style={styles.imgBtn} />
+              <Image source={UImage.wallet_h} style={styles.imgBtn} />
             </Button>
           </View>
           <ImageBackground style={styles.bgout} source={UImage.home_bg} resizeMode="cover">
