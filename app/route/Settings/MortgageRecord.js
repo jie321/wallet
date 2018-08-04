@@ -34,6 +34,7 @@ class MortgageRecord extends React.Component {
       delegateLoglist: [],
       show: false,
       password: "",
+      labelname: '',
     }
   }
 
@@ -73,7 +74,7 @@ class MortgageRecord extends React.Component {
   }
 
   _query =(labelname) => {
-    if (labelname == "") {
+    if (labelname == ""||labelname == undefined||labelname==null) {
       EasyToast.show('请输入Eos账号');
       return;
     }else{
