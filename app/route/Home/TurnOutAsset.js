@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
 
     //转帐信息提示分隔线
     separationline: {
-        height: 50,
+        height: 40,
         paddingHorizontal: 20,
         flexDirection: "row",
         borderBottomWidth: 0.5,
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     },
     btnnextstep: {
         height: 85,
-        marginTop: 60,
+        marginTop: 40,
     },
     nextstep: {
         height: 45,
@@ -600,8 +600,8 @@ const styles = StyleSheet.create({
     headtitle: {
         flex: 1,
         color: UColor.showy,
-        fontSize: 14,
-        lineHeight: 25,
+        fontSize: 12,
+        // lineHeight: 25,
         paddingLeft: 10,
     },
 })
