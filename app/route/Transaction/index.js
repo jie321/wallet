@@ -716,7 +716,7 @@ class Transaction extends BaseComponent {
                 <View style={styles.outsource}>
                     <View style={styles.progressbar}>
                         <Slider maximumValue={this.state.balance*1} minimumValue={0} step={0.0001} value={this.state.buyRamAmount*1}
-                        onSlidingComplete={(value)=>this.setState({ buyRamAmount: value, eosToKB: this.eosToKB(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                        onSlidingComplete={(value)=>this.setState({ buyRamAmount: value.toFixed(4), eosToKB: this.eosToKB(value.toFixed(4), this.props.ramInfo?this.props.ramInfo.price:'')})}
                         maximumTrackTintColor={UColor.tintColor} minimumTrackTintColor={UColor.tintColor} thumbTintColor={UColor.tintColor}
                         />
                         <View style={styles.paragraph}>
