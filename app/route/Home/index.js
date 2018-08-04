@@ -42,7 +42,6 @@ class Home extends React.Component {
       balance: '0',
       account: 'xxxx',
       show: false,
-      init: true,
       invalidWalletList: [],
       totalBalance: '0.00',
       increase:0,
@@ -59,7 +58,10 @@ class Home extends React.Component {
     this.props.dispatch({type:'assets/getReveal',callback:(reveal)=>{ this.setState({isEye:reveal.reveal,});}});
     this.props.dispatch({ type: 'wallet/updateInvalidState', payload: {Invalid: false}});
     this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-      this.getDefaultWalletEosBalance();
+      this.setState({assetRefreshing: true});
+      this.getDefaultWalletEosBalance( () => {
+        this.setState({assetRefreshing: false});
+      });
       this.getAllWalletEosBalance();
       this.getIncrease();
       this.getMyAssetsInfo();
@@ -183,19 +185,14 @@ class Home extends React.Component {
     } });
   }
   
-  getDefaultWalletEosBalance() { 
+  getDefaultWalletEosBalance(callback) { 
     if (this.props.defaultWallet == null || this.props.defaultWallet.name == null || !this.props.defaultWallet.isactived || !this.props.defaultWallet.hasOwnProperty('isactived')) {
       return;
     }
 
-    if(this.state.init){
-      this.setState({init: false});
-      EasyShowLD.loadingShow();
-    }
-
     this.props.dispatch({
       type: 'wallet/getBalance', payload: { contract: "eosio.token", account: this.props.defaultWallet.name , symbol: 'EOS' }, callback: () => {
-        EasyShowLD.loadingClose();
+        if(callback) callback();
       }
     });
   }
@@ -375,17 +372,17 @@ class Home extends React.Component {
     }else {
       const { dispatch } = this.props;
       try {
-        EasyShowLD.loadingShow();
+        this.setState({assetRefreshing: true});
         this.props.dispatch({ type: 'wallet/changeWallet', payload: { data }, callback: () => {
           this.props.dispatch({ type: 'assets/clearBalance', payload: {}, callback: () => {
             this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
-              EasyShowLD.loadingClose();
+              this.setState({assetRefreshing: false});
             }});
           }});
         }});
         this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
       } catch (error) {
-        EasyShowLD.loadingClose();
+        this.setState({assetRefreshing: false});
       }
 
     }
