@@ -197,14 +197,22 @@ class AssetInfo extends BaseComponent {
                                         <Text style={styles.timetext}>时间 : {this.transferTimeZone(rowData.blockTime)}</Text>
                                         <Text style={styles.quantity}>数量 : {rowData.quantity.replace(c.asset.name, "")}</Text>
                                     </View>
-                                    <View style={styles.typedescription}>
-                                       {rowData.type == '转出' ? 
-                                       <Text style={styles.typeto}>类型 : {rowData.type}</Text>
-                                       :
-                                       <Text style={styles.typeout}>类型 : {rowData.type}</Text>
-                                       }
-                                        <Text style={styles.description}>（{rowData.description}）</Text>
-                                    </View>
+                                    {(rowData.blockNum == null || rowData.blockNum == '') ? 
+                                        <View style={{ flexDirection: "column",justifyContent: "flex-end",alignItems: 'center'}}>
+                                            <Image source={UImage.unconfirm} style={styles.shiftturn} />
+                                            <Text style={{fontSize: 14,color: UColor.showy,textAlign: 'center',marginTop: 3}}>未确认...</Text>
+                                        </View>
+                                            :
+                                        <View style={styles.typedescription}>
+                                            {rowData.type == '转出' ? 
+                                            <Text style={styles.typeto}>类型 : {rowData.type}</Text>
+                                            :
+                                            <Text style={styles.typeout}>类型 : {rowData.type}</Text>
+                                            }
+                                            <Text style={styles.description}>（{rowData.description}）</Text>
+                                        </View>
+                                    }
+
                                 </View>
                                 <View style={styles.Ionicout}>
                                     <Ionicons style={styles.Ionico} name="ios-arrow-forward-outline" size={20} /> 
