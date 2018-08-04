@@ -13,6 +13,7 @@ import { EasyShowLD } from "../../components/EasyShow"
 import {kapimg} from '../../utils/Api'
 import Constants from '../../utils/Constants'
 import BaseComponent from "../../components/BaseComponent";
+import {encryptedMsg} from '../../utils/AlgoUtil';
 
 var ScreenWidth = Dimensions.get('window').width;
 var tick=60;
@@ -60,8 +61,9 @@ class Forget extends BaseComponent {
       EasyToast.show('请输入11位手机号');
       return;
     }
+
     EasyShowLD.loadingShow('修改中...');
-    this.props.dispatch({type:'login/changePwd',payload:{phone:this.state.phone,password:this.state.password,code:this.state.code},callback:(data)=>{
+    this.props.dispatch({type:'login/changePwd',payload:{phone:encryptedMsg(this.state.phone),password:encryptedMsg(this.state.password),code:this.state.code},callback:(data)=>{
       EasyShowLD.loadingClose();
       if(data.code==0){
         EasyToast.show("修改成功");

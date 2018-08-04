@@ -9,12 +9,12 @@ import Button from '../../components/Button'
 import moment from 'moment';
 import UImage from '../../utils/Img';
 import AnalyticsUtil from '../../utils/AnalyticsUtil';
-
 import { EasyToast } from '../../components/Toast';
 import { kapimg } from '../../utils/Api'
 import { EasyShowLD } from "../../components/EasyShow"
 import Constants from '../../utils/Constants'
 import BaseComponent from "../../components/BaseComponent";
+import {encryptedMsg} from '../../utils/AlgoUtil';
 
 var ScreenWidth = Dimensions.get('window').width;
 var tick = 60;
@@ -128,7 +128,7 @@ class Login extends BaseComponent {
     EasyShowLD.loadingShow('登陆中...');
 
     this.props.dispatch({
-      type: 'login/login', payload: { phone: this.state.loginPhone, password: this.state.loginPwd, code: this.state.lcode }, callback: (data) => {
+      type: 'login/login', payload: { phone: encryptedMsg(this.state.loginPhone), password: encryptedMsg(this.state.loginPwd), code: this.state.lcode }, callback: (data) => {
         if (data.code == 0) {
           EasyToast.show("登陆成功");
           this.props.navigation.goBack();
@@ -160,7 +160,7 @@ class Login extends BaseComponent {
 
     EasyShowLD.loadingShow('注册中...');
     this.props.dispatch({
-      type: 'login/register', payload: { phone: this.state.phone, password: this.state.password, code: this.state.code, invite: this.state.invite }, callback: (data) => {
+      type: 'login/register', payload: { phone: encryptedMsg(this.state.phone), password: encryptedMsg(this.state.password), code: this.state.code, invite: this.state.invite }, callback: (data) => {
         EasyShowLD.loadingClose();
         if (data.code == 0) {
           EasyToast.show("注册成功");
