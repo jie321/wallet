@@ -93,7 +93,10 @@ class TradeDetails extends BaseComponent {
           </View>
           <View style={styles.conouttext}> 
             <Text style={styles.context}>区块高度：</Text>
-            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'blockNum')}>{(c.blockNum == null || c.blockNum == "") ? '未确认' : c.blockNum}</Text>
+            {(c.blockNum == null || c.blockNum == "") ? 
+            <Text style={{color: UColor.showy, flex: 1,fontSize: 14,}}>未确认</Text>:
+            <Text style={{color: UColor.tintColor, flex: 1,fontSize: 14,}} onPress={this.prot.bind(this, 'blockNum')}>{c.blockNum}</Text>
+            }
           </View>
           <View style={styles.conouttext}>
             <Text style={styles.context}> 备    注 ：</Text>

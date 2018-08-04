@@ -105,6 +105,7 @@ export default {
   unconfirm:require('../img/unconfirm.png'),
   up_h:require('../img/up_h.png'),
   up:require('../img/up.png'),
+  unconfirm:require('../img/unconfirm.png'),
   vote_h:require('../img/vote_h.png'),
   vote_node:require('../img/vote_node.png'),
   vote:require('../img/vote.png'),
