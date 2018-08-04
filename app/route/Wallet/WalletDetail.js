@@ -201,11 +201,19 @@ class WalletDetail extends BaseComponent {
             }else if(result.code == 521){
                 //msg:账号不存在,data:null,code:521
                 EasyShowLD.dialogShow("免责声明",  (<View>
-                <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，我们建议删除。</Text>
+                <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号还没激活，如果你不打算激活此账号，建议删除。</Text>
               </View>),"删除","取消",  () => {
                   this.deletionDirect();
                   EasyShowLD.dialogClose()
               }, () => { EasyShowLD.dialogClose() });
+            }else if(result.code == 515){
+              //msg:账号不存在,data:null,code:521
+              EasyShowLD.dialogShow("免责声明",  (<View>
+              <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号已经被别人抢注，强烈建议删除。</Text>
+            </View>),"删除","取消",  () => {
+                this.deletionDirect();
+                EasyShowLD.dialogClose()
+            }, () => { EasyShowLD.dialogClose() });
             }else {
               EasyShowLD.dialogShow("免责声明",  (<View>
                 <Text style={{color: UColor.arrow,fontSize: 14,}}>网络异常, 暂不能检测到账号是否已经激活, 建议暂不删除此账号, 如果执意删除请先导出私钥并保存好，否则删除后无法找回。</Text>
