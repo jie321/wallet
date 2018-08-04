@@ -102,6 +102,7 @@ export default {
   trend_cpu:require('../img/trend_cpu.png'),
   turn_out:require('../img/turn_out.png'),
   turnin_head:require('../img/turninhead.png'),
+  unconfirm:require('../img/unconfirm.png'),
   up_h:require('../img/up_h.png'),
   up:require('../img/up.png'),
   vote_h:require('../img/vote_h.png'),
