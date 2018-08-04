@@ -199,7 +199,7 @@ class AssetInfo extends BaseComponent {
                                     </View>
                                     {(rowData.blockNum == null || rowData.blockNum == '') ? 
                                         <View style={{ flexDirection: "column",justifyContent: "flex-end",alignItems: 'center'}}>
-                                            <Image source={UImage.unconfirm} style={styles.shiftturn} />
+                                            {/* <Image source={UImage.unconfirm} style={styles.shiftturn} /> */}
                                             <Text style={{fontSize: 14,color: UColor.showy,textAlign: 'center',marginTop: 3}}>未确认...</Text>
                                         </View>
                                             :
