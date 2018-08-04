@@ -94,7 +94,7 @@ export default {
         },
         *getBigRamRank({ payload, callback }, { call, put }) {
             try{
-                const resp = yield call(Request.request, "http://192.168.1.82:8088/api" + getBigRamRank, 'get');
+                const resp = yield call(Request.request, getBigRamRank, 'get');
                 // alert('getBigRamRank: '+JSON.stringify(resp));
                 if(resp.code=='0'){               
                     yield put({ type: 'updateBigRamRank', payload: { bigRamRank:resp.data } });
