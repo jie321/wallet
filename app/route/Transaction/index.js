@@ -28,9 +28,6 @@ const maxHeight = Dimensions.get('window').height;
 
 const trackOption = ['最近交易','持仓大户'];
 
-var upColor = '#00da3c';
-var downColor = '#ec0000';
-
 @connect(({ram,sticker,wallet, assets}) => ({...ram, ...sticker, ...wallet, ...assets}))
 class Transaction extends BaseComponent {
 
@@ -53,6 +50,7 @@ class Transaction extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
+        
       selectedSegment:"时分",
       selectedTrackSegment: trackOption[0],
       isBuy: false,
@@ -71,7 +69,9 @@ class Transaction extends BaseComponent {
       logRefreshing: false,
       modal: false,
       tradename:"RAM",  //交易币种
-      showTime:false,
+      showMore:false,  
+      showMoreTitle:"更多",
+      isKLine:false,  //是否K线
    };
   }
 
@@ -190,28 +190,51 @@ class Transaction extends BaseComponent {
   }
 
   fetchLine(type,opt){
-    this.setState({selectedSegment:opt});
+    // this.setState({selectedSegment:opt});
     InteractionManager.runAfterInteractions(() => {
         this.props.dispatch({type:'ram/getRamPriceLine',payload:{type}});
     });
   }
-
-  setSelectedOption(opt){
-    if(opt=="时分"){
-      this.fetchLine(2,opt);
-    }else if(opt=="5分"){
-      this.fetchLine(6,opt);
-    }else if(opt=="10分"){
-      this.fetchLine(24,opt);
-    }else if(opt=="15分"){
-      this.fetchLine(48,opt);
-    }else if(opt=="30分"){
-        this.fetchLine(48,opt);
-    }
+  
+  fetchKLine(type,opt){
+    EasyToast.show("暂未实现K线");
   }
 
-  onClickTimer(){
-    this.setState({ showTime: !this.state.showTime });
+  onClickTimer(opt){
+
+      if(opt == "时分"){
+        this.setState({isKLine:false, showMore: false,selectedSegment:opt});
+        this.fetchLine(2,opt);
+        return ;
+    }
+    
+    this.setState({isKLine:true, showMore: false,selectedSegment:opt});
+    if(opt == "5分"){
+        this.fetchKLine(6,opt);
+    }else if(opt == "15分"){
+        this.fetchKLine(24,opt);
+    }else if(opt == "30分"){
+        this.fetchKLine(48,opt);
+    }else if(opt == "1小时"){
+        this.setState({showMoreTitle:opt});
+        this.fetchKLine(48,opt);
+    }else if(opt == "1天"){
+        this.setState({showMoreTitle:opt});
+        this.fetchKLine(48,opt);
+    }else if(opt == "1周"){
+        this.setState({showMoreTitle:opt});
+        this.fetchKLine(48,opt);
+    }else if(opt == "1月"){
+        this.setState({showMoreTitle:opt});
+        this.fetchKLine(48,opt);
+    }else if(opt == "3月"){
+        this.setState({showMoreTitle:opt});
+        this.fetchKLine(48,opt);
+    }
+  }
+  
+  onClickMore(){
+    this.setState({ showMore: !this.state.showMore });
   }
   fetchTrackLine(type,opt){
     this.setState({selectedTrackSegment:opt});
@@ -557,39 +580,6 @@ class Transaction extends BaseComponent {
     return info;
   }
 
-  //输入购买数量占总余额的比例
-  getBuyRamRadio(balance)
-  {
-    //  var balance = this.state.balance == ""? "0.0000" :this.state.balance;
-    //  var ratio = 0;             //进度条比例值
-    //  try {
-    //     if(this.state.buyRamAmount){
-    //         if(balance){
-    //             //余额存在且大于0
-    //             var tmpbuyRamAmount = 0;
-    //             var tmpbalance = 0; 
-    //             try {
-    //                 tmpbuyRamAmount = parseFloat(this.state.buyRamAmount);
-    //                 tmpbalance = parseFloat(balance);
-    //               } catch (error) {
-    //                 tmpbuyRamAmount = 0;
-    //                 tmpbalance = 0;
-    //             }
-    //             if(tmpbuyRamAmount > tmpbalance)
-    //             {
-    //                 //余额不足
-    //                 this.setState({buyRamAmount:""});         
-    //                 EasyToast.show("您的余额不足,请重输");           
-    //             }else if(tmpbalance > 0){
-    //                 ratio = tmpbuyRamAmount / tmpbalance;
-    //             }
-    //         }
-    //     }
-    //  } catch (error) {
-    //     ratio = 0;
-    //  }
-    //  return ratio;
-  }
   //输入卖掉的字节数占总字节的比例
   getSellRamRadio()
   {
@@ -737,53 +727,124 @@ class Transaction extends BaseComponent {
                 </View>
             </View>
           </View>
-          <View style={{flex: 1,marginTop: 5,marginLeft:12,justifyContent: 'flex-start',
-                         flexDirection: 'row',alignItems: 'center',backgroundColor: '#4D607E',width: 60}}>
-            <Button onPress={this.onClickTimer.bind(this)}>
-                <View style={{ marginLeft: 0,width: 60, height: 30,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
-                    <Text style={{fontSize: 17,color: UColor.fontColor,}}>1分</Text>
-                </View>
-            </Button> 
-         </View>   
-         {this.state.showTime ?       
-            <View style={{flex: 1,width: '100%',backgroundColor:'#4D607E',marginTop:maxHeight/7,position:"absolute",}}>
-                <View style={{marginLeft:12,marginRight:0,justifyContent: 'center'}}>
-                <SegmentedControls 
-                    tint= {'#ffffff'}
-                    selectedTint= {'#ffffff'}
-                    separatorWidth={0}
-                    containerBorderWidth={0}
-                    containerBorderRadius={0}
-                    onSelection={this.setSelectedOption.bind(this) }
-                    selectedOption={ this.state.selectedSegment }
-                    backTint= {'#4D607E'} options={['时分','5分','10分','15分','30分','1小时']} />
-               </View>
-               <View style={{marginLeft:12,marginRight:0,justifyContent: 'center'}}>
-                <SegmentedControls 
-                    tint= {'#ffffff'}
-                    selectedTint= {'#ffffff'}
-                    separatorWidth={0}
-                    containerBorderWidth={0}
-                    containerBorderRadius={0}
-                    onSelection={this.setSelectedOption.bind(this) }
-                    selectedOption={ this.state.selectedSegment }
-                    backTint= {'#4D607E'} options={['1天','5天','15天','1个月','3个月']} />
-               </View>
-            </View>         
+          <View style={{flex:1,flexDirection:'row',justifyContent: 'center',alignItems:'center',marginLeft: 0,marginRight: 0,backgroundColor: '#4D607E',}}>
+            <View style={{flexDirection:"column",flexGrow:1,}}>
+                <Button onPress={this.onClickTimer.bind(this,"时分")}>
+                    <View style={{ marginLeft: 2,width: 40, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        {this.state.selectedSegment == "时分" ? 
+                                <Text style={{fontSize: 15, color: UColor.tintColor,}}>时分</Text> : 
+                                        <Text style={{fontSize: 15, color: UColor.fontColor,}}>时分</Text>}
+                    </View>
+                </Button>   
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1,}}>
+                <Button onPress={this.onClickTimer.bind(this,"5分")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        {this.state.selectedSegment == "5分" ? 
+                                <Text style={{fontSize: 15, color: UColor.tintColor,}}>5分</Text> : 
+                                        <Text style={{fontSize: 15, color: UColor.fontColor,}}>5分</Text>}
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+                <Button onPress={this.onClickTimer.bind(this,"15分")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        {this.state.selectedSegment == "15分" ? 
+                                <Text style={{fontSize: 15, color: UColor.tintColor,}}>15分</Text> : 
+                                        <Text style={{fontSize: 15, color: UColor.fontColor,}}>15分</Text>}
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+                <Button onPress={this.onClickTimer.bind(this,"30分")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                       {this.state.selectedSegment == "30分" ? 
+                                <Text style={{fontSize: 15, color: UColor.tintColor,}}>30分</Text> : 
+                                        <Text style={{fontSize: 15, color: UColor.fontColor,}}>30分</Text>}
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+                <Button onPress={this.onClickMore.bind(this)}>
+                    <View style={{ flexDirection:"row",marginLeft: 0,width: 50, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        {(this.state.selectedSegment == "更多" || this.state.selectedSegment == "1小时" || this.state.selectedSegment == "1天"
+                           || this.state.selectedSegment == "1周" || this.state.selectedSegment == "1月" || this.state.selectedSegment == "3月") ? 
+                         <Text style={{fontSize: 15,color: UColor.tintColor,}}>{this.state.showMoreTitle}</Text> : 
+                          <Text style={{fontSize: 15,color: UColor.fontColor,}}>{this.state.showMoreTitle}</Text>}
+                         <Image source={ UImage.txbtn_more } style={ {flex:0,width: 10, height:5,resizeMode:'contain'}}/>
+                    </View>
+                </Button> 
+
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+                <Button disabled={true}>
+                    <View style={{ marginLeft: 0,width: 40, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>    </Text>
+                    </View>
+                </Button> 
+            </View>
+         </View> 
+         {this.state.showMore ?       
+            <View style={{flex:1,flexDirection:'row',justifyContent: 'center',alignItems:'center',marginLeft: 0,marginRight: 0,backgroundColor: '#4D607E',}}>
+            <View style={{flexDirection:"column",flexGrow:1,}}>
+                <Button disabled={true}>
+                    <View style={{ marginLeft: 2,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>    </Text>
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1,}}>
+                <Button onPress={this.onClickTimer.bind(this,"1小时")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>1小时</Text>
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+                <Button onPress={this.onClickTimer.bind(this,"1天")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>1天</Text>
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+                <Button onPress={this.onClickTimer.bind(this,"1周")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>1周</Text>
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+               <Button onPress={this.onClickTimer.bind(this,"1月")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>1月</Text>
+                    </View>
+                </Button> 
+            </View>
+            <View style={{flexDirection:"column",flexGrow:1}}>
+               <Button onPress={this.onClickTimer.bind(this,"3月")}>
+                    <View style={{ marginLeft: 0,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>3月</Text>
+                    </View>
+                </Button> 
+            </View>
+         </View> 
+           
         : <View></View>}  
         
-        <View style={{flex:1,paddingTop:5}}>
-          {
-            <Echarts option={this.props.ramLineDatas?this.props.ramLineDatas:{}} width={ScreenWidth} height={160} />
-            
-          }
-        </View>
-        {/* <View style={{justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
-            <View style={{width:8,height:8,borderRadius:4,backgroundColor:'#65CAFF'}}></View>
-            <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>价格走势</Text>
-            <View style={{width:8,height:8,borderRadius:4,backgroundColor:'#556E95',marginLeft:10}}></View>
-            <Text style={{color:'#8696B0',fontSize:11,marginLeft:5}}>交易量</Text>
-        </View> */}
+        {
+            this.state.isKLine ? 
+            <View style={{flex:1,paddingTop:5}}>
+            {
+                <Echarts option={this.props.ramLineDatas?this.props.ramLineDatas:{}} width={ScreenWidth} height={160} />
+            }
+            </View>
+            : <View style={{flex:1,paddingTop:5}}>
+            {
+                <Echarts option={this.props.ramLineDatas?this.props.ramLineDatas:{}} width={ScreenWidth} height={160} />
+            }
+            </View>
+        }
         <View style={styles.tablayout}>  
             {this.funcButton(styles.buytab, this.state.isBuy, 'isBuy', '买')}  
             {this.funcButton(styles.selltab, this.state.isSell, 'isSell', '卖')}  
