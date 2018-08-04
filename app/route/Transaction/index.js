@@ -785,14 +785,16 @@ class Transaction extends BaseComponent {
                                     {rowData.action_name == 'sellram' ? 
                                     <View style={styles.liststrip}>
                                         <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                        <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                        <Text style={styles.selltime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                        <Text style={styles.selltext} numberOfLines={1}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty.replace("EOS", "")}</Text>
+                                        <Text style={styles.sellpricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                        <Text style={styles.selltime} numberOfLines={1}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                     </View>
                                     :
                                     <View style={styles.liststrip}>
                                         <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                        <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
-                                        <Text style={styles.buytime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                        <Text style={styles.buytext} numberOfLines={1}>买 {rowData.eos_qty.replace("EOS", "")}</Text>
+                                        <Text style={styles.buypricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                        <Text style={styles.buytime} numberOfLines={1}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                     </View>
                                     }
                                 </View>
@@ -817,14 +819,16 @@ class Transaction extends BaseComponent {
                                 {rowData.action_name == 'sellram' ? 
                                 <View style={styles.liststrip}>
                                     <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                    <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                    <Text style={styles.selltime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                    <Text style={styles.selltext} numberOfLines={1}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty.replace("EOS", "")}</Text>
+                                    <Text style={styles.sellpricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                    <Text style={styles.selltime} numberOfLines={1} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                 </View>
                                 :
                                 <View style={styles.liststrip}>
                                     <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                    <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
-                                    <Text style={styles.buytime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                    <Text style={styles.buytext} numberOfLines={1}>买 {rowData.eos_qty.replace("EOS", "")}</Text>
+                                    <Text style={styles.buypricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                    <Text style={styles.buytime} numberOfLines={1}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                 </View>
                                 }
                             </View>
@@ -1200,8 +1204,8 @@ const styles = StyleSheet.create({
         height: Platform.OS == 'ios' ? 41 : 34,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
-        paddingHorizontal: 10,
-        justifyContent: "space-between",
+        paddingHorizontal: 5,
+        // justifyContent: "space-between",
         borderRadius: 5,
         marginVertical: 2,
         marginHorizontal: 5,
@@ -1210,37 +1214,54 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         alignItems: 'center',
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
     },
+    sellpricetext: {
+        flex: 3,
+        fontSize: 14,
+        color: '#F25C49',
+        textAlign: 'left',
+        paddingLeft: 8,
+    },
+    buypricetext: {
+        flex: 3,
+        fontSize: 14,
+        color: "#4ed694",
+        textAlign: 'left',
+        paddingLeft: 8,
+    },
+
     payertext: {
-        flex: 2,
-        fontSize: 12,
+        flex: 3,
+        fontSize: 14,
         color: UColor.fontColor,
         textAlign: 'left'
     },
     selltext: {
-        flex: 5,
-        fontSize: 15,
+        flex: 4,
+        fontSize: 14,
         color: '#F25C49',
-        textAlign: 'center'
+        textAlign: 'left',
+        paddingLeft: 8,
     },
     selltime: {
-        flex: 2,
+        flex: 2.5,
         fontSize: 12,
         color: "#F25C49",
-        textAlign: 'right'
+        textAlign: 'left'
     },
     buytext: {
-        flex: 5,
-        fontSize: 15,
+        flex: 4,
+        fontSize: 14,
         color: "#4ed694",
-        textAlign: 'center'
+        textAlign: 'left',
+        paddingLeft: 8,
     },
     buytime: {
-        flex: 2,
+        flex: 2.5,
         fontSize: 12,
         color: "#4ed694",
-        textAlign: 'right'
+        textAlign: 'left'
     },
 
     businessRan: {
