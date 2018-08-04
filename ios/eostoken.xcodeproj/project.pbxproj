@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -74,6 +73,7 @@
 		F98B16032E9E4F0F9050DBBB /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 24F235703580492A9873EC5C /* Feather.ttf */; };
 		FD4433B75567466A88478728 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C2FF719C054C8DB7A9DEE5 /* libresolv.tbd */; };
 		FE3017D409EE445CBC9E7274 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 35A0158F8C004F84B9099AC0 /* CFNetwork.framework */; };
+		BDD776BE095949169C59C0A1 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 89175642279648DFA0D9221B /* libBVLinearGradient.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -541,6 +541,8 @@
 		F40BE070DEE64D2B882F7F93 /* CodePush.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
 		F55D4F5C6A2C4C1EA9F522CC /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		FFF579F7920C454EB208FA37 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		0E1D82B115C3401DB085B345 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; name = "BVLinearGradient.xcodeproj"; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		89175642279648DFA0D9221B /* libBVLinearGradient.a */ = {isa = PBXFileReference; name = "libBVLinearGradient.a"; path = "libBVLinearGradient.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -588,6 +590,7 @@
 				1B33912F175A4B86A732CFB2 /* libRCTWeChat.a in Frameworks */,
 				E6A80DD78FBD45FB85AEDD92 /* RCTWeChatTests.xctest in Frameworks */,
 				AA841E3D0B4E428F979FA1CE /* libRCTBarcode.a in Frameworks */,
+				BDD776BE095949169C59C0A1 /* libBVLinearGradient.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,6 +796,7 @@
 				03494E2E6FB64387A180FD34 /* RNViewShot.xcodeproj */,
 				9866B4913BC749F1A84436AA /* RCTWeChat.xcodeproj */,
 				646A2E09665C4243AC6461F0 /* RCTBarCode.xcodeproj */,
+				0E1D82B115C3401DB085B345 /* BVLinearGradient.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1633,6 +1637,7 @@
 					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-wechat/ios",
 					"$(SRCROOT)/../node_modules/react-native-smart-barcode/ios/RCTBarcode/RCTBarcode",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 				INFOPLIST_FILE = eostoken/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -1648,6 +1653,10 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/eostoken\"",
+				);
 			};
 			name = Debug;
 		};
@@ -1679,6 +1688,7 @@
 					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-wechat/ios",
 					"$(SRCROOT)/../node_modules/react-native-smart-barcode/ios/RCTBarcode/RCTBarcode",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 				INFOPLIST_FILE = eostoken/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -1694,6 +1704,10 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/eostoken\"",
+				);
 			};
 			name = Release;
 		};

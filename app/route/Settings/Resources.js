@@ -427,7 +427,7 @@ class Resources extends BaseComponent {
         }else if(Percentage >= 100){
             newtimePercentage = '100%'
         }else{
-            newtimePercentage = timePercentage;
+            newtimePercentage = (100 - Percentage) + '%';
         }
         return newtimePercentage
     }

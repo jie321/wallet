@@ -168,6 +168,16 @@ export default {
             EasyToast.show('网络繁忙,请稍后!');
         }
     },
+    *clearBalance({payload, callback}, {call, put}){
+        var myAssets = yield call(store.get, 'myAssets217');
+        for(let i in myAssets){
+            let item = myAssets[i];
+            item.balance = '0.0000';
+        }
+        yield call(store.save, 'myAssets217', myAssets);
+        yield put({ type: 'updateMyAssets', payload: {myAssets: myAssets} });
+        if(callback) callback();
+    },
     *addMyAsset({payload, callback},{call,put}){
         var myAssets = yield call(store.get, 'myAssets217');
         // alert(JSON.stringify(payload.asset) + "   " +JSON.stringify(myAssets));
@@ -255,7 +265,7 @@ export default {
      *getTradeDetails({payload, callback},{call,put}) {
         try{
             const resp = yield call(Request.request, getActions, "post", payload);
-            if(resp.code=='0'){               
+            if(resp && resp.code=='0'){               
                 yield put({ type: 'updateDetails', payload: { data:resp.data, ...payload } });
             }else{
                 EasyToast.show(resp.msg);

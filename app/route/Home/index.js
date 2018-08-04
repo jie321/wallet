@@ -374,10 +374,20 @@ class Home extends React.Component {
       }, () => { EasyShowLD.dialogClose() });
     }else {
       const { dispatch } = this.props;
-      this.props.dispatch({ type: 'wallet/changeWallet', payload: { data }, callback: () => {
-        this.getAssetBalance(); 
-      }});
-      this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      try {
+        EasyShowLD.loadingShow();
+        this.props.dispatch({ type: 'wallet/changeWallet', payload: { data }, callback: () => {
+          this.props.dispatch({ type: 'assets/clearBalance', payload: {}, callback: () => {
+            this.props.dispatch({ type: 'assets/getBalance', payload: { accountName: this.props.defaultWallet.name, myAssets: this.props.myAssets}, callback: () => {
+              EasyShowLD.loadingClose();
+            }});
+          }});
+        }});
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" } });
+      } catch (error) {
+        EasyShowLD.loadingClose();
+      }
+
     }
   }
 
