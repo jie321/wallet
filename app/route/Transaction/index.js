@@ -227,9 +227,6 @@ class Transaction extends BaseComponent {
     }else if(opt == "1月"){
         this.setState({showMoreTitle:opt});
         this.fetchKLine(48,opt);
-    }else if(opt == "3月"){
-        this.setState({showMoreTitle:opt});
-        this.fetchKLine(48,opt);
     }
   }
   
@@ -768,7 +765,7 @@ class Transaction extends BaseComponent {
                 <Button onPress={this.onClickMore.bind(this)}>
                     <View style={{ flexDirection:"row",marginLeft: 0,width: 50, height: 25,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
                         {(this.state.selectedSegment == "更多" || this.state.selectedSegment == "1小时" || this.state.selectedSegment == "1天"
-                           || this.state.selectedSegment == "1周" || this.state.selectedSegment == "1月" || this.state.selectedSegment == "3月") ? 
+                           || this.state.selectedSegment == "1周" || this.state.selectedSegment == "1月") ? 
                          <Text style={{fontSize: 15,color: UColor.tintColor,}}>{this.state.showMoreTitle}</Text> : 
                           <Text style={{fontSize: 15,color: UColor.fontColor,}}>{this.state.showMoreTitle}</Text>}
                          <Image source={ UImage.txbtn_more } style={ {flex:0,width: 10, height:5,resizeMode:'contain'}}/>
@@ -822,9 +819,9 @@ class Transaction extends BaseComponent {
                 </Button> 
             </View>
             <View style={{flexDirection:"column",flexGrow:1}}>
-               <Button onPress={this.onClickTimer.bind(this,"3月")}>
+               <Button disabled={true}>
                     <View style={{ marginLeft: 0,width: 40, height: 35,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
-                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>3月</Text>
+                        <Text style={{fontSize: 15,color: UColor.fontColor,}}>    </Text>
                     </View>
                 </Button> 
             </View>
