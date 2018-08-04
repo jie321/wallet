@@ -6,11 +6,16 @@ import Button from '../../components/Button'
 import UImage from '../../utils/Img'
 import { EasyToast } from "../../components/Toast"
 import { EasyShowLD } from '../../components/EasyShow'
+import Constants from '../../utils/Constants'
+import { Eos } from "react-native-eosjs";
+import {formatEosQua} from '../../utils/FormatUtil';
 var dismissKeyboard = require('dismissKeyboard');
 var Dimensions = require('Dimensions')
 const maxWidth = Dimensions.get('window').width;
 const maxHeight = Dimensions.get('window').height;
-@connect(({ vote }) => ({ ...vote}))
+var AES = require("crypto-js/aes");
+var CryptoJS = require("crypto-js");
+@connect(({wallet, vote}) => ({...wallet, ...vote}))
 class MortgageRecord extends React.Component {
 
   static navigationOptions = {
@@ -28,31 +33,41 @@ class MortgageRecord extends React.Component {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       delegateLoglist: [],
       show: false,
+      password: "",
     }
   }
 
   //加载地址数据
   componentDidMount() {
-    EasyShowLD.loadingShow();
-      this.props.dispatch({
-        type: 'vote/getDelegateLoglist',
-        payload: {account_name: this.props.navigation.state.params.account_name},
-        callback: (resp) => {
-          EasyShowLD.loadingClose();
-          if(resp == null || resp.data == null ||  resp.data.rows == null || resp.data.rows.length == 0){
-            this.setState({show: true, delegateLoglist: []});
-          }else{
-            this.setState({show: false, delegateLoglist: resp.data.rows});
-          }
-        }
+    this.getAccountInfo();
+    this.props.dispatch({
+      type: 'wallet/info',
+      payload: {
+          address: "1111"
+      }
     });
+  }
+
+  getAccountInfo() {
+    EasyShowLD.loadingShow();
+    this.props.dispatch({
+      type: 'vote/getDelegateLoglist',
+      payload: {account_name: this.props.navigation.state.params.account_name},
+      callback: (resp) => {
+        EasyShowLD.loadingClose();
+        if(resp == null || resp.data == null ||  resp.data.rows == null || resp.data.rows.length == 0){
+          this.setState({show: true, delegateLoglist: []});
+        }else{
+          this.setState({show: false, delegateLoglist: resp.data.rows});
+        }
+      }
+  });
   }
 
   _empty() {
     this.setState({
       show: false,
       labelname: '',
-      delegateLoglist: []
     });
     this.dismissKeyboardClick();
   }
@@ -76,6 +91,69 @@ class MortgageRecord extends React.Component {
       });
     }
   }
+
+  _setModalVisible(redeem) {
+    this. dismissKeyboardClick();
+    EasyShowLD.dialogShow("您确认要赎回这笔抵押吗？", (
+        <View style={styles.warningout}>
+            <Image source={UImage.warning_h} style={styles.imgBtn} />
+            <Text style={styles.headtitle}>我们建议赎回是保留抵押0.5 EOS，否则它可能影响您的正常使用！赎回的EOS将于3天后，返还到您的账户。</Text>
+        </View>
+    ), "执意赎回", "取消", () => {
+      this.undelegateb(redeem);
+    }, () => { EasyShowLD.dialogClose() });
+  }
+
+  //赎回
+  undelegateb = (redeem) => { 
+    const view =
+    <View style={styles.passoutsource}>
+        <TextInput autoFocus={true} onChangeText={(password) => this.setState({ password })} returnKeyType="go"  
+            selectionColor={UColor.tintColor} secureTextEntry={true} keyboardType="ascii-capable" style={styles.inptpass} maxLength={Constants.PWD_MAX_LENGTH}
+            placeholderTextColor={UColor.arrow} placeholder="请输入密码" underlineColorAndroid="transparent" />
+        {/* <Text style={styles.inptpasstext}>提示：赎回 {Number(redeem.cpu_weight.replace("EOS", ""))+Number(redeem.net_weight.replace("EOS", ""))} EOS</Text> */}
+    </View>
+    EasyShowLD.dialogShow("请输入密码", view, "确认", "取消", () => {
+        if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH) {
+            EasyToast.show('密码长度至少4位,请重输');
+            return;
+        }
+        var privateKey = this.props.defaultWallet.activePrivate;
+        try {
+            var bytes_privateKey = CryptoJS.AES.decrypt(privateKey, this.state.password + this.props.defaultWallet.salt);
+            var plaintext_privateKey = bytes_privateKey.toString(CryptoJS.enc.Utf8);
+            if (plaintext_privateKey.indexOf('eostoken') != -1) {
+                plaintext_privateKey = plaintext_privateKey.substr(8, plaintext_privateKey.length);
+                EasyShowLD.loadingShow();
+                // 解除抵押
+                Eos.undelegate(plaintext_privateKey, redeem.from, redeem.to, formatEosQua(redeem.cpu_weight), formatEosQua(redeem.net_weight), (r) => {
+                    EasyShowLD.loadingClose();
+                    if(r.isSuccess){
+                        this.getAccountInfo();
+                        EasyToast.show("赎回成功");
+                    }else{    
+                        if(r.data){
+                            if(r.data.msg){
+                                EasyToast.show(r.data.msg);
+                            }else{
+                                EasyToast.show("赎回失败");
+                            }
+                        }else{
+                            EasyToast.show("赎回失败");
+                        }
+                    }
+                })
+            } else {
+                EasyShowLD.loadingClose();
+                EasyToast.show('密码错误');
+            }
+        } catch (e) {
+            EasyShowLD.loadingClose();
+            EasyToast.show('未知异常');
+        }
+        // EasyShowLD.dialogClose();
+    }, () => { EasyShowLD.dialogClose() });
+  };
 
   dismissKeyboardClick() {
     dismissKeyboard();
@@ -105,10 +183,15 @@ class MortgageRecord extends React.Component {
         renderRow={(rowData, sectionID, rowID) => (   
             <View style={styles.outsource}>
               <View style={styles.leftout}>
-                  <Text style={styles.fromtotext}>{rowData.from}</Text>
-                  <Text style={styles.payernet}>Payer</Text>
+                <Button onPress={this._setModalVisible.bind(this,rowData)} style={{flex: 1,}}>
+                    <View >
+                        <Text style={{fontSize: 12, color: UColor.tintColor,}}>一键赎回</Text>
+                    </View>
+                </Button> 
+                <View style={{flex: 1,justifyContent: 'space-between',}}>
                   <Text style={styles.fromtotext}>{rowData.to}</Text>
                   <Text style={styles.Receivercpu}>Receiver</Text>
+                </View>
               </View>
               <View style={styles.rightout}>
                   <Text style={styles.fromtotext}>{rowData.net_weight}</Text>
@@ -119,6 +202,7 @@ class MortgageRecord extends React.Component {
             </View>
         )}                   
       />  
+         
     </View>
     );
   }
@@ -126,10 +210,10 @@ class MortgageRecord extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        flexDirection: "column",
-        backgroundColor: UColor.secdColor,
-        paddingTop: 1,
+      flex: 1,
+      flexDirection: "column",
+      backgroundColor: UColor.secdColor,
+      paddingTop: 1,
     },
     header: {
       flexDirection: "row",
@@ -159,10 +243,10 @@ const styles = StyleSheet.create({
       backgroundColor: UColor.fontColor,
     },
     inpt: {
-        flex: 1,
-        height: 45,
-        fontSize: 14,
-        color: '#999999',
+      flex: 1,
+      height: 45,
+      fontSize: 14,
+      color: '#999999',
     },
     canceltext: {
       color: UColor.fontColor,
@@ -190,7 +274,7 @@ const styles = StyleSheet.create({
     },
     outsource: {
       margin: 5,
-      height: 110,
+      height: 90,
       borderRadius: 5,
       paddingHorizontal: 20,
       paddingVertical: 10,
@@ -204,21 +288,110 @@ const styles = StyleSheet.create({
     rightout: {
       flex: 1, 
       alignItems: "flex-end", 
+      justifyContent: 'space-between',
     },
     fromtotext: {
       fontSize: 12,
       color: UColor.fontColor,
-      lineHeight: 20,
     },
     payernet: {
       fontSize: 12,
       color: UColor.arrow,
-      marginBottom: 10,
     },
     Receivercpu: {
       fontSize: 12,
       color: UColor.arrow,
-      lineHeight: 20,
     },
+
+    warningout: {
+      width: maxWidth-80,
+      flexDirection: "row",
+      alignItems: 'center', 
+      // paddingHorizontal: 5,
+      // paddingVertical: 5,
+      borderColor: UColor.showy,
+      borderWidth: 1,
+      borderRadius: 5,
+    },
+    imgBtn: {
+      width: 30,
+      height: 30,
+      margin:5,
+    },
+    headtitle: {
+      flex: 1,
+      color: UColor.showy,
+      fontSize: 14,
+      lineHeight: 25,
+      paddingLeft: 10,
+    },
+   
+   
+      // 密码输入框
+    passoutsource: {
+      flexDirection: 'column', 
+      alignItems: 'center'
+    },
+    inptpass: {
+      color: UColor.tintColor,
+      height: 45,
+      width: maxWidth-100,
+      paddingBottom: 5,
+      fontSize: 16,
+      backgroundColor: UColor.fontColor,
+      borderBottomColor: UColor.baseline,
+      borderBottomWidth: 1,
+    },
+    inptpasstext: {
+      fontSize: 14,
+      color: '#808080',
+      lineHeight: 25,
+      marginTop: 5,
+    },
+
+
+    subViewBackup: {
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      width: maxWidth-20,
+      height: 20,
+      paddingHorizontal: 5,
+    },
+    buttonView2: {
+      width: 30,
+      height: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttontext: {
+      width: 40,
+      color: '#CBCBCB',
+      fontSize: 28,
+      textAlign: 'right',
+    },
+
+    contentText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      paddingBottom: 20,
+    },
+    buttonView: {
+      alignItems: 'flex-end',
+    },
+
+    deleteout: {
+      height: 50,
+      marginHorizontal: 60,
+      marginVertical: 15,
+      borderRadius: 6,
+      backgroundColor: UColor.tintColor,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    deletetext: {
+      fontSize: 16,
+    },
+    
 });
 export default MortgageRecord;

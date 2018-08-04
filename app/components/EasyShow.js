@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import { material } from 'react-native-typography';
 const { height } = Dimensions.get('window');
+const maxWidth = Dimensions.get('window').width;
+const maxHeight = Dimensions.get('window').height;
 import ProgressBar from "./ProgressBar";
 import UColor from '../utils/Colors'
 
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     padding: 10,
     marginVertical: 106,
-    minWidth: 320,
+    minWidth: maxWidth - 30,
     borderRadius: 2,
     elevation: 24,
     overflow: 'hidden',
@@ -291,7 +293,7 @@ const styles = StyleSheet.create({
   disactionContainer: {
     paddingHorizontal: 8,
     paddingVertical: 12,
-    minWidth: 140,
+    minWidth: (maxWidth - 80)/2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -301,7 +303,7 @@ const styles = StyleSheet.create({
   okactionContainer: {
     paddingHorizontal: 8,
     paddingVertical: 12,
-    minWidth: 140,
+    minWidth: (maxWidth - 80)/2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
