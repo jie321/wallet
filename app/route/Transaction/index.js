@@ -843,6 +843,16 @@ class Transaction extends BaseComponent {
                                         <Text style={styles.accounttext}>{rowData.account}</Text>
                                         <Text style={styles.numtext}>排名 {rowData.num}</Text>
                                     </View>
+                                    <View style={styles.Rankcenterout}>
+                                        <Text style={{fontSize: 12,color: UColor.arrow,}}>盈亏 
+                                        {rowData.profit.indexOf('-') != -1 ?
+                                        <Text style={{fontSize: 12, color: '#FF4C4C',}}> {rowData.profit}</Text>
+                                        :
+                                        <Text style={{fontSize: 12, color: '#5BD91E',}}> {rowData.profit}</Text>
+                                        }
+                                        </Text>
+                                        <Text style={{fontSize: 12,color: UColor.arrow,}}>成本价<Text style={{ fontSize: 12,color: UColor.fontColor,}}> {rowData.historyAverageCost}</Text></Text>
+                                    </View>
                                     <View style={styles.Rankrightout}>
                                         <Text style={styles.pertext}>{rowData.per}</Text>
                                         <Text style={styles.quotatext}>{rowData.ramQuota}</Text>
@@ -1238,13 +1248,12 @@ const styles = StyleSheet.create({
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
         paddingHorizontal: 15,
-       
         borderRadius: 5,
         marginVertical: 2,
         marginHorizontal: 5,
     },
     Rankleftout: {
-        flex: 1,
+        flex: 4.5,
         flexDirection: "column",
         justifyContent: "space-around",
     },
@@ -1256,8 +1265,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: UColor.arrow,
     },
+    Rankcenterout: {
+        flex: 4.5,
+        flexDirection: "column",
+        justifyContent: "space-around",
+    },
+
     Rankrightout: {
-        flex: 1,
+        flex: 3,
         flexDirection: "column",
         justifyContent: "space-around",
     },
