@@ -119,6 +119,7 @@ export default {
   voted:require('../img/voted.png'),
   wallet_1:require('../img/wallet_1.png'),
   wallet: require('../img/wallet.png'),
+  wallet_h: require('../img/wallet_h.png'),
   warning:require('../img/warning.png'),
   warning_h:require('../img/warning_h.png'),
   xin0:require('../img/xin0.png'),
