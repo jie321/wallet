@@ -92,26 +92,30 @@ class Transaction extends BaseComponent {
   }
 
   componentDidMount(){
-
-    // 获取内存市场相关信息
-    EasyShowLD.loadingShow();
-    this.props.dispatch({type: 'ram/getRamInfo',payload: {}, callback: () => {
-        EasyShowLD.loadingClose();
-    }});
-
-    // 默认获取2小时K线图
-    this.fetchLine(2,'2小时');
-   
-    // 获取钱包信息和余额
-    this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
-        this.getAccountInfo();
-    }});
+      try {
+        this.setState({logRefreshing: true});
+        // 获取内存市场相关信息
+        this.props.dispatch({type: 'ram/getRamInfo',payload: {}, callback: () => {
+            this.setState({logRefreshing: false});
+        }});
     
-    this.getRamTradeLog();
-    
-    DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
-        this.onRefreshing();
-    });
+        // 默认获取2小时K线图
+        this.fetchLine(2,'2小时');
+       
+        // 获取钱包信息和余额
+        this.props.dispatch({ type: 'wallet/info', payload: { address: "1111" }, callback: () => {
+            this.getAccountInfo();
+        }});
+        
+        this.getRamTradeLog();
+        
+        DeviceEventEmitter.addListener('getRamInfoTimer', (data) => {
+            this.onRefreshing();
+        });
+      } catch (error) {
+        this.setState({logRefreshing: false});
+      }
+
 
   }
 
@@ -186,6 +190,11 @@ class Transaction extends BaseComponent {
       this.fetchLine(48,opt);
     }
   }
+
+  selectedTrackOption(opt){
+    this.setSelectedTrackOption(opt, false);
+  }
+
   //最近交易，持仓大户
   setSelectedTrackOption(opt, onRefreshing = false){
     if(opt== trackOption[0]){
@@ -198,21 +207,26 @@ class Transaction extends BaseComponent {
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
         if(!onRefreshing){
-            EasyShowLD.loadingShow();
+            this.setState({logRefreshing: true});
         }
         this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
-            EasyShowLD.loadingClose();
+            this.setState({logRefreshing: false});
         }});    
     }else{
         // EasyToast.show('开发中，查询区块持仓大户前10名记录');   
         if(!onRefreshing){
-            EasyShowLD.loadingShow();
+            this.setState({logRefreshing: true});
         }
         this.props.dispatch({type: 'ram/getBigRamRank',payload: {}, callback: () => {
-            EasyShowLD.loadingClose();
+            this.setState({logRefreshing: false});
         }});
     }
   }
+
+  selectedTransactionRecord(opt){
+    this.setSelectedTransactionRecord(opt, false);
+  }
+
   //我的交易，大盘交易
   setSelectedTransactionRecord(opt, onRefreshing = false){
     if(opt== transactionOption[0]){
@@ -228,18 +242,18 @@ class Transaction extends BaseComponent {
             EasyToast.show('未检测到您的账号信息');
         }else{
             if(!onRefreshing){
-                EasyShowLD.loadingShow();
+                this.setState({logRefreshing: true});
             }
             this.props.dispatch({type: 'ram/getRamTradeLogByAccount',payload: {account_name: this.props.defaultWallet.account}, callback: () => {
-                EasyShowLD.loadingClose();
+                this.setState({logRefreshing: false});
             }});
         }
     }else{
         if(!onRefreshing){
-            EasyShowLD.loadingShow();
+            this.setState({logRefreshing: true});
         }
         this.props.dispatch({type: 'ram/getRamTradeLog',payload: {}, callback: () => {
-            EasyShowLD.loadingClose();
+            this.setState({logRefreshing: false});
         }}); 
     }
   }
@@ -777,7 +791,7 @@ class Transaction extends BaseComponent {
                 <View>{this.state.isTxRecord ? 
                     <View>
                         <View style={styles.toptabout}>
-                            <SegmentedControls tint= {UColor.mainColor} selectedTint= {UColor.fontColor} onSelection={this.setSelectedTransactionRecord.bind(this) }
+                            <SegmentedControls tint= {UColor.mainColor} selectedTint= {UColor.fontColor} onSelection={this.selectedTransactionRecord.bind(this) }
                                 selectedOption={ this.state.selectedTransactionRecord } backTint= {UColor.secdColor} options={transactionOption} />
                         </View>
                         {(this.props.ramTradeLog != null &&  this.props.ramTradeLog.length == 0) ? <View style={{paddingTop: 50, justifyContent: 'center', alignItems: 'center'}}><Text style={{fontSize: 16, color: UColor.fontColor}}>还没有交易哟~</Text></View> :
@@ -816,7 +830,7 @@ class Transaction extends BaseComponent {
                     </View>: 
             <View>
                 <View style={styles.toptabout}>
-                    <SegmentedControls tint= {UColor.mainColor} selectedTint= {UColor.fontColor} onSelection={this.setSelectedTrackOption.bind(this) }
+                    <SegmentedControls tint= {UColor.mainColor} selectedTint= {UColor.fontColor} onSelection={this.selectedTrackOption.bind(this) }
                         selectedOption={ this.state.selectedTrackSegment } backTint= {UColor.secdColor} options={trackOption} />
                 </View>
                 {this.state.selectedTrackSegment == trackOption[0] ? 
