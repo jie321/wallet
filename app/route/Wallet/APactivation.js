@@ -115,7 +115,7 @@ class APactivation extends BaseComponent {
                         <View style={styles.linkout}>
                             <Text style={styles.linktext} onPress={() => this.onShareFriend()}>分享给你的朋友</Text>
                         </View>
-                    </View>), "知道了", null,  () => { EasyShowLD.dialogClose() });
+                    </View>), "知道了", null,  () => { EasyShowLD.dialogClose();this.props.navigation.goBack(); });
                   }else{
                       if(r.data){
                           if(r.data.msg){
