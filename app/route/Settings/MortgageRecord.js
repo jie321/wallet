@@ -98,7 +98,7 @@ class MortgageRecord extends React.Component {
     EasyShowLD.dialogShow("您确认要赎回这笔抵押吗？", (
         <View style={styles.warningout}>
             <Image source={UImage.warning_h} style={styles.imgBtn} />
-            <Text style={styles.headtitle}>我们建议赎回是保留抵押0.5 EOS，否则它可能影响您的正常使用！赎回的EOS将于3天后，返还到您的账户。</Text>
+            <Text style={styles.headtitle}>建议保留少量抵押，否则可能影响您的账号正常使用！赎回的EOS将于3天后，返还到您的账户。</Text>
         </View>
     ), "执意赎回", "取消", () => {
       this.undelegateb(redeem);
