@@ -187,23 +187,27 @@ class Transaction extends BaseComponent {
     }
   }
   //最近交易，持仓大户
-  setSelectedTrackOption(opt){
+  setSelectedTrackOption(opt, onRefreshing = false){
     if(opt== trackOption[0]){
-      this.fetchTrackLine(0,opt);
+      this.fetchTrackLine(0,opt,onRefreshing);
     }else {
-      this.fetchTrackLine(1,opt);
+      this.fetchTrackLine(1,opt,onRefreshing);
     }
   }
-  fetchTrackLine(type,opt){
+  fetchTrackLine(type,opt, onRefreshing = false){
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
-        EasyShowLD.loadingShow();
+        if(!onRefreshing){
+            EasyShowLD.loadingShow();
+        }
         this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
             EasyShowLD.loadingClose();
         }});    
     }else{
         // EasyToast.show('开发中，查询区块持仓大户前10名记录');   
-        EasyShowLD.loadingShow();
+        if(!onRefreshing){
+            EasyShowLD.loadingShow();
+        }
         this.props.dispatch({type: 'ram/getBigRamRank',payload: {}, callback: () => {
             EasyShowLD.loadingClose();
         }});
