@@ -47,7 +47,6 @@ export default {
   my_share:require('../img/my_share.png'),
   my_system:require('../img/my_system.png'),
   my_wallet:require('../img/my_wallet.png'),
-  nash:require('../img/nash.png'),
   network:require('../img/network.png'),
   phone:require('../img/phone.png'),
   point_empty:require('../img/point_empty.png'),

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import {Modal,Dimensions,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,View,RefreshControl,Text,ScrollView,TouchableOpacity,Image,Platform,TextInput,Slider,KeyboardAvoidingView} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
-import store from 'react-native-simple-store';
+import {DrawerNavigator} from 'react-navigation';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -17,7 +17,6 @@ import { EasyDialog } from "../../components/Dialog"
 import BaseComponent from "../../components/BaseComponent";
 import ProgressBar from '../../components/ProgressBar';
 import moment from 'moment';
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import { Eos } from "react-native-eosjs";
 import Constants from '../../utils/Constants';
 var AES = require("crypto-js/aes");
@@ -29,6 +28,9 @@ const maxHeight = Dimensions.get('window').height;
 
 const trackOption = ['最近交易','持仓大户'];
 
+var upColor = '#00da3c';
+var downColor = '#ec0000';
+
 @connect(({ram,sticker,wallet, assets}) => ({...ram, ...sticker, ...wallet, ...assets}))
 class Transaction extends BaseComponent {
 
@@ -37,12 +39,6 @@ class Transaction extends BaseComponent {
         return {
           title: '交易',
           header:null,  //隐藏顶部导航栏
-        //   headerTitle: "内存交易",
-        //   headerStyle: {
-        //     paddingTop: Platform.OS == "ios" ? 30 : 20,
-        //     backgroundColor: UColor.mainColor,
-        //     borderBottomWidth:0,
-        //   },
          //铃铛small_bell/small_bell_h
         //   headerRight: (
         //     // <Button name="share" onPress={() => this._rightTopClick()} >
@@ -57,7 +53,7 @@ class Transaction extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      selectedSegment:"2小时",
+      selectedSegment:"时分",
       selectedTrackSegment: trackOption[0],
       isBuy: false,
       isSell: false,
@@ -75,6 +71,7 @@ class Transaction extends BaseComponent {
       logRefreshing: false,
       modal: false,
       tradename:"RAM",  //交易币种
+      showTime:false,
    };
   }
 
@@ -152,7 +149,7 @@ class Transaction extends BaseComponent {
     this.props.dispatch({type: 'ram/getRamInfo',payload: {}});
 
     // 获取曲线
-    this.setSelectedOption(this.state.selectedSegment);
+    // this.setSelectedOption(this.state.selectedSegment);
   }
 
   getRamTradeLog(){
@@ -200,17 +197,22 @@ class Transaction extends BaseComponent {
   }
 
   setSelectedOption(opt){
-    if(opt=="2小时"){
+    if(opt=="时分"){
       this.fetchLine(2,opt);
-    }else if(opt=="6小时"){
+    }else if(opt=="5分"){
       this.fetchLine(6,opt);
-    }else if(opt=="24小时"){
+    }else if(opt=="10分"){
       this.fetchLine(24,opt);
-    }else if(opt=="48小时"){
+    }else if(opt=="15分"){
       this.fetchLine(48,opt);
+    }else if(opt=="30分"){
+        this.fetchLine(48,opt);
     }
   }
 
+  onClickTimer(){
+    this.setState({ showTime: !this.state.showTime });
+  }
   fetchTrackLine(type,opt){
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
@@ -712,38 +714,68 @@ class Transaction extends BaseComponent {
                 <Text style={{color:'#8696B0',fontSize:11,textAlign:'left', marginLeft:10}}>开盘   </Text>
                 <Text style={{color:'#fff',fontSize:11,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.open.toFixed(4) : '0'} EOS/KB</Text>
               </View>
-              <View style={{flexDirection:"row",flexGrow:1}}>
+              {
+              this.state.tradename == "RAM" ? <View style={{flexDirection:"row",flexGrow:1}}>
                 <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>内存占比</Text>
                 <Text style={{color:'#fff',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.usage_ram : 0} GB/{this.props.ramInfo ? this.props.ramInfo.total_ram : 0} GB</Text>
                 <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center'}}> ({((this.props.ramInfo ? this.props.ramInfo.usage_ram_percent : '0') * 100).toFixed(2)}%)</Text>
-              </View>
+              </View> : <View></View>
+              }
               <View style={{flexDirection:"row",flexGrow:1}}>
                 <Text style={{color:'#8696B0',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>总资金</Text>
                 <Text style={{color:'#fff',fontSize:11,marginTop:2,textAlign:'center', marginLeft:10}}>{this.props.ramInfo ? this.props.ramInfo.total_eos : '0'} EOS</Text>
               </View>
             </View>
-            <View style={{flexDirection:'column',flexGrow:1}}>
+            <View style={{flexDirection:'column',flexGrow:1,alignItems:"flex-end",marginRight:10}}>
                 <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
-                    <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>涨幅 </Text>
-                    <Text style={(this.props.ramInfo && this.props.ramInfo.increase>=0)?styles.incdo:styles.incup}> {this.props.ramInfo ? (this.props.ramInfo.increase > 0 ? '+' + (this.props.ramInfo.increase * 100).toFixed(2) : (this.props.ramInfo.increase * 100).toFixed(2)): '0.00'}%</Text>
+                    <Text style={{color:'#fff',fontSize:20,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price.toFixed(4) : '0.0000'}</Text>
+                    <Text style={{color:'#8696B0',fontSize:13,marginTop:2,textAlign:'center', marginLeft:5,marginRight:2}}>价格</Text>
                 </View>
                 <View style={{flex:1,flexDirection:'row', alignItems:'center' }}>
-                    <Text style={{color:'#8696B0',fontSize:13,textAlign:'center', marginLeft:10}}>当前价格</Text>
-                    <Text style={{color:'#fff',fontSize:20,marginTop:2,textAlign:'center'}}> {this.props.ramInfo ? this.props.ramInfo.price.toFixed(4) : '0.0000'}</Text>
+                    <Text style={(this.props.ramInfo && this.props.ramInfo.increase>=0)?styles.incdo:styles.incup}> {this.props.ramInfo ? (this.props.ramInfo.increase > 0 ? '+' + (this.props.ramInfo.increase * 100).toFixed(2) : (this.props.ramInfo.increase * 100).toFixed(2)): '0.00'}%</Text>
+                    <Text style={{color:'#8696B0',fontSize:13,marginTop:2,textAlign:'center', marginLeft:5}}>涨幅 </Text>
                 </View>
             </View>
           </View>
-        <View style={{padding:10,paddingTop:5}}>
-          <SegmentedControls 
-          tint= {'#586888'}
-          selectedTint= {'#ffffff'}
-          onSelection={this.setSelectedOption.bind(this) }
-          selectedOption={ this.state.selectedSegment }
-          backTint= {'#43536D'} options={['2小时','6小时','24小时','48小时']} />
-        </View>
-        <View style={{flex:1,paddingTop:10}}>
+          <View style={{flex: 1,marginTop: 5,marginLeft:12,justifyContent: 'flex-start',
+                         flexDirection: 'row',alignItems: 'center',backgroundColor: '#4D607E',width: 60}}>
+            <Button onPress={this.onClickTimer.bind(this)}>
+                <View style={{ marginLeft: 0,width: 60, height: 30,borderRadius: 3, justifyContent: 'center', alignItems: 'center' }} >
+                    <Text style={{fontSize: 17,color: UColor.fontColor,}}>1分</Text>
+                </View>
+            </Button> 
+         </View>   
+         {this.state.showTime ?       
+            <View style={{flex: 1,width: '100%',backgroundColor:'#4D607E',marginTop:maxHeight/7,position:"absolute",}}>
+                <View style={{marginLeft:12,marginRight:0,justifyContent: 'center'}}>
+                <SegmentedControls 
+                    tint= {'#ffffff'}
+                    selectedTint= {'#ffffff'}
+                    separatorWidth={0}
+                    containerBorderWidth={0}
+                    containerBorderRadius={0}
+                    onSelection={this.setSelectedOption.bind(this) }
+                    selectedOption={ this.state.selectedSegment }
+                    backTint= {'#4D607E'} options={['时分','5分','10分','15分','30分','1小时']} />
+               </View>
+               <View style={{marginLeft:12,marginRight:0,justifyContent: 'center'}}>
+                <SegmentedControls 
+                    tint= {'#ffffff'}
+                    selectedTint= {'#ffffff'}
+                    separatorWidth={0}
+                    containerBorderWidth={0}
+                    containerBorderRadius={0}
+                    onSelection={this.setSelectedOption.bind(this) }
+                    selectedOption={ this.state.selectedSegment }
+                    backTint= {'#4D607E'} options={['1天','5天','15天','1个月','3个月']} />
+               </View>
+            </View>         
+        : <View></View>}  
+        
+        <View style={{flex:1,paddingTop:5}}>
           {
             <Echarts option={this.props.ramLineDatas?this.props.ramLineDatas:{}} width={ScreenWidth} height={160} />
+            
           }
         </View>
         {/* <View style={{justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
