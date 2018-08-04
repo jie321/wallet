@@ -239,7 +239,7 @@ class WalletDetail extends BaseComponent {
        <Text style={{color: UColor.arrow,fontSize: 14,}}>系统检测到该账号<Text style={{color: UColor.showy,fontSize: 15,}}>已经激活</Text>！如果执意删除请先导出私钥并保存好，否则删除后无法找回</Text>
      </View>),"执意删除","返回钱包",  () => {
          this.deleteWallet();
-         EasyShowLD.dialogClose()
+        //  EasyShowLD.dialogClose()
      }, () => { EasyShowLD.dialogClose() });
     }
   
@@ -305,7 +305,7 @@ class WalletDetail extends BaseComponent {
       } catch (error) {
         EasyToast.show('您输入的密码不正确');
       }
-      EasyShowLD.dialogClose();
+      // EasyShowLD.dialogClose();
     }, () => { EasyShowLD.dialogClose() });
   }
 
@@ -450,7 +450,7 @@ class WalletDetail extends BaseComponent {
       } catch (error) {
         EasyToast.show('您输入的密码不正确');
       }
-      EasyShowLD.dialogClose();
+      // EasyShowLD.dialogClose();
     }, () => { EasyShowLD.dialogClose() });
   }
 
