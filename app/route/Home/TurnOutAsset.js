@@ -108,6 +108,7 @@ class TurnOutAsset extends BaseComponent {
             return ;
         }
         this._setModalVisible();
+        this.clearFoucs();
     }
 
     // 显示/隐藏 modal  
@@ -251,11 +252,13 @@ class TurnOutAsset extends BaseComponent {
         return obj;
       }
 
+
     clearFoucs = () => {
         this._raccount.blur();
-        this._lpass.blur();
+        // this._lpass.blur();
+        this._ramount.blur();
+        this._rnote.blur();
     }
-
 
     dismissKeyboardClick() {
         dismissKeyboard();

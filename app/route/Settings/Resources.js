@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground,TouchableOpacity,KeyboardAvoidingView} from 'react-native';
+import {Easing,Animated,NativeModules,StatusBar,BackHandler,DeviceEventEmitter,InteractionManager,ListView,StyleSheet,Image,ScrollView,View,RefreshControl,Text, TextInput,Platform,Dimensions,Modal,TouchableHighlight,Switch,ImageBackground,TouchableOpacity,KeyboardAvoidingView,BVLinearGradient} from 'react-native';
 import {TabViewAnimated, TabBar, SceneMap} from 'react-native-tab-view';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Icon from 'react-native-vector-icons/Ionicons'
 import store from 'react-native-simple-store';
+import LinearGradient from 'react-native-linear-gradient';
 import UColor from '../../utils/Colors'
 import Button from  '../../components/Button'
 import Item from '../../components/Item'
@@ -16,7 +17,6 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 import { EasyShowLD } from '../../components/EasyShow'
 import { EasyToast } from '../../components/Toast';
-
 import BaseComponent from "../../components/BaseComponent";
 import Constants from '../../utils/Constants'
 import ViewShot from "react-native-view-shot";
@@ -64,9 +64,9 @@ class Resources extends BaseComponent {
         isTransfer: false,
         LeaseTransfer: 0,
         tetletext: '内存概况',
-        column_One: '100%',
-        column_Two: '100%',
-        column_Three: '100%',
+        column_One: '0%',
+        column_Two: '0%',
+        column_Three: '0%',
         ContrastOne: '0.00/0.00',
         ContrastTwo: '0.00/0.00',
         ContrastThree: '0.00/0.00',
@@ -225,9 +225,9 @@ class Resources extends BaseComponent {
             if (current == 'isMemory'){
                 this.setState({ 
                     tetletext: '内存概况',
-                    column_One: (100 - this.props.Resources.display_data.ram_usage_percent.replace("%", "")) + '%',
-                    column_Two: (100 - this.props.Resources.display_data.ram_left_percent.replace("%", "")) + '%',
-                    column_Three: (100 - this.props.globaldata.used_Percentage) + '%',
+                    column_One: this.props.Resources.display_data.ram_usage_percent,
+                    column_Two: this.props.Resources.display_data.ram_left_percent,
+                    column_Three: this.props.globaldata.used_Percentage + '%',
                     ContrastOne: this.props.Resources.display_data.ram_usage + '/' + this.props.Resources.display_data.ram_bytes,
                     ContrastTwo: this.props.Resources.display_data.ram_left + '/' + this.props.Resources.display_data.ram_bytes,
                     ContrastThree: this.props.globaldata.used + 'GB/' + this.props.globaldata.total + 'GB',
@@ -238,9 +238,9 @@ class Resources extends BaseComponent {
             }else if (current == 'isCalculation'){
                 this.setState({ 
                     tetletext: '计算概况',
-                    column_One: (100 - this.props.Resources.display_data.cpu_limit_available_percent.replace("%", "")) + '%',
-                    column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent.replace("%", "")) + '%',
-                    column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_cpu_left_second_percent:'100%'),
+                    column_One: this.props.Resources.display_data.cpu_limit_available_percent,
+                    column_Two: this.props.Resources.display_data.self_delegated_bandwidth_cpu_weight_percent,
+                    column_Three: (this.props.Resources.refund_request?this.falseAlarm(this.props.Resources.display_data.refund_request_cpu_left_second_percent):'0%'),
                     ContrastOne: this.props.Resources.display_data.cpu_limit_available + '/' + this.props.Resources.display_data.cpu_limit_max,
                     ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.cpu_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.cpu_weight.replace("EOS", "")*100)/100,
                     ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.cpu_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
@@ -251,9 +251,9 @@ class Resources extends BaseComponent {
             }else if (current == 'isNetwork'){
                 this.setState({ 
                     tetletext: '网络概况',
-                    column_One: (100 - this.props.Resources.display_data.net_limit_available_percent.replace("%", "")) + '%',
-                    column_Two: (100 - this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent.replace("%", "")) + '%',
-                    column_Three: (this.props.Resources.refund_request?this.props.Resources.display_data.refund_request_net_left_second_percent:'100%'),
+                    column_One: this.props.Resources.display_data.net_limit_available_percent,
+                    column_Two: this.props.Resources.display_data.self_delegated_bandwidth_net_weight_percent,
+                    column_Three: (this.props.Resources.refund_request?this.falseAlarm(this.props.Resources.display_data.refund_request_net_left_second_percent):'0%'),
                     ContrastOne: this.props.Resources.display_data.net_limit_available + '/' + this.props.Resources.display_data.net_limit_max,
                     ContrastTwo: (this.props.Resources.self_delegated_bandwidth?Math.floor(this.props.Resources.self_delegated_bandwidth.net_weight.replace("EOS", "")*100)/100:'0') + '/' + Math.floor(this.props.Resources.total_resources.net_weight.replace("EOS", "")*100)/100,
                     ContrastThree: ((this.props.Resources.refund_request&&this.props.Resources.refund_request.net_amount!="0.0000 EOS")?this.transferTimeZone(this.props.Resources.refund_request.request_time.replace("T", " ")):'00:00:00'),
@@ -417,6 +417,19 @@ class Resources extends BaseComponent {
         // //转换时间
         let timezone = moment(date).add(72,'hours').format('YYYY-MM-DDTHH:mm:ss');
         return  timezone;
+    }
+    //时间百分比防出错
+    falseAlarm(timePercentage){
+        let Percentage = timePercentage.replace("%", "")
+        let newtimePercentage;
+        if(Percentage <= 0){
+            newtimePercentage = '0%'
+        }else if(Percentage >= 100){
+            newtimePercentage = '100%'
+        }else{
+            newtimePercentage = timePercentage;
+        }
+        return newtimePercentage
     }
 
     chkAmountIsZero(amount,errInfo){
@@ -759,7 +772,7 @@ class Resources extends BaseComponent {
                         <View style={styles.tetleout}>
                             <Text style={styles.tetletext}>{this.state.tetletext}</Text>
                             <ImageBackground source={UImage.line_bg} resizeMode="cover" style={styles.linebgout}>
-                                <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
+                                {/* <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
                                     <View style={styles.stripbg} height={this.state.column_One}/>
                                 </ImageBackground>
                                 <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
@@ -767,7 +780,16 @@ class Resources extends BaseComponent {
                                 </ImageBackground>
                                 <ImageBackground source={UImage.strip_bg} resizeMode="cover"  style={styles.stripbgout}>
                                     <View style={styles.stripbg} height={this.state.column_Three}/>
-                                </ImageBackground>
+                                </ImageBackground> */}
+                                <View style={{width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,height: (ScreenWidth - 30) * 0.307 - 5, backgroundColor: '#43536d',marginBottom: Platform.OS == 'ios' ? 0.3 : 0.2,justifyContent: 'flex-end'}}>
+                                    <LinearGradient colors={['#FE3BE1', '#8585EF', '#06D4FE']} style={{width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,}} height={this.state.column_One}/>
+                                </View>
+                                <View style={{width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,height: (ScreenWidth - 30) * 0.307 - 5,backgroundColor: '#43536d',marginBottom: Platform.OS == 'ios' ? 0.3 : 0.2,justifyContent: 'flex-end'}}>
+                                    <LinearGradient colors={['#FE3BE1', '#8585EF', '#06D4FE']} style={{width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,}} height={this.state.column_Two}/>
+                                </View>
+                                <View style={{width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,height: (ScreenWidth - 30) * 0.307 - 5,backgroundColor: '#43536d',marginBottom: Platform.OS == 'ios' ? 0.3 : 0.2,justifyContent: 'flex-end'}}>
+                                    <LinearGradient colors={['#FE3BE1', '#8585EF', '#06D4FE']} style={{width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236}} height={this.state.column_Three}/>
+                                </View>
                             </ImageBackground>
                             <View style={styles.record}>
                                 <View style={styles.recordout}>
@@ -793,6 +815,7 @@ class Resources extends BaseComponent {
                                 </View>
                             </View>
                         </View>
+                        
                         <View style={styles.tablayout}>  
                             {this.resourceButton(styles.memorytab, this.state.isMemory, 'isMemory', '内存资源')}  
                             {this.resourceButton(styles.calculationtab, this.state.isCalculation, 'isCalculation', '计算资源')}  
@@ -1171,8 +1194,8 @@ const styles = StyleSheet.create({
     },
     botn: {
         marginLeft: 10, 
-        width: 86, 
-        height: 38,  
+        width: 70, 
+        height: 30,  
         borderRadius: 3, 
         backgroundColor: UColor.tintColor, 
         justifyContent: 'center', 
@@ -1204,16 +1227,15 @@ const styles = StyleSheet.create({
     },
 
     linebgout: {
+        width: ScreenWidth - 30,
         height: (ScreenWidth - 30) * 0.307,
         justifyContent: 'space-around',
         alignItems: 'flex-end',
         flexDirection: 'row',
-        zIndex: 1
     },
     stripbgout: {
         width: ((ScreenWidth - 30) * 0.307 - 5) * 0.236,
         height: (ScreenWidth - 30) * 0.307 - 5,
-        zIndex: 2,
         marginBottom: Platform.OS == 'ios' ? 0.3 : 0.2,
     },
     stripbg: {

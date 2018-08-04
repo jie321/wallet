@@ -34,6 +34,7 @@ class RecordQuery extends React.Component {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       newramTradeLog: [],
       show: false,
+      labelname: '',
     }
   }
 
@@ -58,7 +59,8 @@ class RecordQuery extends React.Component {
 
   // 根据账号查找交易记录
   _query = (labelname) =>{
-    if (labelname == "") {
+   
+    if (labelname == ""||labelname == undefined||labelname==null) {
       EasyToast.show('请输入Eos账号');
       return;
     }else{

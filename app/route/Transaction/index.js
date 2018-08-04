@@ -187,23 +187,27 @@ class Transaction extends BaseComponent {
     }
   }
   //最近交易，持仓大户
-  setSelectedTrackOption(opt){
+  setSelectedTrackOption(opt, onRefreshing = false){
     if(opt== trackOption[0]){
-      this.fetchTrackLine(0,opt);
+      this.fetchTrackLine(0,opt,onRefreshing);
     }else {
-      this.fetchTrackLine(1,opt);
+      this.fetchTrackLine(1,opt,onRefreshing);
     }
   }
-  fetchTrackLine(type,opt){
+  fetchTrackLine(type,opt, onRefreshing = false){
     this.setState({selectedTrackSegment:opt});
     if(type == 0){
-        EasyShowLD.loadingShow();
+        if(!onRefreshing){
+            EasyShowLD.loadingShow();
+        }
         this.props.dispatch({type: 'ram/getRamBigTradeLog',payload: {}, callback: () => {
             EasyShowLD.loadingClose();
         }});    
     }else{
         // EasyToast.show('开发中，查询区块持仓大户前10名记录');   
-        EasyShowLD.loadingShow();
+        if(!onRefreshing){
+            EasyShowLD.loadingShow();
+        }
         this.props.dispatch({type: 'ram/getBigRamRank',payload: {}, callback: () => {
             EasyShowLD.loadingClose();
         }});
@@ -751,8 +755,8 @@ class Transaction extends BaseComponent {
                   <View style={styles.inptoutsource}>
                         <View style={styles.outsource}>
                             <View style={styles.progressbar}>
-                                <Slider maximumValue={this.state.myRamAvailable*1} minimumValue={0} step={1} value={this.state.sellRamBytes*1}
-                                    onSlidingComplete={(value)=>this.setState({ sellRamBytes: value, kbToEos: this.kbToEos(value, this.props.ramInfo?this.props.ramInfo.price:'')})}
+                                <Slider maximumValue={this.state.myRamAvailable*1} minimumValue={0} step={0.0001} value={this.state.sellRamBytes*1024}
+                                    onSlidingComplete={(value)=>this.setState({ sellRamBytes: (value/1024).toFixed(4), kbToEos: this.kbToEos(value/1024, this.props.ramInfo?this.props.ramInfo.price:'')})}
                                     maximumTrackTintColor={UColor.tintColor} minimumTrackTintColor={UColor.tintColor} thumbTintColor={UColor.tintColor}
                                     />
                                 <View style={styles.paragraph}>
@@ -778,6 +782,13 @@ class Transaction extends BaseComponent {
                         </View>
                         {(this.props.ramTradeLog != null &&  this.props.ramTradeLog.length == 0) ? <View style={{paddingTop: 50, justifyContent: 'center', alignItems: 'center'}}><Text style={{fontSize: 16, color: UColor.fontColor}}>还没有交易哟~</Text></View> :
                         <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
+                                renderHeader = {()=><View style={{ flexDirection: "row", paddingHorizontal: 5,marginVertical: 2,marginHorizontal: 5,}}>
+                                <Text style={{ flex: 3,paddingLeft: 8, textAlign: 'left',color: UColor.mainColor}}>账号</Text>
+                                <Text style={{ flex: 4,paddingLeft: 8,textAlign: 'left',color: UColor.mainColor}}>数量(EOS)</Text>
+                                <Text style={{ flex: 3,paddingLeft: 8,textAlign: 'left',color: UColor.mainColor}}>价格(KB)</Text>
+                                <Text style={{ flex: 2.5,paddingLeft: 8,textAlign: 'left',color: UColor.mainColor}}>时间</Text>
+                                </View>
+                            }
                             dataSource={this.state.dataSource.cloneWithRows(this.props.ramTradeLog == null ? [] : this.props.ramTradeLog)} 
                             renderRow={(rowData, sectionID, rowID) => (                 
                             <Button onPress={this.openQuery.bind(this,rowData.payer)}>
@@ -785,14 +796,16 @@ class Transaction extends BaseComponent {
                                     {rowData.action_name == 'sellram' ? 
                                     <View style={styles.liststrip}>
                                         <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                        <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                        <Text style={styles.selltime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                        <Text style={styles.selltext} numberOfLines={1}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty.replace("EOS", "")}</Text>
+                                        <Text style={styles.sellpricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                        <Text style={styles.selltime} numberOfLines={1}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                     </View>
                                     :
                                     <View style={styles.liststrip}>
                                         <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                        <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
-                                        <Text style={styles.buytime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                        <Text style={styles.buytext} numberOfLines={1}>买 {rowData.eos_qty.replace("EOS", "")}</Text>
+                                        <Text style={styles.buypricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                        <Text style={styles.buytime} numberOfLines={1}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                     </View>
                                     }
                                 </View>
@@ -810,6 +823,13 @@ class Transaction extends BaseComponent {
                   <View>
                     {(this.props.ramBigTradeLog != null &&  this.props.ramBigTradeLog.length == 0) ? <View style={{paddingTop: 50, justifyContent: 'center', alignItems: 'center'}}><Text style={{fontSize: 16, color: UColor.fontColor}}>还没有交易哟~</Text></View> :
                     <ListView style={{flex: 1,}} renderRow={this.renderRow} enableEmptySections={true} 
+                    renderHeader = {()=><View style={{ flexDirection: "row", paddingHorizontal: 5,marginVertical: 2,marginHorizontal: 5,}}>
+                        <Text style={{ flex: 3,paddingLeft: 8, textAlign: 'left',color: UColor.mainColor}}>账号</Text>
+                        <Text style={{ flex: 4,paddingLeft: 8,textAlign: 'left',color: UColor.mainColor}}>数量(EOS)</Text>
+                        <Text style={{ flex: 3,paddingLeft: 8,textAlign: 'left',color: UColor.mainColor}}>价格(KB)</Text>
+                        <Text style={{ flex: 2.5,paddingLeft: 8,textAlign: 'left',color: UColor.mainColor}}>时间</Text>
+                        </View>
+                    }
                       dataSource={this.state.dataSource.cloneWithRows(this.props.ramBigTradeLog == null ? [] : this.props.ramBigTradeLog)} 
                       renderRow={(rowData, sectionID, rowID) => (                 
                         <Button onPress={this.openQuery.bind(this,rowData.payer)}>
@@ -817,14 +837,16 @@ class Transaction extends BaseComponent {
                                 {rowData.action_name == 'sellram' ? 
                                 <View style={styles.liststrip}>
                                     <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                    <Text style={styles.selltext}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty}</Text>
-                                    <Text style={styles.selltime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                    <Text style={styles.selltext} numberOfLines={1}>卖 {(rowData.price == null || rowData.price == '0') ? rowData.ram_qty : rowData.eos_qty.replace("EOS", "")}</Text>
+                                    <Text style={styles.sellpricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                    <Text style={styles.selltime} numberOfLines={1} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                 </View>
                                 :
                                 <View style={styles.liststrip}>
                                     <Text style={styles.payertext} numberOfLines={1}>{rowData.payer}</Text>
-                                    <Text style={styles.buytext}>买 {rowData.eos_qty}</Text>
-                                    <Text style={styles.buytime} >{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
+                                    <Text style={styles.buytext} numberOfLines={1}>买 {rowData.eos_qty.replace("EOS", "")}</Text>
+                                    <Text style={styles.buypricetext} numberOfLines={1}>{rowData.price != 0?rowData.price:''}</Text>
+                                    <Text style={styles.buytime} numberOfLines={1}>{moment(rowData.record_date).add(8,'hours').fromNow()}</Text>
                                 </View>
                                 }
                             </View>
@@ -1200,8 +1222,8 @@ const styles = StyleSheet.create({
         height: Platform.OS == 'ios' ? 41 : 34,
         backgroundColor: UColor.mainColor,
         flexDirection: "row",
-        paddingHorizontal: 10,
-        justifyContent: "space-between",
+        paddingHorizontal: 5,
+        // justifyContent: "space-between",
         borderRadius: 5,
         marginVertical: 2,
         marginHorizontal: 5,
@@ -1210,37 +1232,54 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         alignItems: 'center',
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
     },
+    sellpricetext: {
+        flex: 3,
+        fontSize: 14,
+        color: '#F25C49',
+        textAlign: 'left',
+        paddingLeft: 8,
+    },
+    buypricetext: {
+        flex: 3,
+        fontSize: 14,
+        color: "#4ed694",
+        textAlign: 'left',
+        paddingLeft: 8,
+    },
+
     payertext: {
-        flex: 2,
-        fontSize: 12,
+        flex: 3,
+        fontSize: 14,
         color: UColor.fontColor,
         textAlign: 'left'
     },
     selltext: {
-        flex: 5,
-        fontSize: 15,
+        flex: 4,
+        fontSize: 14,
         color: '#F25C49',
-        textAlign: 'center'
+        textAlign: 'left',
+        paddingLeft: 8,
     },
     selltime: {
-        flex: 2,
+        flex: 2.5,
         fontSize: 12,
         color: "#F25C49",
-        textAlign: 'right'
+        textAlign: 'left'
     },
     buytext: {
-        flex: 5,
-        fontSize: 15,
+        flex: 4,
+        fontSize: 14,
         color: "#4ed694",
-        textAlign: 'center'
+        textAlign: 'left',
+        paddingLeft: 8,
     },
     buytime: {
-        flex: 2,
+        flex: 2.5,
         fontSize: 12,
         color: "#4ed694",
-        textAlign: 'right'
+        textAlign: 'left'
     },
 
     businessRan: {

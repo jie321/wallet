@@ -122,6 +122,7 @@ class TurnOut extends BaseComponent {
             return ;
         }
         this._setModalVisible();
+        this.clearFoucs();
     }
 
     // 显示/隐藏 modal  
@@ -267,7 +268,9 @@ class TurnOut extends BaseComponent {
 
     clearFoucs = () => {
         this._raccount.blur();
-        this._lpass.blur();
+        // this._lpass.blur();
+        this._ramount.blur();
+        this._rnote.blur();
     }
     scan() {
         const { navigate } = this.props.navigation;
@@ -307,7 +310,7 @@ class TurnOut extends BaseComponent {
                                 </View>
                                 <View style={styles.separate}></View>
                                 <View style={styles.textinptoue} >
-                                    <TextInput  ref={(ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
+                                    <TextInput  ref={ (ref) => this._ramount = ref} value={this.state.amount} returnKeyType="next"
                                         selectionColor={UColor.tintColor} style={styles.textinpt}  placeholderTextColor={UColor.arrow} 
                                         placeholder="转账数量"  underlineColorAndroid="transparent"   keyboardType="numeric"   maxLength = {15}
                                         onChangeText={(amount) => this.setState({ amount: this.chkPrice(amount) })}
