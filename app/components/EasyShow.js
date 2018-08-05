@@ -42,6 +42,7 @@ export class EasyShowLD {
     }
 
     static dialogShow(title, content, okLable, disLabel, okHandler) {
+      clearTimeout(this.handle);
       this.map["LoadingDialog"].setState({
         "modalVisible": true,
         "loadingDialogFlag": DailogShow,
@@ -54,6 +55,7 @@ export class EasyShowLD {
     }
 
     static dialogClose() {
+      clearTimeout(this.handle);
         this.map["LoadingDialog"].setState({
           "modalVisible": false,
         });
@@ -87,12 +89,22 @@ export class EasyShowLD {
 
     //以下是loading部分的
     static loadingShow(text = 'Loading...', timeout = 60000) {
+      clearTimeout(this.handle);
       this.map["LoadingDialog"].setState({
         modalVisible: true,
         loadingDialogFlag: LoadingShow,
         "text": text,
         "timeout": timeout
       });
+
+      if (timeout > 0) {
+        var th = this;
+        this.handle = setTimeout(() => {
+          th.loadingClose();
+          clearTimeout(this.handle);
+        }, timeout);
+      }
+
     }
 
     //切换页面时,如果有loading显示,立刻关闭
@@ -106,6 +118,7 @@ export class EasyShowLD {
     }
 
     static loadingClose() {
+      clearTimeout(this.handle);
       this.map["LoadingDialog"].setState({
         "modalVisible": false
       });
@@ -139,11 +152,15 @@ export class LoadingDialog extends React.Component {
 
     constructor(props) {
       super(props);
+      let handle = 0;
       EasyShowLD.bind(this);
     }
 
 
+    componentWillUnmount() {
+      clearTimeout(this.handle);
 
+    }
 
 
     render() {
